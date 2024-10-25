@@ -172,9 +172,41 @@
 
         <h2>Risultati</h2>
         <p id="risultatoDieWithZero" class="result">Capitale necessario per "Die with Zero": </p>
+		
+		 <!-- Nuova sezione per calcolare l'investimento annuo -->
+        <div class="result">
+            <h2>Calcolo Investimento Annuo per Raggiungere il Capitale</h2>
+
+            <label for="ritornoInvestimentoSlider">Tasso di Ritorno Annuale (%)</label>
+            <input type="range" id="ritornoInvestimentoSlider" min="0" max="15" value="6" step="0.1">
+            <span id="ritornoInvestimentoVal">6%</span>
+
+            <br>
+
+            <label for="anniInvestimento">Numero di anni:</label>
+            <input type="number" id="anniInvestimento" value="30">
+            
+            <p id="risultatoInvestimentoAnnuo">Investimento annuo necessario per raggiungere il capitale: <span class="highlight">-</span></p>
+        </div>
     </div>
 
     <script>
+		let capitaleNecessario = 0.0;
+		// Funzione per aggiornare l'investimento annuo
+        function aggiornaInvestimentoAnnuo() {			
+            const ritornoInvestimento = parseFloat(document.getElementById('ritornoInvestimentoSlider').value) / 100;
+            const anniInvestimento = parseFloat(document.getElementById('anniInvestimento').value);
+			            
+            // Aggiorna i valori degli slider
+            document.getElementById('ritornoInvestimentoVal').textContent = (ritornoInvestimento * 100).toFixed(1) + "%";
+            
+            // Calcolo dell'investimento annuo necessario
+            if (capitaleNecessario && ritornoInvestimento && anniInvestimento) {
+                const investimentoAnnuo = calcolaInvestimentoAnnuo(capitaleNecessario, ritornoInvestimento, anniInvestimento);
+                document.getElementById('risultatoInvestimentoAnnuo').querySelector('span').textContent = formattaEuro(investimentoAnnuo);
+            }
+        }
+	
         // Funzione per calcolare il capitale necessario per "Die with Zero"
         function calcolaDieWithZero(spesaAnnuo, rendimento, inflazione, anni) {
             const tassoRendimentoReale = rendimento - inflazione;
@@ -184,6 +216,17 @@
             const fattore = 1 - Math.pow((1 + inflazione) / (1 + rendimento), anni);
             return spesaAnnuo * (fattore / tassoRendimentoReale);
         }
+		
+		// Funzione per calcolare l'investimento annuo necessario
+		function calcolaInvestimentoAnnuo(capitale, ritorno, anni) {		
+			const fattore = Math.pow(1 + ritorno, anni) - 1;
+			return capitale * (ritorno / fattore);
+		}
+		
+		// Funzione per formattare i numeri in formato Euro
+		function formattaEuro(valore) {
+			return valore.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
+		}
 
         // Funzione per aggiornare il calcolo "Die with Zero"
         function aggiornaDieWithZero() {
@@ -192,9 +235,11 @@
             const inflazione = parseFloat(document.getElementById('inflazioneSlider').value) / 100;
             const anni = parseInt(document.getElementById('anniSlider').value);
 
-            const capitaleNecessario = calcolaDieWithZero(spesaAnnuo, rendimento, inflazione, anni);
+            capitaleNecessario = calcolaDieWithZero(spesaAnnuo, rendimento, inflazione, anni);
             document.getElementById('risultatoDieWithZero').textContent = 
                 `Capitale necessario per "Die with Zero": €${capitaleNecessario.toLocaleString("it-IT", { style: "currency", currency: "EUR", minimumFractionDigits: 2 })}`;
+			//aggiorno investimento necessario
+			aggiornaInvestimentoAnnuo()
         }
 
         // Aggiorna i valori degli slider e ricalcola
