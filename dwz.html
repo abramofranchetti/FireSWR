@@ -188,11 +188,47 @@
             
             <p id="risultatoInvestimentoAnnuo">Investimento annuo necessario per raggiungere il capitale: <span class="highlight">-</span></p>
         </div>
+	
+	<!-- Grafico per visualizzare il capitale nel tempo -->
+        <canvas id="capitaleChart"></canvas>
     </div>
 
     <script>
-		let capitaleNecessario = 0.0;
-		// Funzione per aggiornare l'investimento annuo
+	 function aggiornaGrafico(capitaleIniziale, rendimento, inflazione, anni) {
+            const anniArray = Array.from({ length: anni }, (_, i) => i + 1);
+            const capitaleNelTempo = anniArray.map(anno => capitaleIniziale * Math.pow((1 + rendimento) / (1 + inflazione), -anno));
+
+            if (window.capitaleChart instanceof Chart) {
+                window.capitaleChart.destroy();
+            }
+
+            const ctx = document.getElementById('capitaleChart').getContext('2d');
+            window.capitaleChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: anniArray,
+                    datasets: [{
+                        label: 'Capitale nel tempo',
+                        data: capitaleNelTempo,
+                        borderColor: 'rgb(75, 192, 192)',
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Anni' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Capitale (€)' }
+                        }
+                    }
+                }
+            });
+        }
+	
+	let capitaleNecessario = 0.0;
+	// Funzione per aggiornare l'investimento annuo
         function aggiornaInvestimentoAnnuo() {			
             const ritornoInvestimento = parseFloat(document.getElementById('ritornoInvestimentoSlider').value) / 100;
             const anniInvestimento = parseFloat(document.getElementById('anniInvestimento').value);
@@ -238,8 +274,9 @@
             capitaleNecessario = calcolaDieWithZero(spesaAnnuo, rendimento, inflazione, anni);
             document.getElementById('risultatoDieWithZero').textContent = 
                 `Capitale necessario per "Die with Zero": €${capitaleNecessario.toLocaleString("it-IT", { style: "currency", currency: "EUR", minimumFractionDigits: 2 })}`;
-			//aggiorno investimento necessario
-			aggiornaInvestimentoAnnuo()
+	    //aggiorno investimento necessario
+	    aggiornaInvestimentoAnnuo();
+	    aggiornaGrafico(capitaleNecessario, rendimento, inflazione, anni);	
         }
 
         // Aggiorna i valori degli slider e ricalcola
