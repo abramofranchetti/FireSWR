@@ -138,6 +138,36 @@
             font-weight: bold;
         }    
     
+		.styled-link {
+            display: flex;
+            align-items: center;
+			justify-content: center;
+            text-decoration: none;
+            padding: 10px 15px;
+			margin-top:10px;			
+            font-size: 18px;
+            color: #0073e6;
+            background-color: #f1f9ff;
+            border: 2px solid #0073e6;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .styled-link:hover {
+            background-color: #0073e6;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .styled-link i {
+            margin-right: 8px;
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .styled-link:hover i {
+            transform: scale(1.2);
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -145,7 +175,7 @@
     <div class="container">
          <h1>Calcolo del "Die with Zero" (DWZ) 
 		  <span class="info-icon" title="Informazioni SWR">i
-            <span class="tooltip">indica quanto capitale devi accumulare considerando un certo prelievo annuo per vivere X anni tenendo conto dell'inflazione ed esaurire il capitale dopo tot anni.</span>
+            <span class="tooltip">Indica quanto capitale devi accumulare considerando un certo prelievo annuo A per vivere X anni tenendo conto dell'inflazione ed esaurire il capitale dopo TOT anni.</span>
         </span>
 		</h1>
 
@@ -174,6 +204,9 @@
         <h2>Risultati</h2>
         <p id="risultatoDieWithZero" class="result">Capitale necessario per "Die with Zero": </p>
 		
+		<!-- Grafico per visualizzare il capitale nel tempo -->
+        <canvas id="capitaleChart"></canvas>
+		
 		 <!-- Nuova sezione per calcolare l'investimento annuo -->
         <div class="result">
             <h2>Calcolo Investimento Annuo per Raggiungere il Capitale</h2>
@@ -188,10 +221,11 @@
             <input type="number" id="anniInvestimento" value="30">
             
             <p id="risultatoInvestimentoAnnuo">Investimento annuo necessario per raggiungere il capitale: <span class="highlight">-</span></p>
-        </div>
-	
-	<!-- Grafico per visualizzare il capitale nel tempo -->
-        <canvas id="capitaleChart"></canvas>
+        </div>			
+		
+		<a href="/FireSWR/swr.html" class="styled-link" title="Dai l'inizio a una dinastia di ricconi">
+			<i>💸</i> Vuoi far diventare ricchi i tuoi eredi?
+		</a>
     </div>
 
     <script>	           
