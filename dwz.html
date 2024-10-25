@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcolo SWR e Die with Zero</title>
+    <title>Calcolo Die with Zero</title>
     <style>
         /* Stili di base */
         body {
@@ -194,7 +194,7 @@
         <canvas id="capitaleChart"></canvas>
     </div>
 
-    <script>
+    <script>	           
 	 function aggiornaGrafico(capitaleIniziale, rendimento, inflazione, anni) {
             const anniArray = Array.from({ length: anni }, (_, i) => i + 1);
             const capitaleNelTempo = anniArray.map(anno => capitaleIniziale * Math.pow((1 + rendimento) / (1 + inflazione), -anno));
@@ -294,7 +294,10 @@
             aggiornaDieWithZero();
         });
         document.getElementById('spesaAnnua').addEventListener('input', aggiornaDieWithZero);
-
+	
+        document.getElementById('anniInvestimento').addEventListener('input', () => {            
+             aggiornaInvestimentoAnnuo();
+        });
         // Prima inizializzazione
         aggiornaDieWithZero();
     </script>
