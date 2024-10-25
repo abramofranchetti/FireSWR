@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolo SWR e Die with Zero</title>
+    <style>
+        /* Stili di base */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .slider-container, .input-group {
+            margin-bottom: 20px;
+        }
+        .result {
+            font-weight: bold;
+        }
+		 h1 {
+            display: flex;
+            align-items: center;
+            font-family: Arial, sans-serif;
+			justify-content: center;
+        }
+
+		  .info-icon {
+            display: inline-block;
+            margin-left: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: help;
+            position: relative;
+        }
+
+        /* Tooltip nascosto inizialmente */
+        .info-icon .tooltip {
+            display: none;
+            position: absolute;
+            top: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.4;
+            z-index: 1;
+        }
+
+        /* Mostra il tooltip al passaggio del mouse */
+        .info-icon:hover .tooltip {
+            display: block;
+        }.slider-container label {
+            font-size: 1.1rem;
+            color: #555;
+            display: block;
+            margin-bottom: 10px;
+        }
+		
+		
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .slider-container {
+            margin-bottom: 30px;
+        }
+
+        .slider-container label {
+            font-size: 1.1rem;
+            color: #555;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .result {
+            font-size: 1.2rem;
+            text-align: center;
+            color: #333;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border: 1px solid #4caf50;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .result p {
+            margin: 10px 0;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .highlight {
+            color: #4caf50;
+            font-weight: bold;
+        }    
+    
+    </style>
+</head>
+<body>
+    <div class="container">
+         <h1>Calcolo del "Die with Zero" (DWZ) 
+		  <span class="info-icon" title="Informazioni SWR">i
+            <span class="tooltip">indica quanto capitale devi accumulare considerando un certo prelievo annuo per vivere X anni tenendo conto dell'inflazione ed esaurire il capitale dopo tot anni.</span>
+        </span>
+		</h1>
+
+        <!-- Input per il calcolo Die with Zero -->
+        <div class="input-group">
+            <label for="spesaAnnua">Spesa Annua (€):</label>
+            <input type="number" id="spesaAnnua" value="20000">
+        </div>
+
+        <div class="slider-container">
+            <label for="rendimentoSlider">Tasso di Rendimento <span id="rendimentoVal" class="highlight">5%</span></label>
+            <input type="range" id="rendimentoSlider" min="0" max="20" value="5" step="0.1">
+            
+        </div>
+
+        <div class="slider-container">
+            <label for="inflazioneSlider">Tasso di Inflazione <span id="inflazioneVal" class="highlight">2%</span></label>
+            <input type="range" id="inflazioneSlider" min="0" max="10" value="2" step="0.1">            
+        </div>
+
+        <div class="slider-container">
+            <label for="anniSlider">Numero di anni di rendita <span id="anniVal" class="highlight">20 anni</span></label>
+            <input type="range" id="anniSlider" min="1" max="50" value="20">            
+        </div>
+
+        <h2>Risultati</h2>
+        <p id="risultatoDieWithZero" class="result">Capitale necessario per "Die with Zero": </p>
+    </div>
+
+    <script>
+        // Funzione per calcolare il capitale necessario per "Die with Zero"
+        function calcolaDieWithZero(spesaAnnuo, rendimento, inflazione, anni) {
+            const tassoRendimentoReale = rendimento - inflazione;
+            if (tassoRendimentoReale <= 0) {
+                return "Tasso di rendimento deve essere superiore all'inflazione";
+            }
+            const fattore = 1 - Math.pow((1 + inflazione) / (1 + rendimento), anni);
+            return spesaAnnuo * (fattore / tassoRendimentoReale);
+        }
+
+        // Funzione per aggiornare il calcolo "Die with Zero"
+        function aggiornaDieWithZero() {
+            const spesaAnnuo = parseFloat(document.getElementById('spesaAnnua').value);
+            const rendimento = parseFloat(document.getElementById('rendimentoSlider').value) / 100;
+            const inflazione = parseFloat(document.getElementById('inflazioneSlider').value) / 100;
+            const anni = parseInt(document.getElementById('anniSlider').value);
+
+            const capitaleNecessario = calcolaDieWithZero(spesaAnnuo, rendimento, inflazione, anni);
+            document.getElementById('risultatoDieWithZero').textContent = 
+                `Capitale necessario per "Die with Zero": €${capitaleNecessario.toLocaleString("it-IT", { style: "currency", currency: "EUR", minimumFractionDigits: 2 })}`;
+        }
+
+        // Aggiorna i valori degli slider e ricalcola
+        document.getElementById('rendimentoSlider').addEventListener('input', () => {
+            document.getElementById('rendimentoVal').textContent = `${document.getElementById('rendimentoSlider').value}%`;
+            aggiornaDieWithZero();
+        });
+        document.getElementById('inflazioneSlider').addEventListener('input', () => {
+            document.getElementById('inflazioneVal').textContent = `${document.getElementById('inflazioneSlider').value}%`;
+            aggiornaDieWithZero();
+        });
+        document.getElementById('anniSlider').addEventListener('input', () => {
+            document.getElementById('anniVal').textContent = `${document.getElementById('anniSlider').value} anni`;
+            aggiornaDieWithZero();
+        });
+        document.getElementById('spesaAnnua').addEventListener('input', aggiornaDieWithZero);
+
+        // Prima inizializzazione
+        aggiornaDieWithZero();
+    </script>
+</body>
+</html>
