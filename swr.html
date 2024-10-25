@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolo SWR e Capitale Necessario</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .slider-container {
+            margin-bottom: 30px;
+        }
+
+        .slider-container label {
+            font-size: 1.1rem;
+            color: #555;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .result {
+            font-size: 1.2rem;
+            text-align: center;
+            color: #333;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border: 1px solid #4caf50;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .result p {
+            margin: 10px 0;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .highlight {
+            color: #4caf50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calcolo del Tasso di Prelievo Sicuro (SWR)</h1>
+
+        <!-- Sezione per gli slider -->
+        <div class="slider-container">
+            <label for="rendimentoSlider">Tasso di Rendimento (%) <span id="rendimentoVal" class="highlight">5%</span></label>
+            <input type="range" id="rendimentoSlider" min="0" max="20" value="5" step="0.1">
+
+            <label for="inflazioneSlider">Tasso di Inflazione (%) <span id="inflazioneVal" class="highlight">2%</span></label>
+            <input type="range" id="inflazioneSlider" min="0" max="10" value="2" step="0.1">
+        </div>
+
+        <!-- Calcolo del Capitale Necessario -->
+        <h2>Calcolo del Capitale Necessario per la Rendita</h2>
+        <label for="spesaAnnua">Inserisci la tua spesa annua (€):</label>
+        <input type="number" id="spesaAnnua" value="20000" min="0">
+
+        <!-- Risultati -->
+        <div class="result">
+            <p id="risultatoSWR">Il tuo tasso di prelievo sicuro (SWR) è: <span class="highlight">-</span>%</p>
+			<p id="risultatoMultiploCapitale">Dovrai accantonare <span class="highlight">-</span> volte la tua spesa annua</p>
+            <p id="risultatoCapitale">Il capitale necessario per mantenere la spesa annua è: <span class="highlight">-</span></p>
+        </div>
+		
+        <!-- Nuova sezione per calcolare l'investimento annuo -->
+        <div class="result">
+            <h2>Calcolo Investimento Annuo per Raggiungere il Capitale</h2>
+
+            <label for="ritornoInvestimentoSlider">Tasso di Ritorno Annuale (%)</label>
+            <input type="range" id="ritornoInvestimentoSlider" min="0" max="15" value="6" step="0.1">
+            <span id="ritornoInvestimentoVal">6%</span>
+
+            <br>
+
+            <label for="anniInvestimento">Numero di anni:</label>
+            <input type="number" id="anniInvestimento" value="30">
+            
+            <p id="risultatoInvestimentoAnnuo">Investimento annuo necessario per raggiungere il capitale: <span class="highlight">-</span></p>
+        </div>
+	</div>	
+
+    <script>
+		// Funzione per formattare i numeri in formato Euro
+		function formattaEuro(valore) {
+			return valore.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
+		}
+		
+		// Funzione per calcolare l'investimento annuo necessario
+		function calcolaInvestimentoAnnuo(capitale, ritorno, anni) {		
+			const fattore = Math.pow(1 + ritorno, anni) - 1;
+			return capitale * (ritorno / fattore);
+		}
+		
+        // Funzione per calcolare SWR
+        function calcolaSWR(x, y) {
+            return (x - y) / (x + 1);
+        }
+
+        // Funzione per calcolare il fattore K
+        function calcolaK(x, y) {
+            return (x + 1) / (x - y);
+        }
+
+        // Aggiorna i valori degli slider e ricalcola
+        $('#rendimentoSlider, #inflazioneSlider, #spesaAnnua, #ritornoInvestimentoSlider, #anniInvestimento').on('input', function() {aggiornaValori();});				
+
+        // Funzione per aggiornare i valori e i calcoli
+        function aggiornaValori() {
+            const rendimento = parseFloat($('#rendimentoSlider').val()) / 100;
+            const inflazione = parseFloat($('#inflazioneSlider').val()) / 100;
+
+            // Aggiorna i valori degli slider
+            $('#rendimentoVal').text((rendimento * 100).toFixed(1) + "%");
+            $('#inflazioneVal').text((inflazione * 100).toFixed(1) + "%");
+
+            // Aggiorna il calcolo
+            aggiornaCalcoli();
+        }
+
+        // Funzione per calcolare e mostrare i risultati del SWR e del Capitale necessario
+        function aggiornaCalcoli() {
+            const rendimento = parseFloat($('#rendimentoSlider').val()) / 100;
+            const inflazione = parseFloat($('#inflazioneSlider').val()) / 100;
+            const spesaAnnua = parseFloat($('#spesaAnnua').val());
+
+            // Calcolo SWR e K
+            const swr = calcolaSWR(rendimento, inflazione);
+            const K = calcolaK(rendimento, inflazione);
+
+            // Aggiorna i risultati sullo schermo
+			$('#risultatoMultiploCapitale span').text((K).toFixed(2));
+            $('#risultatoSWR span').text((swr * 100).toFixed(2));
+            $('#risultatoCapitale span').text(formattaEuro(K * spesaAnnua));
+			
+			// Aggiorna anche il calcolo per l'investimento annuo
+            aggiornaInvestimentoAnnuo();
+        }
+		
+		  // Funzione per aggiornare l'investimento annuo
+        function aggiornaInvestimentoAnnuo() {
+            const ritornoInvestimento = parseFloat(document.getElementById('ritornoInvestimentoSlider').value) / 100;
+            const anniInvestimento = parseFloat(document.getElementById('anniInvestimento').value);
+			// Rimuove i punti come separatori delle migliaia
+			// Sostituisce la virgola decimale con un punto
+            const capitaleNecessario = parseFloat(document.getElementById('risultatoCapitale').querySelector('span').textContent.replace(/\./g, '').replace(',', '.'));
+            
+            // Aggiorna i valori degli slider
+            document.getElementById('ritornoInvestimentoVal').textContent = (ritornoInvestimento * 100).toFixed(1) + "%";
+            
+            // Calcolo dell'investimento annuo necessario
+            if (capitaleNecessario && ritornoInvestimento && anniInvestimento) {
+                const investimentoAnnuo = calcolaInvestimentoAnnuo(capitaleNecessario, ritornoInvestimento, anniInvestimento);
+                document.getElementById('risultatoInvestimentoAnnuo').querySelector('span').textContent = formattaEuro(investimentoAnnuo);
+            }
+        }
+
+        // Prima inizializzazione
+        aggiornaValori();
+    </script>
+</body>
+</html>
