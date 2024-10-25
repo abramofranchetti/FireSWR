@@ -72,11 +72,61 @@
             color: #4caf50;
             font-weight: bold;
         }
+	
+	h1 {
+            display: flex;
+            align-items: center;
+            font-family: Arial, sans-serif;
+			justify-content: center;
+        }
+
+	.info-icon {
+            display: inline-block;
+            margin-left: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: help;
+            position: relative;
+        }
+
+        /* Tooltip nascosto inizialmente */
+        .info-icon .tooltip {
+            display: none;
+            position: absolute;
+            top: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.4;
+            z-index: 1;
+        }
+
+        /* Mostra il tooltip al passaggio del mouse */
+        .info-icon:hover .tooltip {
+            display: block;
+        }    
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Calcolo del Tasso di Prelievo Sicuro (SWR)</h1>
+         <h1>
+		 Calcolo del Tasso di Prelievo Sicuro (SWR) 
+		<span class="info-icon" title="Informazioni SWR">i
+            		<span class="tooltip">Il Tasso di Prelievo Sicuro (SWR) rappresenta la percentuale del tuo capitale che puoi prelevare ogni anno senza esaurire i fondi. Ad esempio, con un SWR del 4% e un capitale di 500.000€, potresti prelevare 20.000€ l'anno senza esaurire il capitale.</span>
+        	</span>
+	</h1>
 
         <!-- Sezione per gli slider -->
         <div class="slider-container">
