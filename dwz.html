@@ -37,11 +37,6 @@
             line-height: 1.4;            
         }
 
-        /* Mostra il tooltip al passaggio del mouse */
-        .info-icon:hover .tooltip {
-            display: block;
-        }
-		
 		.slider-container label {
             font-size: 1.1rem;
             color: #555;
@@ -165,7 +160,7 @@
 <body>
     <div class="container">
          <h1>Calcolo del "Die with Zero" (DWZ)</h1>
-         <h2 class="tooltip">Indica quanto capitale devi accumulare considerando un certo prelievo annuo A per vivere X anni tenendo conto dell'inflazione ed esaurire il capitale dopo TOT anni.</h2>
+         <h2 class="tooltip">Calcola quanto capitale è necessario accumulare per coprire una spesa annua di importo A, considerando che il denaro dovrà sostenerti per un periodo di X anni, durante il quale il capitale verrà prelevato fino ad esaurirsi. Questo calcolo tiene conto anche dell'inflazione annua, così da mantenere il potere d'acquisto dei tuoi prelievi. Ad esempio, se prevedi di prelevare €20.000 all'anno e vuoi che il capitale ti duri per 30 anni, con un'inflazione media del 2%, otterrai il capitale totale da accumulare per soddisfare queste esigenze.</h2>
         <!-- Input per il calcolo Die with Zero -->
         <div class="input-group slider-container">
             <label for="spesaAnnua">Spesa Annua (€):</label>

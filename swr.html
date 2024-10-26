@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +23,8 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        h1, h2 {
+        h1,
+        h2 {
             text-align: center;
             color: #333;
         }
@@ -72,37 +74,32 @@
             color: #4caf50;
             font-weight: bold;
         }
-	
-	h1 {
+
+        h1 {
             display: flex;
             align-items: center;
             font-family: Arial, sans-serif;
-			justify-content: center;
+            justify-content: center;
         }
 
         /* Tooltip nascosto inizialmente */
-        .info-icon .tooltip {            
+        .tooltip {
             background-color: #333;
             color: #fff;
             text-align: left;
             padding: 10px;
             border-radius: 8px;
             font-size: 12px;
-            line-height: 1.4;            
-        }
+            line-height: 1.4;
+        }        
 
-        /* Mostra il tooltip al passaggio del mouse */
-        .info-icon:hover .tooltip {
-            display: block;
-        }    
-		
-		.styled-link {
+        .styled-link {
             display: flex;
             align-items: center;
-			justify-content: center;
+            justify-content: center;
             text-decoration: none;
             padding: 10px 15px;
-			margin-top:10px;			
+            margin-top: 10px;
             font-size: 18px;
             color: #0073e6;
             background-color: #f1f9ff;
@@ -127,8 +124,8 @@
             transform: scale(1.2);
         }
 
-         /* Stile per il disclaimer */
-         .disclaimer {
+        /* Stile per il disclaimer */
+        .disclaimer {
             font-size: 0.9em;
             color: #666;
             border-top: 1px solid #ddd;
@@ -136,38 +133,46 @@
             margin-top: 30px;
             line-height: 1.4;
         }
+
         .disclaimer strong {
             font-weight: bold;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-         <h1>Calcolo del Tasso di Prelievo Sicuro (SWR)</h1>
-         <h2 class="tooltip">Il Tasso di Prelievo Sicuro (SWR) rappresenta la percentuale del tuo capitale che puoi prelevare ogni anno senza esaurire i fondi. Ad esempio, con un SWR del 4% e un capitale di 500.000€, potresti prelevare 20.000€ l'anno senza esaurire il capitale.</h2>
+        <h1>Calcolo del Tasso di Prelievo Sicuro (SWR)</h1>
+        <h2 class="tooltip">Il Tasso di Prelievo Sicuro (SWR) rappresenta la percentuale del tuo capitale che puoi
+            prelevare ogni anno senza esaurire i fondi. Ad esempio, con un SWR del 4% e un capitale di 500.000€,
+            potresti prelevare 20.000€ l'anno senza esaurire il capitale.</h2>
 
         <!-- Sezione per gli slider -->
         <div class="slider-container">
-            <label for="rendimentoSlider">Tasso di Rendimento (%) <span id="rendimentoVal" class="highlight">5%</span></label>
+            <label for="rendimentoSlider">Tasso di Rendimento (%) <span id="rendimentoVal"
+                    class="highlight">5%</span></label>
             <input type="range" id="rendimentoSlider" min="0" max="20" value="5" step="0.1">
 
-            <label for="inflazioneSlider">Tasso di Inflazione (%) <span id="inflazioneVal" class="highlight">2%</span></label>
+            <label for="inflazioneSlider">Tasso di Inflazione (%) <span id="inflazioneVal"
+                    class="highlight">2%</span></label>
             <input type="range" id="inflazioneSlider" min="0" max="10" value="2" step="0.1">
         </div>
 
         <!-- Calcolo del Capitale Necessario -->
         <h2>Calcolo del Capitale Necessario per la Rendita</h2>
-            <div class="slider-container">
+        <div class="slider-container">
             <label for="spesaAnnua">Inserisci la tua spesa annua (€):</label>
             <input type="number" id="spesaAnnua" value="20000" min="0">
         </div>
         <!-- Risultati -->
         <div class="result">
             <p id="risultatoSWR">Il tuo tasso di prelievo sicuro (SWR) è: <span class="highlight">-</span>%</p>
-			<p id="risultatoMultiploCapitale">Dovrai accantonare <span class="highlight">-</span> volte la tua spesa annua</p>
-            <p id="risultatoCapitale">Il capitale necessario per mantenere la spesa annua è: <span class="highlight">-</span></p>
+            <p id="risultatoMultiploCapitale">Dovrai accantonare <span class="highlight">-</span> volte la tua spesa
+                annua</p>
+            <p id="risultatoCapitale">Il capitale necessario per mantenere la spesa annua è: <span
+                    class="highlight">-</span></p>
         </div>
-		
+
         <!-- Nuova sezione per calcolare l'investimento annuo -->
         <div class="result">
             <h2>Calcolo Investimento Annuo per Raggiungere il Capitale</h2>
@@ -180,26 +185,28 @@
 
             <label for="anniInvestimento">Numero di anni:</label>
             <input type="number" id="anniInvestimento" value="30">
-            
-            <p id="risultatoInvestimentoAnnuo">Investimento annuo necessario per raggiungere il capitale: <span class="highlight">-</span></p>
+
+            <p id="risultatoInvestimentoAnnuo">Investimento annuo necessario per raggiungere il capitale: <span
+                    class="highlight">-</span></p>
         </div>
-		<a href="/FireSWR/dwz.html" class="styled-link" title="Scopri di più su come godere dei tuoi risparmi durante la vita">
-			<i>💸</i> Vuoi spendere tutto quello che hai prima di morire? <span class="arrow">➔</span>
-		</a>
-	</div>	
+        <a href="/FireSWR/dwz.html" class="styled-link"
+            title="Scopri di più su come godere dei tuoi risparmi durante la vita">
+            <i>💸</i> Vuoi spendere tutto quello che hai prima di morire? <span class="arrow">➔</span>
+        </a>
+    </div>
 
     <script>
-		// Funzione per formattare i numeri in formato Euro
-		function formattaEuro(valore) {
-			return valore.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
-		}
-		
-		// Funzione per calcolare l'investimento annuo necessario
-		function calcolaInvestimentoAnnuo(capitale, ritorno, anni) {		
-			const fattore = Math.pow(1 + ritorno, anni) - 1;
-			return capitale * (ritorno / fattore);
-		}
-		
+        // Funzione per formattare i numeri in formato Euro
+        function formattaEuro(valore) {
+            return valore.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
+        }
+
+        // Funzione per calcolare l'investimento annuo necessario
+        function calcolaInvestimentoAnnuo(capitale, ritorno, anni) {
+            const fattore = Math.pow(1 + ritorno, anni) - 1;
+            return capitale * (ritorno / fattore);
+        }
+
         // Funzione per calcolare SWR
         function calcolaSWR(x, y) {
             return (x - y) / (x + 1);
@@ -211,7 +218,7 @@
         }
 
         // Aggiorna i valori degli slider e ricalcola
-        $('#rendimentoSlider, #inflazioneSlider, #spesaAnnua, #ritornoInvestimentoSlider, #anniInvestimento').on('input', function() {aggiornaValori();});				
+        $('#rendimentoSlider, #inflazioneSlider, #spesaAnnua, #ritornoInvestimentoSlider, #anniInvestimento').on('input', function () { aggiornaValori(); });
 
         // Funzione per aggiornare i valori e i calcoli
         function aggiornaValori() {
@@ -237,25 +244,25 @@
             const K = calcolaK(rendimento, inflazione);
 
             // Aggiorna i risultati sullo schermo
-			$('#risultatoMultiploCapitale span').text((K).toFixed(2));
+            $('#risultatoMultiploCapitale span').text((K).toFixed(2));
             $('#risultatoSWR span').text((swr * 100).toFixed(2));
             $('#risultatoCapitale span').text(formattaEuro(K * spesaAnnua));
-			
-			// Aggiorna anche il calcolo per l'investimento annuo
+
+            // Aggiorna anche il calcolo per l'investimento annuo
             aggiornaInvestimentoAnnuo();
         }
-		
-		  // Funzione per aggiornare l'investimento annuo
+
+        // Funzione per aggiornare l'investimento annuo
         function aggiornaInvestimentoAnnuo() {
             const ritornoInvestimento = parseFloat(document.getElementById('ritornoInvestimentoSlider').value) / 100;
             const anniInvestimento = parseFloat(document.getElementById('anniInvestimento').value);
-			// Rimuove i punti come separatori delle migliaia
-			// Sostituisce la virgola decimale con un punto
+            // Rimuove i punti come separatori delle migliaia
+            // Sostituisce la virgola decimale con un punto
             const capitaleNecessario = parseFloat(document.getElementById('risultatoCapitale').querySelector('span').textContent.replace(/\./g, '').replace(',', '.'));
-            
+
             // Aggiorna i valori degli slider
             document.getElementById('ritornoInvestimentoVal').textContent = (ritornoInvestimento * 100).toFixed(1) + "%";
-            
+
             // Calcolo dell'investimento annuo necessario
             if (capitaleNecessario && ritornoInvestimento && anniInvestimento) {
                 const investimentoAnnuo = calcolaInvestimentoAnnuo(capitaleNecessario, ritornoInvestimento, anniInvestimento);
@@ -268,10 +275,19 @@
     </script>
 
 
- <!-- Disclaimer -->
- <div class="disclaimer">
-    <p><strong>Disclaimer:</strong> Le informazioni e i calcoli forniti in questa pagina sono a scopo puramente informativo e non costituiscono in alcun modo una consulenza finanziaria, fiscale, legale o professionale. Sebbene sia stata posta la massima cura nella preparazione di questi calcoli, non si garantisce l’accuratezza, la completezza o l'affidabilità delle informazioni fornite. L'utente si assume la piena responsabilità per l'uso delle informazioni presenti e per eventuali decisioni o azioni intraprese in base ai risultati di tali calcoli.</p>
-    <p>L’autore declina espressamente ogni responsabilità per eventuali perdite, danni o spese derivanti dall'uso o dall'affidamento sui calcoli e le informazioni qui presenti. Si consiglia vivamente di consultare un professionista qualificato per valutazioni personalizzate e verificare tutte le informazioni con esperti prima di prendere qualsiasi decisione di investimento o finanziaria.</p>
-</div>
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> Le informazioni e i calcoli forniti in questa pagina sono a scopo puramente
+            informativo e non costituiscono in alcun modo una consulenza finanziaria, fiscale, legale o professionale.
+            Sebbene sia stata posta la massima cura nella preparazione di questi calcoli, non si garantisce
+            l’accuratezza, la completezza o l'affidabilità delle informazioni fornite. L'utente si assume la piena
+            responsabilità per l'uso delle informazioni presenti e per eventuali decisioni o azioni intraprese in base
+            ai risultati di tali calcoli.</p>
+        <p>L’autore declina espressamente ogni responsabilità per eventuali perdite, danni o spese derivanti dall'uso o
+            dall'affidamento sui calcoli e le informazioni qui presenti. Si consiglia vivamente di consultare un
+            professionista qualificato per valutazioni personalizzate e verificare tutte le informazioni con esperti
+            prima di prendere qualsiasi decisione di investimento o finanziaria.</p>
+    </div>
 </body>
+
 </html>
