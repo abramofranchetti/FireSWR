@@ -201,7 +201,7 @@
         </div>
 
         <h2>Risultati</h2>
-        <p id="risultatoDieWithZero" class="result">Capitale necessario per "Die with Zero": </p>
+        <p class="result">Capitale necessario per "Die with Zero": <span id="risultatoDieWithZero" class='highlight'></span> </p>
         <!-- Nuova sezione per calcolare l'investimento annuo -->
         <div class="result">
             <h2>Calcolo Investimento Annuo per Raggiungere il Capitale</h2>
@@ -271,7 +271,7 @@
 
             capitaleNecessario = calcolaDieWithZero(spesaAnnuo, rendimento, inflazione, anni);
             document.getElementById('risultatoDieWithZero').textContent =
-                `Capitale necessario per "Die with Zero": €${capitaleNecessario.toLocaleString("it-IT", { style: "currency", currency: "EUR", minimumFractionDigits: 2 })}`;
+                `${capitaleNecessario.toLocaleString("it-IT", { style: "currency", currency: "EUR", minimumFractionDigits: 2 })}`;
             //aggiorno investimento necessario
             aggiornaInvestimentoAnnuo();
         }
