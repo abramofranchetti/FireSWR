@@ -80,37 +80,15 @@
 			justify-content: center;
         }
 
-	.info-icon {
-            display: inline-block;
-            margin-left: 10px;
-            min-width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: #007BFF;
-            color: white;
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: help;
-            position: relative;
-        }
-
         /* Tooltip nascosto inizialmente */
-        .info-icon .tooltip {
-            display: none;
-            position: absolute;
-            top: 120%;
-            left: 50%;
-            transform: translateX(-100%);
-            width: 250px;
+        .info-icon .tooltip {            
             background-color: #333;
             color: #fff;
             text-align: left;
             padding: 10px;
             border-radius: 8px;
             font-size: 12px;
-            line-height: 1.4;
-            z-index: 1;
+            line-height: 1.4;            
         }
 
         /* Mostra il tooltip al passaggio del mouse */
@@ -148,16 +126,25 @@
         .styled-link:hover i {
             transform: scale(1.2);
         }
+
+         /* Stile per il disclaimer */
+         .disclaimer {
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 30px;
+            line-height: 1.4;
+        }
+        .disclaimer strong {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-         <h1>
-			Calcolo del Tasso di Prelievo Sicuro (SWR) 
-			<span class="info-icon" title="Informazioni SWR">i
-            		<span class="tooltip">Il Tasso di Prelievo Sicuro (SWR) rappresenta la percentuale del tuo capitale che puoi prelevare ogni anno senza esaurire i fondi. Ad esempio, con un SWR del 4% e un capitale di 500.000€, potresti prelevare 20.000€ l'anno senza esaurire il capitale.</span>
-        	</span>
-		</h1>
+         <h1>Calcolo del Tasso di Prelievo Sicuro (SWR)</h1>
+         <h2 class="tooltip">Il Tasso di Prelievo Sicuro (SWR) rappresenta la percentuale del tuo capitale che puoi prelevare ogni anno senza esaurire i fondi. Ad esempio, con un SWR del 4% e un capitale di 500.000€, potresti prelevare 20.000€ l'anno senza esaurire il capitale.</h2>
 
         <!-- Sezione per gli slider -->
         <div class="slider-container">
@@ -170,9 +157,10 @@
 
         <!-- Calcolo del Capitale Necessario -->
         <h2>Calcolo del Capitale Necessario per la Rendita</h2>
-        <label for="spesaAnnua">Inserisci la tua spesa annua (€):</label>
-        <input type="number" id="spesaAnnua" value="20000" min="0">
-
+            <div class="slider-container">
+            <label for="spesaAnnua">Inserisci la tua spesa annua (€):</label>
+            <input type="number" id="spesaAnnua" value="20000" min="0">
+        </div>
         <!-- Risultati -->
         <div class="result">
             <p id="risultatoSWR">Il tuo tasso di prelievo sicuro (SWR) è: <span class="highlight">-</span>%</p>
@@ -196,7 +184,7 @@
             <p id="risultatoInvestimentoAnnuo">Investimento annuo necessario per raggiungere il capitale: <span class="highlight">-</span></p>
         </div>
 		<a href="/FireSWR/dwz.html" class="styled-link" title="Scopri di più su come godere dei tuoi risparmi durante la vita">
-			<i>💸</i> Vuoi spendere tutto quello che hai prima di morire? >>
+			<i>💸</i> Vuoi spendere tutto quello che hai prima di morire? <span class="arrow">➔</span>
 		</a>
 	</div>	
 
@@ -278,5 +266,12 @@
         // Prima inizializzazione
         aggiornaValori();
     </script>
+
+
+ <!-- Disclaimer -->
+ <div class="disclaimer">
+    <p><strong>Disclaimer:</strong> Le informazioni e i calcoli forniti in questa pagina sono a scopo puramente informativo e non costituiscono in alcun modo una consulenza finanziaria, fiscale, legale o professionale. Sebbene sia stata posta la massima cura nella preparazione di questi calcoli, non si garantisce l’accuratezza, la completezza o l'affidabilità delle informazioni fornite. L'utente si assume la piena responsabilità per l'uso delle informazioni presenti e per eventuali decisioni o azioni intraprese in base ai risultati di tali calcoli.</p>
+    <p>L’autore declina espressamente ogni responsabilità per eventuali perdite, danni o spese derivanti dall'uso o dall'affidamento sui calcoli e le informazioni qui presenti. Si consiglia vivamente di consultare un professionista qualificato per valutazioni personalizzate e verificare tutte le informazioni con esperti prima di prendere qualsiasi decisione di investimento o finanziaria.</p>
+</div>
 </body>
 </html>

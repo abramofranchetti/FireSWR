@@ -25,39 +25,16 @@
             align-items: center;
             font-family: Arial, sans-serif;
 			justify-content: center;
-        }
+        }		
 
-		  .info-icon {
-            display: inline-block;
-            margin-left: 10px;
-            min-width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: #007BFF;
-            color: white;
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: help;
-            position: relative;
-        }
-
-        /* Tooltip nascosto inizialmente */
-        .info-icon .tooltip {
-			display: none;
-            position: absolute;
-            top: 120%;
-            left: 50%;
-            transform: translateX(-100%);
-            width: 250px;
+        .tooltip {			
             background-color: #333;
             color: #fff;
             text-align: left;
             padding: 10px;
             border-radius: 4px;
             font-size: 12px;
-            line-height: 1.4;
-            z-index: 1;
+            line-height: 1.4;            
         }
 
         /* Mostra il tooltip al passaggio del mouse */
@@ -170,18 +147,27 @@
         .styled-link:hover i {
             transform: scale(1.2);
         }
+
+         /* Stile per il disclaimer */
+         .disclaimer {
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 30px;
+            line-height: 1.4;
+        }
+        .disclaimer strong {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-         <h1>Calcolo del "Die with Zero" (DWZ) 
-		  <span class="info-icon" title="Informazioni SWR">i
-            <span class="tooltip">Indica quanto capitale devi accumulare considerando un certo prelievo annuo A per vivere X anni tenendo conto dell'inflazione ed esaurire il capitale dopo TOT anni.</span>
-        </span>
-		</h1>
-
+         <h1>Calcolo del "Die with Zero" (DWZ)</h1>
+         <h2 class="tooltip">Indica quanto capitale devi accumulare considerando un certo prelievo annuo A per vivere X anni tenendo conto dell'inflazione ed esaurire il capitale dopo TOT anni.</h2>
         <!-- Input per il calcolo Die with Zero -->
-        <div class="input-group">
+        <div class="input-group slider-container">
             <label for="spesaAnnua">Spesa Annua (€):</label>
             <input type="number" id="spesaAnnua" value="20000">
         </div>
@@ -220,8 +206,8 @@
             <p id="risultatoInvestimentoAnnuo">Investimento annuo necessario per raggiungere il capitale: <span class="highlight">-</span></p>
         </div>			
 		
-		<a href="/FireSWR/swr.html" class="styled-link" title="Dai l'inizio a una dinastia di ricconi">
-			<i>💸</i> Vuoi invece far diventare ricchi i posteri? >>
+		<a href="/FireSWR/swr.html" class="styled-link" title="Dai l'inizio a una dinastia di paperoni">
+			<i>💸</i> Vuoi invece far diventare ricchi i posteri? <span class="arrow">➔</span>
 		</a>
     </div>
 
@@ -274,8 +260,7 @@
             document.getElementById('risultatoDieWithZero').textContent = 
                 `Capitale necessario per "Die with Zero": €${capitaleNecessario.toLocaleString("it-IT", { style: "currency", currency: "EUR", minimumFractionDigits: 2 })}`;
 	    //aggiorno investimento necessario
-	    aggiornaInvestimentoAnnuo();
-	    aggiornaGrafico(capitaleNecessario, rendimento, inflazione, anni);	
+	    aggiornaInvestimentoAnnuo();	    
         }
 
         // Aggiorna i valori degli slider e ricalcola
@@ -303,5 +288,11 @@
         // Prima inizializzazione
         aggiornaDieWithZero();
     </script>
+
+     <!-- Disclaimer -->
+     <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> Le informazioni e i calcoli forniti in questa pagina sono a scopo puramente informativo e non costituiscono in alcun modo una consulenza finanziaria, fiscale, legale o professionale. Sebbene sia stata posta la massima cura nella preparazione di questi calcoli, non si garantisce l’accuratezza, la completezza o l'affidabilità delle informazioni fornite. L'utente si assume la piena responsabilità per l'uso delle informazioni presenti e per eventuali decisioni o azioni intraprese in base ai risultati di tali calcoli.</p>
+        <p>L’autore declina espressamente ogni responsabilità per eventuali perdite, danni o spese derivanti dall'uso o dall'affidamento sui calcoli e le informazioni qui presenti. Si consiglia vivamente di consultare un professionista qualificato per valutazioni personalizzate e verificare tutte le informazioni con esperti prima di prendere qualsiasi decisione di investimento o finanziaria.</p>
+    </div>
 </body>
 </html>
