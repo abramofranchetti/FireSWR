@@ -282,10 +282,10 @@
 	
         // Funzione per calcolare il capitale necessario per "Die with Zero"
         function calcolaDieWithZero(spesaAnnuo, rendimento, inflazione, anni) {
-            const tassoRendimentoReale = rendimento - inflazione;
-            if (tassoRendimentoReale <= 0) {
-                return "Tasso di rendimento deve essere superiore all'inflazione";
-            }
+            //const tassoRendimentoReale = rendimento - inflazione;
+            //if (tassoRendimentoReale <= 0) {
+            //    return "Tasso di rendimento deve essere superiore all'inflazione";
+            //}
             const fattore = 1 - Math.pow((1 + inflazione) / (1 + rendimento), anni);
             return spesaAnnuo * (fattore / tassoRendimentoReale);
         }
