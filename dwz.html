@@ -171,7 +171,6 @@
             transform: scale(1.2);
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -205,11 +204,7 @@
 
         <h2>Risultati</h2>
         <p id="risultatoDieWithZero" class="result">Capitale necessario per "Die with Zero": </p>
-		
-		<!-- Grafico per visualizzare il capitale nel tempo -->
-        <canvas id="capitaleChart"></canvas>
-		
-		 <!-- Nuova sezione per calcolare l'investimento annuo -->
+	<!-- Nuova sezione per calcolare l'investimento annuo -->
         <div class="result">
             <h2>Calcolo Investimento Annuo per Raggiungere il Capitale</h2>
 
@@ -231,39 +226,6 @@
     </div>
 
     <script>	           
-	 function aggiornaGrafico(capitaleIniziale, rendimento, inflazione, anni) {
-            const anniArray = Array.from({ length: anni }, (_, i) => i + 1);
-            const capitaleNelTempo = anniArray.map(anno => capitaleIniziale * Math.pow((1 + rendimento) / (1 + inflazione), -anno));
-
-            if (window.capitaleChart instanceof Chart) {
-                window.capitaleChart.destroy();
-            }
-
-            const ctx = document.getElementById('capitaleChart').getContext('2d');
-            window.capitaleChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: anniArray,
-                    datasets: [{
-                        label: 'Capitale nel tempo',
-                        data: capitaleNelTempo,
-                        borderColor: 'rgb(75, 192, 192)',
-                        fill: false
-                    }]
-                },
-                options: {
-                    scales: {
-                        x: {
-                            title: { display: true, text: 'Anni' }
-                        },
-                        y: {
-                            title: { display: true, text: 'Capitale (€)' }
-                        }
-                    }
-                }
-            });
-        }
-	
 	let capitaleNecessario = 0.0;
 	// Funzione per aggiornare l'investimento annuo
         function aggiornaInvestimentoAnnuo() {			
