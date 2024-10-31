@@ -195,9 +195,9 @@
         </div>
 
         <div class="slider-container">
-            <label for="anniSlider">Numero di anni di rendita <span id="anniVal" class="highlight">20
+            <label for="anniSlider">Numero di anni di rendita <span id="anniVal" class="highlight">30
                     anni</span></label>
-            <input type="range" id="anniSlider" min="1" max="50" value="20">
+            <input type="range" id="anniSlider" min="1" max="60" value="30">
         </div>
 
         <h2>Risultati</h2>
@@ -242,16 +242,18 @@
         }
 
         // Funzione per calcolare il capitale necessario per "Die with Zero"
-        function calcolaDieWithZero(spesaAnnuo, rendimento, inflazione, anni) {
+        function calcolaDieWithZero(spesaAnnua, rendimento, inflazione, anni) {            
             const tassoRendimentoReale = rendimento - inflazione;
             
-            if (tassoRendimentoReale === 0) {
-                // Quando rendimento e inflazione sono uguali, moltiplichiamo la spesa per gli anni
-                return spesaAnnuo * anni;
+            //nel caso di inflazione e rendimendo identici, si calcola così        
+            //altrimenti la formula diverge.
+            if(tassoRendimentoReale === 0)
+            {
+                return (spesaAnnua * anni)/(1+rendimento)
             }
-
+            
             const fattore = 1 - Math.pow((1 + inflazione) / (1 + rendimento), anni);
-            return spesaAnnuo * (fattore / tassoRendimentoReale);
+            return spesaAnnua * (fattore / tassoRendimentoReale);
         }
 
         // Funzione per calcolare l'investimento annuo necessario
