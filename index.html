@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire SWR e Die With Zero</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 90%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+        .button i {
+            margin-right: 10px;
+        }
+        .button.dwz {
+            background-color: #ff7e5f;
+        }
+        .button.dwz:hover {
+            background-color: #e06b56;
+        }
+        .button.swr {
+            background-color: #feb47b;
+        }
+        .button.swr:hover {
+            background-color: #d9986a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calcolo FIRE</h1>
+        <a href="/FireSWR/dwz.html" class="button dwz">
+            <i class="fas fa-dollar-sign"></i> Die With Zero
+        </a>
+        <a href="/FireSWR/swr.html" class="button swr">
+            <i class="fas fa-chart-line"></i> SWR Calculator
+        </a>
+    </div>
+</body>
+</html>
