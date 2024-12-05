@@ -128,6 +128,11 @@
                 <strong>Nota: se inserisci commissioni più alte del rendimento otterrai dati senza senso.</strong>
             </p>
         </div>
+        <br>
+        <div class="input-group">
+            <label for="initialCapital">Capitale iniziale (€)</label>
+            <input type="number" id="initialCapital" value="10000" min="1" step="1" oninput="updateValues()">
+        </div>
         
         <div class="slider-container">
             <label for="xRate">Tasso di rendimento annualizzato (%)</label>            
@@ -157,10 +162,9 @@
     </div>
 
     <script>
-        const principal = 10000; // Capitale iniziale
         let chart;
 
-        function calculateRendimenti(x, y, t) {
+        function calculateRendimenti(principal, x, y, t) {
             const noFee = [];
             const withFee = [];
             let currentNoFee = principal;
@@ -177,6 +181,7 @@
         }
 
         function updateValues() {
+            const principal = parseFloat(document.getElementById("initialCapital").value) || 10000;
             const xRate = parseFloat(document.getElementById("xRate").value);
             const yFee = parseFloat(document.getElementById("yFee").value);
             const tYears = parseInt(document.getElementById("tYears").value);
@@ -185,13 +190,13 @@
             document.getElementById("yFeeValue").textContent = `${yFee}%`;
             document.getElementById("tYearsValue").textContent = `${tYears} anni`;
 
-            const { noFee, withFee } = calculateRendimenti(xRate, yFee, tYears);
+            const { noFee, withFee } = calculateRendimenti(principal, xRate, yFee, tYears);
             const diff = noFee[noFee.length - 1] - withFee[withFee.length - 1];
-            
+
             document.getElementById("noFeeReturn").textContent = `€ ${noFee[noFee.length - 1].toFixed(2)}`;
             document.getElementById("withFeeReturn").textContent = `€ ${withFee[withFee.length - 1].toFixed(2)}`;
             document.getElementById("difference").textContent = `€ ${diff.toFixed(2)}`;
-            document.getElementById("difference_percent").textContent = ` (${(diff*100/noFee[noFee.length - 1]).toFixed(2)} %)`;
+            document.getElementById("difference_percent").textContent = ` (${((diff * 100) / noFee[noFee.length - 1]).toFixed(2)}%)`;
 
             updateChart(noFee, withFee, tYears);
         }
