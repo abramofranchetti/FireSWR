@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcolo Rendimento</title>
+    <title>Calcolatore di Crescita dell'Investimento e Impatto delle Commissioni</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>        
         /* Stili di base */
@@ -103,12 +103,32 @@
         .disclaimer strong {
             font-weight: bold;
         }
+
+        .tooltip {
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Calcolo Rendimento</h1>
-        <h6>Nota: se inserisci commissioni più alte del rendimento otterrai dati senza senso</h6>
+        <h1>Calcolatore di Crescita dell'Investimento e Impatto delle Commissioni</h1>
+        <div class="tooltip">
+            <p>
+                Questo calcolatore ti consente di confrontare la crescita di un investimento con e senza 
+                commissioni annuali (TER) su un determinato orizzonte temporale. Regola i parametri 
+                usando gli slider per vedere l'impatto del tasso di rendimento annuale, delle commissioni 
+                e della durata dell'investimento. Puoi anche visualizzare le differenze su grafici interattivi.
+                <br>
+                <strong>Nota: se inserisci commissioni più alte del rendimento otterrai dati senza senso.</strong>
+            </p>
+        </div>
+        
         <div class="slider-container">
             <label for="xRate">Tasso di rendimento annualizzato (%)</label>            
             <input type="range" id="xRate" min="1" max="20" step="0.1" value="5" oninput="updateValues()">            
