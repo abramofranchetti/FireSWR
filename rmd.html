@@ -5,18 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calcolo Rendimento</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+    <style>        
+        /* Stili di base */
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+
         .container {
             max-width: 800px;
             margin: auto;
         }
-        .slider-container {
-            margin: 20px 0;
+
+        .slider-container,
+        .input-group {
+            margin-bottom: 20px;
         }
+
+        .result {
+            font-weight: bold;
+        }
+
+        h1 {
+            display: flex;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            justify-content: center;
+        }        
         .slider-container label {
             display: block;
             margin-bottom: 5px;
@@ -30,28 +45,86 @@
         .results {
             margin: 20px 0;
         }
+
+        .slider-container label {
+            font-size: 1.1rem;
+            color: #555;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .slider-container {
+            margin-bottom: 30px;
+        }
+
+        .slider-container label {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        /* Stile per il disclaimer */
+        .disclaimer {
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 30px;
+            line-height: 1.4;
+        }
+
+        .disclaimer strong {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Calcolo Rendimento</h1>
-
+        <h6>Nota: se inserisci commissioni più alte del rendimento otterrai dati senza senso</h6>
         <div class="slider-container">
-            <label for="xRate">Tasso di rendimento annualizzato (%)</label>
-            <input type="range" id="xRate" min="1" max="20" step="0.1" value="5" oninput="updateValues()">
-            <span id="xRateValue">5%</span>
+            <label for="xRate">Tasso di rendimento annualizzato (%)</label>            
+            <input type="range" id="xRate" min="1" max="20" step="0.1" value="5" oninput="updateValues()">            
+            <label id="xRateValue">5%</label>
         </div>
 
         <div class="slider-container">
-            <label for="yFee">Commissione annua (TER, %)</label>
-            <input type="range" id="yFee" min="0" max="5" step="0.1" value="1" oninput="updateValues()">
-            <span id="yFeeValue">1%</span>
+            <label for="yFee">Commissione annua (TER, %)</label>            
+            <input type="range" id="yFee" min="0" max="10" step="0.1" value="1" oninput="updateValues()">            
+            <label id="yFeeValue">1%</label>
         </div>
 
         <div class="slider-container">
-            <label for="tYears">Durata investimento (anni)</label>
-            <input type="range" id="tYears" min="1" max="50" step="1" value="20" oninput="updateValues()">
-            <span id="tYearsValue">10 anni</span>
+            <label for="tYears">Durata investimento (anni)</label>            
+            <input type="range" id="tYears" min="1" max="50" step="1" value="20" oninput="updateValues()">            
+            <label id="tYearsValue">10 anni</label>
         </div>
 
         <div class="results">
@@ -98,7 +171,7 @@
             document.getElementById("noFeeReturn").textContent = `€ ${noFee[noFee.length - 1].toFixed(2)}`;
             document.getElementById("withFeeReturn").textContent = `€ ${withFee[withFee.length - 1].toFixed(2)}`;
             document.getElementById("difference").textContent = `€ ${diff.toFixed(2)}`;
-            document.getElementById("difference_percent").textContent = ` (-${(diff*100/noFee[noFee.length - 1]).toFixed(2)} %)`;
+            document.getElementById("difference_percent").textContent = ` (${(diff*100/noFee[noFee.length - 1]).toFixed(2)} %)`;
 
             updateChart(noFee, withFee, tYears);
         }
@@ -158,5 +231,18 @@
         // Inizializzazione
         updateValues();
     </script>
+     <!-- Disclaimer -->
+     <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> Le informazioni e i calcoli forniti in questa pagina sono a scopo puramente
+            informativo e non costituiscono in alcun modo una consulenza finanziaria, fiscale, legale o professionale.
+            Sebbene sia stata posta la massima cura nella preparazione di questi calcoli, non si garantisce
+            l’accuratezza, la completezza o l'affidabilità delle informazioni fornite. L'utente si assume la piena
+            responsabilità per l'uso delle informazioni presenti e per eventuali decisioni o azioni intraprese in base
+            ai risultati di tali calcoli.</p>
+        <p>L’autore declina espressamente ogni responsabilità per eventuali perdite, danni o spese derivanti dall'uso o
+            dall'affidamento sui calcoli e le informazioni qui presenti. Si consiglia vivamente di consultare un
+            professionista qualificato per valutazioni personalizzate e verificare tutte le informazioni con esperti
+            prima di prendere qualsiasi decisione di investimento o finanziaria.</p>
+    </div>
 </body>
 </html>
