@@ -163,11 +163,30 @@
         .disclaimer strong {
             font-weight: bold;
         }
+
+        .home-button {
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #0073e6;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #005bb5;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <div>
+            <a href="/" class="home-button">🏠 Home</a>
+        </div>
         <h1>Calcolo del "Die with Zero" (DWZ)</h1>
         <h2 class="tooltip">Calcola quanto capitale è necessario accumulare per coprire una spesa annua di importo A,
             considerando che il denaro dovrà sostenerti per un periodo di X anni, durante il quale il capitale verrà

@@ -136,16 +136,35 @@
 
         .disclaimer strong {
             font-weight: bold;
+        }        
+
+        .home-button {
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #0073e6;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #005bb5;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="container">                
+        <div>
+            <a href="/" class="home-button">🏠 Home</a>
+        </div>
         <h1>Calcolo del Tasso di Prelievo Sicuro (SWR)</h1>
         <h2 class="tooltip">Il Tasso di Prelievo Sicuro (SWR) rappresenta la percentuale del tuo capitale che puoi
-            prelevare ogni anno senza esaurire i fondi. Ad esempio, con un SWR del 4% e un capitale di 500.000€,
-            potresti prelevare 20.000€ l'anno senza esaurire il capitale. Nota che se inserisci un rendimento inferiore
+            prelevare ogni anno senza intaccare i fondi. Ad esempio, con un SWR del 4% e un capitale di 500.000€,
+            potresti prelevare 20.000€ l'anno senza intaccare il capitale. Nota che se inserisci un rendimento inferiore
             all'inflazione otterrai risultati senza senso.</h2>
 
         <!-- Sezione per gli slider -->
