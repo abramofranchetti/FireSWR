@@ -174,7 +174,8 @@
         <div class="results">
             <p>Rendimento senza spese: <strong id="noFeeReturn"></strong></p>
             <p>Rendimento con spese: <strong id="withFeeReturn"></strong></p>
-            <p>Differenza: <strong id="difference"></strong><strong id="difference_percent"></strong></p>
+            <p>Differenza: <strong id="difference"></strong></p>
+            <p>TWR (Terminal Wealth Ratio): <strong id="difference_percent"></strong></p>
         </div>
 
         <canvas id="chart"></canvas>
@@ -215,7 +216,7 @@
             document.getElementById("noFeeReturn").textContent = `€ ${noFee[noFee.length - 1].toFixed(2)}`;
             document.getElementById("withFeeReturn").textContent = `€ ${withFee[withFee.length - 1].toFixed(2)}`;
             document.getElementById("difference").textContent = `€ ${diff.toFixed(2)}`;
-            document.getElementById("difference_percent").textContent = ` (${((diff * 100) / noFee[noFee.length - 1]).toFixed(2)}%)`;
+            document.getElementById("difference_percent").textContent = ` ${((diff * 100) / noFee[noFee.length - 1]).toFixed(2)}%`;
 
             updateChart(noFee, withFee, tYears);
         }
