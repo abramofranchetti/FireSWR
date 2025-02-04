@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore Fair Price Obbligazioni</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+    <script>
+         document.addEventListener("DOMContentLoaded", function() {
+            let oggi = new Date();
+            let scadenzaDefault = new Date(oggi.getFullYear() + 10, oggi.getMonth(), oggi.getDate()).toISOString().split('T')[0];
+            document.getElementById("scadenza").value = scadenzaDefault;
+        });
+        async function calcolaFairPrice() {
+            const scadenza = document.getElementById("scadenza").value;
+            const tassoCedolare = parseFloat(document.getElementById("tassoCedolare").value) / 100;
+            const frequenza = parseInt(document.getElementById("frequenza").value);
+            const prezzoRimborso = parseFloat(document.getElementById("prezzoRimborso").value);
+            const metodoGiorni = document.getElementById("metodoGiorni").value;
+            const riskFreeRate = parseFloat(document.getElementById("riskFreeRate").value);
+            const spreadCredito = parseFloat(document.getElementById("spreadCredito").value);
+            
+            const discountRate = riskFreeRate + spreadCredito;
+            let fairPrice = 0;
+            
+            for (let i = 1; i <= (new Date(scadenza).getFullYear() - new Date().getFullYear()) * frequenza; i++) {
+                fairPrice += (tassoCedolare / frequenza * prezzoRimborso) / Math.pow(1 + discountRate / 100, i / frequenza);
+            }
+            fairPrice += prezzoRimborso / Math.pow(1 + discountRate / 100, (new Date(scadenza) - new Date()) / (365.25 * 24 * 3600 * 1000));
+            
+            document.getElementById("risultato").innerText = `Fair Price: ${fairPrice.toFixed(2)}`;
+        }
+    </script>
+    <style>
+        /* Stile per il disclaimer */
+        .disclaimer {
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 30px;
+            line-height: 1.4;
+        }
+
+        .disclaimer strong {
+            font-weight: bold;
+        }
+
+        .home-button {
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #0073e6;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #005bb5;
+        }
+    </style>
+</head>
+<body class="container mt-5">
+    <section class="section">
+         <div>
+            <a href="/" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <div class="box">
+            <h2 class="title is-4">Calcolatore Fair Price Obbligazioni</h2>
+            <div class="tooltip">
+                <p>
+                    Questo calcolatore ti consente di calcolare il <strong>Fair Price</strong> di un'obbligazione, 
+                    ovvero il prezzo teorico al quale l'obbligazione dovrebbe essere negoziata in base ai tassi di sconto attuali
+                    tenendo conto del tasso cedolare, della scadenza, del prezzo di rimborso, del tasso risk-free e dello spread di credito.    
+                </p>
+            </div>
+            <br>
+            <div class="field">
+                <label class="label">Data di Scadenza:</label>
+                <input class="input" type="date" id="scadenza">
+            </div>
+            <div class="field">
+                <label class="label">Tasso Cedolare (%):</label>
+                <input class="input" type="number" id="tassoCedolare" value="5" step="0.1">
+            </div>
+            <div class="field">
+                <label class="label">Frequenza Cedole:</label>
+                <div class="select">
+                    <select id="frequenza">
+                        <option value="1">Annuale</option>
+                        <option value="2">Semestrale</option>
+                        <option value="4">Trimestrale</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Prezzo di Rimborso:</label>
+                <input class="input" type="number" id="prezzoRimborso" value="100">
+            </div>
+            <div class="field">
+                    <label class="label">Tasso Risk-Free % (si usa il tasso €STR della BCE reperibile <a target="_blank" href="https://www.ecb.europa.eu/stats/financial_markets_and_interest_rates/euro_short-term_rate/html/index.en.html">QUI</a>) :</label>
+                <input class="input" type="number" id="riskFreeRate" value="2.5" step="0.1">
+            </div>
+            <div class="field">
+                <label class="label">Spread di Credito (%) (se hai quello in punti basta dividere per 100):</label>
+                <input class="input" type="number" id="spreadCredito" value="1.0" step="0.01">
+            </div>
+            <div class="field">
+                <label class="label">Metodo Calcolo Giorni:</label>
+                <div class="select">
+                    <select id="metodoGiorni">
+                        <option value="30/360">30/360</option>
+                        <option value="actual/actual">Actual/Actual</option>
+                        <option value="actual/360">Actual/360</option>
+                    </select>
+                </div>
+            </div>
+            <button class="button is-primary" onclick="calcolaFairPrice()">Calcola</button>
+            <h2 class="title is-4" id="risultato" style="color: darkorange;"></h2>
+        </div>
+    </section>
+     <!-- Disclaimer -->
+     <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> Le informazioni e i calcoli forniti in questa pagina sono a scopo puramente
+            informativo e non costituiscono in alcun modo una consulenza finanziaria, fiscale, legale o professionale.
+            Sebbene sia stata posta la massima cura nella preparazione di questi calcoli, non si garantisce
+            l’accuratezza, la completezza o l'affidabilità delle informazioni fornite. L'utente si assume la piena
+            responsabilità per l'uso delle informazioni presenti e per eventuali decisioni o azioni intraprese in base
+            ai risultati di tali calcoli.</p>
+        <p>L’autore declina espressamente ogni responsabilità per eventuali perdite, danni o spese derivanti dall'uso o
+            dall'affidamento sui calcoli e le informazioni qui presenti. Si consiglia vivamente di consultare un
+            professionista qualificato per valutazioni personalizzate e verificare tutte le informazioni con esperti
+            prima di prendere qualsiasi decisione di investimento o finanziaria.</p>
+    </div>
+</body>
+</html>
