@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simulazione Piano di Accumulo su SP500 con Dati Storici Reali</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        body {
+            padding-top: 20px;
+        }
+
+        .box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* Stile per il disclaimer */
+        .disclaimer {
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 30px;
+            line-height: 1.4;
+        }
+
+        .disclaimer strong {
+            font-weight: bold;
+        }
+
+        .home-button {
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #0073e6;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .istruzioni {
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .home-button:hover {
+            background-color: #ebf3fc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div>
+            <a href="/" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="mt-4 mb-4">Simulazione Piano di Accumulo Storico su SP500 con dati Storici Reali</h1>
+        <div class="istruzioni">
+            <p>
+                Questo calcolatore ti consente di simulare un piano di accumulo nel tempo utilizzando <strong>dati
+                    storici reali</strong> dell'indice
+                S&P 500 Total Return. Puoi impostare il capitale iniziale, il versamento mensile, il costo annuale (TER)
+                e
+                le date di inizio e fine della simulazione. Il grafico mostra l'evoluzione del capitale lordo, netto e
+                nettissimo
+                (dopo tassazione delle plusvalenze al 26%). I risultati finali includono i valori lordo, netto e
+                nettissimo alla
+                data di fine, nonché le differenze rispetto al valore lordo.
+                I dati disponibili partono dal 1988 e arrivano fino al 31/12/2024 e sono liberamente consultabili e
+                scaricabili dal
+                <a href="/sp500.json" target="_blank" download="^SP500TR">qui</a>.
+
+                Selezionare una data tra il 1988 e il 2024 per iniziare la simulazione.
+                Nota che tutta la simulazione è in Dollari Americani.
+            </p>
+        </div>
+        <br>
+
+        <!-- Form di input -->
+        <form id="simulationForm" class="mb-4">
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="initialCapital">Capitale Iniziale ($):</label>
+                    <input type="number" class="form-control" id="initialCapital" placeholder="es. 10000" required
+                        value="10000" min="0">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="monthlyDeposit">Versamento Mensile ($):</label>
+                    <input type="number" class="form-control" id="monthlyDeposit" placeholder="es. 200" required
+                        value="200" min="0">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="terFee">Costo Annuale (TER) [%]:</label>
+                    <input type="number" class="form-control" id="terFee" placeholder="es. 0.1" step="0.1" required
+                        value="0.1" min="0">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="startDate">Data Inizio:</label>
+                    <input type="date" class="form-control" id="startDate" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="endDate">Data Fine:</label>
+                    <input type="date" class="form-control" id="endDate" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Simula</button>
+        </form>
+
+        <!-- Grafico -->
+        <canvas id="chartCanvas" height="100"></canvas>
+
+        <!-- Risultati della simulazione -->
+        <div id="simulationResults" class="mt-4"></div>
+    </div>
+
+    <script>
+        // Variabile globale per contenere il dataset
+        let dataset = [];
+
+        // Variabile per la Chart.js (per aggiornare il grafico se necessario)
+        let chartInstance = null;
+
+        // Funzione per convertire una stringa data ("YYYY-MM-DD") in oggetto Date
+        function parseDate(dateStr) {
+            return new Date(dateStr);
+        }
+
+        // Carica il dataset dal file sp500.json
+        function loadDataset() {
+            fetch('sp500.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Errore nel caricamento del dataset: " + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Assumiamo che data sia un array di oggetti con campi "Date" e "Adj Close"
+                    // Ordiniamo il dataset per data (crescente)
+                    dataset = data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+
+                    // Impostiamo i limiti min e max dei campi data in base al dataset
+                    if (dataset.length > 0) {
+                        const minDate = dataset[0].Date;
+                        const maxDate = dataset[dataset.length - 1].Date;
+                        $('#startDate').attr('min', minDate);
+                        $('#startDate').attr('max', maxDate);
+                        $('#endDate').attr('min', minDate);
+                        $('#endDate').attr('max', maxDate);
+                        // Impostiamo dei valori di default
+                        $('#startDate').val(minDate);
+                        $('#endDate').val(maxDate);
+                    }
+                })
+                .catch(error => {
+                    console.error("Errore durante il caricamento del dataset:", error);
+                });
+        }
+
+        // Carica il dataset all'avvio
+        $(document).ready(function () {
+            loadDataset();
+        });
+
+        // Funzione per eseguire la simulazione
+        function runSimulation() {
+            // Legge i parametri di input
+            const initialCapital = parseFloat($('#initialCapital').val());
+            const monthlyDeposit = parseFloat($('#monthlyDeposit').val());
+            const terFee = parseFloat($('#terFee').val()); // espresso in percentuale
+            const startDate = new Date($('#startDate').val());
+            const endDate = new Date($('#endDate').val());
+
+            // Filtra il dataset per il range di date selezionato
+            const simData = dataset.filter(item => {
+                const itemDate = parseDate(item.Date);
+                return itemDate >= startDate && itemDate <= endDate;
+            });
+
+            if (simData.length < 2) {
+                alert("Non ci sono abbastanza dati nel range selezionato.");
+                return;
+            }
+
+            // Array per memorizzare le date e i valori simulati
+            const dates = [];
+            const grossValues = [];
+            const netValues = [];
+            const nettissimoValues = [];
+
+            // Per il calcolo delle plusvalenze, memorizziamo i contributi cumulativi
+            let cumulativeContributions = initialCapital;
+
+            // Per applicare il TER su base giornaliera (si assume 252 giorni di trading/anno)
+            const terDaily = (terFee / 100) / 252;
+
+            // Inizializziamo la simulazione con il primo giorno disponibile
+            let currentGross = initialCapital;
+            let currentNet = initialCapital;
+            dates.push(simData[0].Date);
+            grossValues.push(currentGross);
+            netValues.push(currentNet);
+            let gain = currentNet - cumulativeContributions;
+            let currentNettissimo = currentNet - (gain > 0 ? gain * 0.26 : 0);
+            nettissimoValues.push(currentNettissimo);
+
+            // Per gestire il deposito mensile, teniamo traccia del mese dell'ultimo deposito
+            let lastDepositMonth = parseDate(simData[0].Date).getMonth();
+
+            // Itera sui dati a partire dal secondo giorno
+            for (let i = 1; i < simData.length; i++) {
+                // Calcola il rendimento giornaliero usando i dati "Adj Close"
+                const prevPrice = parseFloat(simData[i - 1]["Adj Close"]);
+                const currPrice = parseFloat(simData[i]["Adj Close"]);
+                const dailyReturn = (currPrice / prevPrice) - 1;
+
+                // Aggiorna i valori lordo e netto in base al rendimento giornaliero
+                currentGross = currentGross * (1 + dailyReturn);
+                currentNet = currentNet * (1 + dailyReturn) * (1 - terDaily);
+
+                // Se è cambiato il mese (rispetto all'ultimo deposito) aggiungiamo il versamento mensile
+                const currentDate = parseDate(simData[i].Date);
+                const currentMonth = currentDate.getMonth();
+                if (currentMonth !== lastDepositMonth) {
+                    currentGross += monthlyDeposit;
+                    currentNet += monthlyDeposit;
+                    cumulativeContributions += monthlyDeposit;
+                    lastDepositMonth = currentMonth;
+                }
+
+                // Calcola il valore "nettissimo": si tassano al 26% le plusvalenze (guadagno oltre i contributi)
+                gain = currentNet - cumulativeContributions;
+                currentNettissimo = currentNet - (gain > 0 ? gain * 0.26 : 0);
+
+                // Salva i dati per il grafico
+                dates.push(simData[i].Date);
+                grossValues.push(currentGross);
+                netValues.push(currentNet);
+                nettissimoValues.push(currentNettissimo);
+            }
+
+            // Crea (o aggiorna) il grafico con Chart.js
+            const ctx = document.getElementById('chartCanvas').getContext('2d');
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Lordo',
+                            data: grossValues,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0 // Nasconde i punti per rendere il grafico più leggibile
+                        },
+                        {
+                            label: 'Netto (dopo spese TER)',
+                            data: netValues,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0 // Nasconde i punti per rendere il grafico più leggibile
+                        },
+                        {
+                            label: 'Nettissimo (dopo tassazione plusvalenze al 26%)',
+                            data: nettissimoValues,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0 // Nasconde i punti per rendere il grafico più leggibile
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        zoom: {
+                            pan: {
+                                enabled: true,
+                                mode: 'xy'
+                            },
+                            zoom: {
+                                wheel: {
+                                    enabled: true,
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                mode: 'xy',
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'month',
+                                tooltipFormat: 'YYYY-MM-DD'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Data'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Valore ($)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Funzione per formattare i numeri in euro con separatore delle migliaia
+            function formatEuro(value) {
+                return new Intl.NumberFormat('it-IT',
+                    {
+                        style: 'currency',
+                        currency: 'EUR',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(value);
+            }
+
+            // Rendimento totale e annualizzato per Lordo, Netto e Nettissimo
+            function calcolaRendimento(valoreFinale) {
+                const rendimentoTotale = ((valoreFinale / capitaleInvestito) - 1) * 100;
+                const rendimentoAnnualizzato = ((valoreFinale / capitaleInvestito) ** (1 / anniTotali) - 1) * 100;
+                return { rendimentoTotale, rendimentoAnnualizzato };
+            }
+
+            function formatPercent(value) {
+                return value.toFixed(1) + "%";
+            }
+
+            // Visualizza i risultati finali della simulazione
+            const finalIndex = dates.length - 1;
+            const finalGross = grossValues[finalIndex];
+            const finalNet = netValues[finalIndex];
+            const finalNettissimo = nettissimoValues[finalIndex];
+
+            // Calcolo delle differenze
+            const diffGrossNet = finalGross - finalNet;
+            const diffGrossNetPerc = (diffGrossNet / finalGross) * 100;
+
+            const diffGrossNettissimo = finalGross - finalNettissimo;
+            const diffGrossNettissimoPerc = (diffGrossNettissimo / finalGross) * 100;
+
+            const anniTotali = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24 * 365.25); // Calcolo anni esatti
+            const capitaleInvestito = initialCapital + (monthlyDeposit * 12 * anniTotali);
+
+            const rendimentoLordo = calcolaRendimento(finalGross);
+            const rendimentoNetto = calcolaRendimento(finalNet);
+            const rendimentoNettissimo = calcolaRendimento(finalNettissimo);
+
+
+
+            let resultHtml = `<h3>Risultati della simulazione</h3>`;
+            resultHtml += `<div class="box">`;
+            resultHtml += `<p><strong>Capitale Investito:</strong> ${formatEuro(capitaleInvestito)}</p>`;
+            resultHtml += `<p><strong>Durata Simulazione:</strong> ${anniTotali.toFixed(1)} anni</p>`;
+            resultHtml += `</div>`;
+
+            resultHtml += `<div class="box">`;
+            resultHtml += `<p><strong>Rendimento assoluto Lordo:</strong> ${formatEuro(finalGross)}</p>`;
+            resultHtml += `<p><strong>Rendimento Totale Lordo:</strong> ${formatPercent(rendimentoLordo.rendimentoTotale)}</p>`;
+            resultHtml += `<p><strong>Rendimento Annualizzato Lordo (CAGR):</strong> ${formatPercent(rendimentoLordo.rendimentoAnnualizzato)}</p>`;
+            resultHtml += `</div>`;
+
+            resultHtml += `<div class="box">`;
+            resultHtml += `<p><strong>Rendimento assoluto Netto (senza TER):</strong> ${formatEuro(finalNet)}</p>`;
+            resultHtml += `<p><strong>Rendimento Totale Netto:</strong> ${formatPercent(rendimentoNetto.rendimentoTotale)}</p>`;
+            resultHtml += `<p><strong>Rendimento Annualizzato Netto (CAGR):</strong> ${formatPercent(rendimentoNetto.rendimentoAnnualizzato)}</p>`;
+            resultHtml += `</div>`;
+
+            resultHtml += `<div class="box">`;
+            resultHtml += `<p><strong>Rendimento Nettissimo (dopo tassazione 26%):</strong> ${formatEuro(finalNettissimo)}</p>`;
+            resultHtml += `<p><strong>Rendimento Totale Nettissimo:</strong> ${formatPercent(rendimentoNettissimo.rendimentoTotale)}</p>`;
+            resultHtml += `<p><strong>Rendimento Annualizzato Nettissimo (CAGR):</strong> ${formatPercent(rendimentoNettissimo.rendimentoAnnualizzato)}</p>`;
+            resultHtml += `</div>`;
+
+            resultHtml += `<div class="box">`;
+            resultHtml += `<p><strong>Diff. Lordo - Netto (TWR (Terminal Wealth Ratio):):</strong> ${formatEuro(diffGrossNet)} (${formatPercent(diffGrossNetPerc)})</p>`;
+            resultHtml += `<p><strong>Diff. Lordo - Nettissimo:</strong> ${formatEuro(diffGrossNettissimo)} (${formatPercent(diffGrossNettissimoPerc)})</p>`;
+            resultHtml += `<p>Nota, questa percentuale può risultare < 26% perchè mostrando la differenza con il lordo, comprende anche il TER, che in quanto spesa, non partecipa al capital gain e non viene tassata.</p>`;
+            resultHtml += `</div>`;
+
+            $('#simulationResults').html(resultHtml);
+        }
+
+        // Gestione del submit del form
+        $('#simulationForm').on('submit', function (e) {
+            e.preventDefault();
+            runSimulation();
+        });
+    </script>
+
+    <!-- Bootstrap JS (con Popper) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> Le informazioni e i calcoli forniti in questa pagina sono a scopo puramente
+            informativo e non costituiscono in alcun modo una consulenza finanziaria, fiscale, legale o professionale.
+            Sebbene sia stata posta la massima cura nella preparazione di questi calcoli, non si garantisce
+            l’accuratezza, la completezza o l'affidabilità delle informazioni fornite. L'utente si assume la piena
+            responsabilità per l'uso delle informazioni presenti e per eventuali decisioni o azioni intraprese in base
+            ai risultati di tali calcoli.</p>
+        <p>L’autore declina espressamente ogni responsabilità per eventuali perdite, danni o spese derivanti dall'uso o
+            dall'affidamento sui calcoli e le informazioni qui presenti. Si consiglia vivamente di consultare un
+            professionista qualificato per valutazioni personalizzate e verificare tutte le informazioni con esperti
+            prima di prendere qualsiasi decisione di investimento o finanziaria.</p>
+    </div>
+</body>
+
+</html>
