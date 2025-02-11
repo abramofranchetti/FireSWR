@@ -364,10 +364,10 @@
 
             // Funzione per formattare i numeri in euro con separatore delle migliaia
             function formatEuro(value) {
-                return new Intl.NumberFormat('it-IT',
+                return new Intl.NumberFormat('en-US',
                     {
                         style: 'currency',
-                        currency: 'EUR',
+                        currency: 'USD',
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0
                     }).format(value);
