@@ -453,7 +453,8 @@
             resultHtml += `<div class="box">`;
             resultHtml += `<p><strong>Diff. Lordo - Netto  (TWR Terminal Wealth Ratio):</strong> ${formatEuro(diffGrossNet)} (${formatPercent(diffGrossNetPerc)})</p>`;
             resultHtml += `<p><strong>Diff. Lordo - Nettissimo:</strong> ${formatEuro(diffGrossNettissimo)} (${formatPercent(diffGrossNettissimoPerc)})</p>`;
-            resultHtml += `<p>Nota, questa percentuale può risultare < 26% perchè mostrando la differenza con il lordo, comprende anche il TER, che in quanto spesa, non partecipa al capital gain e non viene tassata.</p>`;
+            resultHtml += `<p>Nota, questa percentuale può risultare < 26% perchè mostrando la differenza con il lordo, comprende anche il TER, che in quanto spesa, non partecipa al capital gain e non viene tassata.
+                                Inoltre, solo il gain viene tassato al 26% e non l'intera somma lorda.</p>`;                            
             resultHtml += `</div>`;
 
             $('#simulationResults').html(resultHtml);
