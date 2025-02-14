@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Andamento Euro/Dollaro</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js Annotation Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <!-- Chart.js Zoom Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.0.0"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        body {
+            padding-top: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .home-button {
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #0073e6;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #ebf3fc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div>
+            <a href="/" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="mt-4 mb-4">Andamento Euro/Dollaro</h1>
+        <h6 class=""></h6>
+        <canvas id="chartCanvas" height="120"></canvas>
+        <button id="resetZoomButton" class="btn btn-primary mt-3">Reset Zoom</button>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // Variabile per la Chart.js (per aggiornare il grafico se necessario)
+            let chartInstance = null;
+            // Carica il dataset dal file
+            fetch('cambio_eur_usd.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Errore nel caricamento del dataset: " + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+
+                    const dates = [];
+                    const exchangeRates = [];
+
+                    // Campionamento dei dati per alleggerire il grafico
+                    const sampleRate = 10; // Modifica questo valore per regolare il campionamento
+                    data.forEach((item, index) => {
+                        if (index % sampleRate === 0) {
+                            dates.push(item.Date);
+                            exchangeRates.push(item.Close);
+                        }
+                    });
+
+                    // Crea (o aggiorna) il grafico con Chart.js
+                    const ctx = document.getElementById('chartCanvas').getContext('2d');
+                    if (chartInstance) {
+                        chartInstance.destroy();
+                    }
+                    chartInstance = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: dates,
+                            datasets: [
+                                {
+                                    label: 'Cambio Euro/Dollaro',
+                                    data: exchangeRates,
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    fill: false,
+                                    tension: 0.1,
+                                    pointRadius: 0 // Nasconde i punti per rendere il grafico più leggibile
+                                },
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false,
+                            },
+                            plugins: {
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false,
+                                },
+                                annotation: {
+                                    annotations: {
+                                        line1: {
+                                            type: 'line',
+                                            yMin: 1,
+                                            yMax: 1,
+                                            borderColor: 'red',
+                                            borderWidth: 2,
+                                            label: {
+                                                content: 'Parità di cambio',
+                                                enabled: true,
+                                                position: 'start'
+                                            }
+                                        }
+                                    }
+                                },
+                                zoom: {
+                                    pan: {
+                                        enabled: true,
+                                        mode: 'x'
+                                    },
+                                    zoom: {
+                                        wheel: {
+                                            enabled: false,
+                                        },
+                                        pinch: {
+                                            enabled: true
+                                        },
+                                        mode: 'x',
+                                        drag: {
+                                            enabled: true,
+                                            backgroundColor: 'rgba(0,0,0,0.3)',
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    type: 'time',
+                                    time: {
+                                        unit: 'month',
+                                        tooltipFormat: 'yyyy-MM-dd'
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Data'
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: false,
+                                    suggestedMax: Math.max(...exchangeRates) * 1.1,
+                                    title: {
+                                        display: true,
+                                        text: 'Cambio Euro/Dollaro'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error("Errore durante il caricamento del dataset:", error);
+                });
+
+            // Aggiungi evento per il pulsante di reset dello zoom
+            $('#resetZoomButton').click(function () {
+                if (chartInstance) {
+                    chartInstance.resetZoom();
+                }
+            });
+        });
+    </script>
+
+    <!-- Bootstrap JS (con Popper) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

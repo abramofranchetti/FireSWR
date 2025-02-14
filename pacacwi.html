@@ -11,6 +11,9 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <!-- Chart.js Zoom Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.0.0"></script>
     <style>
         body {
             padding-top: 20px;
@@ -86,7 +89,8 @@
             <a href="/" class="home-button">🏠 Home</a>
         </div>
         <br>
-        <h1 class="mt-4 mb-4">Simulazione Piano di Accumulo Storico su ACWI (All Country World Index) con dati Storici Reali</h1>
+        <h1 class="mt-4 mb-4">Simulazione Piano di Accumulo Storico su ACWI (All Country World Index) con dati Storici
+            Reali</h1>
         <div class="istruzioni">
             <p>
                 Questo calcolatore ti consente di simulare un piano di accumulo nel tempo utilizzando <strong>dati
@@ -138,10 +142,12 @@
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Simula</button>
+            <button id="resetZoomButton" class="btn btn-primary">Reset Zoom</button>
         </form>
 
         <!-- Grafico -->
         <canvas id="chartCanvas" height="100"></canvas>
+        
 
         <!-- Risultati della simulazione -->
         <div id="simulationResults" class="mt-4"></div>
@@ -194,6 +200,7 @@
         // Carica il dataset all'avvio
         $(document).ready(function () {
             loadDataset();
+            setTimeout(runSimulation, 1000); // Ritarda la chiamata di 1 secondo per permettere la valorizzazione dei campi data
         });
 
         // Funzione per eseguire la simulazione
@@ -221,6 +228,7 @@
             const grossValues = [];
             const netValues = [];
             const nettissimoValues = [];
+            const totalDeposits = []; // Nuovo array per il totale del denaro versato
 
             // Per il calcolo delle plusvalenze, memorizziamo i contributi cumulativi
             let cumulativeContributions = initialCapital;
@@ -234,6 +242,7 @@
             dates.push(simData[0].Date);
             grossValues.push(currentGross);
             netValues.push(currentNet);
+            totalDeposits.push(initialCapital); // Aggiungi il capitale iniziale al totale del denaro versato
             let gain = currentNet - cumulativeContributions;
             let currentNettissimo = currentNet - (gain > 0 ? gain * 0.26 : 0);
             nettissimoValues.push(currentNettissimo);
@@ -259,7 +268,10 @@
                     currentGross += monthlyDeposit;
                     currentNet += monthlyDeposit;
                     cumulativeContributions += monthlyDeposit;
+                    totalDeposits.push(cumulativeContributions); // Aggiungi il nuovo totale del denaro versato
                     lastDepositMonth = currentMonth;
+                } else {
+                    totalDeposits.push(cumulativeContributions); // Mantieni il totale del denaro versato invariato
                 }
 
                 // Calcola il valore "nettissimo": si tassano al 26% le plusvalenze (guadagno oltre i contributi)
@@ -309,6 +321,16 @@
                             fill: false,
                             tension: 0.1,
                             pointRadius: 0 // Nasconde i punti per rendere il grafico più leggibile
+                        },
+                        {
+                            label: 'Totale Denaro Versato',
+                            data: totalDeposits,
+                            borderColor: 'rgba(255, 206, 86, 1)',
+                            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                            fill: false,
+                            tension: 1, // Imposta tension a 0 per mostrare i gradini
+                            stepped: 'before', // Aggiungi stepped: 'before' per mostrare i gradini
+                            pointRadius: 0 // Nasconde i punti per rendere il grafico più leggibile
                         }
                     ]
                 },
@@ -326,16 +348,20 @@
                         zoom: {
                             pan: {
                                 enabled: true,
-                                mode: 'xy'
+                                mode: 'x'
                             },
                             zoom: {
                                 wheel: {
-                                    enabled: true,
+                                    enabled: false,
                                 },
                                 pinch: {
                                     enabled: true
                                 },
-                                mode: 'xy',
+                                mode: 'x',
+                                drag: {
+                                    enabled: true,
+                                    backgroundColor: 'rgba(0,0,0,0.3)',
+                                }
                             }
                         }
                     },
@@ -443,6 +469,13 @@
         $('#simulationForm').on('submit', function (e) {
             e.preventDefault();
             runSimulation();
+        });
+
+        // Aggiungi evento per il pulsante di reset dello zoom
+        $('#resetZoomButton').click(function () {
+            if (chartInstance) {
+                chartInstance.resetZoom();
+            }
         });
     </script>
 
