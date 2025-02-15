@@ -165,7 +165,7 @@
 
         // Carica il dataset dal file sp500.json
         function loadDataset() {
-            fetch('sp500.json')
+            return fetch('sp500.json')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Errore nel caricamento del dataset: " + response.statusText);
@@ -197,8 +197,9 @@
 
         // Carica il dataset all'avvio
         $(document).ready(function () {
-            loadDataset();
-            setTimeout(runSimulation, 1000); // Ritarda la chiamata di 1 secondo per permettere la valorizzazione dei campi data
+            loadDataset().then(() => {
+               runSimulation();
+            });            
         });
 
         // Funzione per eseguire la simulazione

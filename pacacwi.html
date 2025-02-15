@@ -167,7 +167,7 @@
 
         // Carica il dataset dal file acwi.json
         function loadDataset() {
-            fetch('acwi.json')
+            return fetch('acwi.json')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Errore nel caricamento del dataset: " + response.statusText);
@@ -199,8 +199,11 @@
 
         // Carica il dataset all'avvio
         $(document).ready(function () {
-            loadDataset();
-            setTimeout(runSimulation, 1000); // Ritarda la chiamata di 1 secondo per permettere la valorizzazione dei campi data
+            loadDataset().then(() => {
+            runSimulation();
+            }).catch(error => {
+            console.error("Errore durante il caricamento del dataset:", error);
+            });
         });
 
         // Funzione per eseguire la simulazione
