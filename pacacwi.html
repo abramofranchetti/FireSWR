@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Simulazione Piano di Accumulo su ACWI (All Country Wordl Index) con Dati Storici Reali</title>
+    <title>Simulazione Piano di Accumulo su ACWI (All Country Wordl Index) con Dati Storici Reali e gestione cambio €/$</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Font Awesome CSS -->
@@ -91,8 +91,8 @@
             <a href="/" class="home-button">🏠 Home</a>
         </div>
         <br>
-        <h1 class="mt-4 mb-4">Simulazione Piano di Accumulo Storico su ACWI (All Country World Index) con dati Storici
-            Reali</h1>
+        <h1 class="mt-4 mb-4">Simulazione Piano di Accumulo Storico su indice ACWI (All Country World Index)</h1>
+        <h3 class="text-center">Con dati Storici Reali e gestione cambio €/$ storico</h3>    
         <div class="istruzioni">
             <p>
                 Questo calcolatore ti consente di simulare un piano di accumulo nel tempo utilizzando <strong>dati
@@ -107,9 +107,10 @@
                 I dati disponibili partono dal 2008 e arrivano fino al 31/12/2024 e sono liberamente consultabili e
                 scaricabili dal
                 <a href="/FireSWR/acwi.json" target="_blank" download="ACWI">qui</a>.
-
-                Selezionare una data tra il 2008 e il 2024 per iniziare la simulazione.
-                Nota che tutta la simulazione è in Dollari Americani.
+                <br>        
+                Selezionare una data tra il 2008 e il 2024 per iniziare la simulazione.                
+                <br>
+                <strong>Netto e Nettissimo sono il lordo come totale del risultato, netto si intende dopo l'applicazione del TER e Nettissimo è il risultato netto dopo l'applicazione della tassazione del 26% sul guadagno. </strong> 
             </p>
         </div>
         <br>
@@ -375,7 +376,7 @@
                             pointRadius: 0
                         },
                         {
-                            label: 'Totale Denaro Versato ($)',
+                            label: 'Totale Versato ($)',
                             data: totalDeposits,
                             borderColor: 'rgba(255, 206, 86, 1)',
                             backgroundColor: 'rgba(255, 206, 86, 0.2)',
@@ -415,7 +416,7 @@
                             pointRadius: 0
                         },
                         {
-                            label: 'Totale Denaro Versato (€)',
+                            label: 'Totale Versato (€)',
                             data: totalDepositsEur,
                             borderColor: 'rgba(255, 206, 86, 0.6)',
                             backgroundColor: 'rgba(255, 206, 86, 0.1)',
