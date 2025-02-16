@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Simulazione Piano di Accumulo su ACWI (All Country Wordl Index) con Dati Storici Reali e gestione cambio €/$</title>
+    <title>Simulazione Piano di Accumulo su ACWI (All Country Wordl Index) con Dati Storici Reali e gestione cambio €/$
+    </title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Font Awesome CSS -->
@@ -92,7 +93,7 @@
         </div>
         <br>
         <h1 class="mt-4 mb-4">Simulazione Piano di Accumulo Storico su indice ACWI (All Country World Index)</h1>
-        <h3 class="text-center">Con dati Storici Reali e gestione cambio €/$ storico</h3>    
+        <h3 class="text-center">Con dati Storici Reali e gestione cambio €/$ storico</h3>
         <div class="istruzioni">
             <p>
                 Questo calcolatore ti consente di simulare un piano di accumulo nel tempo utilizzando <strong>dati
@@ -103,14 +104,13 @@
                 nettissimo
                 (dopo tassazione delle plusvalenze al 26%). I risultati finali includono i valori lordo, netto e
                 nettissimo alla
-                data di fine, nonché le differenze rispetto al valore lordo.
-                I dati disponibili partono dal 2008 e arrivano fino al 31/12/2024 e sono liberamente consultabili e
-                scaricabili dal
-                <a href="/FireSWR/acwi.json" target="_blank" download="ACWI">qui</a>.
-                <br>        
-                Selezionare una data tra il 2008 e il 2024 per iniziare la simulazione.                
+                data di fine, nonché le differenze rispetto al valore lordo.                
                 <br>
-                <strong>Per Lordo si intente il rendimento senza spese e tasse, per Netto si intende il rendimento dopo l'applicazione del TER e Nettissimo è il risultato netto dopo l'applicazione della tassazione del 26% sul guadagno. </strong> 
+                Selezionare una data tra il 2008 e il 2024 per iniziare la simulazione.
+                <br>
+                <strong>Per Lordo si intente il rendimento senza spese e tasse, per Netto si intende il rendimento dopo
+                    l'applicazione del TER e Nettissimo è il risultato netto dopo l'applicazione della tassazione del
+                    26% sul guadagno. </strong>
             </p>
         </div>
         <br>
@@ -120,15 +120,18 @@
             <div class="form-row">
                 <div class="form-group col-md-3">
                     <label for="initialCapitalEur">Capitale Iniziale (€):</label>
-                    <input type="number" class="form-control" id="initialCapitalEur" placeholder="es. 10000" required value="10000" min="0">
+                    <input type="number" class="form-control" id="initialCapitalEur" placeholder="es. 10000" required
+                        value="10000" min="0">
                 </div>
                 <div class="form-group col-md-3">
                     <label for="monthlyDepositEur">Versamento Mensile (€):</label>
-                    <input type="number" class="form-control" id="monthlyDepositEur" placeholder="es. 200" required value="200" min="0">
+                    <input type="number" class="form-control" id="monthlyDepositEur" placeholder="es. 200" required
+                        value="200" min="0">
                 </div>
                 <div class="form-group col-md-3">
                     <label for="terFee">Costo Annuale (TER) [%]:</label>
-                    <input type="number" class="form-control" id="terFee" placeholder="es. 0.1" step="0.1" required value="0.1" min="0">
+                    <input type="number" class="form-control" id="terFee" placeholder="es. 0.1" step="0.1" required
+                        value="0.1" min="0">
                 </div>
             </div>
             <div class="form-row">
@@ -147,7 +150,7 @@
 
         <!-- Grafico -->
         <canvas id="chartCanvas" height="100"></canvas>
-        
+
 
         <!-- Risultati della simulazione -->
         <div id="simulationResults" class="mt-4"></div>
@@ -168,7 +171,7 @@
             return new Date(dateStr);
         }
 
-        // Carica il dataset dal file acwi.json
+        // Carica il dataset dal file
         function loadDataset() {
             return fetch('acwi.json')
                 .then(response => {
@@ -223,11 +226,51 @@
         // Carica il dataset all'avvio
         $(document).ready(function () {
             loadDataset().then(() => {
-            runSimulation();
+                runSimulation();
             }).catch(error => {
-            console.error("Errore durante il caricamento del dataset:", error);
+                console.error("Errore durante il caricamento del dataset:", error);
             });
         });
+
+        // Funzione per calcolare la deviazione standard
+        function calcolaDeviazioneStandard(arr) {
+            const media = arr.reduce((acc, val) => acc + val, 0) / arr.length;
+            const varianza = arr.reduce((acc, val) => acc + Math.pow(val - media, 2), 0) / arr.length;
+            return Math.sqrt(varianza);
+        }
+
+        // Funzione per calcolare il drawdown massimo
+        function calcolaMaxDrawdown(valori) {
+            let maxDrawdown = 0;
+            let maxValore = valori[0];
+            for (let i = 1; i < valori.length; i++) {
+                if (valori[i] > maxValore) {
+                    maxValore = valori[i];
+                }
+                const drawdown = (maxValore - valori[i]) / maxValore;
+                if (drawdown > maxDrawdown) {
+                    maxDrawdown = drawdown;
+                }
+            }
+            return maxDrawdown;
+        }
+
+        // Funzione per calcolare il drawdown massimo in valore assoluto
+        function calcolaMaxDrawdownValore(valori) {
+            let maxDrawdownValore = 0;
+            let maxValore = valori[0];
+            for (let i = 1; i < valori.length; i++) {
+                if (valori[i] > maxValore) {
+                    maxValore = valori[i];
+                }
+                const drawdownValore = maxValore - valori[i];
+                if (drawdownValore > maxDrawdownValore) {
+                    maxDrawdownValore = drawdownValore;
+                }
+            }
+            return maxDrawdownValore;
+        }
+
 
         // Funzione per eseguire la simulazione
         function runSimulation() {
@@ -336,6 +379,31 @@
                 nettissimoValuesEur.push(currentNettissimoEur);
             }
 
+            // Calcola la volatilità (deviazione standard)
+            const rendimentiGiornalieri = simData.map((item, index) => {
+                if (index === 0) return 0;
+                const prevPrice = parseFloat(simData[index - 1]["Close"]);
+                const currPrice = parseFloat(item["Close"]);
+                return (currPrice / prevPrice) - 1;
+            }).slice(1);
+
+            // Calcola i rendimenti giornalieri in euro
+            const rendimentiGiornalieriEur = simData.map((item, index) => {
+                if (index === 0) return 0;
+                const prevPriceEur = parseFloat(simData[index - 1]["Close"]) / exchangeRates[index - 1];
+                const currPriceEur = parseFloat(item["Close"]) / exchangeRates[index];
+                return (currPriceEur / prevPriceEur) - 1;
+            }).slice(1);
+
+            const volatilitaEur = calcolaDeviazioneStandard(rendimentiGiornalieriEur);
+            const volatilitaDollar = calcolaDeviazioneStandard(rendimentiGiornalieri);
+
+            // Calcola il drawdown massimo
+            const maxDrawdownDollar = calcolaMaxDrawdown(grossValues);
+            const maxDrawdownEur = calcolaMaxDrawdown(grossValuesEur);
+            const maxDrawdownValoreEur = calcolaMaxDrawdownValore(grossValuesEur);
+            const maxDrawdownValoreDollar = calcolaMaxDrawdownValore(grossValues);
+
             // Crea (o aggiorna) il grafico con Chart.js
             const ctx = document.getElementById('chartCanvas').getContext('2d');
             if (chartInstance) {
@@ -425,7 +493,7 @@
                             stepped: 'before',
                             pointRadius: 0
                         }
-                    ]                    
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -492,8 +560,8 @@
                     }).format(value);
             }
 
-              // Funzione per formattare i numeri in euro con separatore delle migliaia
-              function formatDollar(value) {
+            // Funzione per formattare i numeri in euro con separatore delle migliaia
+            function formatDollar(value) {
                 return new Intl.NumberFormat('en-US',
                     {
                         style: 'currency',
@@ -586,9 +654,15 @@
 
             resultHtml += `<div class="box">`;
             resultHtml += `<p><strong>Diff. Lordo - Netto  (TWR Terminal Wealth Ratio):</strong> ${formatEuro(diffGrossNet)} (${formatPercent(diffGrossNetPerc)})</p>`;
-            resultHtml += `<p><strong>Diff. Lordo - Nettissimo:</strong> ${formatEuro(diffGrossNettissimo)} (${formatPercent(diffGrossNettissimoPerc)})</p>`;
+            resultHtml += `<p><strong>Diff. Lordo - Nettissimo (tassazione effetiva sul totale lordo):</strong> ${formatEuro(diffGrossNettissimo)} (${formatPercent(diffGrossNettissimoPerc)})</p>`;
             resultHtml += `<p>Nota, questa percentuale può risultare < 26% perchè mostrando la differenza con il lordo, comprende anche il TER, che in quanto spesa, non partecipa al capital gain e non viene tassata.
                 Inoltre, solo il gain viene tassato al 26% e non l'intera somma lorda.</p>`;
+            resultHtml += `</div>`;
+
+            resultHtml += `<div class="box">`;
+            resultHtml += `<p><strong>Volatilità (Deviazione Standard) € (sul lordo):</strong> ${formatPercent(volatilitaEur * 100)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) € (sul lordo):</strong> perdita del ${formatPercent(maxDrawdownEur * 100)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) (€) (sul lordo):</strong> perdita di ${formatEuro(maxDrawdownValoreEur)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreEur/maxDrawdownEur)} lordi)</p>`;
             resultHtml += `</div>`;
 
             resultHtml += `</div>`;
@@ -603,7 +677,7 @@
             resultHtml += `Rendimenti in Dollari ($) <span class="fas fa-chevron-down"></span>`;
             resultHtml += `</button>`;
             resultHtml += `</h2>`;
-            resultHtml += `</div>`;            
+            resultHtml += `</div>`;
             resultHtml += `</button>`;
             resultHtml += `</h2>`;
             resultHtml += `</div>`;
@@ -628,6 +702,13 @@
             resultHtml += `<p><strong>Rendimento Totale Nettissimo ($):</strong> ${formatPercent(rendimentoNettissimo.rendimentoTotale)}</p>`;
             resultHtml += `<p><strong>Rendimento Annualizzato Nettissimo (CAGR) ($):</strong> ${formatPercent(rendimentoNettissimo.rendimentoAnnualizzato)}</p>`;
             resultHtml += `</div>`;
+
+            resultHtml += `<div class="box">`;
+            resultHtml += `<p><strong>Volatilità (Deviazione Standard) $ (sul lordo):</strong> ${formatPercent(volatilitaDollar * 100)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) $ (sul lordo):</strong> perdita del ${formatPercent(maxDrawdownDollar * 100)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) ($) (sul lordo):</strong> perdita di ${formatDollar(maxDrawdownValoreDollar)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreDollar/maxDrawdownDollar)} lordi)</p>`;
+            resultHtml += `</div>`;
+
 
             resultHtml += `</div>`;
             resultHtml += `</div>`;
