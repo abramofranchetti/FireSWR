@@ -7,47 +7,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --color-dwz: #ff6f61;
-            --color-dwz-hover: #e65c50;
-            --color-swr: #6b5b95;
-            --color-swr-hover: #5a4a7a;
-            --color-rmd: #88b04b;
-            --color-rmd-hover: #76903e;
-            --color-fpc: #f7cac9;
-            --color-fpc-hover: #e6b5b3;
-            --color-pac: #92a8d1;
-            --color-pac-hover: #7d94b0;
-            --color-sp500data: #9fb9e6;
-            --color-sp500data-hover: #8184a1;
+            --color-calculator: #ff6f61;
+            --color-calculator-hover: #e65c50;            
+            --color-download-file: #92a8d1;
+            --color-download-file-hover: #7d94b0;
+            
         }
         body {
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            background: linear-gradient(135deg, #f5e3c8, #f7e9d4);
         }
         .container {
             text-align: center;
             background-color: white;
-            padding: 50px;
+            padding: 50px;            
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
-            width: 90%;
+            max-width: 700px;            
         }
         h1 {
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 20px;            
             font-size: 2rem;
         }
         .button {
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 100%;
+            justify-content: center;            
             padding: 15px;
             margin: 15px 0;
             color: white;
@@ -60,79 +50,53 @@
         .button i {
             margin-right: 10px;
         }
-        .button.dwz {
-            background-color: var(--color-dwz);
+        .button.calculator {
+            background-color: var(--color-calculator);
         }
-        .button.dwz:hover {
-            background-color: var(--color-dwz-hover);
+        .button.calculator:hover {
+            background-color: var(--color-calculator-hover);
+        }        
+        .button.download-file {
+            background-color: var(--color-download-file);
         }
-        .button.swr {
-            background-color: var(--color-swr);
-        }
-        .button.swr:hover {
-            background-color: var(--color-swr-hover);
-        }
-        .button.rmd {
-            background-color: var(--color-rmd);
-        }
-        .button.rmd:hover {
-            background-color: var(--color-rmd-hover);
-        }
-        .button.fpc {
-            background-color: var(--color-fpc);
-        }
-        .button.fpc:hover {
-            background-color: var(--color-fpc-hover);
-        }
-        .button.pac {
-            background-color: var(--color-pac);
-        }
-        .button.pac:hover {
-            background-color: var(--color-pac-hover);
-        }
-        .button.sp500data {
-            background-color: var(--color-sp500data);
-        }
-        .button.sp500data:hover {
-            background-color: var(--color-sp500data-hover);
+        .button.download-file:hover {
+            background-color: var(--color-download-file-hover);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Calcolo FIRE</h1>
-        <a href="/FireSWR/dwz.html" class="button dwz">
-            <i class="fas fa-dollar-sign"></i> Die With Zero
+        <h1>Calcolatori Finanziari</h1>
+        <a href="/FireSWR/dwz.html" class="button calculator">
+            <i class="fas fa-dollar-sign"></i>FIRE - Die With Zero Calculator
         </a>
-        <a href="/FireSWR/swr.html" class="button swr">
-            <i class="fas fa-chart-line"></i> SWR Calculator
+        <a href="/FireSWR/swr.html" class="button calculator">
+            <i class="fas fa-chart-line"></i>Fire - SWR (Safe Withdrawal Rate) Calculator
         </a>
-        <a href="/FireSWR/rmd.html" class="button rmd">
+        <a href="/FireSWR/rmd.html" class="button calculator">
             <i class="fas fa-percent"></i> Investment Fee Impact Calculator (TWR)
         </a>
-        <a href="/FireSWR/fpc.html" class="button fpc">
+        <a href="/FireSWR/fpc.html" class="button calculator">
             <i class="fas fa-balance-scale"></i> Bond Fair Price Calculator
         </a>
-        <a href="/FireSWR/pacsp500.html" class="button pac">
+        <a href="/FireSWR/pacsp500.html" class="button calculator">
             <i class="fas fa-chart-bar"></i> Historical SP500 PAC Simulator with real data
         </a>
-        <a href="/FireSWR/pacacwi.html" class="button pac">
+        <a href="/FireSWR/pacacwi.html" class="button calculator">
             <i class="fas fa-chart-bar"></i> Historical ACWI PAC Simulator with real data
         </a>        
-        <a href="/FireSWR/eurusd.html" class="button pac">
+        <a href="/FireSWR/eurusd.html" class="button calculator">
             <i class="fas fa-chart-bar"></i> €/$ exchange rates chart (1975-2024) 
         </a>
-
-
-
-        <a href="/FireSWR/sp500.json" class="button sp500data" download="^SP500TR.json">
+        <h1>Fonti Dati</h1>
+        <a href="/FireSWR/sp500.json" class="button download-file" download="^SP500TR.json">
             <i class="fas fa-download"></i> Historical SP500 json data download (1988-2024)
         </a>
-        <a href="/FireSWR/acwi.json" class="button sp500data" download="ACWI.json">
+        <a href="/FireSWR/acwi.json" class="button download-file" download="ACWI.json">
             <i class="fas fa-download"></i> Historical ACWI json data download (2008-2024)
         </a>
-        <a href="/FireSWR/cambio_eur_usd.json" class="button sp500data" download="CAMBIO.json">
-            <i class="fas fa-download"></i> Historical €/$ exchange rates (1975-2024)
+        <a href="/FireSWR/cambio_eur_usd.json" class="button download-file" download="CAMBIO.json">
+            <i class="fas fa-download"></i> Historical €/$ exchange rates json data download (1975-2024)
         </a>
     </div>
 </body>
