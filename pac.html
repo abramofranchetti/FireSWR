@@ -207,6 +207,19 @@
                         $('#endDate').attr('min', minDate);
                         $('#endDate').attr('max', maxDate);
                     }
+
+                    // Verifica se le date di inizio e fine sono valide
+                    const startDateVal = $('#startDate').val();
+                    const endDateVal = $('#endDate').val();
+                    if (startDateVal && endDateVal) {
+                        const startDate = parseDate(startDateVal);
+                        const endDate = parseDate(endDateVal);
+                        // Filtra il dataset per il range di date selezionato
+                        indexDatasetValues = indexDatasetValues.filter(item => {
+                            const itemDate = parseDate(item.Date);
+                            return itemDate >= startDate && itemDate <= endDate;
+                        });
+                    }
                 })
                 .then(() => {
                     return loadExchangeRates();
@@ -229,11 +242,8 @@
                     // Assumiamo che data sia un array di oggetti con campi "Date" e "Close"
                     // Ordiniamo il dataset per data (crescente)
                     var sortedData = data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
-                    const startDate = new Date($('#startDate').val());
-                    const endDate = new Date($('#endDate').val());
                     exchangeRates = indexDatasetValues.map(item => {
-                        const itemDate = new Date(item.Date);
-                        const exchangeRate = sortedData.find(rate => new Date(rate.Date).getTime() === itemDate.getTime());
+                        const exchangeRate = sortedData.find(rate => rate.Date === item.Date);
                         return exchangeRate ? parseFloat(exchangeRate.Close) : null;
                     });
 
@@ -535,10 +545,6 @@
                             intersect: false,
                         },
                         zoom: {
-                            pan: {
-                                enabled: false,
-                                mode: 'x'
-                            },
                             zoom: {
                                 wheel: {
                                     enabled: false,
@@ -601,8 +607,9 @@
 
             // Funzione per calcolare il rendimento totale e annualizzato (CAGR)
             function calcolaRendimento(valoreFinale, valoreIniziale, anniTotali, totaleVersamenti) {
-                const rendimentoTotale = ((valoreFinale - totaleVersamenti) / valoreIniziale - 1) * 100;
-                const rendimentoAnnualizzato = (((valoreFinale - totaleVersamenti) / valoreIniziale) ** (1 / anniTotali) - 1) * 100;
+                const rendimentoTotale = ((valoreFinale - totaleVersamenti) / totaleVersamenti) * 100;
+                const rendimentoAnnualizzato = (((valoreFinale / totaleVersamenti) ** (1 / anniTotali)) - 1) * 100;
+
                 return {
                     rendimentoTotale: rendimentoTotale,
                     rendimentoAnnualizzato: rendimentoAnnualizzato
