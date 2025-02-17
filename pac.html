@@ -104,7 +104,7 @@
                 nettissimo
                 (dopo tassazione delle plusvalenze al 26%). I risultati finali includono i valori lordo, netto e
                 nettissimo alla
-                data di fine, nonché le differenze rispetto al valore lordo.                
+                data di fine, nonché le differenze rispetto al valore lordo.
                 <br>
                 Selezionare una data tra quelle disponibili nello storico del relativo indice.
                 <br>
@@ -165,13 +165,16 @@
 
     <script>
         // Variabile globale per contenere il dataset
-        let dataset = [];
+        let indexDatasetValues = [];
 
         // Variabile globale per contenere il dataset del cambio EUR/USD
         let exchangeRates = [];
 
         // Variabile per la Chart.js (per aggiornare il grafico se necessario)
         let chartInstance = null;
+
+        let mindate = new Date("2000-01-01");
+        let maxdate = new Date("2025-01-01");
 
         // Funzione per convertire una stringa data ("YYYY-MM-DD") in oggetto Date
         function parseDate(dateStr) {
@@ -193,19 +196,16 @@
                 .then(data => {
                     // Assumiamo che data sia un array di oggetti con campi "Date" e "Close"
                     // Ordiniamo il dataset per data (crescente)
-                    dataset = data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+                    indexDatasetValues = data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
 
                     // Impostiamo i limiti min e max dei campi data in base al dataset
-                    if (dataset.length > 0) {
-                        const minDate = dataset[0].Date;
-                        const maxDate = dataset[dataset.length - 1].Date;
+                    if (indexDatasetValues.length > 0) {
+                        minDate = indexDatasetValues[0].Date;
+                        maxDate = indexDatasetValues[indexDatasetValues.length - 1].Date;
                         $('#startDate').attr('min', minDate);
                         $('#startDate').attr('max', maxDate);
                         $('#endDate').attr('min', minDate);
                         $('#endDate').attr('max', maxDate);
-                        // Impostiamo dei valori di default
-                        $('#startDate').val(minDate);
-                        $('#endDate').val(maxDate);
                     }
                 })
                 .then(() => {
@@ -226,7 +226,21 @@
                     return response.json();
                 })
                 .then(data => {
-                    exchangeRates = data.map(item => parseFloat(item.Close));
+                    // Assumiamo che data sia un array di oggetti con campi "Date" e "Close"
+                    // Ordiniamo il dataset per data (crescente)
+                    var sortedData = data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+                    const startDate = new Date($('#startDate').val());
+                    const endDate = new Date($('#endDate').val());
+                    exchangeRates = indexDatasetValues.map(item => {
+                        const itemDate = new Date(item.Date);
+                        const exchangeRate = sortedData.find(rate => new Date(rate.Date).getTime() === itemDate.getTime());
+                        return exchangeRate ? parseFloat(exchangeRate.Close) : null;
+                    });
+
+                    // Verifica se ci sono date senza tasso di cambio corrispondente
+                    if (exchangeRates.includes(null)) {
+                        throw new Error("Errore: alcune date nel dataset dell'indice non hanno un tasso di cambio corrispondente.");
+                    }
                 })
                 .catch(error => {
                     console.error("Errore durante il caricamento del dataset del cambio:", error);
@@ -236,6 +250,9 @@
         // Carica il dataset all'avvio
         $(document).ready(function () {
             loadDataset().then(() => {
+                // Impostiamo dei valori di default
+                $('#startDate').val(minDate);
+                $('#endDate').val(maxDate);
                 runSimulation();
             }).catch(error => {
                 console.error("Errore durante il caricamento del dataset:", error);
@@ -290,10 +307,10 @@
             const terFee = parseFloat($('#terFee').val()); // espresso in percentuale
             const startDate = new Date($('#startDate').val());
             const endDate = new Date($('#endDate').val());
-            const initialCapitalDollar = initialCapitalEur * exchangeRates[0];            
+            const initialCapitalDollar = initialCapitalEur * exchangeRates[0];
 
             // Filtra il dataset per il range di date selezionato
-            const simData = dataset.filter(item => {
+            const simData = indexDatasetValues.filter(item => {
                 const itemDate = parseDate(item.Date);
                 return itemDate >= startDate && itemDate <= endDate;
             });
@@ -613,7 +630,7 @@
             const diffGrossNettissimoDollar = finalGrossDollar - finalNettissimoDollar;
             const diffGrossNettissimoPercDollar = (diffGrossNettissimoDollar / finalGrossDollar) * 100;
 
-            const anniTotali = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24 * 365.25);            
+            const anniTotali = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24 * 365.25);
 
             const rendimentoLordoDollar = calcolaRendimento(finalGrossDollar, initialCapitalDollar, anniTotali, cumulativeContributionsDollar);
             const rendimentoNettoDollar = calcolaRendimento(finalNetDollar, initialCapitalDollar, anniTotali, cumulativeContributionsDollar);
@@ -671,7 +688,7 @@
             resultHtml += `<div class="box">`;
             resultHtml += `<p><strong>Volatilità (Deviazione Standard) € (sul netto):</strong> ${formatPercent(volatilitaNetEur * 100)}</p>`;
             resultHtml += `<p><strong>Drawdown Massimo (MDD) € (sul netto):</strong> perdita del ${formatPercent(maxDrawdownNetEur * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) (€) (sul netto):</strong> perdita di ${formatEuro(maxDrawdownValoreNetEur)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNetEur/maxDrawdownNetEur)})</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) (€) (sul netto):</strong> perdita di ${formatEuro(maxDrawdownValoreNetEur)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNetEur / maxDrawdownNetEur)})</p>`;
             resultHtml += `</div>`;
 
             resultHtml += `</div>`;
@@ -715,7 +732,7 @@
             resultHtml += `<div class="box">`;
             resultHtml += `<p><strong>Volatilità (Deviazione Standard) $ (sul netto):</strong> ${formatPercent(volatilitaNetDollar * 100)}</p>`;
             resultHtml += `<p><strong>Drawdown Massimo (MDD) $ (sul netto):</strong> perdita del ${formatPercent(maxDrawdownNetDollar * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) ($) (sul netto):</strong> perdita di ${formatDollar(maxDrawdownValoreNetDollar)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNetDollar/maxDrawdownNetDollar)})</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) ($) (sul netto):</strong> perdita di ${formatDollar(maxDrawdownValoreNetDollar)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNetDollar / maxDrawdownNetDollar)})</p>`;
             resultHtml += `</div>`;
 
 
@@ -732,7 +749,20 @@
             e.preventDefault();
             loadDataset().then(() => {
                 runSimulation();
-            });            
+            });
+        });
+
+        // Aggiungi questo evento per aggiornare le date min e max quando cambia l'indice selezionato
+        $('#indexSelect').on('change', function () {
+            loadDataset().then(() => {
+                minDate = indexDatasetValues[0].Date;
+                maxDate = indexDatasetValues[indexDatasetValues.length - 1].Date;
+                // Imposta i valori di default per le date di inizio e fine
+                $('#startDate').val(minDate);
+                $('#endDate').val(maxDate);
+            }).catch(error => {
+                console.error("Errore durante il caricamento del dataset:", error);
+            });
         });
 
         // Aggiungi evento per il pulsante di reset dello zoom
