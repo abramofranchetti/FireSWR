@@ -162,6 +162,9 @@
         <canvas id="percentageChartCanvas" height="100"></canvas>
         <!-- Risultati della simulazione -->
         <div id="simulationResults" class="mt-4"></div>
+        <!-- Grafico drawdown-->
+        <h4 class="text-center">Grafico del Drawdown</h4>
+        <canvas id="drawdownChartCanvas" height="100"></canvas>
     </div>
 
     <script>
@@ -174,6 +177,11 @@
         // Variabile per la Chart.js (per aggiornare il grafico se necessario)
         let chartInstance = null;
         let percentageChartInstance = null;
+        let drawdownChartInstance = null;
+
+        // Array per memorizzare i drawdown giornalieri
+        const drawdownNetissimoDollar = [];
+        const drawdownNettissimoEur = [];
 
         let mindate = new Date("2000-01-01");
         let maxdate = new Date("2025-01-01");
@@ -181,6 +189,16 @@
         // Funzione per convertire una stringa data ("YYYY-MM-DD") in oggetto Date
         function parseDate(dateStr) {
             return new Date(dateStr);
+        }
+        // Funzione per calcolare il drawdown giornaliero
+        function calcolaDrawdownGiornaliero(valori) {
+            let maxValore = valori[0];
+            return valori.map(valore => {
+                if (valore > maxValore) {
+                    maxValore = valore;
+                }
+                return (maxValore - valore) / maxValore;
+            });
         }
 
         // Carica il dataset dal file
@@ -308,6 +326,92 @@
                 }
             }
             return maxDrawdownValore;
+        }
+
+        // Funzione per creare il grafico del drawdown
+        function createDrawdownChart(dates, drawdownNetEur, drawdownNetDollar) {
+            const ctx = document.getElementById('drawdownChartCanvas').getContext('2d');
+            if (drawdownChartInstance) {
+                drawdownChartInstance.destroy();
+            }
+            drawdownChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Drawdown Nettissimo (€)',
+                            data: drawdownNetEur.map(value => value * -100),
+                            borderColor: 'rgba(255, 99, 132, 0.6)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Drawdown Nettissimo ($)',
+                            data: drawdownNetDollar.map(value => value * -100),
+                            borderColor: 'rgba(54, 162, 235, 0.6)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        zoom: {
+                            zoom: {
+                                wheel: {
+                                    enabled: false,
+                                },
+                                pinch: {
+                                    enabled: false
+                                },
+                                mode: 'x',
+                                drag: {
+                                    enabled: true,
+                                    backgroundColor: 'rgba(0,0,0,0.3)',
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'month',
+                                tooltipFormat: 'yyyy-MM-dd'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Data'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Drawdown (%)'
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         // Funzione per creare il grafico percentuale
@@ -503,6 +607,10 @@
                 grossValuesEur.push(currentGrossEur);
                 netValuesEur.push(currentNetEur);
                 nettissimoValuesEur.push(currentNettissimoEur);
+                // Calcola il drawdown giornaliero
+                drawdownNetissimoDollar.push((Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]) / Math.max(...nettissimoValuesDollar.slice(0, i + 1)));
+                drawdownNettissimoEur.push((Math.max(...nettissimoValuesEur.slice(0, i + 1)) - nettissimoValuesEur[i]) / Math.max(...nettissimoValuesEur.slice(0, i + 1)));
+
             }
 
             // Calcola la volatilità (deviazione standard)
@@ -530,6 +638,7 @@
             const maxDrawdownValoreNetEur = calcolaMaxDrawdownValore(netValuesEur);
             const maxDrawdownValoreNetDollar = calcolaMaxDrawdownValore(netValuesDollar);
             createPercentageChart(dates, nettissimoValuesEur, nettissimoValuesDollar);
+            createDrawdownChart(dates, drawdownNettissimoEur, drawdownNetissimoDollar);
             // Crea (o aggiorna) il grafico con Chart.js
             const ctx = document.getElementById('chartCanvas').getContext('2d');
             if (chartInstance) {
