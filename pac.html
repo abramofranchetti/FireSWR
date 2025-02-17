@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Simulazione Piano di Accumulo su ACWI (All Country Wordl Index) con Dati Storici Reali e gestione cambio €/$
+    <title>PAC SIMULATOR
     </title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -92,13 +92,13 @@
             <a href="/" class="home-button">🏠 Home</a>
         </div>
         <br>
-        <h1 class="mt-4 mb-4">Simulazione Piano di Accumulo Storico su indice ACWI (All Country World Index)</h1>
+        <h1 class="mt-4 mb-4">Simulazione Piano di Accumulo Storico</h1>
         <h3 class="text-center">Con dati Storici Reali e gestione cambio €/$ storico</h3>
         <div class="istruzioni">
             <p>
                 Questo calcolatore ti consente di simulare un piano di accumulo nel tempo utilizzando <strong>dati
-                    storici reali</strong> dell'indice
-                ACWI. Puoi impostare il capitale iniziale, il versamento mensile, il costo annuale (TER)
+                    storici reali</strong> dell'indice selezionato.
+                Puoi impostare il capitale iniziale, il versamento mensile, il costo annuale (TER)
                 e
                 le date di inizio e fine della simulazione. Il grafico mostra l'evoluzione del capitale lordo, netto e
                 nettissimo
@@ -106,7 +106,7 @@
                 nettissimo alla
                 data di fine, nonché le differenze rispetto al valore lordo.                
                 <br>
-                Selezionare una data tra il 2008 e il 2024 per iniziare la simulazione.
+                Selezionare una data tra quelle disponibili nello storico del relativo indice.
                 <br>
                 <strong>Per Lordo si intente il rendimento senza spese e tasse, per Netto si intende il rendimento dopo
                     l'applicazione del TER e Nettissimo è il risultato netto dopo l'applicazione della tassazione del
@@ -118,6 +118,13 @@
         <!-- Form di input -->
         <form id="simulationForm" class="mb-4">
             <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="indexSelect">Seleziona Indice:</label>
+                    <select class="form-control" id="indexSelect" required>
+                        <option value="acwi">ACWI (All Country World Index)</option>
+                        <option value="sp500">SP500 TR</option>
+                    </select>
+                </div>
                 <div class="form-group col-md-3">
                     <label for="initialCapitalEur">Capitale Iniziale (€):</label>
                     <input type="number" class="form-control" id="initialCapitalEur" placeholder="es. 10000" required
@@ -173,7 +180,10 @@
 
         // Carica il dataset dal file
         function loadDataset() {
-            return fetch('acwi.json')
+            const selectedIndex = $('#indexSelect').val();
+            const datasetFile = selectedIndex + '.json';
+
+            return fetch(datasetFile)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Errore nel caricamento del dataset: " + response.statusText);
@@ -720,7 +730,9 @@
         // Gestione del submit del form
         $('#simulationForm').on('submit', function (e) {
             e.preventDefault();
-            runSimulation();
+            loadDataset().then(() => {
+                runSimulation();
+            });            
         });
 
         // Aggiungi evento per il pulsante di reset dello zoom
