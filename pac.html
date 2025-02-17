@@ -156,9 +156,10 @@
         </form>
 
         <!-- Grafico -->
+        <h4 class="text-center">Grafico in denaro</h4>
         <canvas id="chartCanvas" height="100"></canvas>
-
-
+        <h4 class="text-center">Grafico in %</h4>
+        <canvas id="percentageChartCanvas" height="100"></canvas>
         <!-- Risultati della simulazione -->
         <div id="simulationResults" class="mt-4"></div>
     </div>
@@ -172,6 +173,7 @@
 
         // Variabile per la Chart.js (per aggiornare il grafico se necessario)
         let chartInstance = null;
+        let percentageChartInstance = null;
 
         let mindate = new Date("2000-01-01");
         let maxdate = new Date("2025-01-01");
@@ -308,6 +310,92 @@
             return maxDrawdownValore;
         }
 
+        // Funzione per creare il grafico percentuale
+        function createPercentageChart(dates, netValuesEur, netValuesDollar) {
+            const ctx = document.getElementById('percentageChartCanvas').getContext('2d');
+            if (percentageChartInstance) {
+                percentageChartInstance.destroy();
+            }
+            percentageChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Nettissimo (€)',
+                            data: netValuesEur.map((value, index) => ((value / netValuesEur[0]) - 1) * 100),
+                            borderColor: 'rgba(255, 99, 132, 0.6)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Nettissimo ($)',
+                            data: netValuesDollar.map((value, index) => ((value / netValuesDollar[0]) - 1) * 100),
+                            borderColor: 'rgba(54, 162, 235, 0.6)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        zoom: {
+                            zoom: {
+                                wheel: {
+                                    enabled: false,
+                                },
+                                pinch: {
+                                    enabled: false
+                                },
+                                mode: 'x',
+                                drag: {
+                                    enabled: true,
+                                    backgroundColor: 'rgba(0,0,0,0.3)',
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'month',
+                                tooltipFormat: 'yyyy-MM-dd'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Data'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Percentuale'
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
 
         // Funzione per eseguire la simulazione
         function runSimulation() {
@@ -441,7 +529,7 @@
             const maxDrawdownNetEur = calcolaMaxDrawdown(netValuesEur);
             const maxDrawdownValoreNetEur = calcolaMaxDrawdownValore(netValuesEur);
             const maxDrawdownValoreNetDollar = calcolaMaxDrawdownValore(netValuesDollar);
-
+            createPercentageChart(dates, nettissimoValuesEur, nettissimoValuesDollar);
             // Crea (o aggiorna) il grafico con Chart.js
             const ctx = document.getElementById('chartCanvas').getContext('2d');
             if (chartInstance) {
@@ -572,7 +660,7 @@
                                 text: 'Data'
                             }
                         },
-                        y: {                            
+                        y: {
                             title: {
                                 display: true,
                                 text: 'Valore'
@@ -581,6 +669,7 @@
                     }
                 }
             });
+
 
             // Funzione per formattare i numeri in euro con separatore delle migliaia
             function formatEuro(value) {
