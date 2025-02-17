@@ -156,15 +156,17 @@
         </form>
 
         <!-- Grafico -->
-        <h4 class="text-center">Grafico in denaro</h4>
+        <h4 class="text-center">Andamento in denaro</h4>
         <canvas id="chartCanvas" height="100"></canvas>
-        <h4 class="text-center">Grafico in %</h4>
+        <h4 class="text-center">Andamento in %</h4>
         <canvas id="percentageChartCanvas" height="100"></canvas>
         <!-- Risultati della simulazione -->
         <div id="simulationResults" class="mt-4"></div>
         <!-- Grafico drawdown-->
-        <h4 class="text-center">Grafico del Drawdown</h4>
+        <h4 class="text-center">Andamento Drawdown percentuale</h4>
         <canvas id="drawdownChartCanvas" height="100"></canvas>
+        <h4 class="text-center">Andamento Drawdown in denaro</h4>
+        <canvas id="drawdownValueChartCanvas" height="100"></canvas>
     </div>
 
     <script>
@@ -178,12 +180,7 @@
         let chartInstance = null;
         let percentageChartInstance = null;
         let drawdownChartInstance = null;
-
-        // Array per memorizzare i drawdown giornalieri
-        const drawdownNettissimoDollar = [];
-        const drawdownNettissimoEur = [];
-        const drawdownNettissimoEurValore = [];
-        const drawdownNettissimoDollarValore = [];
+        let drawdownValueChartInstance = null;
 
         let minDate = new Date("2000-01-01");
         let maxDate = new Date("2025-01-01");
@@ -265,10 +262,10 @@
                     // Ordiniamo il dataset per data (crescente)
                     var sortedData = data
                         .sort((a, b) => new Date(a.Date) - new Date(b.Date))
-                        .filter(item => {                        
-                        return item.Date >= minDate && item.Date <= maxDate;
-                    });
-                    
+                        .filter(item => {
+                            return item.Date >= minDate && item.Date <= maxDate;
+                        });
+
                     exchangeRates = indexDatasetValues.map(item => {
                         const exchangeRate = sortedData.find(rate => rate.Date === item.Date);
                         return exchangeRate ? parseFloat(exchangeRate.Close) : null;
@@ -421,6 +418,92 @@
             });
         }
 
+        // Funzione per creare il grafico del drawdown
+        function createDrawdownValueChart(dates, drawdownNetEur, drawdownNetDollar) {
+            const ctx = document.getElementById('drawdownValueChartCanvas').getContext('2d');
+            if (drawdownValueChartInstance) {
+                drawdownValueChartInstance.destroy();
+            }
+            drawdownValueChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Drawdown Nettissimo (€)',
+                            data: drawdownNetEur.map(value => value * -1),
+                            borderColor: 'rgba(255, 99, 132, 0.6)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Drawdown Nettissimo ($)',
+                            data: drawdownNetDollar.map(value => value * -1),
+                            borderColor: 'rgba(54, 162, 235, 0.6)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        zoom: {
+                            zoom: {
+                                wheel: {
+                                    enabled: false,
+                                },
+                                pinch: {
+                                    enabled: false
+                                },
+                                mode: 'x',
+                                drag: {
+                                    enabled: true,
+                                    backgroundColor: 'rgba(0,0,0,0.3)',
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'month',
+                                tooltipFormat: 'yyyy-MM-dd'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Data'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Drawdown (Valore)'
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         // Funzione per creare il grafico percentuale
         function createPercentageChart(dates, netValuesEur, netValuesDollar) {
             const ctx = document.getElementById('percentageChartCanvas').getContext('2d');
@@ -510,6 +593,11 @@
 
         // Funzione per eseguire la simulazione
         function runSimulation() {
+            // Array per memorizzare i drawdown giornalieri
+            const drawdownNettissimoDollar = [];
+            const drawdownNettissimoEur = [];
+            const drawdownNettissimoEurValore = [];
+            const drawdownNettissimoDollarValore = [];
             // Legge i parametri di input
             const initialCapitalEur = parseFloat($('#initialCapitalEur').val());
             const monthlyDepositEur = parseFloat($('#monthlyDepositEur').val());
@@ -619,7 +707,7 @@
                 drawdownNettissimoEur.push((Math.max(...nettissimoValuesEur.slice(0, i + 1)) - nettissimoValuesEur[i]) / Math.max(...nettissimoValuesEur.slice(0, i + 1)));
                 // in valore invece che %
                 drawdownNettissimoEurValore.push(Math.max(...nettissimoValuesEur.slice(0, i + 1)) - nettissimoValuesEur[i]);
-                drawdownNettissimoDollarValore.push(Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]);  
+                drawdownNettissimoDollarValore.push(Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]);
             }
 
             // Calcola la volatilità (deviazione standard)
@@ -654,16 +742,17 @@
             const maxDrawdownValoreNettissimoEur = Math.max(...drawdownNettissimoEurValore);
             // in valore
             const maxDrawdownValoreNettissimoDollar = Math.max(...drawdownNettissimoDollarValore);
-            
+
             const maxDrawdownValoreNettissimoEurIndex = drawdownNettissimoEurValore.indexOf(maxDrawdownValoreNettissimoEur);
             const maxDrawdownValoreNettissimoEurDate = dates[maxDrawdownValoreNettissimoEurIndex];
             const maxDrawdownValoreNettissimoDollarIndex = drawdownNettissimoDollarValore.indexOf(maxDrawdownValoreNettissimoDollar);
             const maxDrawdownValoreNettissimoDollarDate = dates[maxDrawdownValoreNettissimoDollarIndex];
             const maxDrawdownNettissimoTotValueEur = nettissimoValuesEur[maxDrawdownValoreNettissimoEurIndex];
-            const maxDrawdownNettissimoTotValueDollar = nettissimoValuesDollar[maxDrawdownValoreNettissimoDollarIndex];            
+            const maxDrawdownNettissimoTotValueDollar = nettissimoValuesDollar[maxDrawdownValoreNettissimoDollarIndex];
 
             createPercentageChart(dates, nettissimoValuesEur, nettissimoValuesDollar);
             createDrawdownChart(dates, drawdownNettissimoEur, drawdownNettissimoDollar);
+            createDrawdownValueChart(dates, drawdownNettissimoEurValore, drawdownNettissimoDollarValore);
             // Crea (o aggiorna) il grafico con Chart.js
             const ctx = document.getElementById('chartCanvas').getContext('2d');
             if (chartInstance) {
@@ -920,14 +1009,14 @@
                 </strong> perdita del ${formatPercent(maxDrawdownNettissimoEur * 100)} 
                 in data ${maxDrawdownNettissimoEuroDate} 
                 (su capitale che al momento era di ${formatEuro(nettissimoValuesEur[maxDrawdownNettissimoEuroIndex])}
-                al netto delle tasse) quindi una perdita di ${formatEuro(nettissimoValuesEur[maxDrawdownNettissimoEuroIndex]*maxDrawdownNettissimoEur)}</p>`;
+                al netto delle tasse) quindi una perdita di ${formatEuro(nettissimoValuesEur[maxDrawdownNettissimoEuroIndex] * maxDrawdownNettissimoEur)}</p>`;
             resultHtml += `<p><strong>Drawdown Massimo (MDD) in euro (sul nettissimo):
                 </strong> in data ${maxDrawdownValoreNettissimoEurDate} perdita di 
                 ${formatEuro(maxDrawdownValoreNettissimoEur)} 
                 dal precedente massimo, portando il capitale a un minimo locale di
                 ${formatEuro(maxDrawdownNettissimoTotValueEur)} 
-                (la perdita % però non è un massimo  ma è di solo il ${formatPercent(drawdownNettissimoEur[maxDrawdownValoreNettissimoEurIndex]*100)}%)
-                </p>`;                                
+                (la perdita percentuale però non è un massimo  ma è di solo il ${formatPercent(drawdownNettissimoEur[maxDrawdownValoreNettissimoEurIndex] * 100)})
+                </p>`;
             resultHtml += `</div>`;
 
             resultHtml += `</div>`;
@@ -970,18 +1059,18 @@
 
             resultHtml += `<div class="box">`;
             resultHtml += `<p><strong>Volatilità (Deviazione Standard) $ (sul nettissimo):</strong> ${formatPercent(volatilitaNetDollar * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) € in % (sul nettissimo):
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) $ in % (sul nettissimo):
                 </strong> perdita del ${formatPercent(maxDrawdownNettissimoDollar * 100)} 
                 in data ${maxDrawdownNettissimoDollarDate} 
                 (su capitale che al momento era di ${formatDollar(nettissimoValuesDollar[maxDrawdownNettissimoDollarIndex])}
-                al netto delle tasse) quindi una perdita di ${formatDollar(nettissimoValuesDollar[maxDrawdownNettissimoDollarIndex]*maxDrawdownNettissimoDollar)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) in euro (sul nettissimo):
+                al netto delle tasse) quindi una perdita di ${formatDollar(nettissimoValuesDollar[maxDrawdownNettissimoDollarIndex] * maxDrawdownNettissimoDollar)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) in $ (sul nettissimo):
                 </strong> in data ${maxDrawdownValoreNettissimoDollarDate} perdita di 
                 ${formatDollar(maxDrawdownValoreNettissimoDollar)} 
                 dal precedente massimo, portando il capitale a un minimo locale di
                 ${formatDollar(maxDrawdownNettissimoTotValueDollar)} 
-                (la perdita percentuale però non è un massimo  ma è di solo il ${formatPercent(drawdownNettissimoDollar[maxDrawdownValoreNettissimoDollarIndex]*100)})
-                </p>`;    
+                (la perdita percentuale però non è un massimo  ma è di solo il ${formatPercent(drawdownNettissimoDollar[maxDrawdownValoreNettissimoDollarIndex] * 100)})
+                </p>`;
             resultHtml += `</div>`;
 
 
