@@ -183,8 +183,8 @@
         const drawdownNetissimoDollar = [];
         const drawdownNettissimoEur = [];
 
-        let mindate = new Date("2000-01-01");
-        let maxdate = new Date("2025-01-01");
+        let minDate = new Date("2000-01-01");
+        let maxDate = new Date("2025-01-01");
 
         // Funzione per convertire una stringa data ("YYYY-MM-DD") in oggetto Date
         function parseDate(dateStr) {
@@ -261,11 +261,12 @@
                 .then(data => {
                     // Assumiamo che data sia un array di oggetti con campi "Date" e "Close"
                     // Ordiniamo il dataset per data (crescente)
-                    var sortedData = data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
-                    sortedData = sortedData.filter(item => {
-                        const itemDate = new Date(item.Date);
-                        return itemDate >= mindate && itemDate <= maxdate;
+                    var sortedData = data
+                        .sort((a, b) => new Date(a.Date) - new Date(b.Date))
+                        .filter(item => {                        
+                        return item.Date >= minDate && item.Date <= maxDate;
                     });
+                    
                     exchangeRates = indexDatasetValues.map(item => {
                         const exchangeRate = sortedData.find(rate => rate.Date === item.Date);
                         return exchangeRate ? parseFloat(exchangeRate.Close) : null;
@@ -637,10 +638,10 @@
             const volatilitaNetDollar = calcolaDeviazioneStandard(rendimentiGiornalieriNetDollar);
 
             // Calcola il drawdown massimo sul netto
-            const maxDrawdownNetDollar = calcolaMaxDrawdown(netValuesDollar);
-            const maxDrawdownNetEur = calcolaMaxDrawdown(netValuesEur);
-            const maxDrawdownValoreNetEur = calcolaMaxDrawdownValore(netValuesEur);
-            const maxDrawdownValoreNetDollar = calcolaMaxDrawdownValore(netValuesDollar);
+            const maxDrawdownNettissimoDollar = calcolaMaxDrawdown(nettissimoValuesDollar);
+            const maxDrawdownNettissimoEur = calcolaMaxDrawdown(nettissimoValuesEur);
+            const maxDrawdownValoreNettissimoEur = calcolaMaxDrawdownValore(nettissimoValuesEur);
+            const maxDrawdownValoreNettissimoDollar = calcolaMaxDrawdownValore(nettissimoValuesDollar);
             createPercentageChart(dates, nettissimoValuesEur, nettissimoValuesDollar);
             createDrawdownChart(dates, drawdownNettissimoEur, drawdownNetissimoDollar);
             // Crea (o aggiorna) il grafico con Chart.js
@@ -705,7 +706,7 @@
                         },
                         {
                             label: 'Netto (€)',
-                            data: netValuesEur,
+                            data: nettissimoValuesEur,
                             borderColor: 'rgba(255, 99, 132, 0.6)',
                             backgroundColor: 'rgba(255, 99, 132, 0.1)',
                             fill: false,
@@ -887,16 +888,16 @@
             resultHtml += `</div>`;
 
             resultHtml += `<div class="box">`;
-            resultHtml += `<p><strong>Diff. Lordo - Netto  (TWR Terminal Wealth Ratio):</strong> ${formatEuro(diffGrossNetDollar)} (${formatPercent(diffGrossNetPercDollar)})</p>`;
-            resultHtml += `<p><strong>Diff. Lordo - Nettissimo (tassazione effetiva sul totale lordo):</strong> ${formatEuro(diffGrossNettissimoDollar)} (${formatPercent(diffGrossNettissimoPercDollar)})</p>`;
+            resultHtml += `<p><strong>Diff. Lordo - Netto  (TWR Terminal Wealth Ratio) ossia Impatto del TER:</strong> ${formatEuro(diffGrossNetDollar)} (${formatPercent(diffGrossNetPercDollar)})</p>`;
+            resultHtml += `<p><strong>Diff. Lordo - Nettissimo (tassazione effetiva sul totale lordo e spese TER):</strong> ${formatEuro(diffGrossNettissimoDollar)} (${formatPercent(diffGrossNettissimoPercDollar)})</p>`;
             resultHtml += `<p>Nota, questa percentuale può risultare < 26% perchè mostrando la differenza con il lordo, comprende anche il TER, che in quanto spesa, non partecipa al capital gain e non viene tassata.
                 Inoltre, solo il gain viene tassato al 26% e non l'intera somma lorda.</p>`;
             resultHtml += `</div>`;
 
             resultHtml += `<div class="box">`;
-            resultHtml += `<p><strong>Volatilità (Deviazione Standard) € (sul netto):</strong> ${formatPercent(volatilitaNetEur * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) € (sul netto):</strong> perdita del ${formatPercent(maxDrawdownNetEur * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) (€) (sul netto):</strong> perdita di ${formatEuro(maxDrawdownValoreNetEur)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNetEur / maxDrawdownNetEur)})</p>`;
+            resultHtml += `<p><strong>Volatilità (Deviazione Standard) € (sul nettissimo):</strong> ${formatPercent(volatilitaNetEur * 100)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) € (sul nettissimo):</strong> perdita del ${formatPercent(maxDrawdownNettissimoEur * 100)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) (€) (sul nettissimo):</strong> perdita di ${formatEuro(maxDrawdownValoreNettissimoEur)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNettissimoEur / maxDrawdownNettissimoEur)} al netto delle tasse)</p>`;
             resultHtml += `</div>`;
 
             resultHtml += `</div>`;
@@ -938,9 +939,9 @@
             resultHtml += `</div>`;
 
             resultHtml += `<div class="box">`;
-            resultHtml += `<p><strong>Volatilità (Deviazione Standard) $ (sul netto):</strong> ${formatPercent(volatilitaNetDollar * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) $ (sul netto):</strong> perdita del ${formatPercent(maxDrawdownNetDollar * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) ($) (sul netto):</strong> perdita di ${formatDollar(maxDrawdownValoreNetDollar)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNetDollar / maxDrawdownNetDollar)})</p>`;
+            resultHtml += `<p><strong>Volatilità (Deviazione Standard) $ (sul nettissimo):</strong> ${formatPercent(volatilitaNetDollar * 100)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) $ (sul nettissimo):</strong> perdita del ${formatPercent(maxDrawdownNettissimoDollar * 100)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) ($) (sul nettissimo):</strong> perdita di ${formatDollar(maxDrawdownValoreNettissimoDollar)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNettissimoDollar / maxDrawdownNettissimoDollar)} al netto delle tasse)</p>`;
             resultHtml += `</div>`;
 
 
