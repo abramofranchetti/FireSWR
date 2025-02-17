@@ -180,8 +180,10 @@
         let drawdownChartInstance = null;
 
         // Array per memorizzare i drawdown giornalieri
-        const drawdownNetissimoDollar = [];
+        const drawdownNettissimoDollar = [];
         const drawdownNettissimoEur = [];
+        const drawdownNettissimoEurValore = [];
+        const drawdownNettissimoDollarValore = [];
 
         let minDate = new Date("2000-01-01");
         let maxDate = new Date("2025-01-01");
@@ -613,9 +615,11 @@
                 netValuesEur.push(currentNetEur);
                 nettissimoValuesEur.push(currentNettissimoEur);
                 // Calcola il drawdown giornaliero
-                drawdownNetissimoDollar.push((Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]) / Math.max(...nettissimoValuesDollar.slice(0, i + 1)));
+                drawdownNettissimoDollar.push((Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]) / Math.max(...nettissimoValuesDollar.slice(0, i + 1)));
                 drawdownNettissimoEur.push((Math.max(...nettissimoValuesEur.slice(0, i + 1)) - nettissimoValuesEur[i]) / Math.max(...nettissimoValuesEur.slice(0, i + 1)));
-
+                // in valore invece che %
+                drawdownNettissimoEurValore.push(Math.max(...nettissimoValuesEur.slice(0, i + 1)) - nettissimoValuesEur[i]);
+                drawdownNettissimoDollarValore.push(Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]);  
             }
 
             // Calcola la volatilità (deviazione standard)
@@ -638,12 +642,28 @@
             const volatilitaNetDollar = calcolaDeviazioneStandard(rendimentiGiornalieriNetDollar);
 
             // Calcola il drawdown massimo sul netto
-            const maxDrawdownNettissimoDollar = calcolaMaxDrawdown(nettissimoValuesDollar);
-            const maxDrawdownNettissimoEur = calcolaMaxDrawdown(nettissimoValuesEur);
-            const maxDrawdownValoreNettissimoEur = calcolaMaxDrawdownValore(nettissimoValuesEur);
-            const maxDrawdownValoreNettissimoDollar = calcolaMaxDrawdownValore(nettissimoValuesDollar);
+            // in %
+            const maxDrawdownNettissimoDollar = Math.max(...drawdownNettissimoDollar);
+            const maxDrawdownNettissimoDollarIndex = drawdownNettissimoDollar.indexOf(maxDrawdownNettissimoDollar);
+            const maxDrawdownNettissimoDollarDate = dates[maxDrawdownNettissimoDollarIndex];
+            // in %
+            const maxDrawdownNettissimoEur = Math.max(...drawdownNettissimoEur);
+            const maxDrawdownNettissimoEuroIndex = drawdownNettissimoEur.indexOf(maxDrawdownNettissimoEur);
+            const maxDrawdownNettissimoEuroDate = dates[maxDrawdownNettissimoEuroIndex];
+            // in valore
+            const maxDrawdownValoreNettissimoEur = Math.max(...drawdownNettissimoEurValore);
+            // in valore
+            const maxDrawdownValoreNettissimoDollar = Math.max(...drawdownNettissimoDollarValore);
+            
+            const maxDrawdownValoreNettissimoEurIndex = drawdownNettissimoEurValore.indexOf(maxDrawdownValoreNettissimoEur);
+            const maxDrawdownValoreNettissimoEurDate = dates[maxDrawdownValoreNettissimoEurIndex];
+            const maxDrawdownValoreNettissimoDollarIndex = drawdownNettissimoDollarValore.indexOf(maxDrawdownValoreNettissimoDollar);
+            const maxDrawdownValoreNettissimoDollarDate = dates[maxDrawdownValoreNettissimoDollarIndex];
+            const maxDrawdownNettissimoTotValueEur = nettissimoValuesEur[maxDrawdownValoreNettissimoEurIndex];
+            const maxDrawdownNettissimoTotValueDollar = nettissimoValuesDollar[maxDrawdownValoreNettissimoDollarIndex];            
+
             createPercentageChart(dates, nettissimoValuesEur, nettissimoValuesDollar);
-            createDrawdownChart(dates, drawdownNettissimoEur, drawdownNetissimoDollar);
+            createDrawdownChart(dates, drawdownNettissimoEur, drawdownNettissimoDollar);
             // Crea (o aggiorna) il grafico con Chart.js
             const ctx = document.getElementById('chartCanvas').getContext('2d');
             if (chartInstance) {
@@ -896,8 +916,18 @@
 
             resultHtml += `<div class="box">`;
             resultHtml += `<p><strong>Volatilità (Deviazione Standard) € (sul nettissimo):</strong> ${formatPercent(volatilitaNetEur * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) € (sul nettissimo):</strong> perdita del ${formatPercent(maxDrawdownNettissimoEur * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) (€) (sul nettissimo):</strong> perdita di ${formatEuro(maxDrawdownValoreNettissimoEur)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNettissimoEur / maxDrawdownNettissimoEur)} al netto delle tasse)</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) € in % (sul nettissimo):
+                </strong> perdita del ${formatPercent(maxDrawdownNettissimoEur * 100)} 
+                in data ${maxDrawdownNettissimoEuroDate} 
+                (su capitale che al momento era di ${formatEuro(nettissimoValuesEur[maxDrawdownNettissimoEuroIndex])}
+                al netto delle tasse) quindi una perdita di ${formatEuro(nettissimoValuesEur[maxDrawdownNettissimoEuroIndex]*maxDrawdownNettissimoEur)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) in euro (sul nettissimo):
+                </strong> in data ${maxDrawdownValoreNettissimoEurDate} perdita di 
+                ${formatEuro(maxDrawdownValoreNettissimoEur)} 
+                dal precedente massimo, portando il capitale a un minimo locale di
+                ${formatEuro(maxDrawdownNettissimoTotValueEur)} 
+                (la perdita % però non è un massimo  ma è di solo il ${formatPercent(drawdownNettissimoEur[maxDrawdownValoreNettissimoEurIndex]*100)}%)
+                </p>`;                                
             resultHtml += `</div>`;
 
             resultHtml += `</div>`;
@@ -940,8 +970,18 @@
 
             resultHtml += `<div class="box">`;
             resultHtml += `<p><strong>Volatilità (Deviazione Standard) $ (sul nettissimo):</strong> ${formatPercent(volatilitaNetDollar * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) $ (sul nettissimo):</strong> perdita del ${formatPercent(maxDrawdownNettissimoDollar * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) ($) (sul nettissimo):</strong> perdita di ${formatDollar(maxDrawdownValoreNettissimoDollar)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNettissimoDollar / maxDrawdownNettissimoDollar)} al netto delle tasse)</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) € in % (sul nettissimo):
+                </strong> perdita del ${formatPercent(maxDrawdownNettissimoDollar * 100)} 
+                in data ${maxDrawdownNettissimoDollarDate} 
+                (su capitale che al momento era di ${formatDollar(nettissimoValuesDollar[maxDrawdownNettissimoDollarIndex])}
+                al netto delle tasse) quindi una perdita di ${formatDollar(nettissimoValuesDollar[maxDrawdownNettissimoDollarIndex]*maxDrawdownNettissimoDollar)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) in euro (sul nettissimo):
+                </strong> in data ${maxDrawdownValoreNettissimoDollarDate} perdita di 
+                ${formatDollar(maxDrawdownValoreNettissimoDollar)} 
+                dal precedente massimo, portando il capitale a un minimo locale di
+                ${formatDollar(maxDrawdownNettissimoTotValueDollar)} 
+                (la perdita percentuale però non è un massimo  ma è di solo il ${formatPercent(drawdownNettissimoDollar[maxDrawdownValoreNettissimoDollarIndex]*100)})
+                </p>`;    
             resultHtml += `</div>`;
 
 
