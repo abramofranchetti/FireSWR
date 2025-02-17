@@ -280,6 +280,7 @@
             const terFee = parseFloat($('#terFee').val()); // espresso in percentuale
             const startDate = new Date($('#startDate').val());
             const endDate = new Date($('#endDate').val());
+            const initialCapitalDollar = initialCapitalEur * exchangeRates[0];            
 
             // Filtra il dataset per il range di date selezionato
             const simData = dataset.filter(item => {
@@ -294,37 +295,37 @@
 
             // Array per memorizzare le date e i valori simulati
             const dates = [];
-            const grossValues = [];
-            const netValues = [];
-            const nettissimoValues = [];
-            const totalDeposits = [];
+            const grossValuesDollar = [];
+            const netValuesDollar = [];
+            const nettissimoValuesDollar = [];
+            const totalDepositsDollar = [];
             const grossValuesEur = [];
             const netValuesEur = [];
             const nettissimoValuesEur = [];
             const totalDepositsEur = [];
 
             // Per il calcolo delle plusvalenze, memorizziamo i contributi cumulativi
-            let cumulativeContributions = initialCapitalEur * exchangeRates[0];
+            let cumulativeContributionsDollar = initialCapitalEur * exchangeRates[0];
             let cumulativeContributionsEur = initialCapitalEur;
 
             // Per applicare il TER su base giornaliera (si assume 252 giorni di trading/anno)
             const terDaily = (terFee / 100) / 252;
 
             // Inizializziamo la simulazione con il primo giorno disponibile
-            let currentGross = initialCapitalEur * exchangeRates[0];
-            let currentNet = initialCapitalEur * exchangeRates[0];
+            let currentGrossDollar = initialCapitalEur * exchangeRates[0];
+            let currentNetDollar = initialCapitalEur * exchangeRates[0];
             let currentGrossEur = initialCapitalEur;
             let currentNetEur = initialCapitalEur;
             dates.push(simData[0].Date);
-            grossValues.push(currentGross);
-            netValues.push(currentNet);
-            totalDeposits.push(currentGross);
+            grossValuesDollar.push(currentGrossDollar);
+            netValuesDollar.push(currentNetDollar);
+            totalDepositsDollar.push(currentGrossDollar);
             grossValuesEur.push(currentGrossEur);
             netValuesEur.push(currentNetEur);
             totalDepositsEur.push(currentGrossEur);
-            let gain = currentNet - cumulativeContributions;
-            let currentNettissimo = currentNet - (gain > 0 ? gain * 0.26 : 0);
-            nettissimoValues.push(currentNettissimo);
+            let gainDollar = currentNetDollar - cumulativeContributionsDollar;
+            let currentNettissimoDollar = currentNetDollar - (gainDollar > 0 ? gainDollar * 0.26 : 0);
+            nettissimoValuesDollar.push(currentNettissimoDollar);
             let gainEur = currentNetEur - cumulativeContributionsEur;
             let currentNettissimoEur = currentNetEur - (gainEur > 0 ? gainEur * 0.26 : 0);
             nettissimoValuesEur.push(currentNettissimoEur);
@@ -335,55 +336,55 @@
             // Itera sui dati a partire dal secondo giorno
             for (let i = 1; i < simData.length; i++) {
                 // Calcola il rendimento giornaliero usando i dati "Close"
-                const prevPrice = parseFloat(simData[i - 1]["Close"]);
-                const currPrice = parseFloat(simData[i]["Close"]);
-                const dailyReturn = (currPrice / prevPrice) - 1;
+                const prevPriceDollar = parseFloat(simData[i - 1]["Close"]);
+                const currPriceDollar = parseFloat(simData[i]["Close"]);
+                const dailyReturnDollar = (currPriceDollar / prevPriceDollar) - 1;
 
                 // Aggiorna i valori lordo e netto in base al rendimento giornaliero
-                currentGross = currentGross * (1 + dailyReturn);
-                currentNet = currentNet * (1 + dailyReturn) * (1 - terDaily);
-                currentGrossEur = currentGross / exchangeRates[i];
-                currentNetEur = currentNet / exchangeRates[i];
+                currentGrossDollar = currentGrossDollar * (1 + dailyReturnDollar);
+                currentNetDollar = currentNetDollar * (1 + dailyReturnDollar) * (1 - terDaily);
+                currentGrossEur = currentGrossDollar / exchangeRates[i];
+                currentNetEur = currentNetDollar / exchangeRates[i];
 
                 // Se è cambiato il mese (rispetto all'ultimo deposito) aggiungiamo il versamento mensile
                 const currentDate = parseDate(simData[i].Date);
                 const currentMonth = currentDate.getMonth();
                 if (currentMonth !== lastDepositMonth) {
-                    currentGross += monthlyDepositEur * exchangeRates[i];
-                    currentNet += monthlyDepositEur * exchangeRates[i];
-                    cumulativeContributions += monthlyDepositEur * exchangeRates[i];
-                    totalDeposits.push(cumulativeContributions);
+                    currentGrossDollar += monthlyDepositEur * exchangeRates[i];
+                    currentNetDollar += monthlyDepositEur * exchangeRates[i];
+                    cumulativeContributionsDollar += monthlyDepositEur * exchangeRates[i];
+                    totalDepositsDollar.push(cumulativeContributionsDollar);
                     currentGrossEur += monthlyDepositEur;
                     currentNetEur += monthlyDepositEur;
                     cumulativeContributionsEur += monthlyDepositEur;
                     totalDepositsEur.push(cumulativeContributionsEur);
                     lastDepositMonth = currentMonth;
                 } else {
-                    totalDeposits.push(cumulativeContributions);
+                    totalDepositsDollar.push(cumulativeContributionsDollar);
                     totalDepositsEur.push(cumulativeContributionsEur);
                 }
 
                 // Calcola il valore "nettissimo": si tassano al 26% le plusvalenze (guadagno oltre i contributi)
-                gain = currentNet - cumulativeContributions;
-                currentNettissimo = currentNet - (gain > 0 ? gain * 0.26 : 0);
+                gainDollar = currentNetDollar - cumulativeContributionsDollar;
+                currentNettissimoDollar = currentNetDollar - (gainDollar > 0 ? gainDollar * 0.26 : 0);
                 gainEur = currentNetEur - cumulativeContributionsEur;
                 currentNettissimoEur = currentNetEur - (gainEur > 0 ? gainEur * 0.26 : 0);
 
                 // Salva i dati per il grafico
                 dates.push(simData[i].Date);
-                grossValues.push(currentGross);
-                netValues.push(currentNet);
-                nettissimoValues.push(currentNettissimo);
+                grossValuesDollar.push(currentGrossDollar);
+                netValuesDollar.push(currentNetDollar);
+                nettissimoValuesDollar.push(currentNettissimoDollar);
                 grossValuesEur.push(currentGrossEur);
                 netValuesEur.push(currentNetEur);
                 nettissimoValuesEur.push(currentNettissimoEur);
             }
 
             // Calcola la volatilità (deviazione standard)
-            const rendimentiGiornalieriNet = simData.map((item, index) => {
+            const rendimentiGiornalieriNetDollar = simData.map((item, index) => {
                 if (index === 0) return 0;
-                const prevNet = netValues[index - 1];
-                const currNet = netValues[index];
+                const prevNet = netValuesDollar[index - 1];
+                const currNet = netValuesDollar[index];
                 return (currNet / prevNet) - 1;
             }).slice(1);
 
@@ -396,13 +397,13 @@
             }).slice(1);
 
             const volatilitaNetEur = calcolaDeviazioneStandard(rendimentiGiornalieriNetEur);
-            const volatilitaNetDollar = calcolaDeviazioneStandard(rendimentiGiornalieriNet);
+            const volatilitaNetDollar = calcolaDeviazioneStandard(rendimentiGiornalieriNetDollar);
 
             // Calcola il drawdown massimo sul netto
-            const maxDrawdownNetDollar = calcolaMaxDrawdown(netValues);
+            const maxDrawdownNetDollar = calcolaMaxDrawdown(netValuesDollar);
             const maxDrawdownNetEur = calcolaMaxDrawdown(netValuesEur);
             const maxDrawdownValoreNetEur = calcolaMaxDrawdownValore(netValuesEur);
-            const maxDrawdownValoreNetDollar = calcolaMaxDrawdownValore(netValues);
+            const maxDrawdownValoreNetDollar = calcolaMaxDrawdownValore(netValuesDollar);
 
             // Crea (o aggiorna) il grafico con Chart.js
             const ctx = document.getElementById('chartCanvas').getContext('2d');
@@ -416,7 +417,7 @@
                     datasets: [
                         {
                             label: 'Lordo ($)',
-                            data: grossValues,
+                            data: grossValuesDollar,
                             borderColor: 'rgba(75, 192, 192, 1)',
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             fill: false,
@@ -426,7 +427,7 @@
                         },
                         {
                             label: 'Netto ($)',
-                            data: netValues,
+                            data: netValuesDollar,
                             borderColor: 'rgba(255, 99, 132, 1)',
                             backgroundColor: 'rgba(255, 99, 132, 0.2)',
                             fill: false,
@@ -436,7 +437,7 @@
                         },
                         {
                             label: 'Nettissimo ($)',
-                            data: nettissimoValues,
+                            data: nettissimoValuesDollar,
                             borderColor: 'rgba(54, 162, 235, 1)',
                             backgroundColor: 'rgba(54, 162, 235, 0.2)',
                             fill: false,
@@ -445,7 +446,7 @@
                         },
                         {
                             label: 'Totale Versato ($)',
-                            data: totalDeposits,
+                            data: totalDepositsDollar,
                             borderColor: 'rgba(255, 206, 86, 1)',
                             backgroundColor: 'rgba(255, 206, 86, 0.2)',
                             fill: false,
@@ -572,9 +573,9 @@
             }
 
             // Funzione per calcolare il rendimento totale e annualizzato (CAGR)
-            function calcolaRendimento(valoreFinale, valoreIniziale, anniTotali) {
-                const rendimentoTotale = (valoreFinale / valoreIniziale - 1) * 100;
-                const rendimentoAnnualizzato = ((valoreFinale / valoreIniziale) ** (1 / anniTotali) - 1) * 100;
+            function calcolaRendimento(valoreFinale, valoreIniziale, anniTotali, totaleVersamenti) {
+                const rendimentoTotale = ((valoreFinale - totaleVersamenti) / valoreIniziale - 1) * 100;
+                const rendimentoAnnualizzato = (((valoreFinale - totaleVersamenti) / valoreIniziale) ** (1 / anniTotali) - 1) * 100;
                 return {
                     rendimentoTotale: rendimentoTotale,
                     rendimentoAnnualizzato: rendimentoAnnualizzato
@@ -588,9 +589,9 @@
 
             // Visualizza i risultati finali della simulazione
             const finalIndex = dates.length - 1;
-            const finalGrossDollar = grossValues[finalIndex];
-            const finalNetDollar = netValues[finalIndex];
-            const finalNettissimoDollar = nettissimoValues[finalIndex];
+            const finalGrossDollar = grossValuesDollar[finalIndex];
+            const finalNetDollar = netValuesDollar[finalIndex];
+            const finalNettissimoDollar = nettissimoValuesDollar[finalIndex];
             const finalGrossEur = grossValuesEur[finalIndex];
             const finalNetEur = netValuesEur[finalIndex];
             const finalNettissimoEur = nettissimoValuesEur[finalIndex];
@@ -602,20 +603,18 @@
             const diffGrossNettissimoDollar = finalGrossDollar - finalNettissimoDollar;
             const diffGrossNettissimoPercDollar = (diffGrossNettissimoDollar / finalGrossDollar) * 100;
 
-            const anniTotali = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24 * 365.25); // Calcolo anni esatti
-            const capitaleInvestitoDollar = initialCapitalEur * exchangeRates[0] + (monthlyDepositEur * exchangeRates[0] * 12 * anniTotali);
-            const capitaleInvestitoEur = initialCapitalEur + (monthlyDepositEur * 12 * anniTotali);
+            const anniTotali = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24 * 365.25);            
 
-            const rendimentoLordoDollar = calcolaRendimento(finalGrossDollar, initialCapitalEur * exchangeRates[0], anniTotali);
-            const rendimentoNettoDollar = calcolaRendimento(finalNetDollar, initialCapitalEur * exchangeRates[0], anniTotali);
-            const rendimentoNettissimoDollar = calcolaRendimento(finalNettissimoDollar, initialCapitalEur * exchangeRates[0], anniTotali);
-            const rendimentoLordoEur = calcolaRendimento(finalGrossEur, initialCapitalEur, anniTotali);
-            const rendimentoNettoEur = calcolaRendimento(finalNetEur, initialCapitalEur, anniTotali);
-            const rendimentoNettissimoEur = calcolaRendimento(finalNettissimoEur, initialCapitalEur, anniTotali);
+            const rendimentoLordoDollar = calcolaRendimento(finalGrossDollar, initialCapitalDollar, anniTotali, cumulativeContributionsDollar);
+            const rendimentoNettoDollar = calcolaRendimento(finalNetDollar, initialCapitalDollar, anniTotali, cumulativeContributionsDollar);
+            const rendimentoNettissimoDollar = calcolaRendimento(finalNettissimoDollar, initialCapitalDollar, anniTotali, cumulativeContributionsDollar);
+            const rendimentoLordoEur = calcolaRendimento(finalGrossEur, initialCapitalEur, anniTotali, cumulativeContributionsEur);
+            const rendimentoNettoEur = calcolaRendimento(finalNetEur, initialCapitalEur, anniTotali, cumulativeContributionsEur);
+            const rendimentoNettissimoEur = calcolaRendimento(finalNettissimoEur, initialCapitalEur, anniTotali, cumulativeContributionsEur);
 
             let resultHtml = `<h3>Risultati della simulazione</h3>`;
             resultHtml += `<div class="box">`;
-            resultHtml += `<p><strong>Capitale Investito:</strong> ${formatEuro(capitaleInvestitoEur)}</p>`;
+            resultHtml += `<p><strong>Capitale Investito:</strong> ${formatEuro(cumulativeContributionsEur)}</p>`;
             resultHtml += `<p><strong>Durata Simulazione:</strong> ${anniTotali.toFixed(1)} anni</p>`;
             resultHtml += `</div>`;
 
