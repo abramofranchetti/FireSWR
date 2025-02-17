@@ -380,23 +380,23 @@
             }
 
             // Calcola la volatilità (deviazione standard)
-            const rendimentiGiornalieri = simData.map((item, index) => {
+            const rendimentiGiornalieriNet = simData.map((item, index) => {
                 if (index === 0) return 0;
-                const prevPrice = parseFloat(simData[index - 1]["Close"]);
-                const currPrice = parseFloat(item["Close"]);
-                return (currPrice / prevPrice) - 1;
+                const prevNet = netValues[index - 1];
+                const currNet = netValues[index];
+                return (currNet / prevNet) - 1;
             }).slice(1);
 
             // Calcola i rendimenti giornalieri in euro
-            const rendimentiGiornalieriEur = simData.map((item, index) => {
+            const rendimentiGiornalieriNetEur = simData.map((item, index) => {
                 if (index === 0) return 0;
-                const prevPriceEur = parseFloat(simData[index - 1]["Close"]) / exchangeRates[index - 1];
-                const currPriceEur = parseFloat(item["Close"]) / exchangeRates[index];
-                return (currPriceEur / prevPriceEur) - 1;
+                const prevNetEur = netValuesEur[index - 1];
+                const currNetEur = netValuesEur[index];
+                return (currNetEur / prevNetEur) - 1;
             }).slice(1);
 
-            const volatilitaEur = calcolaDeviazioneStandard(rendimentiGiornalieriEur);
-            const volatilitaDollar = calcolaDeviazioneStandard(rendimentiGiornalieri);
+            const volatilitaNetEur = calcolaDeviazioneStandard(rendimentiGiornalieriNetEur);
+            const volatilitaNetDollar = calcolaDeviazioneStandard(rendimentiGiornalieriNet);
 
             // Calcola il drawdown massimo sul netto
             const maxDrawdownNetDollar = calcolaMaxDrawdown(netValues);
@@ -588,27 +588,27 @@
 
             // Visualizza i risultati finali della simulazione
             const finalIndex = dates.length - 1;
-            const finalGross = grossValues[finalIndex];
-            const finalNet = netValues[finalIndex];
-            const finalNettissimo = nettissimoValues[finalIndex];
+            const finalGrossDollar = grossValues[finalIndex];
+            const finalNetDollar = netValues[finalIndex];
+            const finalNettissimoDollar = nettissimoValues[finalIndex];
             const finalGrossEur = grossValuesEur[finalIndex];
             const finalNetEur = netValuesEur[finalIndex];
             const finalNettissimoEur = nettissimoValuesEur[finalIndex];
 
             // Calcolo delle differenze
-            const diffGrossNet = finalGross - finalNet;
-            const diffGrossNetPerc = (diffGrossNet / finalGross) * 100;
+            const diffGrossNetDollar = finalGrossDollar - finalNetDollar;
+            const diffGrossNetPercDollar = (diffGrossNetDollar / finalGrossDollar) * 100;
 
-            const diffGrossNettissimo = finalGross - finalNettissimo;
-            const diffGrossNettissimoPerc = (diffGrossNettissimo / finalGross) * 100;
+            const diffGrossNettissimoDollar = finalGrossDollar - finalNettissimoDollar;
+            const diffGrossNettissimoPercDollar = (diffGrossNettissimoDollar / finalGrossDollar) * 100;
 
             const anniTotali = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24 * 365.25); // Calcolo anni esatti
-            const capitaleInvestito = initialCapitalEur * exchangeRates[0] + (monthlyDepositEur * exchangeRates[0] * 12 * anniTotali);
+            const capitaleInvestitoDollar = initialCapitalEur * exchangeRates[0] + (monthlyDepositEur * exchangeRates[0] * 12 * anniTotali);
             const capitaleInvestitoEur = initialCapitalEur + (monthlyDepositEur * 12 * anniTotali);
 
-            const rendimentoLordo = calcolaRendimento(finalGross, initialCapitalEur * exchangeRates[0], anniTotali);
-            const rendimentoNetto = calcolaRendimento(finalNet, initialCapitalEur * exchangeRates[0], anniTotali);
-            const rendimentoNettissimo = calcolaRendimento(finalNettissimo, initialCapitalEur * exchangeRates[0], anniTotali);
+            const rendimentoLordoDollar = calcolaRendimento(finalGrossDollar, initialCapitalEur * exchangeRates[0], anniTotali);
+            const rendimentoNettoDollar = calcolaRendimento(finalNetDollar, initialCapitalEur * exchangeRates[0], anniTotali);
+            const rendimentoNettissimoDollar = calcolaRendimento(finalNettissimoDollar, initialCapitalEur * exchangeRates[0], anniTotali);
             const rendimentoLordoEur = calcolaRendimento(finalGrossEur, initialCapitalEur, anniTotali);
             const rendimentoNettoEur = calcolaRendimento(finalNetEur, initialCapitalEur, anniTotali);
             const rendimentoNettissimoEur = calcolaRendimento(finalNettissimoEur, initialCapitalEur, anniTotali);
@@ -653,14 +653,14 @@
             resultHtml += `</div>`;
 
             resultHtml += `<div class="box">`;
-            resultHtml += `<p><strong>Diff. Lordo - Netto  (TWR Terminal Wealth Ratio):</strong> ${formatEuro(diffGrossNet)} (${formatPercent(diffGrossNetPerc)})</p>`;
-            resultHtml += `<p><strong>Diff. Lordo - Nettissimo (tassazione effetiva sul totale lordo):</strong> ${formatEuro(diffGrossNettissimo)} (${formatPercent(diffGrossNettissimoPerc)})</p>`;
+            resultHtml += `<p><strong>Diff. Lordo - Netto  (TWR Terminal Wealth Ratio):</strong> ${formatEuro(diffGrossNetDollar)} (${formatPercent(diffGrossNetPercDollar)})</p>`;
+            resultHtml += `<p><strong>Diff. Lordo - Nettissimo (tassazione effetiva sul totale lordo):</strong> ${formatEuro(diffGrossNettissimoDollar)} (${formatPercent(diffGrossNettissimoPercDollar)})</p>`;
             resultHtml += `<p>Nota, questa percentuale può risultare < 26% perchè mostrando la differenza con il lordo, comprende anche il TER, che in quanto spesa, non partecipa al capital gain e non viene tassata.
                 Inoltre, solo il gain viene tassato al 26% e non l'intera somma lorda.</p>`;
             resultHtml += `</div>`;
 
             resultHtml += `<div class="box">`;
-            resultHtml += `<p><strong>Volatilità (Deviazione Standard) € (sul lordo):</strong> ${formatPercent(volatilitaEur * 100)}</p>`;
+            resultHtml += `<p><strong>Volatilità (Deviazione Standard) € (sul netto):</strong> ${formatPercent(volatilitaNetEur * 100)}</p>`;
             resultHtml += `<p><strong>Drawdown Massimo (MDD) € (sul netto):</strong> perdita del ${formatPercent(maxDrawdownNetEur * 100)}</p>`;
             resultHtml += `<p><strong>Drawdown Massimo (MDD) (€) (sul netto):</strong> perdita di ${formatEuro(maxDrawdownValoreNetEur)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNetEur/maxDrawdownNetEur)})</p>`;
             resultHtml += `</div>`;
@@ -686,25 +686,25 @@
             resultHtml += `<div class="card-body">`;
 
             resultHtml += `<div class="box">`;
-            resultHtml += `<p><strong>Rendimento assoluto Lordo ($):</strong> ${formatDollar(finalGross)}</p>`;
-            resultHtml += `<p><strong>Rendimento Totale Lordo ($):</strong> ${formatPercent(rendimentoLordo.rendimentoTotale)}</p>`;
-            resultHtml += `<p><strong>Rendimento Annualizzato Lordo (CAGR) ($):</strong> ${formatPercent(rendimentoLordo.rendimentoAnnualizzato)}</p>`;
+            resultHtml += `<p><strong>Rendimento assoluto Lordo ($):</strong> ${formatDollar(finalGrossDollar)}</p>`;
+            resultHtml += `<p><strong>Rendimento Totale Lordo ($):</strong> ${formatPercent(rendimentoLordoDollar.rendimentoTotale)}</p>`;
+            resultHtml += `<p><strong>Rendimento Annualizzato Lordo (CAGR) ($):</strong> ${formatPercent(rendimentoLordoDollar.rendimentoAnnualizzato)}</p>`;
             resultHtml += `</div>`;
 
             resultHtml += `<div class="box">`;
-            resultHtml += `<p><strong>Rendimento assoluto Netto ($):</strong> ${formatDollar(finalNet)}</p>`;
-            resultHtml += `<p><strong>Rendimento Totale Netto ($):</strong> ${formatPercent(rendimentoNetto.rendimentoTotale)}</p>`;
-            resultHtml += `<p><strong>Rendimento Annualizzato Netto (CAGR) ($):</strong> ${formatPercent(rendimentoNetto.rendimentoAnnualizzato)}</p>`;
+            resultHtml += `<p><strong>Rendimento assoluto Netto ($):</strong> ${formatDollar(finalNetDollar)}</p>`;
+            resultHtml += `<p><strong>Rendimento Totale Netto ($):</strong> ${formatPercent(rendimentoNettoDollar.rendimentoTotale)}</p>`;
+            resultHtml += `<p><strong>Rendimento Annualizzato Netto (CAGR) ($):</strong> ${formatPercent(rendimentoNettoDollar.rendimentoAnnualizzato)}</p>`;
             resultHtml += `</div>`;
 
             resultHtml += `<div class="box">`;
-            resultHtml += `<p><strong>Rendimento Nettissimo ($):</strong> ${formatDollar(finalNettissimo)}</p>`;
-            resultHtml += `<p><strong>Rendimento Totale Nettissimo ($):</strong> ${formatPercent(rendimentoNettissimo.rendimentoTotale)}</p>`;
-            resultHtml += `<p><strong>Rendimento Annualizzato Nettissimo (CAGR) ($):</strong> ${formatPercent(rendimentoNettissimo.rendimentoAnnualizzato)}</p>`;
+            resultHtml += `<p><strong>Rendimento Nettissimo ($):</strong> ${formatDollar(finalNettissimoDollar)}</p>`;
+            resultHtml += `<p><strong>Rendimento Totale Nettissimo ($):</strong> ${formatPercent(rendimentoNettissimoDollar.rendimentoTotale)}</p>`;
+            resultHtml += `<p><strong>Rendimento Annualizzato Nettissimo (CAGR) ($):</strong> ${formatPercent(rendimentoNettissimoDollar.rendimentoAnnualizzato)}</p>`;
             resultHtml += `</div>`;
 
             resultHtml += `<div class="box">`;
-            resultHtml += `<p><strong>Volatilità (Deviazione Standard) $ (sul lordo):</strong> ${formatPercent(volatilitaDollar * 100)}</p>`;
+            resultHtml += `<p><strong>Volatilità (Deviazione Standard) $ (sul netto):</strong> ${formatPercent(volatilitaNetDollar * 100)}</p>`;
             resultHtml += `<p><strong>Drawdown Massimo (MDD) $ (sul netto):</strong> perdita del ${formatPercent(maxDrawdownNetDollar * 100)}</p>`;
             resultHtml += `<p><strong>Drawdown Massimo (MDD) ($) (sul netto):</strong> perdita di ${formatDollar(maxDrawdownValoreNetDollar)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNetDollar/maxDrawdownNetDollar)})</p>`;
             resultHtml += `</div>`;
