@@ -262,6 +262,10 @@
                     // Assumiamo che data sia un array di oggetti con campi "Date" e "Close"
                     // Ordiniamo il dataset per data (crescente)
                     var sortedData = data.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+                    sortedData = sortedData.filter(item => {
+                        const itemDate = new Date(item.Date);
+                        return itemDate >= mindate && itemDate <= maxdate;
+                    });
                     exchangeRates = indexDatasetValues.map(item => {
                         const exchangeRate = sortedData.find(rate => rate.Date === item.Date);
                         return exchangeRate ? parseFloat(exchangeRate.Close) : null;
