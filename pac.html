@@ -292,46 +292,7 @@
                 console.error("Errore durante il caricamento del dataset:", error);
             });
         });
-
-        // Funzione per calcolare la deviazione standard
-        function calcolaDeviazioneStandard(arr) {
-            const media = arr.reduce((acc, val) => acc + val, 0) / arr.length;
-            const varianza = arr.reduce((acc, val) => acc + Math.pow(val - media, 2), 0) / arr.length;
-            return Math.sqrt(varianza);
-        }
-
-        // Funzione per calcolare il drawdown massimo
-        function calcolaMaxDrawdown(valori) {
-            let maxDrawdown = 0;
-            let maxValore = valori[0];
-            for (let i = 1; i < valori.length; i++) {
-                if (valori[i] > maxValore) {
-                    maxValore = valori[i];
-                }
-                const drawdown = (maxValore - valori[i]) / maxValore;
-                if (drawdown > maxDrawdown) {
-                    maxDrawdown = drawdown;
-                }
-            }
-            return maxDrawdown;
-        }
-
-        // Funzione per calcolare il drawdown massimo in valore assoluto
-        function calcolaMaxDrawdownValore(valori) {
-            let maxDrawdownValore = 0;
-            let maxValore = valori[0];
-            for (let i = 1; i < valori.length; i++) {
-                if (valori[i] > maxValore) {
-                    maxValore = valori[i];
-                }
-                const drawdownValore = maxValore - valori[i];
-                if (drawdownValore > maxDrawdownValore) {
-                    maxDrawdownValore = drawdownValore;
-                }
-            }
-            return maxDrawdownValore;
-        }
-
+        
         // Funzione per creare il grafico del drawdown
         function createDrawdownChart(dates, drawdownNetEur, drawdownNetDollar) {
             const ctx = document.getElementById('drawdownChartCanvas').getContext('2d');
@@ -709,25 +670,33 @@
                 drawdownNettissimoEurValore.push(Math.max(...nettissimoValuesEur.slice(0, i + 1)) - nettissimoValuesEur[i]);
                 drawdownNettissimoDollarValore.push(Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]);
             }
+            // Funzione per calcolare la deviazione standard annualizzata
+            function calcolaDeviazioneStandardAnnualizzata(data) {
+                const media = data.reduce((acc, val) => acc + val, 0) / data.length;
+                const varianza = data.reduce((acc, val) => acc + Math.pow(val - media, 2), 0) / data.length;
+                const deviazioneStandardGiornaliera = Math.sqrt(varianza);
+                const giorniDiTradingAnnuali = 252;
+                return deviazioneStandardGiornaliera * Math.sqrt(giorniDiTradingAnnuali);
+            }
 
             // Calcola la volatilità (deviazione standard)
-            const rendimentiGiornalieriNetDollar = simData.map((item, index) => {
+            const rendimentiGiornalieriNettissimoDollar = simData.map((item, index) => {
                 if (index === 0) return 0;
-                const prevNet = netValuesDollar[index - 1];
-                const currNet = netValuesDollar[index];
+                const prevNet = nettissimoValuesDollar[index - 1];
+                const currNet = nettissimoValuesDollar[index];
                 return (currNet / prevNet) - 1;
             }).slice(1);
 
             // Calcola i rendimenti giornalieri in euro
-            const rendimentiGiornalieriNetEur = simData.map((item, index) => {
+            const rendimentiGiornalieriNettissimoEur = simData.map((item, index) => {
                 if (index === 0) return 0;
-                const prevNetEur = netValuesEur[index - 1];
-                const currNetEur = netValuesEur[index];
+                const prevNetEur = nettissimoValuesEur[index - 1];
+                const currNetEur = nettissimoValuesEur[index];
                 return (currNetEur / prevNetEur) - 1;
             }).slice(1);
 
-            const volatilitaNetEur = calcolaDeviazioneStandard(rendimentiGiornalieriNetEur);
-            const volatilitaNetDollar = calcolaDeviazioneStandard(rendimentiGiornalieriNetDollar);
+            const volatilitaNettissimoEur = calcolaDeviazioneStandardAnnualizzata(rendimentiGiornalieriNettissimoEur);
+            const volatilitaNettissimoDollar = calcolaDeviazioneStandardAnnualizzata(rendimentiGiornalieriNettissimoDollar);
 
             // Calcola il drawdown massimo sul netto
             // in %
@@ -1004,7 +973,7 @@
             resultHtml += `</div>`;
 
             resultHtml += `<div class="box">`;
-            resultHtml += `<p><strong>Volatilità (Deviazione Standard) € (sul nettissimo):</strong> ${formatPercent(volatilitaNetEur * 100)}</p>`;
+            resultHtml += `<p><strong>Volatilità (Deviazione Standard Annualizzata) € (sul nettissimo):</strong> ${formatPercent(volatilitaNettissimoEur * 100)}</p>`;
             resultHtml += `<p><strong>Drawdown Massimo (MDD) € in % (sul nettissimo):
                 </strong> perdita del ${formatPercent(maxDrawdownNettissimoEur * 100)} 
                 in data ${maxDrawdownNettissimoEuroDate} 
@@ -1058,7 +1027,7 @@
             resultHtml += `</div>`;
 
             resultHtml += `<div class="box">`;
-            resultHtml += `<p><strong>Volatilità (Deviazione Standard) $ (sul nettissimo):</strong> ${formatPercent(volatilitaNetDollar * 100)}</p>`;
+            resultHtml += `<p><strong>Volatilità (Deviazione Standard Annualizzata) $ (sul nettissimo):</strong> ${formatPercent(volatilitaNettissimoDollar * 100)}</p>`;
             resultHtml += `<p><strong>Drawdown Massimo (MDD) $ in % (sul nettissimo):
                 </strong> perdita del ${formatPercent(maxDrawdownNettissimoDollar * 100)} 
                 in data ${maxDrawdownNettissimoDollarDate} 
