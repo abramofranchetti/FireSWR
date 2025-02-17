@@ -398,11 +398,11 @@
             const volatilitaEur = calcolaDeviazioneStandard(rendimentiGiornalieriEur);
             const volatilitaDollar = calcolaDeviazioneStandard(rendimentiGiornalieri);
 
-            // Calcola il drawdown massimo
-            const maxDrawdownDollar = calcolaMaxDrawdown(grossValues);
-            const maxDrawdownEur = calcolaMaxDrawdown(grossValuesEur);
-            const maxDrawdownValoreEur = calcolaMaxDrawdownValore(grossValuesEur);
-            const maxDrawdownValoreDollar = calcolaMaxDrawdownValore(grossValues);
+            // Calcola il drawdown massimo sul netto
+            const maxDrawdownNetDollar = calcolaMaxDrawdown(netValues);
+            const maxDrawdownNetEur = calcolaMaxDrawdown(netValuesEur);
+            const maxDrawdownValoreNetEur = calcolaMaxDrawdownValore(netValuesEur);
+            const maxDrawdownValoreNetDollar = calcolaMaxDrawdownValore(netValues);
 
             // Crea (o aggiorna) il grafico con Chart.js
             const ctx = document.getElementById('chartCanvas').getContext('2d');
@@ -661,8 +661,8 @@
 
             resultHtml += `<div class="box">`;
             resultHtml += `<p><strong>Volatilità (Deviazione Standard) € (sul lordo):</strong> ${formatPercent(volatilitaEur * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) € (sul lordo):</strong> perdita del ${formatPercent(maxDrawdownEur * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) (€) (sul lordo):</strong> perdita di ${formatEuro(maxDrawdownValoreEur)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreEur/maxDrawdownEur)} lordi)</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) € (sul netto):</strong> perdita del ${formatPercent(maxDrawdownNetEur * 100)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) (€) (sul netto):</strong> perdita di ${formatEuro(maxDrawdownValoreNetEur)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNetEur/maxDrawdownNetEur)})</p>`;
             resultHtml += `</div>`;
 
             resultHtml += `</div>`;
@@ -705,8 +705,8 @@
 
             resultHtml += `<div class="box">`;
             resultHtml += `<p><strong>Volatilità (Deviazione Standard) $ (sul lordo):</strong> ${formatPercent(volatilitaDollar * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) $ (sul lordo):</strong> perdita del ${formatPercent(maxDrawdownDollar * 100)}</p>`;
-            resultHtml += `<p><strong>Drawdown Massimo (MDD) ($) (sul lordo):</strong> perdita di ${formatDollar(maxDrawdownValoreDollar)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreDollar/maxDrawdownDollar)} lordi)</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) $ (sul netto):</strong> perdita del ${formatPercent(maxDrawdownNetDollar * 100)}</p>`;
+            resultHtml += `<p><strong>Drawdown Massimo (MDD) ($) (sul netto):</strong> perdita di ${formatDollar(maxDrawdownValoreNetDollar)} (su capitale che al momento era di ${formatEuro(maxDrawdownValoreNetDollar/maxDrawdownNetDollar)})</p>`;
             resultHtml += `</div>`;
 
 
