@@ -4,23 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yahoo Finance Data Fetcher</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Yahoo Finance Data Fetcher</h1>
-    <form id="financeForm">
-        <label for="ticker">Ticker Symbol:</label>
-        <input type="text" id="ticker" name="ticker" required value="AAPL">
+    <div class="container mt-5">
+        <h1 class="text-center">Yahoo Finance Data Fetcher</h1>
+        <form id="financeForm" class="mt-4">
+            <div class="form-group">
+                <label for="ticker">Ticker Symbol:</label>
+                <input type="text" id="ticker" name="ticker" class="form-control" required value="AAPL">
+            </div>
+            <div class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate" class="form-control" required value="1980-01-01">
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate" class="form-control" required value="2024-12-31">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Fetch Data</button>
+        </form>
         <br>
-        <label for="startDate">Start Date:</label>
-        <input type="date" id="startDate" name="startDate" required value="2020-01-01">
-        <br>
-        <label for="endDate">End Date:</label>
-        <input type="date" id="endDate" name="endDate" required value="2020-12-31">
-        <br>
-        <button type="submit">Fetch Data</button>
-    </form>
-    <h2>Results:</h2>
-    <pre id="results"></pre>
+        <pre id="results" class="mt-4"></pre>
+    </div>
 
     <script>
         document.getElementById('financeForm').addEventListener('submit', function(event) {
@@ -56,5 +62,8 @@
                 });
         });
     </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
