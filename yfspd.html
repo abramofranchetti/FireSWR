@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yahoo Finance Data Fetcher</title>
+</head>
+<body>
+    <h1>Yahoo Finance Data Fetcher</h1>
+    <form id="financeForm">
+        <label for="ticker">Ticker Symbol:</label>
+        <input type="text" id="ticker" name="ticker" required value="AAPL">
+        <br>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" required value="2020-01-01">
+        <br>
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" name="endDate" required value="2020-12-31">
+        <br>
+        <button type="submit">Fetch Data</button>
+    </form>
+    <h2>Results:</h2>
+    <pre id="results"></pre>
+
+    <script>
+        document.getElementById('financeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const ticker = document.getElementById('ticker').value;
+            const startDate = new Date(document.getElementById('startDate').value).getTime() / 1000;
+            const endDate = new Date(document.getElementById('endDate').value).getTime() / 1000;
+
+            const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?symbol=${ticker}&period1=${startDate}&period2=${endDate}&interval=1d&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-US&region=US&crumb=t5QZMhgytYZ&corsDomain=finance.yahoo.com`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const timestamps = data.chart.result[0].timestamp;
+                    const adjClose = data.chart.result[0].indicators.adjclose[0].adjclose;
+                    const formattedData = timestamps.map((timestamp, index) => {
+                        return {
+                            Date: new Date(timestamp * 1000).toISOString().split('T')[0],
+                            Close: adjClose[index]
+                        };
+                    });
+                    document.getElementById('results').textContent = JSON.stringify(formattedData, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('results').textContent = 'Error fetching data: ' + error;
+                });
+        });
+    </script>
+</body>
+</html>
