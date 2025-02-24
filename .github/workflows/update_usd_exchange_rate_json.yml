@@ -51,5 +51,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git add py_script/${{ github.event.inputs.file_name }}
-          git diff --cached --exit-code || (git commit -m "Aggiornamento automatico del JSON per ${{ github.event.inputs.stock_symbol }}")          
-          git push https://github.com/${{ github.repository }}.git HEAD:main || (git pull --rebase origin main && git push https://github.com/${{ github.repository }}.git HEAD:main)
+          git commit -m "Aggiornamento automatico del JSON per ${{ github.event.inputs.stock_symbol }}"
+          git push https://github.com/${{ github.repository }}.git HEAD:main
