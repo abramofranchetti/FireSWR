@@ -16,7 +16,7 @@ file_name = sys.argv[2]
 print(f"Fetching data for symbol: {symbol}")
 
 # Scaricare i dati storici
-df = yf.download(symbol, start="2025-01-01")
+df = yf.download(symbol, start="2024-01-27")
 
 # Controllare se il DataFrame è vuoto
 if df.empty:
