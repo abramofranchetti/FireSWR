@@ -37,7 +37,7 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git add py_script/${{ github.event.inputs.stock_symbol | toLowerCase() }}_exchange_rate.json
+          git add py_script/${{ github.event.inputs.stock_symbol}}_result.json
           git commit -m "Aggiornamento automatico del JSON per ${{ github.event.inputs.stock_symbol }}"
           git push
         continue-on-error: true  # Evita errori se non ci sono modifiche
