@@ -52,7 +52,7 @@ df["Date"] = df["Date"].astype(str)
 data_list = df.to_dict(orient="records")
 
 # Salva i dati trasformati in un file JSON
-file_path = f"{file_name.lower()}"
+file_path = f"py_script/{file_name}"
 with open(file_path, "w") as f:
     json.dump(data_list, f, indent=2)
 
