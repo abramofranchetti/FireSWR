@@ -40,7 +40,7 @@ df["Date"] = pd.to_datetime(df["Date"]).dt.date  # Converti DateTime in formato 
 df = df[["Date", "Close"]]
 
 # Creare un DataFrame con tutte le date possibili
-date_range = pd.date_range(start=start_date, end=df["Date"].max())
+date_range = pd.date_range(start=df["Date"].min(), end=df["Date"].max())
 full_df = pd.DataFrame(date_range, columns=["Date"])
 full_df["Date"] = full_df["Date"].dt.date  # Converti in formato date senza ora
 
