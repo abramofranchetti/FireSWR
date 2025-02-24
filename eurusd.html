@@ -69,7 +69,7 @@
             // Variabile per la Chart.js (per aggiornare il grafico se necessario)
             let chartInstance = null;
             // Carica il dataset dal file
-            fetch('cambio_eur_usd.json')
+            fetch('json/cambio_eur_usd.json')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Errore nel caricamento del dataset: " + response.statusText);

@@ -205,7 +205,7 @@
         // Carica il dataset dal file
         function loadDataset() {
             const selectedIndex = $('#indexSelect').val();
-            const datasetFile = selectedIndex + '.json';
+            const datasetFile = 'json/' + selectedIndex + '.json';
 
             return fetch(datasetFile)
                 .then(response => {
@@ -252,7 +252,7 @@
 
         // Carica il dataset del cambio EUR/USD dal file cambio_eur_usd.json
         function loadExchangeRates() {
-            return fetch('cambio_eur_usd.json')
+            return fetch('json/cambio_eur_usd.json')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Errore nel caricamento del dataset del cambio: " + response.statusText);

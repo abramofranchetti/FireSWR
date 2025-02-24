@@ -36,7 +36,7 @@ jobs:
           pip install yfinance pandas
 
       - name: Remove existing JSON file
-        run: rm -f py_script/${{ github.event.inputs.file_name }}
+        run: rm -f json/${{ github.event.inputs.file_name }}
 
       - name: Run stock value downloader
         run: python py_script/stock_value_downloader.py ${{ github.event.inputs.stock_symbol }} ${{ github.event.inputs.file_name }}      
@@ -50,6 +50,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git add py_script/${{ github.event.inputs.file_name }}
+          git add json/${{ github.event.inputs.file_name }}
           git commit -m "Aggiornamento automatico del JSON per ${{ github.event.inputs.stock_symbol }}" --allow-empty
           git push https://github.com/${{ github.repository }}.git HEAD:main

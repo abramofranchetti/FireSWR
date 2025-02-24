@@ -57,10 +57,10 @@ df["Date"] = df["Date"].astype(str)
 data_list = df.to_dict(orient="records")
 
 # Ensure the directory exists
-os.makedirs(os.path.dirname(f"py_script/{file_name}"), exist_ok=True)
+os.makedirs(os.path.dirname(f"json/{file_name}"), exist_ok=True)
 
 # Salva i dati trasformati in un file JSON
-file_path = f"py_script/{file_name}"
+file_path = f"json/{file_name}"
 with open(file_path, "w") as f:
     json.dump(data_list, f, indent=2)
 
