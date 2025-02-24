@@ -10,6 +10,7 @@ if len(sys.argv) != 2:
 
 # Simbolo del cambio su Yahoo Finance
 symbol = sys.argv[1]
+file_name= sys.argv[2]
 
 # Scaricare i dati storici
 df = yf.download(symbol, start="2025-01-01")
@@ -51,7 +52,7 @@ df["Date"] = df["Date"].astype(str)
 data_list = df.to_dict(orient="records")
 
 # Salva i dati trasformati in un file JSON
-file_path = f"{symbol.lower()}_exchange_rate.json"
+file_path = f"{file_name.lower()}"
 with open(file_path, "w") as f:
     json.dump(data_list, f, indent=2)
 
