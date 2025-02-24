@@ -2,6 +2,7 @@ import yfinance as yf
 import json
 import pandas as pd
 import sys
+import os
 
 # Verifica che siano stati passati i parametri necessari
 if len(sys.argv) != 3:
@@ -54,6 +55,9 @@ df["Date"] = df["Date"].astype(str)
 
 # Convertire i dati in una lista di dizionari
 data_list = df.to_dict(orient="records")
+
+# Ensure the directory exists
+os.makedirs(os.path.dirname(f"py_script/{file_name}"), exist_ok=True)
 
 # Salva i dati trasformati in un file JSON
 file_path = f"py_script/{file_name}"
