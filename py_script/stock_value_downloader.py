@@ -5,18 +5,19 @@ import sys
 import os
 
 # Verifica che siano stati passati i parametri necessari
-if len(sys.argv) != 3:
-    print("Usage: python stock_value_downloader.py <stock_symbol> <file_name>")
+if len(sys.argv) != 4:
+    print("Usage: python stock_value_downloader.py <stock_symbol> <file_name> <date>")
     exit()
 
 # Simbolo del cambio su Yahoo Finance
 symbol = sys.argv[1]
 file_name = sys.argv[2]
+start_date = sys.argv[3]
 
 print(f"Fetching data for symbol: {symbol}")
 
 # Scaricare i dati storici
-df = yf.download(symbol, start="2024-01-27")
+df = yf.download(symbol, start=start_date)
 
 # Controllare se il DataFrame è vuoto
 if df.empty:
@@ -39,7 +40,7 @@ df["Date"] = pd.to_datetime(df["Date"]).dt.date  # Converti DateTime in formato 
 df = df[["Date", "Close"]]
 
 # Creare un DataFrame con tutte le date possibili
-date_range = pd.date_range(start="2025-01-01", end=df["Date"].max())
+date_range = pd.date_range(start=start_date, end=df["Date"].max())
 full_df = pd.DataFrame(date_range, columns=["Date"])
 full_df["Date"] = full_df["Date"].dt.date  # Converti in formato date senza ora
 

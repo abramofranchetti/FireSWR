@@ -13,6 +13,10 @@ on:
         description: "File name to save the JSON"
         required: true
         default: "eur_usd_exchange_rate.json"
+      start_date:
+        description: "Start date for the historical data"
+        required: true
+        default: "2025-01-01"
 
 jobs:
   update-json:
