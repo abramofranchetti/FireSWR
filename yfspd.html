@@ -36,7 +36,7 @@
             const endDate = new Date(document.getElementById('endDate').value).getTime() / 1000;
 
             const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?symbol=${ticker}&period1=${startDate}&period2=${endDate}&interval=1d&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-US&region=US&crumb=t5QZMhgytYZ&corsDomain=finance.yahoo.com`;
-            const proxyUrl = `https://cors-anywhere.herokuapp.com/${url}`;
+            const proxyUrl = `https://corsproxy.io/${url}`;
 
             fetch(proxyUrl)
                 .then(response => response.json())
