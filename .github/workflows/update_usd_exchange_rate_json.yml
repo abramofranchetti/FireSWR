@@ -33,6 +33,8 @@ jobs:
 
       - name: Run stock value downloader
         run: python py_script/stock_value_downloader.py ${{ github.event.inputs.stock_symbol }} ${{ github.event.inputs.file_name }}
+
+      - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
