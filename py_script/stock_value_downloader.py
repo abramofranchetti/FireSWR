@@ -3,16 +3,19 @@ import json
 import pandas as pd
 import sys
 import os
+from datetime import datetime
 
 # Verifica che siano stati passati i parametri necessari
-if len(sys.argv) != 4:
-    print("Usage: python stock_value_downloader.py <stock_symbol> <file_name> <date>")
+if len(sys.argv) < 3:
+    print("Usage: python stock_value_downloader.py <stock_symbol> <file_name> [<date>]")
     exit()
 
 # Simbolo del cambio su Yahoo Finance
 symbol = sys.argv[1]
 file_name = sys.argv[2]
-start_date = sys.argv[3]
+
+# Usa la data corrente se non viene fornita una data di inizio
+start_date = sys.argv[3] if len(sys.argv) == 4 else datetime.now().strftime('%Y-%m-%d')
 
 print(f"Fetching data for symbol: {symbol}")
 
