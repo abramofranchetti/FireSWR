@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: '6 6 * * *' # Esegue ogni giorno a mezzanotte UTC
   workflow_dispatch: # Permette di eseguirlo manualmente
+    inputs:
+      stock_symbol:
+        description: 'Stock symbol to download'
+        required: true
+        default: 'EURUSD=X'
 
 jobs:
   update-json:
@@ -23,7 +28,7 @@ jobs:
           pip install yfinance pandas
 
       - name: Run stock value downloader
-        run: python py_script/stock_value_downloader.py EURUSD=X
+        run: python py_script/stock_value_downloader.py ${{ github.event.inputs.stock_symbol }}
 
       - name: Configure Git
         run: |
@@ -32,7 +37,7 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git add eurusd_exchange_rate.json
-          git commit -m "Aggiornamento automatico del JSON"
+          git add py_script/${{ github.event.inputs.stock_symbol | toLowerCase() }}_exchange_rate.json
+          git commit -m "Aggiornamento automatico del JSON per ${{ github.event.inputs.stock_symbol }}"
           git push
         continue-on-error: true  # Evita errori se non ci sono modifiche
