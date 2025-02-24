@@ -1,0 +1,42 @@
+const fs = require('fs');
+const https = require('https');
+
+// Parametri per la richiesta
+const ticker = process.env.TICKER || "AAPL"
+const startDate = Math.floor(new Date('2024-01-01').getTime() / 1000); // Modifica la data di inizio
+const endDate = Math.floor(new Date().getTime() / 1000); // Data odierna
+
+// URL API di Yahoo Finance
+const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?symbol=${ticker}&period1=${startDate}&period2=${endDate}&interval=1d&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-US&region=US&crumb=t5QZMhgytYZ&corsDomain=finance.yahoo.com`;
+
+// Scarica i dati
+https.get(url, (res) => {
+    let data = '';
+
+    res.on('data', chunk => {
+        data += chunk;
+    });
+
+    res.on('end', () => {
+        try {
+            const jsonData = JSON.parse(data);
+            const timestamps = jsonData.chart.result[0].timestamp;
+            const adjClose = jsonData.chart.result[0].indicators.adjclose[0].adjclose;
+
+            // Formatta i dati
+            const formattedData = timestamps.map((timestamp, index) => ({
+                Date: new Date(timestamp * 1000).toISOString().split('T')[0],
+                Close: adjClose[index]
+            }));
+
+            // Salva il file JSON
+            fs.writeFileSync(`data/${ticker}.json`, JSON.stringify(formattedData, null, 2), 'utf8');
+            console.log("JSON aggiornato con successo!");
+        } catch (error) {
+            console.error("Errore nel parsing del JSON:", error);
+        }
+    });
+
+}).on("error", (err) => {
+    console.error("Errore nel download:", err);
+});
