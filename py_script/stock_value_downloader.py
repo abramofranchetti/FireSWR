@@ -3,14 +3,16 @@ import json
 import pandas as pd
 import sys
 
-# Verifica che sia stato passato un simbolo come argomento
-if len(sys.argv) != 2:
-    print("Usage: python stock_value_downloader.py <stock_symbol>")
+# Verifica che siano stati passati i parametri necessari
+if len(sys.argv) != 3:
+    print("Usage: python stock_value_downloader.py <stock_symbol> <file_name>")
     exit()
 
 # Simbolo del cambio su Yahoo Finance
 symbol = sys.argv[1]
-file_name= sys.argv[2]
+file_name = sys.argv[2]
+
+print(f"Fetching data for symbol: {symbol}")
 
 # Scaricare i dati storici
 df = yf.download(symbol, start="2025-01-01")
@@ -19,6 +21,8 @@ df = yf.download(symbol, start="2025-01-01")
 if df.empty:
     print("Nessun dato disponibile per il periodo specificato.")
     exit()
+
+print("Data fetched successfully")
 
 # *** Appiattire le colonne multi-livello ***
 # Modifica le colonne per rimuovere la struttura multi-livello
