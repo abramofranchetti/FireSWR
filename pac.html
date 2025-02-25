@@ -191,6 +191,23 @@
         function parseDate(dateStr) {
             return new Date(dateStr);
         }
+
+        // Funzione per unire i dati storici e i dati aggiornati
+        function mergeData(historicalData, updatedData) {
+            const mergedData = [...historicalData];
+
+            updatedData.forEach(updatedItem => {
+                const existingItemIndex = mergedData.findIndex(item => item.Date === updatedItem.Date);
+                if (existingItemIndex !== -1) {
+                    mergedData[existingItemIndex] = updatedItem;
+                } else {
+                    mergedData.push(updatedItem);
+                }
+            });
+
+            return mergedData;
+        }
+
         // Funzione per calcolare il drawdown giornaliero
         function calcolaDrawdownGiornaliero(valori) {
             let maxValore = valori[0];
@@ -252,36 +269,44 @@
 
         // Carica il dataset del cambio EUR/USD dal file
         function loadExchangeRates() {
-            return fetch('json/cambio_eur_usd_storico.json')
-                .then(response => {
+            return Promise.all([
+                fetch('json/cambio_eur_usd_storico.json').then(response => {
                     if (!response.ok) {
-                        throw new Error("Errore nel caricamento del dataset del cambio: " + response.statusText);
+                        throw new Error("Errore nel caricamento del dataset storico del cambio: " + response.statusText);
+                    }
+                    return response.json();
+                }),
+                fetch('json/cambio_eur_usd_updated.json').then(response => {
+                    if (!response.ok) {
+                        throw new Error("Errore nel caricamento del dataset aggiornato del cambio: " + response.statusText);
                     }
                     return response.json();
                 })
-                .then(data => {
-                    // Assumiamo che data sia un array di oggetti con campi "Date" e "Close"
-                    // Ordiniamo il dataset per data (crescente)
-                    var sortedData = data
-                        .sort((a, b) => new Date(a.Date) - new Date(b.Date))
-                        .filter(item => {
-                            return item.Date >= minDate && item.Date <= maxDate;
-                        });
+            ])
+            .then(([historicalData, updatedData]) => {
+                const mergedData = mergeData(historicalData, updatedData);
 
-                    exchangeRates = indexDatasetValues.map(item => {
-                        const exchangeRate = sortedData.find(rate => rate.Date === item.Date);
-                        return exchangeRate ? parseFloat(exchangeRate.Close) : null;
+                // Ordiniamo il dataset per data (crescente)
+                var sortedData = mergedData.sort((a, b) => new Date(a.Date) - new Date(b.Date))
+                    .filter(item => {
+                        return item.Date >= minDate && item.Date <= maxDate;
                     });
 
-                    // Verifica se ci sono date senza tasso di cambio corrispondente
-                    if (exchangeRates.includes(null)) {
-                        throw new Error("Errore: alcune date nel dataset dell'indice non hanno un tasso di cambio corrispondente.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Errore durante il caricamento del dataset del cambio:", error);
+                exchangeRates = indexDatasetValues.map(item => {
+                    const exchangeRate = sortedData.find(rate => rate.Date === item.Date);
+                    return exchangeRate ? parseFloat(exchangeRate.Close) : null;
                 });
+
+                // Verifica se ci sono date senza tasso di cambio corrispondente
+                if (exchangeRates.includes(null)) {
+                    throw new Error("Errore: alcune date nel dataset dell'indice non hanno un tasso di cambio corrispondente.");
+                }
+            })
+            .catch(error => {
+                console.error("Errore durante il caricamento del dataset del cambio:", error);
+            });
         }
+
 
         // Carica il dataset all'avvio
         $(document).ready(function () {
@@ -294,7 +319,7 @@
                 console.error("Errore durante il caricamento del dataset:", error);
             });
         });
-        
+
         // Funzione per creare il grafico del drawdown
         function createDrawdownChart(dates, drawdownNetEur, drawdownNetDollar) {
             const ctx = document.getElementById('drawdownChartCanvas').getContext('2d');
