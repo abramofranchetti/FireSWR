@@ -10,7 +10,7 @@ jobs:
     env:
       STOCK_SYMBOL: "EURUSD=X"
       FILE_NAME: "cambio_eur_usd_updated.json"
-      START_DATE: "2025-01-01"
+      START_DATE: "2025-02-01"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
