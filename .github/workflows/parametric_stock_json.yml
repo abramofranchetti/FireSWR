@@ -10,7 +10,7 @@ on:
       file_name:
         description: "File name to save the JSON"
         required: true
-        default: "eur_usd_exchange_rate_updated.json"
+        default: "cambio_eur_usd_updated.json"
       start_date:
         description: "Start date for the historical data"
         required: true

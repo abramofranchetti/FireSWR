@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       STOCK_SYMBOL: "EURUSD=X"
-      FILE_NAME: "eur_usd_exchange_rate_updated.json"
+      FILE_NAME: "cambio_eur_usd_updated.json"
       START_DATE: "2025-01-01"
     steps:
       - name: Checkout repository
