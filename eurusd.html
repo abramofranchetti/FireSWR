@@ -68,123 +68,148 @@
         $(document).ready(function () {
             // Variabile per la Chart.js (per aggiornare il grafico se necessario)
             let chartInstance = null;
-            // Carica il dataset dal file
-            fetch('json/cambio_eur_usd.json')
-                .then(response => {
+
+            // Funzione per unire i dati storici e i dati aggiornati
+            function mergeData(historicalData, updatedData) {
+                const mergedData = [...historicalData];
+
+                updatedData.forEach(updatedItem => {
+                    const existingItemIndex = mergedData.findIndex(item => item.Date === updatedItem.Date);
+                    if (existingItemIndex !== -1) {
+                        mergedData[existingItemIndex] = updatedItem;
+                    } else {
+                        mergedData.push(updatedItem);
+                    }
+                });
+
+                return mergedData;
+            }
+
+            // Carica i dataset dai file
+            Promise.all([
+                fetch('json/cambio_eur_usd.json').then(response => {
                     if (!response.ok) {
-                        throw new Error("Errore nel caricamento del dataset: " + response.statusText);
+                        throw new Error("Errore nel caricamento del dataset storico: " + response.statusText);
+                    }
+                    return response.json();
+                }),
+                fetch('json/cambio_eur_usd_updated.json').then(response => {
+                    if (!response.ok) {
+                        throw new Error("Errore nel caricamento del dataset aggiornato: " + response.statusText);
                     }
                     return response.json();
                 })
-                .then(data => {
+            ])
+            .then(([historicalData, updatedData]) => {
+                const mergedData = mergeData(historicalData, updatedData);
 
-                    const dates = [];
-                    const exchangeRates = [];
+                const dates = [];
+                const exchangeRates = [];
 
-                    // Campionamento dei dati per alleggerire il grafico
-                    const sampleRate = 10; // Modifica questo valore per regolare il campionamento
-                    data.forEach((item, index) => {
-                        if (index % sampleRate === 0) {
-                            dates.push(item.Date);
-                            exchangeRates.push(item.Close);
-                        }
-                    });
-
-                    // Crea (o aggiorna) il grafico con Chart.js
-                    const ctx = document.getElementById('chartCanvas').getContext('2d');
-                    if (chartInstance) {
-                        chartInstance.destroy();
+                // Campionamento dei dati per alleggerire il grafico
+                const sampleRate = 3; // Modifica questo valore per regolare il campionamento
+                mergedData.forEach((item, index) => {
+                    if (index % sampleRate === 0) {
+                        dates.push(item.Date);
+                        exchangeRates.push(item.Close);
                     }
-                    chartInstance = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: dates,
-                            datasets: [
-                                {
-                                    label: 'Cambio Euro/Dollaro',
-                                    data: exchangeRates,
-                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                    fill: false,
-                                    tension: 0.1,
-                                    pointRadius: 0 // Nasconde i punti per rendere il grafico più leggibile
-                                },
-                            ]
+                });
+
+                // Crea (o aggiorna) il grafico con Chart.js
+                const ctx = document.getElementById('chartCanvas').getContext('2d');
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [
+                            {
+                                label: 'Cambio Euro/Dollaro',
+                                data: exchangeRates,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                fill: false,
+                                tension: 0.1,
+                                pointRadius: 0 // Nasconde i punti per rendere il grafico più leggibile
+                            },
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
                         },
-                        options: {
-                            responsive: true,
-                            interaction: {
+                        plugins: {
+                            tooltip: {
                                 mode: 'index',
                                 intersect: false,
                             },
-                            plugins: {
-                                tooltip: {
-                                    mode: 'index',
-                                    intersect: false,
-                                },
-                                annotation: {
-                                    annotations: {
-                                        line1: {
-                                            type: 'line',
-                                            yMin: 1,
-                                            yMax: 1,
-                                            borderColor: 'red',
-                                            borderWidth: 2,
-                                            label: {
-                                                content: 'Parità di cambio',
-                                                enabled: true,
-                                                position: 'start'
-                                            }
-                                        }
-                                    }
-                                },
-                                zoom: {
-                                    pan: {
-                                        enabled: true,
-                                        mode: 'x'
-                                    },
-                                    zoom: {
-                                        wheel: {
-                                            enabled: false,
-                                        },
-                                        pinch: {
-                                            enabled: true
-                                        },
-                                        mode: 'x',
-                                        drag: {
+                            annotation: {
+                                annotations: {
+                                    line1: {
+                                        type: 'line',
+                                        yMin: 1,
+                                        yMax: 1,
+                                        borderColor: 'red',
+                                        borderWidth: 2,
+                                        label: {
+                                            content: 'Parità di cambio',
                                             enabled: true,
-                                            backgroundColor: 'rgba(0,0,0,0.3)',
+                                            position: 'start'
                                         }
                                     }
                                 }
                             },
-                            scales: {
-                                x: {
-                                    type: 'time',
-                                    time: {
-                                        unit: 'month',
-                                        tooltipFormat: 'yyyy-MM-dd'
-                                    },
-                                    title: {
-                                        display: true,
-                                        text: 'Data'
-                                    }
+                            zoom: {
+                                pan: {
+                                    enabled: true,
+                                    mode: 'x'
                                 },
-                                y: {
-                                    beginAtZero: false,
-                                    suggestedMax: Math.max(...exchangeRates) * 1.1,
-                                    title: {
-                                        display: true,
-                                        text: 'Cambio Euro/Dollaro'
+                                zoom: {
+                                    wheel: {
+                                        enabled: false,
+                                    },
+                                    pinch: {
+                                        enabled: true
+                                    },
+                                    mode: 'x',
+                                    drag: {
+                                        enabled: true,
+                                        backgroundColor: 'rgba(0,0,0,0.3)',
                                     }
                                 }
                             }
+                        },
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'month',
+                                    tooltipFormat: 'yyyy-MM-dd'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Data'
+                                }
+                            },
+                            y: {
+                                beginAtZero: false,
+                                suggestedMax: Math.max(...exchangeRates) * 1.1,
+                                title: {
+                                    display: true,
+                                    text: 'Cambio Euro/Dollaro'
+                                }
+                            }
                         }
-                    });
-                })
-                .catch(error => {
-                    console.error("Errore durante il caricamento del dataset:", error);
+                    }
                 });
+            })
+            .catch(error => {
+                console.error("Errore durante il caricamento dei dataset:", error);
+            });
 
             // Aggiungi evento per il pulsante di reset dello zoom
             $('#resetZoomButton').click(function () {

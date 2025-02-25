@@ -250,9 +250,9 @@
                 });
         }
 
-        // Carica il dataset del cambio EUR/USD dal file cambio_eur_usd.json
+        // Carica il dataset del cambio EUR/USD dal file
         function loadExchangeRates() {
-            return fetch('json/cambio_eur_usd.json')
+            return fetch('json/cambio_eur_usd_storico.json')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Errore nel caricamento del dataset del cambio: " + response.statusText);
