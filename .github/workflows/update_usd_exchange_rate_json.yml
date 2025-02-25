@@ -2,7 +2,7 @@ name: Aggiorna JSON giornalmente
 
 on:
   schedule:
-    - cron: "6 6 * * *" # Esegue ogni giorno a mezzanotte UTC
+    - cron: "* * * * *"
   workflow_dispatch: # Permette di eseguirlo manualmente
     inputs:
       stock_symbol:
@@ -41,6 +41,7 @@ jobs:
 
       - name: Remove existing JSON file
         run: rm -f json/${{ github.event.inputs.file_name }}
+        shell: bash
 
       - name: Run stock value downloader
         run: python py_script/stock_value_downloader.py ${{ github.event.inputs.stock_symbol }} ${{ github.event.inputs.file_name }} ${{ github.event.inputs.start_date }}            
