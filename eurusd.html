@@ -59,20 +59,35 @@
         </div>
         <br>
         <h1 class="mt-4 mb-4">Andamento Euro/Dollaro</h1>
-        <h6 class=""></h6>
+        <h6 class="text-center">Il cambio Euro/Dollaro rappresenta il valore di un Euro in Dollari. 
+            I dati storici precedenti il 1999, anno di introduzione dell'Euro, sono stati estrapolati dall'ECU (European Currency Unit), 
+            che era un'unità di conto utilizzata dalle istituzioni europee prima dell'Euro. 
+            Prima dell'ECU, i dati sono stati calcolati come media dei cambi delle valute nazionali europee con il Dollaro.
+        </h6>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="startDate">Data Inizio:</label>
+                <input type="date" id="startDate" class="form-control">
+            </div>
+            <div class="col-md-6">
+                <label for="endDate">Data Fine:</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+        </div>
         <canvas id="chartCanvas" height="120"></canvas>
         <button id="resetZoomButton" class="btn btn-primary mt-3">Reset Zoom</button>
     </div>
 
     <script>
         $(document).ready(function () {
-            // Variabile per la Chart.js (per aggiornare il grafico se necessario)
             let chartInstance = null;
+            let mergedData = [];
+            let updateTimeout = null;
+            let minDate = null;
+            let maxDate = null;
 
-            // Funzione per unire i dati storici e i dati aggiornati
             function mergeData(historicalData, updatedData) {
                 const mergedData = [...historicalData];
-
                 updatedData.forEach(updatedItem => {
                     const existingItemIndex = mergedData.findIndex(item => item.Date === updatedItem.Date);
                     if (existingItemIndex !== -1) {
@@ -85,37 +100,32 @@
                 return mergedData;
             }
 
-            // Carica i dataset dai file
-            Promise.all([
-                fetch('json/cambio_eur_usd_storico.json').then(response => {
-                    if (!response.ok) {
-                        throw new Error("Errore nel caricamento del dataset storico: " + response.statusText);
-                    }
-                    return response.json();
-                }),
-                fetch('json/cambio_eur_usd_updated.json').then(response => {
-                    if (!response.ok) {
-                        throw new Error("Errore nel caricamento del dataset aggiornato: " + response.statusText);
-                    }
-                    return response.json();
-                })
-            ])
-            .then(([historicalData, updatedData]) => {
-                const mergedData = mergeData(historicalData, updatedData);
+            function filterDataByDate(data, startDate, endDate) {
+                return data.filter(item => {
+                    const date = new Date(item.Date);
+                    return date >= new Date(startDate) && date <= new Date(endDate);
+                });
+            }
 
+            function calculateAverage(data) {
+                const sum = data.reduce((acc, item) => acc + item, 0);
+                return sum / data.length;
+            }
+
+            function updateChart(data) {
                 const dates = [];
                 const exchangeRates = [];
 
-                // Campionamento dei dati per alleggerire il grafico
-                const sampleRate = 3; // Modifica questo valore per regolare il campionamento
-                mergedData.forEach((item, index) => {
+                const sampleRate = 3;
+                data.forEach((item, index) => {
                     if (index % sampleRate === 0) {
                         dates.push(item.Date);
-                        exchangeRates.push(item.Close);
+                        exchangeRates.push(parseFloat(item.Close));
                     }
                 });
 
-                // Crea (o aggiorna) il grafico con Chart.js
+                const averageRate = calculateAverage(exchangeRates);
+
                 const ctx = document.getElementById('chartCanvas').getContext('2d');
                 if (chartInstance) {
                     chartInstance.destroy();
@@ -132,7 +142,7 @@
                                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                                 fill: false,
                                 tension: 0.1,
-                                pointRadius: 0 // Nasconde i punti per rendere il grafico più leggibile
+                                pointRadius: 0
                             },
                         ]
                     },
@@ -149,7 +159,7 @@
                             },
                             annotation: {
                                 annotations: {
-                                    line1: {
+                                    line0: {
                                         type: 'line',
                                         yMin: 1,
                                         yMax: 1,
@@ -157,6 +167,18 @@
                                         borderWidth: 2,
                                         label: {
                                             content: 'Parità di cambio',
+                                            enabled: true,
+                                            position: 'start'
+                                        }
+                                    },
+                                    line1: {
+                                        type: 'line',
+                                        yMin: averageRate,
+                                        yMax: averageRate,
+                                        borderColor: 'blue',
+                                        borderWidth: 1,
+                                        label: {
+                                            content: 'Media ' + averageRate.toFixed(4),
                                             enabled: true,
                                             position: 'start'
                                         }
@@ -206,12 +228,58 @@
                         }
                     }
                 });
+            }
+
+            Promise.all([
+                fetch('json/cambio_eur_usd_storico.json').then(response => {
+                    if (!response.ok) {
+                        throw new Error("Errore nel caricamento del dataset storico: " + response.statusText);
+                    }
+                    return response.json();
+                }),
+                fetch('json/cambio_eur_usd_updated.json').then(response => {
+                    if (!response.ok) {
+                        throw new Error("Errore nel caricamento del dataset aggiornato: " + response.statusText);
+                    }
+                    return response.json();
+                })
+            ])
+            .then(([historicalData, updatedData]) => {
+                mergedData = mergeData(historicalData, updatedData);
+
+                minDate = new Date(Math.min(...mergedData.map(item => new Date(item.Date))));
+                maxDate = new Date(Math.max(...mergedData.map(item => new Date(item.Date))));
+
+                $('#startDate').val(minDate.toISOString().split('T')[0]);
+                $('#endDate').val(maxDate.toISOString().split('T')[0]);
+                $('#startDate').attr('min', minDate.toISOString().split('T')[0]);
+                $('#startDate').attr('max', maxDate.toISOString().split('T')[0]);
+                $('#endDate').attr('min', minDate.toISOString().split('T')[0]);
+                $('#endDate').attr('max', maxDate.toISOString().split('T')[0]);
+
+                updateChart(mergedData);
             })
             .catch(error => {
                 console.error("Errore durante il caricamento dei dataset:", error);
             });
 
-            // Aggiungi evento per il pulsante di reset dello zoom
+            $('#startDate, #endDate').change(function () {
+                clearTimeout(updateTimeout);
+                updateTimeout = setTimeout(() => {
+                    const startDate = $('#startDate').val();
+                    const endDate = $('#endDate').val();
+
+                    if (new Date(startDate) < minDate || new Date(endDate) > maxDate || startDate=='' || endDate=='') {
+                        alert('Le date selezionate devono essere comprese tra ' + minDate.toISOString().split('T')[0] + ' e ' + maxDate.toISOString().split('T')[0]);
+                        $('#startDate').val(minDate.toISOString().split('T')[0]);
+                        $('#endDate').val(maxDate.toISOString().split('T')[0]);
+                        return;
+                    }
+                    const filteredData = filterDataByDate(mergedData, startDate, endDate);
+                    updateChart(filteredData);
+                }, 500);
+            });
+
             $('#resetZoomButton').click(function () {
                 if (chartInstance) {
                     chartInstance.resetZoom();
