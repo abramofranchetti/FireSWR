@@ -1,0 +1,50 @@
+name: ACWI
+
+on:
+  schedule:
+    - cron: "0 6 * * 1-5"
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    env:
+      STOCK_SYMBOL: "ACWI"
+      FILE_NAME: "acwi_updated.json"
+      START_DATE: "2025-01-01"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Pull
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git pull --rebase origin main
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install yfinance pandas
+
+      - name: Remove existing JSON file
+        run: rm -f json/${{ env.FILE_NAME }}
+        shell: bash
+
+      - name: Run stock value downloader
+        run: python py_script/stock_value_downloader.py ${{ env.STOCK_SYMBOL }} ${{ env.FILE_NAME }} ${{ env.START_DATE }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add json/${{ env.FILE_NAME }}
+          git commit -m "Aggiornamento automatico del JSON per ${{ env.STOCK_SYMBOL }}" --allow-empty
+          git push https://github.com/${{ github.repository }}.git HEAD:main

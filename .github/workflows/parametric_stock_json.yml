@@ -1,0 +1,58 @@
+name: Aggiorna JSON stock parametrizzato
+
+on:
+  workflow_dispatch: # Permette di eseguirlo manualmente
+    inputs:
+      stock_symbol:
+        description: "Stock symbol to download"
+        required: true
+        default: "EURUSD=X"
+      file_name:
+        description: "File name to save the JSON"
+        required: true
+        default: "eur_usd_exchange_rate_updated.json"
+      start_date:
+        description: "Start date for the historical data"
+        required: true
+        default: "2025-01-01"
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Pull
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git pull --rebase origin main
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install yfinance pandas
+
+      - name: Remove existing JSON file
+        run: rm -f json/${{ github.event.inputs.file_name }}
+        shell: bash
+
+      - name: Run stock value downloader
+        run: python py_script/stock_value_downloader.py ${{ github.event.inputs.stock_symbol }} ${{ github.event.inputs.file_name }} ${{ github.event.inputs.start_date }}            
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add json/${{ github.event.inputs.file_name }}
+          git commit -m "Aggiornamento automatico del JSON per ${{ github.event.inputs.stock_symbol }}" --allow-empty
+          git push https://github.com/${{ github.repository }}.git HEAD:main
