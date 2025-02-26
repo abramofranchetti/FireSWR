@@ -271,7 +271,7 @@
                                         'Variazione percentuale: ' + percentageChange.toFixed(2) + '%<br>' +
                                         'Comprando 1000€ avresti ottenuto ' + dollarsAtFirstPoint.toFixed(2) + '$ al primo cambio.<br>' +
                                         'Vendendo quei dollari al secondo cambio avresti ottenuto ' + eurosAtSecondPoint.toFixed(2) + '€.<br>' +
-                                        (difference > 0 ? ('Guadagno:') : ('Perdita:')) + difference.toFixed(2) + '€'
+                                        (difference > 0 ? ('Guadagno:') : ('Perdita:')) + difference.toFixed(2) + '€' + ' (' + (difference > 0 ? '+' : '') + (difference / initialAmount * 100).toFixed(2) + '% dell\'investimento iniziale)'
                                     );
                                     firstPoint = null;
                                     secondPoint = null;
