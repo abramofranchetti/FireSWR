@@ -49,6 +49,21 @@
         .home-button:hover {
             background-color: #ebf3fc;
         }
+
+        .percentage-change {
+            margin-top: 1rem !important;
+            display: inline-block;
+            text-align: left;
+            vertical-align: middle;
+            font-size: 18px;
+            margin-top: 20px;
+            color: #0073e6;
+            padding: .375rem .75rem;                        
+            background-color: #f0f8ff;
+            font-weight: 400;            
+            line-height: 1.5;
+            border-radius: .25rem;
+        }
     </style>
 </head>
 
@@ -59,10 +74,12 @@
         </div>
         <br>
         <h1 class="mt-4 mb-4">Andamento Euro/Dollaro</h1>
-        <h6 class="text-center">Il cambio Euro/Dollaro rappresenta il valore di un Euro in Dollari. 
-            I dati storici precedenti il 1999, anno di introduzione dell'Euro, sono stati estrapolati dall'ECU (European Currency Unit), 
-            che era un'unità di conto utilizzata dalle istituzioni europee prima dell'Euro. 
-            Prima dell'ECU, i dati sono stati calcolati come media dei cambi delle valute nazionali europee con il Dollaro.
+        <h6 class="text-center">Il cambio Euro/Dollaro rappresenta il valore di un Euro in Dollari.
+            I dati storici precedenti il 1999, anno di introduzione dell'Euro, sono stati estrapolati dall'ECU (European
+            Currency Unit),
+            che era un'unità di conto utilizzata dalle istituzioni europee prima dell'Euro.
+            Prima dell'ECU, i dati sono stati calcolati come media dei cambi delle valute nazionali europee con il
+            Dollaro.
         </h6>
         <div class="row">
             <div class="col-md-6">
@@ -76,6 +93,8 @@
         </div>
         <canvas id="chartCanvas" height="120"></canvas>
         <button id="resetZoomButton" class="btn btn-primary mt-3">Reset Zoom</button>
+        <div class="percentage-change" id="percentageChange">Clicca su un punto e poi su un altro per calcolare la
+            variazione %</div>
     </div>
 
     <script>
@@ -85,6 +104,8 @@
             let updateTimeout = null;
             let minDate = null;
             let maxDate = null;
+            let firstPoint = null;
+            let secondPoint = null;
 
             function mergeData(historicalData, updatedData) {
                 const mergedData = [...historicalData];
@@ -110,6 +131,10 @@
             function calculateAverage(data) {
                 const sum = data.reduce((acc, item) => acc + item, 0);
                 return sum / data.length;
+            }
+
+            function calculatePercentageChange(start, end) {
+                return ((end - start) / start) * 100;
             }
 
             function updateChart(data) {
@@ -225,6 +250,33 @@
                                     text: 'Cambio Euro/Dollaro'
                                 }
                             }
+                        },
+                        onClick: function (event, elements) {
+                            if (elements.length > 0) {
+                                const index = elements[0].index;
+                                const value = exchangeRates[index];
+                                if (!firstPoint) {
+                                    firstPoint = value;
+                                    $('#percentageChange').text('Primo punto selezionato: ' + value);
+                                } else {
+                                    secondPoint = value;
+                                    const percentageChange = calculatePercentageChange(firstPoint, secondPoint);
+                                    const initialAmount = 1000;
+                                    const dollarsAtFirstPoint = initialAmount * firstPoint;
+                                    const eurosAtSecondPoint = dollarsAtFirstPoint / secondPoint;
+                                    const difference = eurosAtSecondPoint - initialAmount;
+                                    $('#percentageChange').html(
+                                        'Cambio al primo punto: ' + firstPoint.toFixed(4) + ' dollari per un euro <br>' +
+                                        'Cambio al secondo punto: ' + secondPoint.toFixed(4) + ' dollari per un euro<br>' +
+                                        'Variazione percentuale: ' + percentageChange.toFixed(2) + '%<br>' +
+                                        'Comprando 1000€ avresti ottenuto ' + dollarsAtFirstPoint.toFixed(2) + '$ al primo cambio.<br>' +
+                                        'Vendendo quei dollari al secondo cambio avresti ottenuto ' + eurosAtSecondPoint.toFixed(2) + '€.<br>' +
+                                        (difference > 0 ? ('Guadagno:') : ('Perdita:')) + difference.toFixed(2) + '€'
+                                    );
+                                    firstPoint = null;
+                                    secondPoint = null;
+                                }
+                            }
                         }
                     }
                 });
@@ -244,24 +296,24 @@
                     return response.json();
                 })
             ])
-            .then(([historicalData, updatedData]) => {
-                mergedData = mergeData(historicalData, updatedData);
+                .then(([historicalData, updatedData]) => {
+                    mergedData = mergeData(historicalData, updatedData);
 
-                minDate = new Date(Math.min(...mergedData.map(item => new Date(item.Date))));
-                maxDate = new Date(Math.max(...mergedData.map(item => new Date(item.Date))));
+                    minDate = new Date(Math.min(...mergedData.map(item => new Date(item.Date))));
+                    maxDate = new Date(Math.max(...mergedData.map(item => new Date(item.Date))));
 
-                $('#startDate').val(minDate.toISOString().split('T')[0]);
-                $('#endDate').val(maxDate.toISOString().split('T')[0]);
-                $('#startDate').attr('min', minDate.toISOString().split('T')[0]);
-                $('#startDate').attr('max', maxDate.toISOString().split('T')[0]);
-                $('#endDate').attr('min', minDate.toISOString().split('T')[0]);
-                $('#endDate').attr('max', maxDate.toISOString().split('T')[0]);
+                    $('#startDate').val(minDate.toISOString().split('T')[0]);
+                    $('#endDate').val(maxDate.toISOString().split('T')[0]);
+                    $('#startDate').attr('min', minDate.toISOString().split('T')[0]);
+                    $('#startDate').attr('max', maxDate.toISOString().split('T')[0]);
+                    $('#endDate').attr('min', minDate.toISOString().split('T')[0]);
+                    $('#endDate').attr('max', maxDate.toISOString().split('T')[0]);
 
-                updateChart(mergedData);
-            })
-            .catch(error => {
-                console.error("Errore durante il caricamento dei dataset:", error);
-            });
+                    updateChart(mergedData);
+                })
+                .catch(error => {
+                    console.error("Errore durante il caricamento dei dataset:", error);
+                });
 
             $('#startDate, #endDate').change(function () {
                 clearTimeout(updateTimeout);
@@ -269,7 +321,7 @@
                     const startDate = $('#startDate').val();
                     const endDate = $('#endDate').val();
 
-                    if (new Date(startDate) < minDate || new Date(endDate) > maxDate || startDate=='' || endDate=='') {
+                    if (new Date(startDate) < minDate || new Date(endDate) > maxDate || startDate == '' || endDate == '') {
                         alert('Le date selezionate devono essere comprese tra ' + minDate.toISOString().split('T')[0] + ' e ' + maxDate.toISOString().split('T')[0]);
                         $('#startDate').val(minDate.toISOString().split('T')[0]);
                         $('#endDate').val(maxDate.toISOString().split('T')[0]);
