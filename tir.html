@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,24 +8,69 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        .disclaimer {
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 30px;
+            line-height: 1.4;
+        }
+
+        .disclaimer strong {
+            font-weight: bold;
+        }
+
+        .home-button:hover {
+            background-color: #ebf3fc;
+        }
+
+        .home-button {
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #0073e6;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+    </style>
 </head>
+
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Calcolatore Tasso di Interesse Reale</h1>        
-        <h5 class="text-center">Il calcolatore usa la formula: Interesse reale =  \(\left(\frac{1 + \text{Tasso Nominale}}{1 + \text{Tasso di Inflazione}} - 1\right) \times 100\)</h5>
-        <p class="text-center">Questa formula calcola il tasso di interesse reale tenendo conto dell'inflazione. <br> Esempio: Se il Tasso Nominale è 5% e il Tasso di Inflazione è 2%, il Tasso di Interesse Reale sarà \(\left(\frac{1 + 0.05}{1 + 0.02} - 1\right) \times 100 = 2.94\% \)</p>
-        <p class="text-center">Questo perchè se con 1000€ compravo 100 panini da 10€ l'uno, con l'interesse del 5% dopo un anno il capitale sarà 1050€ e avrei potuto comprare 105 panini, ma dato che i panini ora costano 10,20€ posso comprare solo 102,94 panini. Ergo il mio guadagno reale non è stato di 5 panini ma solamente 2,94 panini.
-            In sostanza ho potuto acquistare meno beni rispetto all'anno precedente, quindi il mio guadagno reale è stato inferiore al 5% nominale.
-            <strong>Nota che quindi il tasso reale non si calcola semplicemente sottraendo l'inflazione dal tasso nominale, ma con la formula sopra indicata.</strong>            
+        <div>
+            <a href="/" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Calcolatore Tasso di Interesse Reale</h1>
+        <h5 class="text-center">Il calcolatore usa la formula: Interesse reale = \(\left(\frac{1 + \text{Tasso
+            Nominale}}{1 + \text{Tasso di Inflazione}} - 1\right) \times 100\)</h5>
+        <p class="text-center">Questa formula calcola il tasso di interesse reale tenendo conto dell'inflazione. <br>
+            Esempio: Se il Tasso Nominale è 5% e il Tasso di Inflazione è 2%, il Tasso di Interesse Reale sarà
+            \(\left(\frac{1 + 0.05}{1 + 0.02} - 1\right) \times 100 = 2.94\% \)</p>
+        <p class="text-center">Questo perchè se con 1000€ compravo 100 panini da 10€ l'uno, con l'interesse del 5% dopo
+            un anno il capitale sarà 1050€ e avrei potuto comprare 105 panini, ma dato che i panini ora costano 10,20€
+            posso comprare solo 102,94 panini. Ergo il mio guadagno reale non è stato di 5 panini ma solamente 2,94
+            panini.
+            In sostanza ho potuto acquistare meno beni rispetto all'anno precedente, quindi il mio guadagno reale è
+            stato inferiore al 5% nominale.
+            <strong>Nota che quindi il tasso reale non si calcola semplicemente sottraendo l'inflazione dal tasso
+                nominale, ma con la formula sopra indicata.</strong>
         </p>
         <form id="interestForm">
             <div class="form-group">
                 <label for="nominalRate">Tasso Nominale (%)</label>
-                <input type="number" class="form-control" id="nominalRate" placeholder="Inserisci il tasso nominale" required>
+                <input type="number" class="form-control" id="nominalRate" placeholder="Inserisci il tasso nominale"
+                    required>
             </div>
             <div class="form-group">
                 <label for="inflationRate">Tasso di Inflazione (%)</label>
-                <input type="number" class="form-control" id="inflationRate" placeholder="Inserisci il tasso di inflazione" required>
+                <input type="number" class="form-control" id="inflationRate"
+                    placeholder="Inserisci il tasso di inflazione" required>
             </div>
             <button type="submit" class="btn btn-primary">Calcola</button>
         </form>
@@ -34,7 +80,7 @@
     </div>
 
     <script>
-        document.getElementById('interestForm').addEventListener('submit', function(event) {
+        document.getElementById('interestForm').addEventListener('submit', function (event) {
             event.preventDefault();
             const nominalRate = parseFloat(document.getElementById('nominalRate').value) / 100;
             const inflationRate = parseFloat(document.getElementById('inflationRate').value) / 100;
@@ -42,5 +88,20 @@
             document.getElementById('result').innerText = `Tasso di Interesse Reale: ${realRate.toFixed(2)}%`;
         });
     </script>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> Le informazioni e i calcoli forniti in questa pagina sono a scopo puramente
+            informativo e non costituiscono in alcun modo una consulenza finanziaria, fiscale, legale o professionale.
+            Sebbene sia stata posta la massima cura nella preparazione di questi calcoli, non si garantisce
+            l’accuratezza, la completezza o l'affidabilità delle informazioni fornite. L'utente si assume la piena
+            responsabilità per l'uso delle informazioni presenti e per eventuali decisioni o azioni intraprese in base
+            ai risultati di tali calcoli.</p>
+        <p>L’autore declina espressamente ogni responsabilità per eventuali perdite, danni o spese derivanti dall'uso o
+            dall'affidamento sui calcoli e le informazioni qui presenti. Si consiglia vivamente di consultare un
+            professionista qualificato per valutazioni personalizzate e verificare tutte le informazioni con esperti
+            prima di prendere qualsiasi decisione di investimento o finanziaria.</p>
+    </div>
 </body>
+
 </html>
