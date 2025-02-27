@@ -21,7 +21,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: auto;
             background-color: white;
             padding: 20px;
@@ -255,24 +255,59 @@
                             if (elements.length > 0) {
                                 const index = elements[0].index;
                                 const value = exchangeRates[index];
+                                const date = dates[index];
                                 if (!firstPoint) {
-                                    firstPoint = value;
+                                    firstPoint = { value, date };
                                     $('#percentageChange').text('Primo punto selezionato: ' + value);
+                                    chartInstance.options.plugins.annotation.annotations.firstPointLine = {
+                                        type: 'line',
+                                        scaleID: 'x',
+                                        value: date,
+                                        borderColor: 'green',
+                                        borderWidth: 2,
+                                        label: {
+                                            content: 'Primo punto' + firstPoint.value.toFixed(4),
+                                            enabled: true,
+                                            position: 'start'
+                                        }
+                                    };
+                                    chartInstance.update();
                                 } else {
-                                    secondPoint = value;
-                                    const percentageChange = calculatePercentageChange(firstPoint, secondPoint);
+                                    secondPoint = { value, date };
+                                    const percentageChange = calculatePercentageChange(firstPoint.value, secondPoint.value);
                                     const initialAmount = 1000;
-                                    const dollarsAtFirstPoint = initialAmount * firstPoint;
-                                    const eurosAtSecondPoint = dollarsAtFirstPoint / secondPoint;
+                                    const dollarsAtFirstPoint = initialAmount * firstPoint.value;
+                                    const eurosAtSecondPoint = dollarsAtFirstPoint / secondPoint.value;
                                     const difference = eurosAtSecondPoint - initialAmount;
                                     $('#percentageChange').html(
-                                        'Cambio al primo punto: ' + firstPoint.toFixed(4) + ' dollari per un euro <br>' +
-                                        'Cambio al secondo punto: ' + secondPoint.toFixed(4) + ' dollari per un euro<br>' +
+                                        'Cambio al primo punto: ' + firstPoint.value.toFixed(4) + ' dollari per un euro <br>' +
+                                        'Cambio al secondo punto: ' + secondPoint.value.toFixed(4) + ' dollari per un euro<br>' +
                                         'Variazione percentuale: ' + percentageChange.toFixed(2) + '%<br>' +
                                         'Comprando 1000€ avresti ottenuto ' + dollarsAtFirstPoint.toFixed(2) + '$ al primo cambio.<br>' +
                                         'Vendendo quei dollari al secondo cambio avresti ottenuto ' + eurosAtSecondPoint.toFixed(2) + '€.<br>' +
                                         (difference > 0 ? ('Guadagno:') : ('Perdita:')) + difference.toFixed(2) + '€' + ' (' + (difference > 0 ? '+' : '') + (difference / initialAmount * 100).toFixed(2) + '% dell\'investimento iniziale)'
                                     );
+                                    chartInstance.options.plugins.annotation.annotations.secondPointLine = {
+                                        type: 'line',
+                                        scaleID: 'x',
+                                        value: date,
+                                        borderColor: 'red',
+                                        borderWidth: 2,
+                                        label: {
+                                            content: 'Secondo punto' + secondPoint.value.toFixed(4),
+                                            enabled: true,
+                                            position: 'start'
+                                        }
+                                    };
+                                    chartInstance.options.plugins.annotation.annotations.areaBetweenPoints = {
+                                        type: 'box',
+                                        xMin: firstPoint.date,
+                                        xMax: secondPoint.date,
+                                        backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                                        borderColor: 'rgba(0, 255, 0, 0.25)',
+                                        borderWidth: 1
+                                    };
+                                    chartInstance.update();
                                     firstPoint = null;
                                     secondPoint = null;
                                 }
@@ -335,6 +370,14 @@
             $('#resetZoomButton').click(function () {
                 if (chartInstance) {
                     chartInstance.resetZoom();
+                    // Reset delle annotazioni e delle variabili dei punti selezionati
+                    chartInstance.options.plugins.annotation.annotations.firstPointLine = null;
+                    chartInstance.options.plugins.annotation.annotations.secondPointLine = null;
+                    chartInstance.options.plugins.annotation.annotations.areaBetweenPoints = null;
+                    chartInstance.update();
+                    firstPoint = null;
+                    secondPoint = null;
+                    $('#percentageChange').text('Clicca su un punto e poi su un altro per calcolare la variazione %');
                 }
             });
         });
