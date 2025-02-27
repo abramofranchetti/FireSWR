@@ -6,29 +6,35 @@
     <title>Calcolatore Fair Price Obbligazioni</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
     <script>
-         document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function() {
             let oggi = new Date();
             let scadenzaDefault = new Date(oggi.getFullYear() + 10, oggi.getMonth(), oggi.getDate()).toISOString().split('T')[0];
             document.getElementById("scadenza").value = scadenzaDefault;
         });
+
         async function calcolaFairPrice() {
             const scadenza = document.getElementById("scadenza").value;
             const tassoCedolare = parseFloat(document.getElementById("tassoCedolare").value) / 100;
             const frequenza = parseInt(document.getElementById("frequenza").value);
             const prezzoRimborso = parseFloat(document.getElementById("prezzoRimborso").value);
-            const metodoGiorni = document.getElementById("metodoGiorni").value;
             const riskFreeRate = parseFloat(document.getElementById("riskFreeRate").value);
             const spreadCredito = parseFloat(document.getElementById("spreadCredito").value);
             
             const discountRate = riskFreeRate + spreadCredito;
+            const discountRateNoSpread = riskFreeRate;
             let fairPrice = 0;
+            let fairPriceNoSpread = 0;
             
             for (let i = 1; i <= (new Date(scadenza).getFullYear() - new Date().getFullYear()) * frequenza; i++) {
                 fairPrice += (tassoCedolare / frequenza * prezzoRimborso) / Math.pow(1 + discountRate / 100, i / frequenza);
+                fairPriceNoSpread += (tassoCedolare / frequenza * prezzoRimborso) / Math.pow(1 + discountRateNoSpread / 100, i / frequenza);
             }
             fairPrice += prezzoRimborso / Math.pow(1 + discountRate / 100, (new Date(scadenza) - new Date()) / (365.25 * 24 * 3600 * 1000));
+            fairPriceNoSpread += prezzoRimborso / Math.pow(1 + discountRateNoSpread / 100, (new Date(scadenza) - new Date()) / (365.25 * 24 * 3600 * 1000));
             
-            document.getElementById("risultato").innerText = `Fair Price: ${fairPrice.toFixed(2)}`;
+            document.getElementById("risultato").innerText = `
+                Fair Price: ${fairPrice.toFixed(2)}                
+                Fair Price senza Spread di credito: ${fairPriceNoSpread.toFixed(2)}`;
         }
     </script>
     <style>
@@ -108,18 +114,8 @@
             <div class="field">
                 <label class="label">Spread di Credito (%) (se hai quello in punti basta dividere per 100):</label>
                 <input class="input" type="number" id="spreadCredito" value="1.0" step="0.01">
-            </div>
-            <div class="field">
-                <label class="label">Metodo Calcolo Giorni:</label>
-                <div class="select">
-                    <select id="metodoGiorni">
-                        <option value="30/360">30/360</option>
-                        <option value="actual/actual">Actual/Actual</option>
-                        <option value="actual/360">Actual/360</option>
-                    </select>
-                </div>
-            </div>
-            <button class="button is-primary" onclick="calcolaFairPrice()">Calcola</button>
+            </div>            
+            <button class="button is-primary" onclick="calcolaFairPrice()">Calcola</button>           
             <h2 class="title is-4" id="risultato" style="color: darkorange;"></h2>
         </div>
     </section>
