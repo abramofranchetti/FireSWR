@@ -111,13 +111,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 {
                     label: 'Capitale versato (Al netto dell\'inflazione)',
                     data: realCapitalData,
-                    backgroundColor: 'rgb(42, 157, 144)',
+                    backgroundColor: 'rgb(39, 71, 84)', 
                     borderWidth: 1
                 },
                 {
                     label: 'Inflazione sul capitale versato',
                     data: inflationData,
-                    backgroundColor: 'rgb(232, 196, 104)',                    
+                    backgroundColor: 'rgb(244, 164, 98)',                    
                     borderWidth: 1
                 },
                 {
@@ -129,13 +129,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 {
                     label: 'Inflazione sul capital gain',
                     data: inflationOnCapitalGainData,
-                    backgroundColor: 'rgb(244, 164, 98)',
+                    backgroundColor: 'rgb(232, 196, 104)',
                     borderWidth: 1
                 },
                 {
                     label: 'Capital Gain al netto di inflazione e tasse',
                     data: realNetCapitalGainData,
-                    backgroundColor: 'rgb(39, 71, 84)',
+                    backgroundColor: 'rgb(42, 157, 144)',
                     borderWidth: 1
                 }
             ]
