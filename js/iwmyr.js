@@ -55,12 +55,10 @@ document.addEventListener('DOMContentLoaded', function () {
         inflationOnCapitalGainData.push(0);
         labels.push(`${currentYear++}`);
 
-        for (let year = 1; year <= period; year++) {
-
+        for (let year = 1; year <= period; year++) {            
             labels.push(`${currentYear++}`);
             capital += periodicDeposit;
             totalNominalDeposit += periodicDeposit;
-
             const nominalCapitalGain = capital * returnRate;            
             totalReturn += nominalCapitalGain;
             const currentCapitalTax = nominalCapitalGain * 0.26;
@@ -69,7 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
             taxesData.push(currentCapitalTax + taxesData[year - 1]);
             inflationOnCapitalGainData.push((totalReturn - (totalReturn * 0.26)) * calcolaInflazione(inflationRate, year));
             realNetCapitalGainData.push(totalReturn - taxesData[year] - inflationOnCapitalGainData[year]);
-
             capital += nominalCapitalGain;
         }
 
@@ -78,7 +75,11 @@ document.addEventListener('DOMContentLoaded', function () {
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td><i class="fas fa-chart-line"></i> Total Return:</td>
+                        <td><i class="fas fa-coins"></i> Totale versato:</td>
+                        <td>${formatEuro(totalNominalDeposit)}</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-chart-line"></i> Total Return lordo:</td>
                         <td>${formatEuro(totalReturn)}</td>
                     </tr>
                     <tr>
@@ -103,6 +104,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     </tr>
                 </tbody>
             </table>
+
+            <p> Quindi alla fine si avrà un lordo totale di ${formatEuro(totalReturn + totalNominalDeposit)} ma il valore reale di questi soldi al netto di tasse
+            e inflazione sarà solamente ${formatEuro(realNetCapitalGainData[realNetCapitalGainData.length - 1]+realCapitalData[realCapitalData.length - 1])} </p>
         `;
 
         return {
