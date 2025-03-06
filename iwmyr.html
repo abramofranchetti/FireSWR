@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andamento dell'Investimento</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/iwmyr.js" defer></script>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <h1 class="text-center">Andamento dell'Investimento</h1>
+
+        <div class="form-group">
+            <label>Tipo di investimento</label>
+            <div>
+                <input type="radio" id="oneShot" name="investmentType" value="one-shot" checked>
+                <label for="oneShot">One Shot</label>
+            </div>
+            <div>
+                <input type="radio" id="periodic" name="investmentType" value="periodic">
+                <label for="periodic">Periodic</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="annualDeposit">Deposito annuale (€)</label>
+            <input type="number" class="form-control" id="annualDeposit" value="10000">
+        </div>
+
+        <div class="form-group">
+            <label for="investmentPeriod">Periodo di investimento (anni)</label>
+            <input type="number" class="form-control" id="investmentPeriod" value="15">
+        </div>
+
+        <div class="form-group">
+            <label for="annualReturn">Rendimento annuale lordo (%)</label>
+            <input type="number" class="form-control" id="annualReturn" value="6">
+        </div>
+
+        <div class="form-group">
+            <label for="annualInflation">Tasso di inflazione annua (%)</label>
+            <input type="number" class="form-control" id="annualInflation" value="2">
+        </div>
+
+        <canvas id="investmentChart" width="400" height="200"></canvas>
+        <br>
+        <div id="totalReturnContainer">
+            <span id="totalReturnValue">0</span>
+        </div>
+        
+        
+    </div>
+
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+.home-button {
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #0073e6;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    float: left;
+}
+
+.home-button:hover {
+    background-color: #005bb5;
+}
+
+.disclaimer {
+    font-size: 0.9em;
+    color: #666;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+    margin-top: 30px;
+    line-height: 1.4;
+}
+
+.disclaimer strong {
+    font-weight: bold;
+}
