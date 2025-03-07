@@ -49,6 +49,32 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                         }
                     }
+                },
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                yMin: annualCoupon,
+                                yMax: annualCoupon,
+                                borderColor: 'red',
+                                borderWidth: 2,
+                                label: {
+                                    content: 'Cedola Nominale',
+                                    enabled: true,
+                                    position: 'start'
+                                }
+                            }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    }
                 }
             }
         });
