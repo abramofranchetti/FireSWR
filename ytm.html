@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yield to Maturity</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/ytm.js" defer></script>    
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <h1 class="text-center">Yield to Maturity</h1>
+        <h5>Il Yield to Maturity (YTM) misura il rendimento annuo effettivo che otterresti se acquistassi oggi l'obbligazione a un dato prezzo e la tenessi fino alla scadenza, incassando le cedole e il rimborso a 100.</h5>
+        <h5>La formula approssimativa per il YTM è:</h5>
+        <h4>
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow>
+                <mi>YTM</mi>
+                <mo>&#8776;</mo>
+                <mfrac>
+                <mrow>
+                    <mi>C</mi>
+                    <mo>+</mo>
+                    <mfrac>
+                    <mrow>
+                        <mi>F</mi>
+                        <mo>-</mo>
+                        <mi>P</mi>
+                    </mrow>
+                    <mi>N</mi>
+                    </mfrac>
+                </mrow>
+                <mfrac>
+                    <mrow>
+                    <mi>F</mi>
+                    <mo>+</mo>
+                    <mi>P</mi>
+                    </mrow>
+                    <mn>2</mn>
+                </mfrac>
+                </mfrac>
+            </mrow>
+            </math>
+        </h4>
+        <h5>Dove:</h5>
+        <ul>
+            <li><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>C</mi></math> = Cedola annua = 0,85€</li>
+            <li><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>F</mi></math> = Valore nominale a scadenza = 100€</li>
+            <li><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>P</mi></math> = Prezzo di mercato = 42€</li>
+            <li><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>N</mi></math> = Anni alla scadenza (servirebbe sapere quanti anni mancano)</li>
+        </ul>
+
+        <form id="ytmForm">
+            <div class="form-group">
+                <label for="marketPrice">Prezzo di Mercato (€)</label>
+                <input type="number" class="form-control" id="marketPrice" required min="0" step="0.01" value="42">
+            </div>
+            <div class="form-group">
+                <label for="annualCoupon">Cedola Annua (€)</label>
+                <input type="number" class="form-control" id="annualCoupon" required min="0" step="0.01" value="0.85">
+            </div>
+            <div class="form-group">
+                <label for="faceValue">Valore Nominale (€)</label>
+                <input type="number" class="form-control" id="faceValue" required min="0" step="0.01" value="100">
+            </div>
+            <div class="form-group">
+                <label for="yearsToMaturity">Anni alla Scadenza</label>
+                <input type="number" class="form-control" id="yearsToMaturity" required min="0" step="1" value="96">
+            </div>
+            <button type="submit" class="btn btn-primary">Calcola YTM</button>
+        </form>
+
+        <div class="mt-4">
+            <h3>Yield to Maturity: <span id="ytmResult">0.00%</span></h3>
+        </div>
+
+        <canvas id="ytmChart" width="400" height="200"></canvas>
+    </div>
+
+     <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+</body>
+
+</html>
