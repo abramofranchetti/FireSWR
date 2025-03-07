@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const ytmForm = document.getElementById('ytmForm');
     const ytmResult = document.getElementById('ytmResult');
     const ctx = document.getElementById('ytmChart').getContext('2d');
+    const marketPriceRange = document.getElementById('marketPriceRange');
+    const annualCouponInput = document.getElementById('annualCoupon');
+    const faceValueInput = document.getElementById('faceValue');
+    const yearsToMaturityInput = document.getElementById('yearsToMaturity');
     let chartInstance = null;
 
     function calculateYTM(marketPrice, annualCoupon, faceValue, yearsToMaturity) {
@@ -9,14 +13,14 @@ document.addEventListener('DOMContentLoaded', function () {
         return ytm * 100; // Convert to percentage
     }
 
-    function renderChart(ytmValues) {
+    function renderChart(ytmValues, selectedYTM, selectedMarketPrice) {
         if (chartInstance) {
             chartInstance.destroy();
         }
         chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ytmValues.map((_, index) => `Year ${index + 1}`),
+                labels: ytmValues.map((_, index) => `€${20 + index}`),
                 datasets: [{
                     label: 'Yield to Maturity (%)',
                     data: ytmValues,
@@ -36,32 +40,65 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                         }
                     }
+                },
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                yMin: selectedYTM,
+                                yMax: selectedYTM,                                
+                                borderColor: 'red',
+                                borderWidth: 2,
+                                label: {
+                                    content: `${selectedYTM}%`,
+                                    enabled: true,
+                                    position: 'top'
+                                }
+                            },
+                            line2: {
+                                type: 'line',
+                                xMin: selectedMarketPrice,
+                                xMax: selectedMarketPrice,                                
+                                borderColor: 'red',
+                                borderWidth: 2,
+                                label: {
+                                    content: `${selectedMarketPrice + 20}€`,
+                                    enabled: true,
+                                    position: 'top'
+                                }
+                            }
+                        }
+                    }
                 }
             }
         });
     }
 
     function performCalculation() {
-        const marketPrice = parseFloat(document.getElementById('marketPrice').value);
-        const annualCoupon = parseFloat(document.getElementById('annualCoupon').value);
-        const faceValue = parseFloat(document.getElementById('faceValue').value);
-        const yearsToMaturity = parseInt(document.getElementById('yearsToMaturity').value);
+        const annualCoupon = parseFloat(annualCouponInput.value);
+        const faceValue = parseFloat(faceValueInput.value);
+        const yearsToMaturity = parseInt(yearsToMaturityInput.value);
+        const selectedMarketPrice = parseInt(marketPriceRange.value);
 
-        if (marketPrice > 0 && annualCoupon >= 0 && faceValue > 0 && yearsToMaturity > 0) {
-            const ytm = calculateYTM(marketPrice, annualCoupon, faceValue, yearsToMaturity).toFixed(2);
-            ytmResult.textContent = `${ytm}%`;
-
-            const ytmValues = Array.from({ length: yearsToMaturity }, (_, i) => calculateYTM(marketPrice, annualCoupon, faceValue, i + 1).toFixed(2));
-            renderChart(ytmValues);
+        if (annualCoupon >= 0 && faceValue > 0 && yearsToMaturity > 0) {
+            const ytmValues = [];
+            for (let marketPrice = 20; marketPrice <= 120; marketPrice++) {
+                const ytm = calculateYTM(marketPrice, annualCoupon, faceValue, yearsToMaturity).toFixed(2);
+                ytmValues.push(ytm);
+            }
+            const selectedYTM = ytmValues[selectedMarketPrice - 20];
+            ytmResult.textContent = `${selectedYTM}%`;
+            renderChart(ytmValues, selectedYTM, selectedMarketPrice -20);
         } else {
             alert('Per favore, inserisci valori validi.');
         }
     }
 
-    ytmForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        performCalculation();
-    });
+    marketPriceRange.addEventListener('input', performCalculation);
+    annualCouponInput.addEventListener('input', performCalculation);
+    faceValueInput.addEventListener('input', performCalculation);
+    yearsToMaturityInput.addEventListener('input', performCalculation);
 
     // Perform the calculation when the page loads
     performCalculation();

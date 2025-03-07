@@ -11,7 +11,9 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
     <script src="js/ytm.js" defer></script>    
 </head>
 
@@ -63,8 +65,9 @@
 
         <form id="ytmForm">
             <div class="form-group">
-                <label for="marketPrice">Prezzo di Mercato (€)</label>
-                <input type="number" class="form-control" id="marketPrice" required min="0" step="0.01" value="42">
+                <label for="marketPriceRange">Prezzo di Mercato (€)</label>
+                <input type="range" class="form-control" id="marketPriceRange" required min="20" max="120" step="1" value="42">
+                <span id="marketPriceValue">42</span>€
             </div>
             <div class="form-group">
                 <label for="annualCoupon">Cedola Annua (€)</label>
@@ -78,7 +81,6 @@
                 <label for="yearsToMaturity">Anni alla Scadenza</label>
                 <input type="number" class="form-control" id="yearsToMaturity" required min="0" step="1" value="96">
             </div>
-            <button type="submit" class="btn btn-primary">Calcola YTM</button>
         </form>
 
         <div class="mt-4">
@@ -98,6 +100,13 @@
                  .then(data => {
                      document.getElementById('disclaimer-container').innerHTML = data;
                  });
+
+             const marketPriceRange = document.getElementById('marketPriceRange');
+             const marketPriceValue = document.getElementById('marketPriceValue');
+
+             marketPriceRange.addEventListener('input', function () {
+                 marketPriceValue.textContent = marketPriceRange.value;
+             });
          });
      </script>
 </body>
