@@ -9,7 +9,22 @@ document.addEventListener('DOMContentLoaded', function () {
     let chartInstance = null;
 
     function calculateYTM(marketPrice, annualCoupon, faceValue, yearsToMaturity) {
-        const ytm = (annualCoupon + (faceValue - marketPrice) / yearsToMaturity) / ((faceValue + marketPrice) / 2);
+        let ytm = 0.05; // Initial guess
+        const maxIterations = 100;
+        const tolerance = 1e-6;
+
+        for (let i = 0; i < maxIterations; i++) {
+            const f = marketPrice - (annualCoupon * (1 - Math.pow(1 + ytm, -yearsToMaturity)) / ytm + faceValue * Math.pow(1 + ytm, -yearsToMaturity));
+            const fPrime = annualCoupon * (Math.pow(1 + ytm, -yearsToMaturity) * (yearsToMaturity / ytm + 1) - 1) / (ytm * ytm) - faceValue * yearsToMaturity * Math.pow(1 + ytm, -yearsToMaturity - 1);
+            const newYTM = ytm - f / fPrime;
+
+            if (Math.abs(newYTM - ytm) < tolerance) {
+                ytm = newYTM;
+                break;
+            }
+            ytm = newYTM;
+        }
+
         return ytm * 100; // Convert to percentage
     }
 
@@ -47,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             line1: {
                                 type: 'line',
                                 yMin: selectedYTM,
-                                yMax: selectedYTM,                                
+                                yMax: selectedYTM,
                                 borderColor: 'red',
                                 borderWidth: 2,
                                 label: {
@@ -59,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             line2: {
                                 type: 'line',
                                 xMin: selectedMarketPrice,
-                                xMax: selectedMarketPrice,                                
+                                xMax: selectedMarketPrice,
                                 borderColor: 'red',
                                 borderWidth: 2,
                                 label: {
@@ -89,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             const selectedYTM = ytmValues[selectedMarketPrice - 20];
             ytmResult.textContent = `${selectedYTM}%`;
-            renderChart(ytmValues, selectedYTM, selectedMarketPrice -20);
+            renderChart(ytmValues, selectedYTM, selectedMarketPrice - 20);
         } else {
             alert('Per favore, inserisci valori validi.');
         }

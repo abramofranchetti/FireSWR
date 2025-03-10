@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     const cceForm = document.getElementById('cceForm');
     const annualCouponInput = document.getElementById('annualCoupon');
+    const purchasePriceInput = document.getElementById('purchasePrice');
+    const purchasePriceOutput = document.getElementById('purchasePriceOutput');
+    const effectiveCouponDisplay = document.getElementById('effectiveCouponDisplay');
     const cceResult = document.getElementById('cceResult');
     const ctx = document.getElementById('cceChart').getContext('2d');
     let chartInstance = null;
@@ -9,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return (annualCoupon / purchasePrice) * 100; // Convert to percentage
     }
 
-    function renderChart(annualCoupon) {
+    function renderChart(annualCoupon, selectedPrice) {
         const purchasePrices = Array.from({ length: 101 }, (_, i) => i + 20);
         const effectiveCoupons = purchasePrices.map(price => calculateEffectiveCoupon(annualCoupon, price).toFixed(2));
 
@@ -64,6 +67,18 @@ document.addEventListener('DOMContentLoaded', function () {
                                     enabled: true,
                                     position: 'start'
                                 }
+                            },
+                            line2: {
+                                type: 'line',
+                                xMin: selectedPrice-20,
+                                xMax: selectedPrice-20,
+                                borderColor: 'blue',
+                                borderWidth: 2,
+                                label: {
+                                    content: 'Prezzo Selezionato',
+                                    enabled: true,
+                                    position: 'start'
+                                }
                             }
                         }
                     },
@@ -80,10 +95,29 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function updateEffectiveCouponDisplay(annualCoupon, purchasePrice) {
+        const effectiveCoupon = calculateEffectiveCoupon(annualCoupon, purchasePrice).toFixed(2);
+        effectiveCouponDisplay.textContent = `Cedola Effettiva: ${effectiveCoupon}%`;
+    }
+
     annualCouponInput.addEventListener('input', function () {
         const annualCoupon = parseFloat(annualCouponInput.value);
+        const purchasePrice = parseFloat(purchasePriceInput.value);
         if (annualCoupon >= 0) {
-            renderChart(annualCoupon);
+            renderChart(annualCoupon, purchasePrice);
+            updateEffectiveCouponDisplay(annualCoupon, purchasePrice);
+        } else {
+            alert('Per favore, inserisci valori validi.');
+        }
+    });
+
+    purchasePriceInput.addEventListener('input', function () {
+        const purchasePrice = parseFloat(purchasePriceInput.value);
+        purchasePriceOutput.value = purchasePrice;
+        const annualCoupon = parseFloat(annualCouponInput.value);
+        if (annualCoupon >= 0) {
+            renderChart(annualCoupon, purchasePrice);
+            updateEffectiveCouponDisplay(annualCoupon, purchasePrice);
         } else {
             alert('Per favore, inserisci valori validi.');
         }
@@ -91,5 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Perform the calculation when the page loads
     const defaultAnnualCoupon = parseFloat(annualCouponInput.value);
-    renderChart(defaultAnnualCoupon);
+    const defaultPurchasePrice = parseFloat(purchasePriceInput.value);
+    renderChart(defaultAnnualCoupon, defaultPurchasePrice);
+    updateEffectiveCouponDisplay(defaultAnnualCoupon, defaultPurchasePrice);
 });

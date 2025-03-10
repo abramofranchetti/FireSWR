@@ -24,44 +24,20 @@
         </div>
         <h1 class="text-center">Yield to Maturity</h1>
         <h5>Il Yield to Maturity (YTM) misura il rendimento annuo effettivo che otterresti se acquistassi oggi l'obbligazione a un dato prezzo e la tenessi fino alla scadenza, incassando le cedole e il rimborso a 100.</h5>
-        <h5>La formula approssimativa per il YTM è:</h5>
-        <h4>
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mrow>
-                <mi>YTM</mi>
-                <mo>&#8776;</mo>
-                <mfrac>
-                <mrow>
-                    <mi>C</mi>
-                    <mo>+</mo>
-                    <mfrac>
-                    <mrow>
-                        <mi>F</mi>
-                        <mo>-</mo>
-                        <mi>P</mi>
-                    </mrow>
-                    <mi>N</mi>
-                    </mfrac>
-                </mrow>
-                <mfrac>
-                    <mrow>
-                    <mi>F</mi>
-                    <mo>+</mo>
-                    <mi>P</mi>
-                    </mrow>
-                    <mn>2</mn>
-                </mfrac>
-                </mfrac>
-            </mrow>
-            </math>
-        </h4>
+        <h5>Non esiste una soluziona algebrica, per il calcolo del YTM utilizza il metodo iterativo di Newton-Raphson:</h5>
+        <h5>
+            \[
+            f(\text{YTM}) = P - \left( \frac{C (1 - (1 + \text{YTM})^{-N})}{\text{YTM}} + F (1 + \text{YTM})^{-N} \right)
+            \]
+        </h5>
         <h5>Dove:</h5>
         <ul>
-            <li><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>C</mi></math> = Cedola annua = 0,85€</li>
-            <li><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>F</mi></math> = Valore nominale a scadenza = 100€</li>
-            <li><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>P</mi></math> = Prezzo di mercato = 42€</li>
-            <li><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>N</mi></math> = Anni alla scadenza (servirebbe sapere quanti anni mancano)</li>
+            <li>\( C \) = Cedola annua = 0,85€</li>
+            <li>\( F \) = Valore nominale a scadenza = 100€</li>
+            <li>\( P \) = Prezzo di mercato = 42€</li>
+            <li>\( N \) = Anni alla scadenza (servirebbe sapere quanti anni mancano)</li>
         </ul>
+        <h5>Il metodo di Newton-Raphson viene utilizzato per trovare la radice della funzione iterativamente, partendo da un valore iniziale e migliorandolo fino a quando la differenza tra le iterazioni successive è inferiore a una tolleranza specificata.</h5>
 
         <form id="ytmForm">
             <div class="form-group">
