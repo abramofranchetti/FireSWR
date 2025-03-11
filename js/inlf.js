@@ -206,10 +206,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function calculateCumulativeInflation(values, startIndex, endIndex) {
-        let cumulativeInflation = 0;
+        let cumulativeFactor = 1;
         for (let i = startIndex; i <= endIndex; i++) {
-            cumulativeInflation += values[i];
+            cumulativeFactor *= (1 + values[i] / 100);
         }
-        return cumulativeInflation;
+        return (cumulativeFactor - 1) * 100;
     }
 });
