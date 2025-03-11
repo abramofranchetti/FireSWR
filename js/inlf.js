@@ -1,11 +1,21 @@
 document.addEventListener('DOMContentLoaded', function () {
+    let italiaparsedData = { labels: [], values: [] };
+    let europaparsedData = { labels: [], values: [] };
     fetch('csv/datiinflazionemediaitalia.csv')
         .then(response => response.text())
-        .then(data => {
-            const parsedData = parseCSV(data);
-            parsedData.labels.reverse();
-            parsedData.values.reverse();
-            createChart(parsedData);
+        .then(italianData => {
+            italiaparsedData = parseCSV(italianData);
+            italiaparsedData.labels.reverse();
+            italiaparsedData.values.reverse();
+            return fetch('csv/datiinflazionemediaeuropa.csv');
+        })
+        .then(response => response.text())
+        .then(europeData => {
+            europaparsedData = parseCSV(europeData);
+            europaparsedData.labels.reverse();
+            europaparsedData.values.reverse();
+            const synchronizedData = synchronizeData(italiaparsedData, europaparsedData);
+            createChart(synchronizedData.italiaData, synchronizedData.europaData);
         });
 
     // Funzione per formattare i numeri in euro con separatore delle migliaia
@@ -33,25 +43,56 @@ document.addEventListener('DOMContentLoaded', function () {
         return { labels, values };
     }
 
-    function createChart(data) {
+    function synchronizeData(italiaData, europaData) {
+        const allLabels = Array.from(new Set([...italiaData.labels, ...europaData.labels])).sort();
+        const italiaValues = [];
+        const europaValues = [];
+
+        allLabels.forEach(label => {
+            const italiaIndex = italiaData.labels.indexOf(label);
+            const europaIndex = europaData.labels.indexOf(label);
+
+            italiaValues.push(italiaIndex !== -1 ? italiaData.values[italiaIndex] : null);
+            europaValues.push(europaIndex !== -1 ? europaData.values[europaIndex] : null);
+        });
+
+        return {
+            italiaData: { labels: allLabels, values: italiaValues },
+            europaData: { labels: allLabels, values: europaValues }
+        };
+    }
+
+    function createChart(italiaData, europaData) {
         const ctx = document.getElementById('inflationChart').getContext('2d');
-        const averageInflation = data.values.reduce((a, b) => a + b, 0) / data.values.length;
+        const averageInflation = italiaData.values.reduce((a, b) => a + (b || 0), 0) / italiaData.values.filter(v => v !== null).length;
         let firstPoint = null;
         let secondPoint = null;
 
         const chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: data.labels,
-                datasets: [{
-                    label: 'Inflazione Media',
-                    data: data.values,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
-                    fill: false,
-                    pointRadius: 5, // Aumenta la dimensione dei punti
-                    pointHoverRadius: 7 // Aumenta la dimensione dei punti al passaggio del mouse
-                }]
+                labels: italiaData.labels,
+                datasets: [
+                    {
+                        label: 'Infl. Media Italia',
+                        data: italiaData.values,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        fill: false,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    },
+                    {
+                        label: 'Infl. Media Europa',
+                        data: europaData.values,
+                        borderColor: 'rgba(255, 99, 132, 0.5)',
+                        borderWidth: 1,
+                        fill: false,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        borderDash: [5, 5]
+                    }
+                ]
             },
             options: {
                 responsive: true,
@@ -120,8 +161,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                     position: 'center'
                                 }
                             }
-
-
                         }
                     }
                 },
@@ -145,14 +184,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         const index = activeElements[0].index;
                         if (!firstPoint) {
                             firstPoint = index;
-                            document.getElementById('cumulativeInflation').innerText = `Primo punto selezionato: ${data.labels[firstPoint]}`;
+                            document.getElementById('cumulativeInflation').innerText = `Primo punto selezionato: ${italiaData.labels[firstPoint]}`;
                         } else {
                             secondPoint = index;
                             const startIndex = firstPoint
                             const endIndex = secondPoint;
-                            const cumulativeInflation = calculateCumulativeInflation(data.values, startIndex, endIndex);
-                            document.getElementById('cumulativeInflation').innerText = `Inflazione cumulata tra ${data.labels[firstPoint]} e ${data.labels[secondPoint]}: ${cumulativeInflation.toFixed(2)}%
-                            ${formatEuro(10000)} sarebbero diventati ${formatEuro(Math.round(10000 / (1 + cumulativeInflation / 100)))}`;
+                            const cumulativeInflation = calculateCumulativeInflation(italiaData.values, startIndex, endIndex);
+                            document.getElementById('cumulativeInflation').innerText = `Inflazione cumulata tra ${italiaData.labels[firstPoint]} e ${italiaData.labels[secondPoint]}: ${cumulativeInflation.toFixed(2)}%
+                    ${formatEuro(10000)} sarebbero diventati ${formatEuro(Math.round(10000 / (1 + cumulativeInflation / 100)))}`;
                             firstPoint = null;
                             secondPoint = null;
                         }
