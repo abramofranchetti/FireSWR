@@ -190,8 +190,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             const startIndex = firstPoint
                             const endIndex = secondPoint;
                             const cumulativeInflation = calculateCumulativeInflation(italiaData.values, startIndex, endIndex);
+                            const svalutatedValue = Math.round(10000 / (1 + cumulativeInflation / 100));
                             document.getElementById('cumulativeInflation').innerText = `Inflazione cumulata tra ${italiaData.labels[firstPoint]} e ${italiaData.labels[secondPoint]}: ${cumulativeInflation.toFixed(2)}%
-                    ${formatEuro(10000)} sarebbero diventati ${formatEuro(Math.round(10000 / (1 + cumulativeInflation / 100)))}`;
+                    ${formatEuro(10000)} sarebbero diventati ${formatEuro(svalutatedValue)} con perdita del potere d'acquisto
+                    del ${(((svalutatedValue / 10000) - 1 ) * -100).toFixed(2)}%`;
                             firstPoint = null;
                             secondPoint = null;
                         }
