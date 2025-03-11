@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.text())
         .then(data => {
             const parsedData = parseCSV(data);
+            parsedData.labels.reverse(); 
+            parsedData.values.reverse(); 
             createChart(parsedData);
         });
 
