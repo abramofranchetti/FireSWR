@@ -107,7 +107,20 @@ document.addEventListener('DOMContentLoaded', function () {
                                     enabled: true,
                                     position: 'center'
                                 }
+                            },
+                            line3: {
+                                type: 'line',
+                                yMin: 0,
+                                yMax: 0,
+                                borderColor: 'black',
+                                borderWidth: 1,
+                                label: {
+                                    content: 'Zero Inflazione',
+                                    enabled: true,
+                                    position: 'center'
+                                }
                             }
+
 
                         }
                     }
