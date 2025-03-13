@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore rivalutazione TFR</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/tfr.js" defer></script>    
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <h1 class="text-center">Calcolatore rivalutazione TFR</h1>
+        <h5 class="text-center">La rivalutazione del TFR secondo normativa si calcola come 1.5% + 3/4 dell'inflazione</h5>
+
+        <div class="input-group mb-4 d-flex justify-content-center align-items-center">
+            <label for="startYear" class="mr-2">Anno Iniziale</label>
+            <input type="number" class="form-control w-auto" id="startYear" value="2019" min="2004" max="2024">
+            <label for="endYear" class="ml-4 mr-2">Anno Finale</label>
+            <input type="number" class="form-control w-auto" id="endYear" value="2024" min="2004" max="2024">
+        </div>
+        <div class="result alert alert-success text-center" id="resultContainer">
+            <p id="resultText">Risultato qui</p>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="revaluationTable">
+                <thead>
+                    <tr>
+                        <th>Anno</th>
+                        <th>Rivalutazione (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Contenuto della tabella -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+     <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+     <script src="js/tfr.js" defer></script>
+</body>
+
+</html>
