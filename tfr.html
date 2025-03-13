@@ -23,23 +23,26 @@
             <a href="/FireSWR" class="home-button">🏠 Home</a>
         </div>
         <h1 class="text-center">Calcolatore rivalutazione TFR</h1>
-        <h5 class="text-center">La rivalutazione del TFR secondo normativa si calcola come 1.5% + 3/4 dell'inflazione</h5>
-
+        <h5 class="text-center">La rivalutazione del TFR secondo normativa si calcola come 1.5% sommato al 75% dell'inflazione</h5>
+        <br>
         <div class="input-group mb-4 d-flex justify-content-center align-items-center">
             <label for="startYear" class="mr-2">Anno Iniziale</label>
-            <input type="number" class="form-control w-auto" id="startYear" value="2019" min="2004" max="2024">
+            <input type="number" class="form-control w-auto" id="startYear" value="2019" min="2005" max="2024">
             <label for="endYear" class="ml-4 mr-2">Anno Finale</label>
-            <input type="number" class="form-control w-auto" id="endYear" value="2024" min="2004" max="2024">
+            <input type="number" class="form-control w-auto" id="endYear" value="2024" min="2005" max="2024">
         </div>
-        <div class="result alert alert-success text-center" id="resultContainer">
+        <h6 class="text-center">Risultati</h6>
+        <div class="result text-center" id="resultContainer">
             <p id="resultText">Risultato qui</p>
         </div>
+        <h6 class="text-center">Rendimenti annuali</h6>
         <div class="table-responsive">
             <table class="table table-bordered table-striped" id="revaluationTable">
                 <thead>
                     <tr>
                         <th>Anno</th>
-                        <th>Rivalutazione (%)</th>
+                        <th>Rivalutazione TFR (%)</th>
+                        <th>Rendimento Fondo Pensione (%)</th>
                     </tr>
                 </thead>
                 <tbody>
