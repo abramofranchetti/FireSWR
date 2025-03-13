@@ -8,12 +8,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         Promise.all([
             fetch('csv/tfr.csv').then(response => response.text()),
-            fetch('csv/cometa.csv').then(response => response.text())
-        ]).then(([tfrData, cometaData]) => {
+            fetch('csv/cometa.csv').then(response => response.text()),
+            fetch('csv/acwi_xeon.csv').then(response => response.text())
+        ]).then(([tfrData, cometaData, acwiXeonData]) => {
             const tfrParsedData = parseCSV(tfrData, '\t');
             const cometaParsedData = parseCSV(cometaData, ',');
+            const acwiXeonParsedData = parseCSV(acwiXeonData, ',');
             cometaParsedData.labels.reverse();
-            cometaParsedData.values.reverse();
+            cometaParsedData.values.reverse();            
             const startIndex = tfrParsedData.labels.indexOf(startYear.toString());
             const endIndex = tfrParsedData.labels.indexOf(endYear.toString());
 
@@ -24,28 +26,34 @@ document.addEventListener('DOMContentLoaded', function () {
                 const cometaCumulativeRevaluation = calculateCometaCumulativeRevaluation(cometaParsedData, startYear, endYear);
                 const cometaAnnualizedRevaluation = ((1 + cometaCumulativeRevaluation / 100) ** (1 / (endYear - startYear + 1)) - 1) * 100;
 
+                const acwiXeonCumulativeRevaluation = calculateCometaCumulativeRevaluation(acwiXeonParsedData, startYear, endYear);
+                const acwiXeonAnnualizedRevaluation = ((1 + acwiXeonCumulativeRevaluation / 100) ** (1 / (endYear - startYear + 1)) - 1) * 100;
+
                 const resultTable = `
                     <table class="table table-bordered table-striped">
                         <tr>
                             <th></th>
                             <th>Rendimento TFR</th>
                             <th>Rendimento Fondo Pensione</th>
+                            <th>Rendimento Benchmark</th>
                         </tr>
                         <tr>
                             <th>Rivalutazione cumulata</th>
                             <td class="${cumulativeRevaluation >= cometaCumulativeRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${cumulativeRevaluation.toFixed(2)}%</td>
                             <td class="${cometaCumulativeRevaluation >= cumulativeRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${cometaCumulativeRevaluation.toFixed(2)}%</td>
+                            <td class="">${acwiXeonCumulativeRevaluation.toFixed(2)}%</td>
                         </tr>
                         <tr>
                             <th>Rivalutazione Annualizzata</th>
                             <td class="${annualizedRevaluation >= cometaAnnualizedRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${annualizedRevaluation.toFixed(2)}%</td>
                             <td class="${cometaAnnualizedRevaluation >= annualizedRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${cometaAnnualizedRevaluation.toFixed(2)}%</td>
+                            <td class="">${acwiXeonAnnualizedRevaluation.toFixed(2)}%</td>
                         </tr>
                     </table>
                 `;
                 document.getElementById('resultText').innerHTML = resultTable;
 
-                populateRevaluationTable(tfrParsedData.labels, tfrParsedData.values, cometaParsedData, startIndex, endIndex);
+                populateRevaluationTable(tfrParsedData.labels, tfrParsedData.values, cometaParsedData, acwiXeonParsedData, startIndex, endIndex);
             } else {
                 document.getElementById('resultText').innerText = 'Intervallo di anni non valido.';
                 document.getElementById('revaluationTable').querySelector('tbody').innerHTML = '';
@@ -103,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return ((endValue - startValue) / startValue) * 100;
     }
 
-    function populateRevaluationTable(labels, tfrValues, cometaData, startIndex, endIndex) {
+    function populateRevaluationTable(labels, tfrValues, cometaData, acwiXeonData, startIndex, endIndex) {
         const tbody = document.getElementById('revaluationTable').querySelector('tbody');
         tbody.innerHTML = '';
         for (let i = startIndex; i <= endIndex; i++) {
@@ -111,25 +119,29 @@ document.addEventListener('DOMContentLoaded', function () {
             const yearCell = document.createElement('td');
             const tfrValueCell = document.createElement('td');
             const cometaValueCell = document.createElement('td');
+            const acwiXeonValueCell = document.createElement('td');
 
             yearCell.textContent = labels[i];
             tfrValueCell.textContent = tfrValues[i].toFixed(2) + '%';
             const cometaReturn = calculateCometaAnnualReturn(cometaData, labels[i]);
             cometaValueCell.textContent = cometaReturn !== null ? cometaReturn.toFixed(2) + '%' : 'N/A';
+            const acwiXeonReturn = calculateCometaAnnualReturn(acwiXeonData, labels[i]);
+            acwiXeonValueCell.textContent = acwiXeonReturn !== null ? acwiXeonReturn.toFixed(2) + '%' : 'N/A';
 
             if (cometaReturn !== null) {
-                if (tfrValues[i] >= cometaReturn) {
+                if (tfrValues[i] >= cometaReturn && tfrValues[i] >= acwiXeonReturn) {
                     tfrValueCell.classList.add('bg-success', 'text-white');
                     cometaValueCell.classList.add('bg-danger', 'text-white');
-                } else {
+                } else  {
                     tfrValueCell.classList.add('bg-danger', 'text-white');
-                    cometaValueCell.classList.add('bg-success', 'text-white');
+                    cometaValueCell.classList.add('bg-success', 'text-white');                    
                 }
             }
 
             row.appendChild(yearCell);
             row.appendChild(tfrValueCell);
             row.appendChild(cometaValueCell);
+            row.appendChild(acwiXeonValueCell);
             tbody.appendChild(row);
         }
     }
