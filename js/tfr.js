@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const endIndex = tfrParsedData.labels.indexOf(endYear.toString());
 
             if (startIndex !== -1 && endIndex !== -1 && startIndex <= endIndex) {
-                const cumulativeRevaluation = calculateCumulativeRevaluation(tfrParsedData.values, startIndex, endIndex);
-                const annualizedRevaluation = ((1 + cumulativeRevaluation / 100) ** (1 / (endYear - startYear + 1)) - 1) * 100;
+                const tfrCumulativeRevaluation = calculateCumulativeRevaluation(tfrParsedData.values, startIndex, endIndex);
+                const tfrAnnualizedRevaluation = ((1 + tfrCumulativeRevaluation / 100) ** (1 / (endYear - startYear + 1)) - 1) * 100;
 
                 const cometaCumulativeRevaluation = calculateCometaCumulativeRevaluation(cometaParsedData, startYear, endYear);
                 const cometaAnnualizedRevaluation = ((1 + cometaCumulativeRevaluation / 100) ** (1 / (endYear - startYear + 1)) - 1) * 100;
@@ -39,15 +39,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         </tr>
                         <tr>
                             <th>Rivalutazione cumulata</th>
-                            <td class="${cumulativeRevaluation >= cometaCumulativeRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${cumulativeRevaluation.toFixed(2)}%</td>
-                            <td class="${cometaCumulativeRevaluation >= cumulativeRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${cometaCumulativeRevaluation.toFixed(2)}%</td>
-                            <td class="">${acwiXeonCumulativeRevaluation.toFixed(2)}%</td>
+                            <td class="${tfrCumulativeRevaluation >= cometaCumulativeRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${tfrCumulativeRevaluation.toFixed(2)}%</td>
+                            <td class="${cometaCumulativeRevaluation >= tfrCumulativeRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${cometaCumulativeRevaluation.toFixed(2)}%</td>
+                            <td class="${acwiXeonCumulativeRevaluation >= tfrCumulativeRevaluation ? 'bg-primary text-white' : 'bg-danger text-white'}">${acwiXeonCumulativeRevaluation.toFixed(2)}%</td>
                         </tr>
                         <tr>
                             <th>Rivalutazione Annualizzata</th>
-                            <td class="${annualizedRevaluation >= cometaAnnualizedRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${annualizedRevaluation.toFixed(2)}%</td>
-                            <td class="${cometaAnnualizedRevaluation >= annualizedRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${cometaAnnualizedRevaluation.toFixed(2)}%</td>
-                            <td class="">${acwiXeonAnnualizedRevaluation.toFixed(2)}%</td>
+                            <td class="${tfrAnnualizedRevaluation >= cometaAnnualizedRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${tfrAnnualizedRevaluation.toFixed(2)}%</td>
+                            <td class="${cometaAnnualizedRevaluation >= tfrAnnualizedRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${cometaAnnualizedRevaluation.toFixed(2)}%</td>
+                            <td class="${acwiXeonAnnualizedRevaluation >= tfrAnnualizedRevaluation ? 'bg-primary text-white' : 'bg-danger text-white'}">${acwiXeonAnnualizedRevaluation.toFixed(2)}%</td>
                         </tr>
                     </table>
                 `;
@@ -127,14 +127,19 @@ document.addEventListener('DOMContentLoaded', function () {
             cometaValueCell.textContent = cometaReturn !== null ? cometaReturn.toFixed(2) + '%' : 'N/A';
             const acwiXeonReturn = calculateCometaAnnualReturn(acwiXeonData, labels[i]);
             acwiXeonValueCell.textContent = acwiXeonReturn !== null ? acwiXeonReturn.toFixed(2) + '%' : 'N/A';
-
-            if (cometaReturn !== null) {
+            if (cometaReturn !== null && acwiXeonReturn !== null) {
                 if (tfrValues[i] >= cometaReturn && tfrValues[i] >= acwiXeonReturn) {
                     tfrValueCell.classList.add('bg-success', 'text-white');
                     cometaValueCell.classList.add('bg-danger', 'text-white');
-                } else  {
+                    acwiXeonValueCell.classList.add('bg-danger', 'text-white');
+                } else if (cometaReturn >= tfrValues[i] && acwiXeonReturn >= tfrValues[i]) {
                     tfrValueCell.classList.add('bg-danger', 'text-white');
-                    cometaValueCell.classList.add('bg-success', 'text-white');                    
+                    cometaValueCell.classList.add('bg-success', 'text-white');
+                    acwiXeonValueCell.classList.add('bg-primary', 'text-white');
+                } else {
+                    tfrValueCell.classList.add('bg-danger', 'text-white');
+                    cometaValueCell.classList.add('bg-danger', 'text-white');
+                    acwiXeonValueCell.classList.add('bg-primary', 'text-white');
                 }
             }
 
