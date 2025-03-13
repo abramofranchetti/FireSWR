@@ -14,7 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
-    <script src="js/tfr.js" defer></script>    
+    <script src="js/tfr.js" defer></script>
 </head>
 
 <body class="bg-light">
@@ -24,8 +24,10 @@
         </div>
         <br>
         <h1 class="text-center">Calcolatore rivalutazione TFR</h1>
-        <h6 class="text-center">Con simpatico confronto con fondo pensione Cometa comparto Crescita e un indice virtuale usato come benchmark composto dal 60% ACWE (All Country World Index) e 40% XEON (Monetario €)</h6>
-        <h5 class="text-center">La rivalutazione del TFR secondo normativa si calcola come 1.5% sommato al 75% dell'inflazione</h5>
+        <h6 class="text-center">Con simpatico confronto con fondo pensione Cometa comparto Crescita e un indice virtuale
+            usato come benchmark composto dal 60% ACWE (All Country World Index) e 40% XEON (Monetario €)</h6>
+        <h5 class="text-center">La rivalutazione del TFR secondo normativa si calcola come 1.5% sommato al 75%
+            dell'inflazione</h5>
         <br>
         <div class="input-group mb-4 d-flex justify-content-center align-items-center">
             <label for="startYear" class="mr-2">Anno Iniziale</label>
@@ -34,9 +36,8 @@
             <input type="number" class="form-control" id="endYear" value="2024" min="2005" max="2024">
         </div>
         <h6 class="text-center">Risultati</h6>
-        <div class="result text-center" id="resultContainer">
-            <p id="resultText">Risultato qui</p>
-        </div>
+        <div class="table-responsive" id="resultText"></div>
+
         <h6 class="text-center">Rendimenti annuali</h6>
         <div class="table-responsive">
             <table class="table table-bordered table-striped" id="revaluationTable">
@@ -55,19 +56,19 @@
         </div>
     </div>
 
-     <!-- Disclaimer -->
-     <div id="disclaimer-container"></div>
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
 
-     <script>
-         document.addEventListener('DOMContentLoaded', function () {
-             fetch('html/disclaimer.html')
-                 .then(response => response.text())
-                 .then(data => {
-                     document.getElementById('disclaimer-container').innerHTML = data;
-                 });
-         });
-     </script>
-     <script src="js/tfr.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+    <script src="js/tfr.js" defer></script>
 </body>
 
 </html>
