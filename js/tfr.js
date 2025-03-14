@@ -185,22 +185,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     {
                         label: 'TFR',
                         data: tfrPercentage,
-                        borderColor: 'rgba(0, 123, 255, 1)',
-                        backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        backgroundColor: 'rgba(40, 167, 69, 0.2)',
                         fill: false
                     },
                     {
                         label: 'Fondo Pensione',
                         data: cometaPercentage,
                         borderColor: 'rgba(220, 53, 69, 1)',
-                        backgroundColor: 'rgba(220, 53, 69, 0.2)',
+                        backgroundColor: 'rgba(220, 53, 69, 0.2)',                                                
                         fill: false
                     },
                     {
                         label: 'Benchmark',
                         data: acwiXeonPercentage,
-                        borderColor: 'rgba(40, 167, 69, 1)',
-                        backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        backgroundColor: 'rgba(0, 123, 255, 0.2)',                        
                         fill: false
                     }
                 ]
