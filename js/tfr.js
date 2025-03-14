@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
     const startYearInput = document.getElementById('startYear');
     const endYearInput = document.getElementById('endYear');
+    const ctx = document.getElementById('investmentChart').getContext('2d');
 
     function calculateRevaluation() {
         const startYear = parseInt(startYearInput.value);
         const endYear = parseInt(endYearInput.value);
-        let investmentChart = null;
 
         Promise.all([
             fetch('csv/tfr.csv').then(response => response.text()),
@@ -153,15 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    let investmentChart;
-
     function generateInvestmentChart(labels, tfrValues, cometaData, acwiXeonData, startIndex, endIndex) {
-        const ctx = document.getElementById('investmentChart').getContext('2d');
-
-        if (investmentChart) {
-            investmentChart.destroy();
-        }
-
         const tfrInvestment = [10000 * (1 + tfrValues[startIndex] / 100)];
         const cometaInvestment = [10000 * (1 + (calculateCometaAnnualReturn(cometaData, labels[startIndex]) || 0) / 100)];
         const acwiXeonInvestment = [10000 * (1 + (calculateCometaAnnualReturn(acwiXeonData, labels[startIndex]) || 0) / 100)];
@@ -180,47 +172,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
         tfrPercentage.unshift(0);
         cometaPercentage.unshift(0);
-        acwiXeonPercentage.unshift(0);        
+        acwiXeonPercentage.unshift(0);
 
-        investmentChart = new Chart(ctx, {
+        if (window.investmentChart instanceof Chart) {        
+            window.investmentChart.destroy();
+          }
+
+          window.investmentChart = new Chart(ctx, {
             type: 'line',
             data: {
-            labels: labels.slice(startIndex - 1, endIndex + 1),
-            datasets: [
-                {
-                label: 'TFR',
-                data: tfrPercentage,
-                borderColor: 'rgba(0, 123, 255, 1)',
-                backgroundColor: 'rgba(0, 123, 255, 0.2)',
-                fill: false
-                },
-                {
-                label: 'Fondo Pensione',
-                data: cometaPercentage,
-                borderColor: 'rgba(220, 53, 69, 1)',
-                backgroundColor: 'rgba(220, 53, 69, 0.2)',
-                fill: false
-                },
-                {
-                label: 'Benchmark',
-                data: acwiXeonPercentage,
-                borderColor: 'rgba(40, 167, 69, 1)',
-                backgroundColor: 'rgba(40, 167, 69, 0.2)',
-                fill: false
-                }
-            ]
+                labels: labels.slice(startIndex - 1, endIndex + 1),
+                datasets: [
+                    {
+                        label: 'TFR',
+                        data: tfrPercentage,
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                        fill: false
+                    },
+                    {
+                        label: 'Fondo Pensione',
+                        data: cometaPercentage,
+                        borderColor: 'rgba(220, 53, 69, 1)',
+                        backgroundColor: 'rgba(220, 53, 69, 0.2)',
+                        fill: false
+                    },
+                    {
+                        label: 'Benchmark',
+                        data: acwiXeonPercentage,
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                        fill: false
+                    }
+                ]
             },
             options: {
-            scales: {
-                y: {
-                beginAtZero: true,
-                ticks: {
-                    callback: function (value) {
-                    return value + '%';
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) {
+                                return value + '%';
+                            }
+                        }
                     }
                 }
-                }
-            }
             }
         });
     }
