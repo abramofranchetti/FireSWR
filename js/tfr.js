@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const endIndex = tfrParsedData.labels.indexOf(endYear.toString());
 
             if (startIndex !== -1 && endIndex !== -1 && startIndex <= endIndex) {
-                const tfrCumulativeRevaluation = calculateCumulativeRevaluation(tfrParsedData.values, startIndex, endIndex);
+                const tfrCumulativeRevaluation = calculateTfrCumulativeRevaluation(tfrParsedData.values, startIndex, endIndex);
                 const tfrAnnualizedRevaluation = ((1 + tfrCumulativeRevaluation / 100) ** (1 / (endYear - startYear + 1)) - 1) * 100;
 
                 const cometaCumulativeRevaluation = calculateCometaCumulativeRevaluation(cometaParsedData, startYear, endYear);
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return { labels, values };
     }
 
-    function calculateCumulativeRevaluation(values, startIndex, endIndex) {
+    function calculateTfrCumulativeRevaluation(values, startIndex, endIndex) {
         let cumulativeFactor = 1;
         for (let i = startIndex; i <= endIndex; i++) {
             cumulativeFactor *= (1 + values[i] / 100);
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .map((label, index) => ({ label, value: cometaData.values[index] }))
             .filter(entry => {
                 const year = parseInt(entry.label.split('/')[1]);
-                return year >= startYear && year <= endYear;
+                return year >= startYear && year <= endYear+1;
             });
         if (yearData.length < 2) return null;
         const startValue = parseFloat(yearData[0].value);
@@ -107,9 +107,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const yearData = cometaData.labels
             .map((label, index) => ({ label, value: cometaData.values[index] }))
             .filter(entry => entry.label.endsWith(year.toString()));
+        const nextYearData = cometaData.labels
+            .map((label, index) => ({ label, value: cometaData.values[index] }))
+            .filter(entry => entry.label.endsWith((parseInt(year) + 1).toString()));
         if (yearData.length < 2) return null;
         const startValue = parseFloat(yearData[0].value);
-        const endValue = parseFloat(yearData[yearData.length - 1].value);
+        const endValue = parseFloat(nextYearData[0].value);
         return ((endValue - startValue) / startValue) * 100;
     }
 
@@ -130,17 +133,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const acwiXeonReturn = calculateCometaAnnualReturn(acwiXeonData, labels[i]);
             acwiXeonValueCell.textContent = acwiXeonReturn !== null ? acwiXeonReturn.toFixed(2) + '%' : 'N/A';
             if (cometaReturn !== null && acwiXeonReturn !== null) {
-                if (tfrValues[i] >= cometaReturn && tfrValues[i] >= acwiXeonReturn) {
+                if (tfrValues[i] >= cometaReturn) {
                     tfrValueCell.classList.add('bg-success', 'text-white');
                     cometaValueCell.classList.add('bg-danger', 'text-white');
-                    acwiXeonValueCell.classList.add('bg-danger', 'text-white');
-                } else if (cometaReturn >= tfrValues[i] && acwiXeonReturn >= tfrValues[i]) {
-                    tfrValueCell.classList.add('bg-danger', 'text-white');
-                    cometaValueCell.classList.add('bg-success', 'text-white');
                     acwiXeonValueCell.classList.add('bg-primary', 'text-white');
                 } else {
                     tfrValueCell.classList.add('bg-danger', 'text-white');
-                    cometaValueCell.classList.add('bg-danger', 'text-white');
+                    cometaValueCell.classList.add('bg-success', 'text-white');
                     acwiXeonValueCell.classList.add('bg-primary', 'text-white');
                 }
             }
@@ -176,9 +175,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (window.investmentChart instanceof Chart) {        
             window.investmentChart.destroy();
-          }
+        }
 
-          window.investmentChart = new Chart(ctx, {
+        window.investmentChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels.slice(startIndex - 1, endIndex + 1),
