@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function calculateRevaluation() {
         const startYear = parseInt(startYearInput.value);
         const endYear = parseInt(endYearInput.value);
+        let investmentChart = null;
 
         Promise.all([
             fetch('csv/tfr.csv').then(response => response.text()),
@@ -15,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const cometaParsedData = parseCSV(cometaData, ',');
             const acwiXeonParsedData = parseCSV(acwiXeonData, ',');
             cometaParsedData.labels.reverse();
-            cometaParsedData.values.reverse();            
+            cometaParsedData.values.reverse();
             const startIndex = tfrParsedData.labels.indexOf(startYear.toString());
             const endIndex = tfrParsedData.labels.indexOf(endYear.toString());
 
@@ -54,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('resultText').innerHTML = resultTable;
 
                 populateRevaluationTable(tfrParsedData.labels, tfrParsedData.values, cometaParsedData, acwiXeonParsedData, startIndex, endIndex);
+                generateInvestmentChart(tfrParsedData.labels, tfrParsedData.values, cometaParsedData, acwiXeonParsedData, startIndex, endIndex);
             } else {
                 document.getElementById('resultText').innerText = 'Intervallo di anni non valido.';
                 document.getElementById('revaluationTable').querySelector('tbody').innerHTML = '';
@@ -74,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const [label, value] = line.split(delimiter);
             if (label && value) {
                 labels.push(label.trim());
-                values.push(parseFloat(value.replace('%','').replace(',', '.')));
+                values.push(parseFloat(value.replace('%', '').replace(',', '.')));
             }
         });
         return { labels, values };
@@ -149,5 +151,77 @@ document.addEventListener('DOMContentLoaded', function () {
             row.appendChild(acwiXeonValueCell);
             tbody.appendChild(row);
         }
+    }
+
+    let investmentChart;
+
+    function generateInvestmentChart(labels, tfrValues, cometaData, acwiXeonData, startIndex, endIndex) {
+        const ctx = document.getElementById('investmentChart').getContext('2d');
+
+        if (investmentChart) {
+            investmentChart.destroy();
+        }
+
+        const tfrInvestment = [10000 * (1 + tfrValues[startIndex] / 100)];
+        const cometaInvestment = [10000 * (1 + (calculateCometaAnnualReturn(cometaData, labels[startIndex]) || 0) / 100)];
+        const acwiXeonInvestment = [10000 * (1 + (calculateCometaAnnualReturn(acwiXeonData, labels[startIndex]) || 0) / 100)];
+
+        for (let i = startIndex + 1; i <= endIndex; i++) {
+            tfrInvestment.push(tfrInvestment[tfrInvestment.length - 1] * (1 + tfrValues[i] / 100));
+            const cometaReturn = calculateCometaAnnualReturn(cometaData, labels[i]);
+            cometaInvestment.push(cometaInvestment[cometaInvestment.length - 1] * (1 + (cometaReturn !== null ? cometaReturn : 0) / 100));
+            const acwiXeonReturn = calculateCometaAnnualReturn(acwiXeonData, labels[i]);
+            acwiXeonInvestment.push(acwiXeonInvestment[acwiXeonInvestment.length - 1] * (1 + (acwiXeonReturn !== null ? acwiXeonReturn : 0) / 100));
+        }
+
+        const tfrPercentage = tfrInvestment.map(value => (value / 10000 - 1) * 100);
+        const cometaPercentage = cometaInvestment.map(value => (value / 10000 - 1) * 100);
+        const acwiXeonPercentage = acwiXeonInvestment.map(value => (value / 10000 - 1) * 100);
+
+        tfrPercentage.unshift(0);
+        cometaPercentage.unshift(0);
+        acwiXeonPercentage.unshift(0);        
+
+        investmentChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+            labels: labels.slice(startIndex - 1, endIndex + 1),
+            datasets: [
+                {
+                label: 'TFR',
+                data: tfrPercentage,
+                borderColor: 'rgba(0, 123, 255, 1)',
+                backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                fill: false
+                },
+                {
+                label: 'Fondo Pensione',
+                data: cometaPercentage,
+                borderColor: 'rgba(220, 53, 69, 1)',
+                backgroundColor: 'rgba(220, 53, 69, 0.2)',
+                fill: false
+                },
+                {
+                label: 'Benchmark',
+                data: acwiXeonPercentage,
+                borderColor: 'rgba(40, 167, 69, 1)',
+                backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                fill: false
+                }
+            ]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function (value) {
+                    return value + '%';
+                    }
+                }
+                }
+            }
+            }
+        });
     }
 });
