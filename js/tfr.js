@@ -249,8 +249,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     {
                         label: 'S&P 500',
                         data: sp500Percentage,
-                        borderColor: 'rgba(0, 123, 255, 1)',
-                        backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                        borderColor: 'rgba(23, 162, 184, 1)',
+                        backgroundColor: 'rgba(23, 162, 184, 0.2)',
                         fill: false
                     },
                 ]
