@@ -54,17 +54,17 @@ document.addEventListener('DOMContentLoaded', function () {
                             <th>Rivalutazione cumulata</th>
                             <td class="${tfrCumulativeRevaluation >= cometaCumulativeRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${tfrCumulativeRevaluation.toFixed(2)}%</td>
                             <td class="${cometaCumulativeRevaluation >= tfrCumulativeRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${cometaCumulativeRevaluation.toFixed(2)}%</td>
-                            <td class="${acwiXeonCumulativeRevaluation >= tfrCumulativeRevaluation ? 'bg-primary text-white' : 'bg-danger text-white'}">${acwiXeonCumulativeRevaluation.toFixed(2)}%</td>
-                            <td class="${goldCumulativeRevaluation >= tfrCumulativeRevaluation ? 'bg-warning text-dark' : 'bg-danger text-white'}">${goldCumulativeRevaluation.toFixed(2)}%</td>
-                            <td class="${sp500CumulativeRevaluation >= tfrCumulativeRevaluation ? 'bg-info text-white' : 'bg-danger text-white'}">${sp500CumulativeRevaluation.toFixed(2)}%</td>
+                            <td class="bg-primary text-white">${acwiXeonCumulativeRevaluation.toFixed(2)}%</td>
+                            <td class="bg-warning text-white">${goldCumulativeRevaluation.toFixed(2)}%</td>
+                            <td class="bg-info text-white">${sp500CumulativeRevaluation.toFixed(2)}%</td>
                         </tr>
                         <tr>
                             <th>Rivalutazione Annualizzata</th>
                             <td class="${tfrAnnualizedRevaluation >= cometaAnnualizedRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${tfrAnnualizedRevaluation.toFixed(2)}%</td>
                             <td class="${cometaAnnualizedRevaluation >= tfrAnnualizedRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${cometaAnnualizedRevaluation.toFixed(2)}%</td>
-                            <td class="${acwiXeonAnnualizedRevaluation >= tfrAnnualizedRevaluation ? 'bg-primary text-white' : 'bg-danger text-white'}">${acwiXeonAnnualizedRevaluation.toFixed(2)}%</td>
-                            <td class="${goldAnnualizedRevaluation >= tfrAnnualizedRevaluation ? 'bg-warning text-dark' : 'bg-danger text-white'}">${goldAnnualizedRevaluation.toFixed(2)}%</td>
-                            <td class="${sp500AnnualizedRevaluation >= tfrAnnualizedRevaluation ? 'bg-info text-white' : 'bg-danger text-white'}">${sp500AnnualizedRevaluation.toFixed(2)}%</td>
+                            <td class="bg-primary text-white">${acwiXeonAnnualizedRevaluation.toFixed(2)}%</td>
+                            <td class="bg-warning text-white">${goldAnnualizedRevaluation.toFixed(2)}%</td>
+                            <td class="bg-info text-white">${sp500AnnualizedRevaluation.toFixed(2)}%</td>
                         </tr>
                     </table>
                 `;
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .map((label, index) => ({ label, value: cometaData.values[index] }))
             .filter(entry => {
                 const year = parseInt(entry.label.split('/')[1]);
-                return year >= startYear && year <= endYear+1;
+                return year >= startYear && year <= endYear + 1;
             });
         if (yearData.length === 0) return null;
         const startValue = parseFloat(yearData[0].value);
@@ -158,16 +158,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (tfrValues[i] >= cometaReturn) {
                     tfrValueCell.classList.add('bg-success', 'text-white');
                     cometaValueCell.classList.add('bg-danger', 'text-white');
-                    acwiXeonValueCell.classList.add('bg-primary', 'text-white');
-                    goldValueCell.classList.add('bg-warning', 'text-dark');
-                    sp500ValueCell.classList.add('bg-info', 'text-white');
+
                 } else {
                     tfrValueCell.classList.add('bg-danger', 'text-white');
                     cometaValueCell.classList.add('bg-success', 'text-white');
-                    acwiXeonValueCell.classList.add('bg-primary', 'text-white');
-                    goldValueCell.classList.add('bg-warning', 'text-white');
-                    sp500ValueCell.classList.add('bg-info', 'text-white');
                 }
+                acwiXeonValueCell.classList.add('bg-primary', 'text-white');
+                goldValueCell.classList.add('bg-warning', 'text-white');
+                sp500ValueCell.classList.add('bg-info', 'text-white');
             }
 
             row.appendChild(yearCell);
@@ -211,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function () {
         goldPercentage.unshift(0);
         sp500Percentage.unshift(0);
 
-        if (window.investmentChart instanceof Chart) {        
+        if (window.investmentChart instanceof Chart) {
             window.investmentChart.destroy();
         }
 
@@ -231,21 +229,21 @@ document.addEventListener('DOMContentLoaded', function () {
                         label: 'Fondo Pensione',
                         data: cometaPercentage,
                         borderColor: 'rgba(220, 53, 69, 1)',
-                        backgroundColor: 'rgba(220, 53, 69, 0.2)',                                                
+                        backgroundColor: 'rgba(220, 53, 69, 0.2)',
                         fill: false
                     },
                     {
                         label: 'Benchmark',
                         data: acwiXeonPercentage,
                         borderColor: 'rgba(0, 123, 255, 1)',
-                        backgroundColor: 'rgba(0, 123, 255, 0.2)',                        
+                        backgroundColor: 'rgba(0, 123, 255, 0.2)',
                         fill: false
                     },
                     {
                         label: 'Gold',
                         data: goldPercentage,
                         borderColor: 'rgba(255, 215, 0, 1)',
-                        backgroundColor: 'rgba(255, 215, 0, 0.2)',                        
+                        backgroundColor: 'rgba(255, 215, 0, 0.2)',
                         fill: false
                     },
                     {
