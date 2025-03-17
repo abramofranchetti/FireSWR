@@ -30,60 +30,69 @@
             dell'inflazione</h6>
         <br>
         <div class="input-group mb-4 d-flex justify-content-center align-items-center">
-            <label for="startYear" class="mr-2">Inizio</label>
             <div class="input-group-prepend">
-                <button class="btn btn-outline-secondary" type="button" id="decreaseStartYear">-</button>
+                <div class="input-group mb-4 d-flex justify-content-start align-items-center flex-column mr-2">
+                    <label for="startYear" class="mr-2">Data Inizio</label>
+                    <div class="input-group mb-4 d-flex justify-content-start align-items-center flex-row">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button" id="decreaseStartYear">-</button>
+                        </div>
+                        <input type="number" class="form-control" id="startYear" value="2019" min="2005" max="2024" required>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="increaseStartYear">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-4 d-flex justify-content-start align-items-center flex-column ml-2">
+                    <label for="endYear" class="mr-2">Data Fine</label>
+                    <div class="input-group mb-4 d-flex justify-content-start align-items-center flex-row">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button" id="decreaseEndYear">-</button>
+                        </div>
+                        <input type="number" class="form-control" id="endYear" value="2024" min="2005" max="2024" required>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="increaseEndYear">+</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <input type="number" class="form-control" id="startYear" value="2019" min="2005" max="2024">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" id="increaseStartYear">+</button>
+            <h6 class="text-center">Risultati simulazione</h6>
+            <div class="table-responsive" id="resultText"></div>
+
+            <h6 class="text-center">Rendimenti annuali %</h6>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="revaluationTable">
+                    <thead>
+                        <tr>
+                            <th>Anno</th>
+                            <th>TFR</th>
+                            <th>Fondo Pensione</th>
+                            <th>Benchmark</th>
+                            <th>Oro</th>
+                            <th>S&P 500</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Contenuto della tabella -->
+                    </tbody>
+                </table>
             </div>
-            <label for="endYear" class="ml-4 mr-2">Fine</label>
-            <div class="input-group-prepend">
-                <button class="btn btn-outline-secondary" type="button" id="decreaseEndYear">-</button>
-            </div>
-            <input type="number" class="form-control" id="endYear" value="2024" min="2005" max="2024">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" id="increaseEndYear">+</button>
-            </div>
+            <h6 class="text-center">Grafico Andamento in %</h6>
+            <canvas id="investmentChart" width="400" height="200"></canvas>
         </div>
-        <h6 class="text-center">Risultati simulazione</h6>
-        <div class="table-responsive" id="resultText"></div>
 
-        <h6 class="text-center">Rendimenti annuali %</h6>
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped" id="revaluationTable">
-                <thead>
-                    <tr>
-                        <th>Anno</th>
-                        <th>TFR</th>
-                        <th>Fondo Pensione</th>
-                        <th>Benchmark</th>
-                        <th>Oro</th>
-                        <th>S&P 500</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Contenuto della tabella -->
-                </tbody>
-            </table>
-        </div>
-        <h6 class="text-center">Grafico Andamento in %</h6>
-        <canvas id="investmentChart" width="400" height="200"></canvas>
-    </div>
+        <!-- Disclaimer -->
+        <div id="disclaimer-container"></div>
 
-    <!-- Disclaimer -->
-    <div id="disclaimer-container"></div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            fetch('html/disclaimer.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('disclaimer-container').innerHTML = data;
-                });
-        });
-    </script>    
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                fetch('html/disclaimer.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('disclaimer-container').innerHTML = data;
+                    });
+            });
+        </script>
 </body>
 
 </html>
