@@ -27,3 +27,14 @@
 .disclaimer strong {
     font-weight: bold;
 }
+
+.input-group-prepend .btn,
+.input-group-append .btn {
+    border-radius: 0;
+    margin-bottom: 1px;
+}
+
+.input-group .form-control {
+    border-radius: 0;
+    max-width: 80px;
+}

@@ -84,6 +84,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
     calculateRevaluation();
 
+    document.getElementById('decreaseStartYear').addEventListener('click', function () {
+        if (startYearInput.value > startYearInput.min) {
+            startYearInput.value--;
+            calculateRevaluation();
+        }
+    });
+
+    document.getElementById('increaseStartYear').addEventListener('click', function () {
+        if (startYearInput.value < startYearInput.max) {
+            startYearInput.value++;
+            calculateRevaluation();
+        }
+    });
+
+    document.getElementById('decreaseEndYear').addEventListener('click', function () {
+        if (endYearInput.value > endYearInput.min) {
+            endYearInput.value--;
+            calculateRevaluation();
+        }
+    });
+
+    document.getElementById('increaseEndYear').addEventListener('click', function () {
+        if (endYearInput.value < endYearInput.max) {
+            endYearInput.value++;
+            calculateRevaluation();
+        }
+    });
+
     function parseCSV(data, delimiter) {
         const lines = data.split('\n');
         const labels = [];

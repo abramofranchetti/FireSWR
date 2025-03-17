@@ -30,10 +30,22 @@
             dell'inflazione</h6>
         <br>
         <div class="input-group mb-4 d-flex justify-content-center align-items-center">
-            <label for="startYear" class="mr-2">Anno Iniziale</label>
+            <label for="startYear" class="mr-2">Inizio</label>
+            <div class="input-group-prepend">
+                <button class="btn btn-outline-secondary" type="button" id="decreaseStartYear">-</button>
+            </div>
             <input type="number" class="form-control" id="startYear" value="2019" min="2005" max="2024">
-            <label for="endYear" class="ml-4 mr-2">Anno Finale</label>
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="increaseStartYear">+</button>
+            </div>
+            <label for="endYear" class="ml-4 mr-2">Fine</label>
+            <div class="input-group-prepend">
+                <button class="btn btn-outline-secondary" type="button" id="decreaseEndYear">-</button>
+            </div>
             <input type="number" class="form-control" id="endYear" value="2024" min="2005" max="2024">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="increaseEndYear">+</button>
+            </div>
         </div>
         <h6 class="text-center">Risultati simulazione</h6>
         <div class="table-responsive" id="resultText"></div>
@@ -71,8 +83,7 @@
                     document.getElementById('disclaimer-container').innerHTML = data;
                 });
         });
-    </script>
-    <script src="js/tfr.js" defer></script>
+    </script>    
 </body>
 
 </html>
