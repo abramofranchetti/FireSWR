@@ -144,7 +144,24 @@ document.addEventListener('DOMContentLoaded', function () {
         return ((endValue - startValue) / startValue) * 100;
     }
 
-    function populateRevaluationTable(labels, tfrValues, indicesData, startIndex, endIndex) {
+    function populateRevaluationTable(labels, tfrValues, indicesData, startIndex, endIndex) {        
+        const thead = document.getElementById('revaluationTable').querySelector('thead');
+        thead.innerHTML = '';
+        const tableHeaderRow = document.createElement('tr');
+        anniCell =document.createElement('th');
+        tfrCell =document.createElement('th');
+        anniCell.textContent = 'Anno';
+        tfrCell.textContent = 'TFR';
+        tableHeaderRow.appendChild(anniCell);
+        tableHeaderRow.appendChild(tfrCell);
+        
+        indices.forEach(index => {
+            const th = document.createElement('th');
+            th.textContent = index.name;
+            tableHeaderRow.appendChild(th);
+        });
+        thead.appendChild(tableHeaderRow);
+        
         const tbody = document.getElementById('revaluationTable').querySelector('tbody');
         tbody.innerHTML = '';
         for (let i = startIndex; i <= endIndex; i++) {
