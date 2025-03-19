@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolo perdita potere acquisto dovuto all'inflazione</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/cppa.js" defer></script>    
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Calcolo perdita potere acquisto dovuto all'inflazione</h1>
+        <h6 class="text-center">Calcola la perdita del potere d'acquisto del capitale iniziale in base all'inflazione annua e agli anni totali</h6>
+
+        <div class="input-group mb-4">
+            <label for="inflationSlider">Capitale iniziale in €</label>
+            <input type="number" class="form-control-range" id="initialCapital" placeholder="Capitale iniziale (€)" value="10000">
+        </div>
+
+        <div class="slider-container mb-4">
+            <label for="inflationSlider">Inflazione annua (%)</label>
+            <input type="range" class="form-control-range" id="inflationSlider" min="0" max="20" step="0.1" value="2">
+            <span id="inflationValue">2%</span>
+        </div>
+
+        <div class="slider-container mb-4">
+            <label for="yearsSlider">Anni totali</label>
+            <input type="range" class="form-control-range" id="yearsSlider" min="1" max="100" step="1" value="10">
+            <span id="yearsValue">10</span>
+        </div>
+
+        <div class="result alert alert-success text-center">
+            <p id="resultText">Il capitale da 10k€ sarebbe diventato 10k€ con una perdita del potere di acquisto di 0%</p>
+        </div>
+    </div>
+
+     <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+</body>
+
+</html>
