@@ -4,12 +4,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const ctx = document.getElementById('investmentChart').getContext('2d');
 
     const indices = [
-        { name: 'Cometa Crescita', file: 'csv/cometa.csv', delimiter: ',' },
-        { name: 'Solidarietà Veneto Dinamico', file: 'csv/solidarietaveneto.csv', delimiter: ',' },
-        { name: 'Benchmark', file: 'csv/acwi_xeon.csv', delimiter: ',' },
-        { name: 'Oro', file: 'csv/gold_month.csv', delimiter: ',' },
-        { name: 'S&P 500', file: 'csv/sp500_month.csv', delimiter: ',' },        
+        { name: 'Cometa Crescita', file: 'csv/cometa.csv', delimiter: ',' ,color: 'rgba(220, 53, 69, ALPHA)'},
+        { name: 'Solidarietà Veneto Dinamico', file: 'csv/solidarietaveneto.csv', delimiter: ',', color: 'rgba(100, 123, 255, ALPHA)'},
+        { name: 'Benchmark', file: 'csv/acwi_xeon.csv', delimiter: ',', color: 'rgba(23, 162, 184, ALPHA)'},
+        { name: 'Oro', file: 'csv/gold_month.csv', delimiter: ',', color: 'rgba(255, 215, 0, ALPHA)'},
+        { name: 'S&P 500', file: 'csv/sp500_month.csv', delimiter: ',', color: 'rgba(100, 30, 80, ALPHA)'}        
     ];
+
+    function getColor(index, alpha = 1) {        
+        return index.color.replace('ALPHA', alpha);
+    }
 
     function calculateRevaluation() {
         const startYear = parseInt(startYearInput.value);
@@ -161,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
             tableHeaderRow.appendChild(th);
         });
         thead.appendChild(tableHeaderRow);
-        
+
         const tbody = document.getElementById('revaluationTable').querySelector('tbody');
         tbody.innerHTML = '';
         for (let i = startIndex; i <= endIndex; i++) {
@@ -231,8 +235,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     ...percentages.map((percentage, i) => ({
                         label: indices[i].name,
                         data: percentage,
-                        borderColor: getColor(i),
-                        backgroundColor: getColor(i, 0.2),
+                        borderColor: getColor(indices[i]),
+                        backgroundColor: getColor(indices[i], 0.2),
                         fill: false
                     }))
                 ]
@@ -250,16 +254,5 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-    }
-
-    function getColor(index, alpha = 1) {
-        const colors = [
-            'rgba(220, 53, 69, ALPHA)',
-            'rgba(0, 123, 255, ALPHA)',
-            'rgba(255, 215, 0, ALPHA)',
-            'rgba(23, 162, 184, ALPHA)',
-            'rgba(100, 30, 80, ALPHA)'
-        ];
-        return colors[index].replace('ALPHA', alpha);
-    }
+    }   
 });
