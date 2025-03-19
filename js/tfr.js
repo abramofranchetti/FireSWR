@@ -12,13 +12,15 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch('csv/cometa.csv').then(response => response.text()),
             fetch('csv/acwi_xeon.csv').then(response => response.text()),
             fetch('csv/gold_month.csv').then(response => response.text()),
-            fetch('csv/sp500_month.csv').then(response => response.text())
-        ]).then(([tfrData, cometaData, acwiXeonData, goldMonthData, sp500Data]) => {
+            fetch('csv/sp500_month.csv').then(response => response.text()),
+            fetch('csv/solidarietaveneto.csv').then(response => response.text())
+        ]).then(([tfrData, cometaData, acwiXeonData, goldMonthData, sp500Data, solidarietavenetoData]) => {
             const tfrParsedData = parseCSV(tfrData, '\t');
             const cometaParsedData = parseCSV(cometaData, ',');
             const acwiXeonParsedData = parseCSV(acwiXeonData, ',');
             const goldMonthParsedData = parseCSV(goldMonthData, ',');
             const sp500ParsedData = parseCSV(sp500Data, ',');
+            const solidarietavenetoParsedData = parseCSV(solidarietavenetoData, ',');
             cometaParsedData.labels.reverse();
             cometaParsedData.values.reverse();
             const startIndex = tfrParsedData.labels.indexOf(startYear.toString());
@@ -30,6 +32,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const cometaCumulativeRevaluation = calculateCometaCumulativeRevaluation(cometaParsedData, startYear, endYear);
                 const cometaAnnualizedRevaluation = ((1 + cometaCumulativeRevaluation / 100) ** (1 / (endYear - startYear + 1)) - 1) * 100;
+
+                const solidarietavenetoCumulativeRevaluation = calculateCometaCumulativeRevaluation(solidarietavenetoParsedData, startYear, endYear);
+                const solidarietavenetoAnnualizedRevaluation = ((1 + solidarietavenetoCumulativeRevaluation / 100) ** (1 / (endYear - startYear + 1)) - 1) * 100;
 
                 const acwiXeonCumulativeRevaluation = calculateCometaCumulativeRevaluation(acwiXeonParsedData, startYear, endYear);
                 const acwiXeonAnnualizedRevaluation = ((1 + acwiXeonCumulativeRevaluation / 100) ** (1 / (endYear - startYear + 1)) - 1) * 100;
@@ -45,7 +50,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         <tr>
                             <th></th>
                             <th>TFR</th>
-                            <th>Fondo Pensione</th>
+                            <th>Cometa Crescita</th>                            
+                            <th>Solidarietà Veneto Dinamico</th>
                             <th>Benchmark</th>
                             <th>Oro</th>
                             <th>S&P 500</th>
@@ -54,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <th>Rivalutazione cumulata</th>
                             <td class="${tfrCumulativeRevaluation >= cometaCumulativeRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${tfrCumulativeRevaluation.toFixed(2)}%</td>
                             <td class="${cometaCumulativeRevaluation >= tfrCumulativeRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${cometaCumulativeRevaluation.toFixed(2)}%</td>
+                            <td class="${solidarietavenetoCumulativeRevaluation >= tfrCumulativeRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${solidarietavenetoCumulativeRevaluation.toFixed(2)}%</td>
                             <td class="bg-primary text-white">${acwiXeonCumulativeRevaluation.toFixed(2)}%</td>
                             <td class="bg-warning text-white">${goldCumulativeRevaluation.toFixed(2)}%</td>
                             <td class="bg-info text-white">${sp500CumulativeRevaluation.toFixed(2)}%</td>
@@ -62,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <th>Rivalutazione Annualizzata</th>
                             <td class="${tfrAnnualizedRevaluation >= cometaAnnualizedRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${tfrAnnualizedRevaluation.toFixed(2)}%</td>
                             <td class="${cometaAnnualizedRevaluation >= tfrAnnualizedRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${cometaAnnualizedRevaluation.toFixed(2)}%</td>
+                            <td class="${solidarietavenetoAnnualizedRevaluation >= tfrAnnualizedRevaluation ? 'bg-success text-white' : 'bg-danger text-white'}">${solidarietavenetoAnnualizedRevaluation.toFixed(2)}%</td>
                             <td class="bg-primary text-white">${acwiXeonAnnualizedRevaluation.toFixed(2)}%</td>
                             <td class="bg-warning text-white">${goldAnnualizedRevaluation.toFixed(2)}%</td>
                             <td class="bg-info text-white">${sp500AnnualizedRevaluation.toFixed(2)}%</td>
@@ -70,8 +78,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 `;
                 document.getElementById('resultText').innerHTML = resultTable;
 
-                populateRevaluationTable(tfrParsedData.labels, tfrParsedData.values, cometaParsedData, acwiXeonParsedData, goldMonthParsedData, sp500ParsedData, startIndex, endIndex);
-                generateInvestmentChart(tfrParsedData.labels, tfrParsedData.values, cometaParsedData, acwiXeonParsedData, goldMonthParsedData, sp500ParsedData, startIndex, endIndex);
+                populateRevaluationTable(tfrParsedData.labels, tfrParsedData.values, cometaParsedData, solidarietavenetoParsedData, acwiXeonParsedData, goldMonthParsedData, sp500ParsedData, startIndex, endIndex);
+                generateInvestmentChart(tfrParsedData.labels, tfrParsedData.values, cometaParsedData, solidarietavenetoParsedData, acwiXeonParsedData, goldMonthParsedData, sp500ParsedData, startIndex, endIndex);
             } else {
                 document.getElementById('resultText').innerText = 'Intervallo di anni non valido.';
                 document.getElementById('revaluationTable').querySelector('tbody').innerHTML = '';
@@ -160,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return ((endValue - startValue) / startValue) * 100;
     }
 
-    function populateRevaluationTable(labels, tfrValues, cometaData, acwiXeonData, goldMonthData, sp500Data, startIndex, endIndex) {
+    function populateRevaluationTable(labels, tfrValues, cometaData, solidarietavenetoData, acwiXeonData, goldMonthData, sp500Data, startIndex, endIndex) {
         const tbody = document.getElementById('revaluationTable').querySelector('tbody');
         tbody.innerHTML = '';
         for (let i = startIndex; i <= endIndex; i++) {
@@ -168,6 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const yearCell = document.createElement('td');
             const tfrValueCell = document.createElement('td');
             const cometaValueCell = document.createElement('td');
+            const solidarietavenetoValueCell = document.createElement('td');
             const acwiXeonValueCell = document.createElement('td');
             const goldValueCell = document.createElement('td');
             const sp500ValueCell = document.createElement('td');
@@ -176,6 +185,8 @@ document.addEventListener('DOMContentLoaded', function () {
             tfrValueCell.textContent = tfrValues[i].toFixed(2) + '%';
             const cometaReturn = calculateCometaAnnualReturn(cometaData, labels[i]);
             cometaValueCell.textContent = cometaReturn !== null ? cometaReturn.toFixed(2) + '%' : 'N/A';
+            const solidarietavenetoReturn = calculateCometaAnnualReturn(solidarietavenetoData, labels[i]);
+            solidarietavenetoValueCell.textContent = solidarietavenetoReturn !== null ? solidarietavenetoReturn.toFixed(2) + '%' : 'N/A';
             const acwiXeonReturn = calculateCometaAnnualReturn(acwiXeonData, labels[i]);
             acwiXeonValueCell.textContent = acwiXeonReturn !== null ? acwiXeonReturn.toFixed(2) + '%' : 'N/A';
             const goldReturn = calculateCometaAnnualReturn(goldMonthData, labels[i]);
@@ -191,6 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     tfrValueCell.classList.add('bg-danger', 'text-white');
                     cometaValueCell.classList.add('bg-success', 'text-white');
                 }
+                solidarietavenetoValueCell.classList.add(solidarietavenetoReturn >= tfrValues[i] ? 'bg-success' : 'bg-danger', 'text-white');
                 acwiXeonValueCell.classList.add('bg-primary', 'text-white');
                 goldValueCell.classList.add('bg-warning', 'text-white');
                 sp500ValueCell.classList.add('bg-info', 'text-white');
@@ -199,6 +211,7 @@ document.addEventListener('DOMContentLoaded', function () {
             row.appendChild(yearCell);
             row.appendChild(tfrValueCell);
             row.appendChild(cometaValueCell);
+            row.appendChild(solidarietavenetoValueCell);
             row.appendChild(acwiXeonValueCell);
             row.appendChild(goldValueCell);
             row.appendChild(sp500ValueCell);
@@ -206,9 +219,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function generateInvestmentChart(labels, tfrValues, cometaData, acwiXeonData, goldMonthData, sp500Data, startIndex, endIndex) {
+    function generateInvestmentChart(labels, tfrValues, cometaData, solidarietavenetoData, acwiXeonData, goldMonthData, sp500Data, startIndex, endIndex) {
         const tfrInvestment = [10000 * (1 + tfrValues[startIndex] / 100)];
         const cometaInvestment = [10000 * (1 + (calculateCometaAnnualReturn(cometaData, labels[startIndex]) || 0) / 100)];
+        const solidarietavenetoInvestment = [10000 * (1 + (calculateCometaAnnualReturn(solidarietavenetoData, labels[startIndex]) || 0) / 100)];
         const acwiXeonInvestment = [10000 * (1 + (calculateCometaAnnualReturn(acwiXeonData, labels[startIndex]) || 0) / 100)];
         const goldInvestment = [10000 * (1 + (calculateCometaAnnualReturn(goldMonthData, labels[startIndex]) || 0) / 100)];
         const sp500Investment = [10000 * (1 + (calculateCometaAnnualReturn(sp500Data, labels[startIndex]) || 0) / 100)];
@@ -217,6 +231,8 @@ document.addEventListener('DOMContentLoaded', function () {
             tfrInvestment.push(tfrInvestment[tfrInvestment.length - 1] * (1 + tfrValues[i] / 100));
             const cometaReturn = calculateCometaAnnualReturn(cometaData, labels[i]);
             cometaInvestment.push(cometaInvestment[cometaInvestment.length - 1] * (1 + (cometaReturn !== null ? cometaReturn : 0) / 100));
+            const solidarietavenetoReturn = calculateCometaAnnualReturn(solidarietavenetoData, labels[i]);
+            solidarietavenetoInvestment.push(solidarietavenetoInvestment[solidarietavenetoInvestment.length - 1] * (1 + (solidarietavenetoReturn !== null ? solidarietavenetoReturn : 0) / 100));
             const acwiXeonReturn = calculateCometaAnnualReturn(acwiXeonData, labels[i]);
             acwiXeonInvestment.push(acwiXeonInvestment[acwiXeonInvestment.length - 1] * (1 + (acwiXeonReturn !== null ? acwiXeonReturn : 0) / 100));
             const goldReturn = calculateCometaAnnualReturn(goldMonthData, labels[i]);
@@ -227,12 +243,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const tfrPercentage = tfrInvestment.map(value => (value / 10000 - 1) * 100);
         const cometaPercentage = cometaInvestment.map(value => (value / 10000 - 1) * 100);
+        const solidarietavenetoPercentage = solidarietavenetoInvestment.map(value => (value / 10000 - 1) * 100);
         const acwiXeonPercentage = acwiXeonInvestment.map(value => (value / 10000 - 1) * 100);
         const goldPercentage = goldInvestment.map(value => (value / 10000 - 1) * 100);
         const sp500Percentage = sp500Investment.map(value => (value / 10000 - 1) * 100);
 
         tfrPercentage.unshift(0);
         cometaPercentage.unshift(0);
+        solidarietavenetoPercentage.unshift(0);
         acwiXeonPercentage.unshift(0);
         goldPercentage.unshift(0);
         sp500Percentage.unshift(0);
@@ -254,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         fill: false
                     },
                     {
-                        label: 'Fondo Pensione',
+                        label: 'Cometa',
                         data: cometaPercentage,
                         borderColor: 'rgba(220, 53, 69, 1)',
                         backgroundColor: 'rgba(220, 53, 69, 0.2)',
@@ -265,6 +283,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         data: acwiXeonPercentage,
                         borderColor: 'rgba(0, 123, 255, 1)',
                         backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                        fill: false
+                    },
+                    {
+                        label: 'Solidarietà Veneto',
+                        data: solidarietavenetoPercentage,
+                        borderColor: 'rgba(100, 30, 80, 1)',
+                        backgroundColor: 'rgba(100, 30, 80, 0.2)',
                         fill: false
                     },
                     {
