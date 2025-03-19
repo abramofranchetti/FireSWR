@@ -27,7 +27,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const inflationRate = parseFloat(inflationSlider.value);
         const years = parseInt(yearsSlider.value);
         const { svalutatedValue, lossPercentage } = calculateInflationLoss(initialCapital, inflationRate, years);
-        resultText.innerText = `Il capitale iniziale di ${formatEuro(initialCapital)} per via dell'inflazione cumulata del ${inflationRate}% in ${years} anni è diventato ${formatEuro(svalutatedValue)} con la perdita di potere di acquisto del ${lossPercentage}%`;
+        resultText.innerText = `Il potere di acquisto del capitale iniziale di ${formatEuro(initialCapital)} per via dell'inflazione cumulata del ${inflationRate}% in ${years} anni 
+        è diventato ${formatEuro(svalutatedValue)} con una perdita di potere di acquisto del ${lossPercentage}%`;
     }
 
     initialCapitalInput.addEventListener('input', updateResult);
