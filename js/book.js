@@ -203,7 +203,8 @@ document.addEventListener('DOMContentLoaded', function () {
         new Order(107, 70),
         new Order(108, 80),
         new Order(109, 90),
-        new Order(110, 100)
+        new Order(110, 100),
+        new Order(111, 110)
     ];
 
     testBuyOrders.forEach(order => addOrder(buyBook, order, 'success'));
