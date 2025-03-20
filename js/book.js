@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const accountBalanceElement = document.getElementById('account-balance');
     const stockQuantityElement = document.getElementById('stock-quantity');
     const spreadValueElement = document.getElementById('spread-value');
-    let accountBalance = 10000; // Conto personale iniziale
-    let stockQuantity = 0; // Numero di azioni possedute
+    let accountBalance = 10000; 
+    let stockQuantity = 0; 
 
     class Order {
         constructor(price, quantity) {
@@ -196,29 +196,17 @@ document.addEventListener('DOMContentLoaded', function () {
     // Popola il book con dati di test
     const testBuyOrders = [
         new Order(100, 10),
-        new Order(99, 20),
-        new Order(98, 30),
-        new Order(97, 40),
-        new Order(96, 50),
-        new Order(95, 60),
-        new Order(94, 70),
-        new Order(93, 80),
-        new Order(92, 90),
-        new Order(91, 100),
-        new Order(90, 110)
-        
+        new Order(99.9, 20),
+        new Order(98.7, 4000),
+        new Order(97, 40),        
     ];
     const testSellOrders = [
         new Order(101, 10),
-        new Order(102, 20),
-        new Order(103, 30),
-        new Order(104, 40),
-        new Order(105, 50),
+        new Order(102.5, 5),
+        new Order(10.6, 300),
+        new Order(104, 4),
+        new Order(105.4, 2),
         new Order(106, 60),
-        new Order(107, 70),
-        new Order(108, 80),
-        new Order(109, 90),
-        new Order(110, 100)
     ];
 
     testBuyOrders.forEach(order => addOrder(buyBook, order, 'success'));
