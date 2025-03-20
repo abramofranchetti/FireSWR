@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book simulator</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/book.js" defer></script>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Book simulator</h1>
+        <h6>Nel book azionario, "denaro" e "lettera" rappresentano i prezzi a cui rispettivamente gli acquirenti e i venditori sono disposti a comprare o vendere un'azione in un dato momento.
+
+            Denaro (Bid): È il prezzo più alto che un compratore è disposto a pagare per acquistare un titolo.
+            Lettera (Ask o Offer): È il prezzo più basso a cui un venditore è disposto a cedere un titolo.
+            La differenza tra questi due prezzi si chiama spread denaro-lettera</h6>
+
+        <!-- Saldo attuale -->
+        <div class="text-center mb-4">
+            <h4>Saldo attuale: €<span id="account-balance">10000.00</span></h4>
+            <h4>Azioni possedute: <span id="stock-quantity">0</span></h4>
+        </div>
+
+        <!-- Sezione per piazzare ordini -->
+        <div class="order-section mb-4">
+            <h3 class="text-center">Piazza un ordine</h3>
+            <div class="input-group mb-3">
+                <div>
+                    <label for="order-price" class="">Prezzo</label>
+                    <input type="number" class="form-control" id="order-price" placeholder="Prezzo" value="101" min="1">
+                </div>
+                <div>
+                    <label for="order-quantity" class="">Quantità</label>
+                    <input type="number" class="form-control" id="order-quantity" placeholder="Quantità" value="1"  min="1">
+                </div>
+                <div class="input-group-append">
+                    <button class="btn btn-success" id="buy-order">Compra</button>
+                    <button class="btn btn-danger" id="sell-order">Vendi</button>
+                </div>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-primary" id="buy-market-order">Compra al meglio</button>
+                <button class="btn btn-warning" id="sell-market-order">Vendi al meglio</button>
+            </div>
+        </div>
+
+        <!-- Sezione per aggiungere offerte esterne -->
+        <div class="external-order-section mb-4">
+            <h3 class="text-center">Aggiungi offerta esterna</h3>
+            <div class="input-group mb-3">
+                <div>
+                    <label for="external-order-price" class="">Prezzo</label>
+                    <input type="number" class="form-control" id="external-order-price" placeholder="Prezzo" value="101" min="1">
+                </div>
+                <div>
+                    <label for="external-order-quantity" class="">Quantità</label>
+                    <input type="number" class="form-control" id="external-order-quantity" placeholder="Quantità" value="1" min="1">
+                </div>
+                <div class="input-group-append">
+                    <button class="btn btn-success" id="add-buy-order">Aggiungi Denaro</button>
+                    <button class="btn btn-danger" id="add-sell-order">Aggiungi Lettera</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="book-section mb-4">
+            <h3 class="text-center">Book</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="text-center">Denaro (Bid)</h4>
+                    <ul class="list-group" id="buy-book">                        
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h4 class="text-center">Lettera (Ask)</h4>
+                    <ul class="list-group" id="sell-book">                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="result alert alert-success text-center">
+            <p></p>
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });         
+        });        
+    </script>
+</body>
+
+</html>
