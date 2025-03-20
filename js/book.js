@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const resultContainer = document.querySelector('.result p');
     const accountBalanceElement = document.getElementById('account-balance');
     const stockQuantityElement = document.getElementById('stock-quantity');
+    const spreadValueElement = document.getElementById('spread-value');
     let accountBalance = 10000; // Conto personale iniziale
     let stockQuantity = 0; // Numero di azioni possedute
 
@@ -127,6 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         sortBook(buyBook, 'desc');
         sortBook(sellBook, 'asc');
+        updateSpreadValue();
     }
 
     function addOrder(book, order, type) {
@@ -178,6 +180,19 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(`Saldo attuale: €${accountBalance.toFixed(2)}, Azioni possedute: ${stockQuantity}`);
     }
 
+    function updateSpreadValue() {
+        const bestBuyOrder = getFirstNonEmptyChild(buyBook);
+        const bestSellOrder = getFirstNonEmptyChild(sellBook);
+        if (bestBuyOrder && bestSellOrder) {
+            const bestBuyPrice = parseFloat(bestBuyOrder.textContent.match(/\d+(\.\d+)?/)[0]);
+            const bestSellPrice = parseFloat(bestSellOrder.textContent.match(/\d+(\.\d+)?/)[0]);
+            const spread = bestSellPrice - bestBuyPrice;
+            spreadValueElement.textContent = `${spread.toFixed(2)}€`;
+        } else {
+            spreadValueElement.textContent = '0.00€';
+        }
+    }
+
     // Popola il book con dati di test
     const testBuyOrders = [
         new Order(100, 10),
@@ -203,12 +218,12 @@ document.addEventListener('DOMContentLoaded', function () {
         new Order(107, 70),
         new Order(108, 80),
         new Order(109, 90),
-        new Order(110, 100),
-        new Order(111, 110)
+        new Order(110, 100)
     ];
 
     testBuyOrders.forEach(order => addOrder(buyBook, order, 'success'));
     testSellOrders.forEach(order => addOrder(sellBook, order, 'danger'));
     sortBook(buyBook, 'desc');
     sortBook(sellBook, 'asc');
+    updateSpreadValue();
 });
