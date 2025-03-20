@@ -203,8 +203,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const testSellOrders = [
         new Order(101, 10),
         new Order(102.5, 5),
-        new Order(10.6, 300),
-        new Order(104, 4),
+        new Order(103.6, 300),
+        new Order(103.9, 4),
         new Order(105.4, 2),
         new Order(106, 60),
     ];
