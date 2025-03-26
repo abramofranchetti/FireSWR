@@ -24,13 +24,18 @@
         </div>
         <br>
         <h1 class="text-center">Interesse netto annuo necessario</h1>
-        <h5 class="text-center"> Le bande mostrate nel grafico allegato sono solo indicative: nella mondo reale non esiste una divisione così netta tra i rendimenti ottenibili con i diversi investimenti.</h5>
+        <h5 class="text-center"> Le bande mostrate nel grafico allegato sono solo indicative: nella mondo reale non
+            esiste una divisione così netta tra i rendimenti ottenibili con i diversi investimenti.</h5>
 
         <div class="form-group">
-            <label for="dailyAmount">Importo giornaliero desiderato: &MediumSpace;</label><span id="dailyAmountValue" class="font-weight-bold">50</span><span class="font-weight-bold"> €</span>
-            <input type="range" id="dailyAmount" value="50" step="1" min="10" max="100" oninput="updateAmounts()" style="width: 100%;">            
+            <label for="dailyAmount">Importo giornaliero desiderato: &MediumSpace;</label><span id="dailyAmountValue"
+                class="font-weight-bold">50</span><span class="font-weight-bold"> €</span>
+            <input type="range" id="dailyAmount" value="50" step="1" min="10" max="100" oninput="updateAmounts()"
+                style="width: 100%;">
             <br>
-            <span>Importo mensile risultante (31 giorni): <span id="monthlyAmountValue" class="font-weight-bold">1550</span>€</span>
+            <span>Importo mensile risultante (31 giorni): <span id="monthlyAmountValue"
+                    class="font-weight-bold">1550</span></span>
+            (<span id="yearlyAmountValue" class="font-weight-bold">18250</span> annui)
         </div>
         <canvas id="interestChart"></canvas>
 

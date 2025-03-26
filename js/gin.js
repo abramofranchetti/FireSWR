@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const dailyAmount = document.getElementById('dailyAmount');
     dailyAmount.addEventListener('input', function () {
         document.getElementById('dailyAmountValue').textContent = dailyAmount.value;
-        updateChart();        
+        updateChart();
         updateAmounts();
     });
     let step = 25000;
@@ -10,11 +10,22 @@ document.addEventListener('DOMContentLoaded', function () {
     let ctx = document.getElementById('interestChart').getContext('2d');
     let chart;
 
+    function formatEuro(value) {
+        return new Intl.NumberFormat('it-IT',
+            {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+    }
+
     function updateAmounts() {
         const dailyAmount = document.getElementById('dailyAmount').value;
-        document.getElementById('dailyAmountValue').textContent = dailyAmount;
-        document.getElementById('monthlyAmountValue').textContent = dailyAmount * 31;
-    }    
+        document.getElementById('dailyAmountValue').textContent = formatEuro(dailyAmount);
+        document.getElementById('monthlyAmountValue').textContent = formatEuro(dailyAmount * 31);
+        document.getElementById('yearlyAmountValue').textContent = formatEuro(dailyAmount * 365);
+    }
 
     function calculateInterest(dailyAmount) {
         let yearlyAmount = dailyAmount * 365;
@@ -52,39 +63,39 @@ document.addEventListener('DOMContentLoaded', function () {
         chart = new Chart(ctx, {
             type: 'line',
             data: {
-            labels: capital,
-            datasets: [{
-                label: 'Interesse netto annuo (%)',
-                data: interest,
-                borderColor: 'blue',
-                fill: false,
-                tension: 0.5
-            }]
+                labels: capital,
+                datasets: [{
+                    label: 'Interesse netto annuo (%)',
+                    data: interest,
+                    borderColor: 'blue',
+                    fill: false,
+                    tension: 0.5
+                }]
             },
             options: {
-            responsive: true,
-            scales: {
-                x: {
-                title: { display: true, text: 'Patrimonio investito (€)' },                
+                responsive: true,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Patrimonio investito (€)' },
+                    },
+                    y: {
+                        title: { display: true, text: 'Interesse netto annuo (%)' },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
                 },
-                y: {
-                title: { display: true, text: 'Interesse netto annuo (%)' },
-                ticks: {
-                    stepSize: 1
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            box1: { type: 'box', xMin: 100000 / step - 2, xMax: 200000 / step - 2, backgroundColor: 'rgba(128, 128, 128, 0.3)', label: { content: 'Investimenti Speculativi', position: 'center', display: true, rotation: -90, color: 'blue', textStrokeColor: 'black', font: { size: 14, weight: 'bold' } } },
+                            box2: { type: 'box', xMin: 200000 / step - 2, xMax: 500000 / step - 2, backgroundColor: 'rgba(255, 0, 0, 0.2)', label: { content: 'Azionario', position: 'center', display: true, rotation: -90, color: 'blue', textStrokeColor: 'black', font: { size: 14, weight: 'bold' } } },
+                            box3: { type: 'box', xMin: 500000 / step - 2, xMax: 700000 / step - 2, backgroundColor: 'rgba(255, 165, 0, 0.2)', label: { content: 'Bond High Yield', position: 'center', display: true, rotation: -90, color: 'blue', textStrokeColor: 'black', font: { size: 14, weight: 'bold' } } },
+                            box4: { type: 'box', xMin: 700000 / step - 2, xMax: 900000 / step - 2, backgroundColor: 'rgba(0, 0, 255, 0.2)', label: { content: 'Bond Governativi', position: 'center', display: true, rotation: -90, color: 'blue', textStrokeColor: 'black', font: { size: 14, weight: 'bold' } } },
+                            box5: { type: 'box', xMin: 900000 / step - 2, xMax: 1200000 / step - 2, backgroundColor: 'rgba(0, 128, 0, 0.2)', label: { content: 'Conto Deposito', position: 'center', display: true, rotation: -90, color: 'blue', textStrokeColor: 'black', font: { size: 14, weight: 'bold' } } }
+                        }
+                    }
                 }
-                }
-            },
-            plugins: {
-                annotation: {
-                annotations: {
-                    box1: { type: 'box', xMin: 100000 / step - 2, xMax: 200000 / step - 2, backgroundColor: 'rgba(128, 128, 128, 0.3)', label: { content: 'Investimenti Speculativi', position: 'center', display: true, rotation: -90, color: 'blue', textStrokeColor: 'black', font: { size: 14, weight: 'bold' } } },
-                    box2: { type: 'box', xMin: 200000 / step - 2, xMax: 500000 / step - 2, backgroundColor: 'rgba(255, 0, 0, 0.2)', label: { content: 'Azionario', position: 'center', display: true, rotation: -90, color: 'blue', textStrokeColor: 'black', font: { size: 14, weight: 'bold' } } },
-                    box3: { type: 'box', xMin: 500000 / step - 2, xMax: 700000 / step - 2, backgroundColor: 'rgba(255, 165, 0, 0.2)', label: { content: 'Bond High Yield', position: 'center', display: true, rotation: -90, color: 'blue', textStrokeColor: 'black', font: { size: 14, weight: 'bold' } } },
-                    box4: { type: 'box', xMin: 700000 / step - 2, xMax: 900000 / step - 2, backgroundColor: 'rgba(0, 0, 255, 0.2)', label: { content: 'Bond Governativi', position: 'center', display: true, rotation: -90, color: 'blue', textStrokeColor: 'black', font: { size: 14, weight: 'bold' } } },
-                    box5: { type: 'box', xMin: 900000 / step - 2, xMax: 1200000 / step - 2, backgroundColor: 'rgba(0, 128, 0, 0.2)', label: { content: 'Conto Deposito', position: 'center', display: true, rotation: -90, color: 'blue', textStrokeColor: 'black', font: { size: 14, weight: 'bold' } } }
-                }
-                }
-            }
             }
         });
     }
@@ -186,4 +197,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     createChart();
     updateChart();
+    updateAmounts();
 });
