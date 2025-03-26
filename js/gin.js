@@ -2,12 +2,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const dailyAmount = document.getElementById('dailyAmount');
     dailyAmount.addEventListener('input', function () {
         document.getElementById('dailyAmountValue').textContent = dailyAmount.value;
-        updateChart();
+        updateChart();        
+        updateAmounts();
     });
     let step = 25000;
 
     let ctx = document.getElementById('interestChart').getContext('2d');
     let chart;
+
+    function updateAmounts() {
+        const dailyAmount = document.getElementById('dailyAmount').value;
+        document.getElementById('dailyAmountValue').textContent = dailyAmount;
+        document.getElementById('monthlyAmountValue').textContent = dailyAmount * 31;
+    }    
 
     function calculateInterest(dailyAmount) {
         let yearlyAmount = dailyAmount * 365;
