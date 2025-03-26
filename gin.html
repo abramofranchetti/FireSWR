@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafico Interesse Netto</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <script src="js/gin.js" defer></script>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Interesse netto annuo necessario</h1>
+        <h5 class="text-center"> Le bande mostrate nel grafico allegato sono solo indicative: nella mondo reale non esiste una divisione così netta tra i rendimenti ottenibili con i diversi investimenti.</h5>
+
+        <div class="form-group">
+            <label for="dailyAmount">Importo giornaliero desiderato (€):</label>
+            <input type="range" id="dailyAmount" value="50" step="1" min="10" max="100" oninput="dailyAmountValue.textContent = this.value" style="width: 100%;">
+            <span id="dailyAmountValue" class="font-weight-bold">50</span><span class="font-weight-bold">€</span>
+        </div>
+        <canvas id="interestChart"></canvas>
+
+        <!-- Disclaimer -->
+        <div id="disclaimer-container"></div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                fetch('html/disclaimer.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('disclaimer-container').innerHTML = data;
+                    });
+            });
+        </script>
+</body>
+
+</html>
