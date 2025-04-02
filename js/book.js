@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const accountBalanceElement = document.getElementById('account-balance');
     const stockQuantityElement = document.getElementById('stock-quantity');
     const spreadValueElement = document.getElementById('spread-value');
+    const lastTradePriceElement = document.getElementById('last-trade-price');
     let accountBalance = 10000; 
     let stockQuantity = 0; 
 
@@ -164,6 +165,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const formattedDate = now.toLocaleString();
         resultItem.textContent = `${formattedDate} ||  ${operationType} || Prezzo ${price} || Quantità ${quantity}`;
         resultContainer.insertBefore(resultItem, resultContainer.firstChild);
+
+        // Aggiorna il prezzo del titolo
+        lastTradePriceElement.textContent = price.toFixed(2);
     }
 
     function updateAccountBalanceAndStock(operationType, price, quantity) {
