@@ -542,7 +542,7 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
                     pointRadius: 0
                 },
                 {
-                    label: 'Nettissimo Reale (€)',
+                    label: 'Nettissimo Infl. Adjusted (€)',
                     data: realNettissimoValuesEur.map((value, index) => ((value / realNettissimoValuesEur[0]) - 1) * 100),
                     borderColor: 'rgba(107, 248, 107, 0.6)',
                     backgroundColor: 'rgba(107, 248, 107, 0.1)',
