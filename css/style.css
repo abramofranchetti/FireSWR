@@ -12,12 +12,23 @@
 }
 
 .container {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: auto;
     background-color: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.istruzioni {
+    background-color: #333;
+    color: #fff;
+    text-align: left;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.4;
 }
 
 .home-button:hover {
