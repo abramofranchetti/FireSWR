@@ -41,13 +41,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const datiLordo = [];
         const datiNetto = [];
+        const capitaleVersatoLordo = [];
+        const capitaleVersatoNetto = [];
         let totaleLordo = 0;
         let totaleNetto = 0;
+        let totaleVersatoLordo = 0;
+        let totaleVersatoNetto = 0;
 
         for (let i = 1; i <= durata * 12; i++) {
             if (i % intervallo === 0) {
                 totaleLordo = (totaleLordo + mensile) * (1 + annuo / 12);
                 totaleNetto = (totaleNetto + mensile - comm) * (1 + annuo / 12);
+                totaleVersatoLordo += mensile;
+                totaleVersatoNetto += mensile - comm;
             } else {
                 totaleLordo *= (1 + annuo / 12);
                 totaleNetto *= (1 + annuo / 12);
@@ -55,6 +61,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (i % 12 === 0) {
                 datiLordo.push(totaleLordo);
                 datiNetto.push(totaleNetto);
+                capitaleVersatoLordo.push(totaleVersatoLordo);
+                capitaleVersatoNetto.push(totaleVersatoNetto);
             }
         }
 
@@ -99,6 +107,20 @@ document.addEventListener('DOMContentLoaded', function () {
                         label: 'Investimento Netto',
                         data: datiNetto,
                         borderColor: 'red',
+                        fill: false,
+                    },
+                    {
+                        label: 'Capitale Versato Lordo',
+                        data: capitaleVersatoLordo,
+                        borderColor: 'blue',
+                        borderDash: [5, 5],
+                        fill: false,
+                    },
+                    {
+                        label: 'Capitale Versato Netto',
+                        data: capitaleVersatoNetto,
+                        borderColor: 'orange',
+                        borderDash: [5, 5],
                         fill: false,
                     },
                 ],
