@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!price) continue;
 
             // Capitale versato
-            totalCapital += amount;
+            totalCapital += amount + commission;
             capitalInvested.push(totalCapital);
 
             // Senza commissioni
