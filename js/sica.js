@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const anni = document.getElementById('anni');
     const anniValue = document.getElementById('anniValue');
     const graficoCanvas = document.getElementById('graficoInvestimento');
-    const impattoMonetario = document.getElementById('impattoMonetario');
     const impattoPercentuale = document.getElementById('impattoPercentuale');
     const frequenza = document.getElementById('frequenza');
     const impattosusingoloacquisto = document.getElementById('impattosusingoloacquisto');
@@ -69,8 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const totaleCommissioni = totaleVersatoLordo - totaleVersatoNetto;
         const impatto = totaleLordo - totaleNetto;
         const impattoPerc = (totaleCommissioni / totaleLordo) * 100;        
-
-        impattoMonetario.textContent = `Impatto Monetario delle commissioni sul totale finale : €${impatto.toFixed(2)}`;
+        
         impattoPercentuale.textContent = `Impatto Percentuale delle commissioni rispetto al rendimento lordo : ${totaleCommissioni.toFixed(2)} / ${totaleLordo.toFixed(2)} * 100 = ${impattoPerc.toFixed(2)}%`;
 
         const totaleInvestito = (durata * 12 / intervallo) * mensile;
