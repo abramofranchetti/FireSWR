@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolo Cedola Effettiva</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/sica.js" defer></script>    
+</head>
+
+<body class="bg-light">
+    <div class="container">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <h1 class="text-center">Simulatore di impatto delle commissioni di acquisto</h1>        
+        <h5 class="text-center mb-4">Inserisci le commissioni di acquisto in euro e l'importo dell'acquisto periodico.</h5>
+        <h6 class="text-center mb-4">
+            La rivalutazione del capitale lordo e netto viene calcolata mensilmente in modo iterativo utilizzando la seguente strategia (ad esempio per il pac mensile):
+            <br>
+            <br> 
+            <div class="formula-container text-center">
+                <p><i>
+                    <strong>Totale Lordo Anno Corrente = </strong>
+                    (Totale Lordo Anno Precedente + Importo Mensile) 
+                    × (1 + Rendimento Annuo / 12)
+                </i></p>
+                <p><i>
+                    <strong>Totale Netto Anno Corrente = </strong>
+                    (Totale Netto Anno Precedente + Importo Mensile - Commissioni di Acquisto) 
+                    × (1 + Rendimento Annuo / 12)
+                </i></p>
+            </div>
+        </h6>
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="frequenza">Frequenza del PAC:</label>
+                <select id="frequenza" class="form-control">
+                    <option value="1" selected>Mensile</option>
+                    <option value="3">Trimestrale</option>
+                    <option value="12">Annuale</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="importoMensile">Importo (€):</label>
+                <input type="number" id="importoMensile" class="form-control" value="100">
+            </div>
+            <div class="col-md-6">
+                <label for="commissioni">Commissioni (€):</label>
+                <input type="number" id="commissioni" class="form-control" value="4">
+                <label for="impattosusingoloacquisto">Impatto commissioni su singolo acquisto (%):</label>                
+                <span id="impattosusingoloacquisto">4%</span>
+            </div>                        
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="rendimento">Rendimento Annuo (%):</label>
+                <input type="range" id="rendimento" class="form-control-range" min="1" max="15" step="0.1" value="6">
+                <span id="rendimentoValue">6%</span>
+            </div>
+            <div class="col-md-6">
+                <label for="anni">Durata (anni):</label>
+                <input type="range" id="anni" class="form-control-range" min="1" max="30" value="10">
+                <span id="anniValue">10 anni</span>
+            </div>
+        </div>        
+
+        <div class="mb-4">
+            <canvas id="graficoInvestimento"></canvas>
+        </div>
+        <div id="riepilogo" class="mt-4">
+            <h5>Riepilogo:</h5>
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th></th>
+                        <th>Lordo</th>
+                        <th>Netto</th>
+                        <th>Differenza</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><i class="fas fa-percentage"></i> Rendimento Totale (%)</td>
+                        <td id="rendimentoTotaleLordo"></td>
+                        <td id="rendimentoTotaleNetto"></td>
+                        <td id="differenzaRendimento"></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-euro-sign"></i> Valore Totale (€)</td>
+                        <td id="valoreTotaleLordo"></td>
+                        <td id="valoreTotaleNetto"></td>
+                        <td id="differenzaValore"></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-chart-line"></i> Guadagno Totale (€)</td>
+                        <td id="guadagnoTotaleLordo"></td>
+                        <td id="guadagnoTotaleNetto"></td>
+                        <td id="differenzaGuadagno"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="mt-3">
+                <p><i class="fas fa-exclamation-circle"></i> <strong>Impatto Monetario:</strong> <span id="impattoMonetario"></span></p>
+                <p><i class="fas fa-percentage"></i> <strong>Impatto Percentuale:</strong> <span id="impattoPercentuale"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
