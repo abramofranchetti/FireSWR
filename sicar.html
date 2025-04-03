@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolo Cedola Effettiva</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/sicar.js" defer></script>    
+</head>
+
+<body class="bg-light">
+    <div class="container">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <h1 class="text-center">Simulatore di impatto delle commissioni di acquisto su dati storici reali SP500</h1>        
+        <h5 class="text-center">La metodologia usata è quella di aggiungere il costo delle commissioni di acquisto al prezzo di acquisto, e di calcolare il rendimento effettivo sul prezzo medio di carico aggiornato considerando le commissioni pagate.</h5>
+        <p class="text-center">Calcola il rendimento effettivo del tuo investimento considerando le commissioni di acquisto.</p>
+        
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label for="frequency">Frequenza PAC:</label>
+                <select id="frequency" class="form-control">
+                    <option value="monthly">Mensile</option>
+                    <option value="quarterly">Trimestrale</option>
+                    <option value="yearly">Annuale</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="amount">Importo ($):</label>
+                <input type="number" id="amount" class="form-control" value="100">
+            </div>
+            <div class="col-md-4">
+                <label for="commission">Commissioni ($):</label>
+                <input type="number" id="commission" class="form-control" value="7">
+                <small id="commissionPercentage" class="form-text text-muted">Percentuale: 7.00%</small>
+            </div>
+            <div class="col-md-4">
+                <label for="startDate">Data Inizio:</label>
+                <input type="date" id="startDate" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="endDate">Data Fine:</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+        </div>
+        <canvas id="pacChart" height="100"></canvas>
+        <div class="mt-4">
+            <h5>Risultati:</h5>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Valore Finale ($)</th>
+                        <th>Rendimento (%)</th>
+                        <th>Commissioni Totali ($)</th>
+                        <th>Commissioni (% del Valore Finale)</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable">
+                    <!-- Dati dinamici -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
