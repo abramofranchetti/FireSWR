@@ -106,6 +106,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${returnWithoutCommission.toFixed(2)}%</td>
                 <td>-</td>
                 <td>-</td>
+                <td>-</td>
+                <td>-</td>
             </tr>
             <tr>
                 <td>Con Commissioni</td>
@@ -113,6 +115,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${returnWithCommission.toFixed(2)}%</td>
                 <td>${totalCommissions.toFixed(2)}</td>
                 <td>${commissionPercentage.toFixed(2)}%</td>
+                <td>${(returnWithCommission - returnWithoutCommission).toFixed(2)}%</td>
+                <td>${(finalWithCommission - finalWithoutCommission).toFixed(2)}$</td>
             </tr>
         `;
     }
