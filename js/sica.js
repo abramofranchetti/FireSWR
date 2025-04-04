@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
         resultsTable.innerHTML = `
             <tr>
                 <td>Senza Commissioni</td>
-                <td>${finalWithoutCommission.toFixed(2)}</td>
+                <td>${finalWithoutCommission.toFixed(2)}$</td>
                 <td>${returnWithoutCommission.toFixed(2)}%</td>
                 <td>-</td>
                 <td>-</td>
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </tr>
             <tr>
                 <td>Con Commissioni</td>
-                <td>${finalWithCommission.toFixed(2)}</td>
+                <td>${finalWithCommission.toFixed(2)}$</td>
                 <td>${returnWithCommission.toFixed(2)}%</td>
                 <td>${totalCommissions.toFixed(2)}</td>
                 <td>${commissionPercentage.toFixed(2)}%</td>
