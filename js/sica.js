@@ -176,10 +176,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         borderColor: 'blue',
                         fill: false,
                     },
-                ],
+                ],                
             },
             options: {
                 responsive: true,
+                elements: {
+                    point:{
+                        radius: 0
+                    }
+                },
                 plugins: {
                     legend: {
                         position: 'top',
