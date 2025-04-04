@@ -1,157 +1,191 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const importoMensile = document.getElementById('importoMensile');
-    const commissioni = document.getElementById('commissioni');
-    const rendimento = document.getElementById('rendimento');
-    const rendimentoValue = document.getElementById('rendimentoValue');
-    const anni = document.getElementById('anni');
-    const anniValue = document.getElementById('anniValue');
-    const graficoCanvas = document.getElementById('graficoInvestimento');
-    const impattoPercentuale = document.getElementById('impattoPercentuale');
-    const frequenza = document.getElementById('frequenza');
-    const impattosusingoloacquisto = document.getElementById('impattosusingoloacquisto');
-    const totaleCommissioniText = document.getElementById('totaleCommissioni');
-    const rendimentoTotaleLordo = document.getElementById('rendimentoTotaleLordo');
-    const rendimentoTotaleNetto = document.getElementById('rendimentoTotaleNetto');
-    const valoreTotaleLordo = document.getElementById('valoreTotaleLordo');
-    const valoreTotaleNetto = document.getElementById('valoreTotaleNetto');
-    const guadagnoTotaleLordo = document.getElementById('guadagnoTotaleLordo');
-    const guadagnoTotaleNetto = document.getElementById('guadagnoTotaleNetto');
-    const differenzaRendimento = document.getElementById('differenzaRendimento');
-    const differenzaValore = document.getElementById('differenzaValore');
-    const differenzaGuadagno = document.getElementById('differenzaGuadagno');
+    const frequencyInput = document.getElementById('frequency');
+    const amountInput = document.getElementById('amount');
+    const commissionInput = document.getElementById('commission');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const resultsTable = document.getElementById('resultsTable');
+    const ctx = document.getElementById('pacChart').getContext('2d');
+    const commissionPercentageLabel = document.getElementById('commissionPercentage');
 
-    let grafico;
+    let chart;
 
-    function aggiornaValori() {
-        rendimentoValue.textContent = `${rendimento.value}%`;
-        anniValue.textContent = `${anni.value} anni`;
+    // Frequenze in giorni
+    const frequencies = {
+        monthly: 30,
+        quarterly: 90,
+        yearly: 365,
+    };
+
+    // Carica i dati SP500
+    fetch('json/sp500.json')
+        .then(response => response.json())
+        .then(data => {
+            const prices = data.map(entry => parseFloat(entry.Close));
+            const dates = data.map(entry => entry.Date);
+            
+            // Imposta i limiti delle date
+            const minDate = dates[0];
+            const maxDate = dates[dates.length - 1];
+            startDateInput.min = minDate;
+            startDateInput.max = maxDate;
+            endDateInput.min = minDate;
+            endDateInput.max = maxDate;
+
+            // Imposta i valori predefiniti (ultimi 10 anni)
+            const defaultStartDate = new Date(maxDate);
+            defaultStartDate.setFullYear(defaultStartDate.getFullYear() - 10);
+            startDateInput.value = defaultStartDate.toISOString().split('T')[0];
+            endDateInput.value = maxDate;
+
+            updateSimulation(prices, dates);
+        });
+
+    // Aggiorna la simulazione quando cambiano i valori
+    [frequencyInput, amountInput, commissionInput, startDateInput, endDateInput].forEach(input => {
+        input.addEventListener('input', () => {
+            // Aggiorna la percentuale di commissione
+            if (input === commissionInput || input === amountInput) {
+                const amount = parseFloat(amountInput.value);
+                const commission = parseFloat(commissionInput.value);
+                const percentage = (commission / amount) * 100;
+                commissionPercentageLabel.textContent = `Percentuale: ${percentage.toFixed(2)}%`;
+            }
+
+            // Aggiorna la simulazione
+            fetch('json/sp500.json')
+                .then(response => response.json())
+                .then(data => {
+                    const prices = data.map(entry => parseFloat(entry.Close));
+                    const dates = data.map(entry => entry.Date);
+                    updateSimulation(prices, dates);
+                });
+        });
+    });
+
+    function updateSimulation(prices, dates) {
+        const frequency = frequencies[frequencyInput.value];
+        const amount = parseFloat(amountInput.value);
+        const commission = parseFloat(commissionInput.value);
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+
+        // Filtra i dati in base alle date selezionate
+        const filteredData = dates
+            .map((date, index) => ({ date: new Date(date), price: prices[index] }))
+            .filter(entry => entry.date >= startDate && entry.date <= endDate);
+
+        const filteredPrices = filteredData.map(entry => entry.price);
+        const filteredDates = filteredData.map(entry => entry.date.toISOString().split('T')[0]);
+
+        const { valuesWithoutCommission, valuesWithCommission, totalCommissions, capitalInvested, chartDates } = calculatePAC(
+            filteredPrices,
+            frequency,
+            amount,
+            commission,
+            filteredDates
+        );
+
+        // Calcola i risultati finali
+        const finalWithoutCommission = valuesWithoutCommission[valuesWithoutCommission.length - 1];
+        const finalWithCommission = valuesWithCommission[valuesWithCommission.length - 1];
+        const initialInvestment = capitalInvested[capitalInvested.length - 1];
+
+        const returnWithoutCommission = ((finalWithoutCommission - initialInvestment) / initialInvestment) * 100;
+        const returnWithCommission = ((finalWithCommission - initialInvestment) / initialInvestment) * 100;
+        const commissionPercentage = (totalCommissions / finalWithCommission) * 100;
+
+        // Aggiorna il grafico
+        updateChart(chartDates, valuesWithoutCommission, valuesWithCommission, capitalInvested);
+
+        // Aggiorna la tabella
+        resultsTable.innerHTML = `
+            <tr>
+                <td>Senza Commissioni</td>
+                <td>${finalWithoutCommission.toFixed(2)}</td>
+                <td>${returnWithoutCommission.toFixed(2)}%</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Con Commissioni</td>
+                <td>${finalWithCommission.toFixed(2)}</td>
+                <td>${returnWithCommission.toFixed(2)}%</td>
+                <td>${totalCommissions.toFixed(2)}</td>
+                <td>${commissionPercentage.toFixed(2)}%</td>
+            </tr>
+        `;
     }
 
-    function annualToMonthlyReturn(annualRate) {
-        return Math.pow(1 + annualRate, 1 / 12) - 1;
-    }
+    function calculatePAC(prices, frequency, amount, commission, dates) {
+        let chartDates = dates.filter((_, index) => index % frequency === 0);
+        let valuesWithoutCommission = [];
+        let valuesWithCommission = [];
+        let capitalInvested = [];
+        let sharesWithoutCommission = 0;
+        let sharesWithCommission = 0;
+        let totalCommissions = 0;
+        let totalCapital = 0;
 
-    function calcolaInvestimento() {
-        const mensile = parseFloat(importoMensile.value);
-        const comm = parseFloat(commissioni.value);
-        const annuo = parseFloat(rendimento.value) / 100;
-        const durata = parseInt(anni.value);
-        const intervallo = parseInt(frequenza.value); // Frequenza del PAC (1 = mensile, 3 = trimestrale, 12 = annuale)
+        for (let i = 0; i < prices.length; i += frequency) {
+            const price = prices[i];
+            if (!price) continue;
 
-        const datiLordo = [];
-        const datiNetto = [];
-        const capitaleVersatoLordo = [];
-        const capitaleVersatoNetto = [];
-        let totaleLordo = 0;
-        let totaleNetto = 0;
-        let totaleVersatoLordo = 0;
-        let totaleVersatoNetto = 0;
+            // Capitale versato
+            totalCapital += amount + commission;
+            capitalInvested.push(totalCapital);
 
-        for (let i = 1; i <= durata * 12; i++) {
-            if (i % intervallo === 0) {
-                totaleLordo = (totaleLordo + mensile) * (1 + annuo / 12);
-                totaleNetto = (totaleNetto + mensile - comm) * (1 + annuo / 12);
-                totaleVersatoLordo += mensile;
-                totaleVersatoNetto += mensile - comm;
-            } else {
-                totaleLordo *= (1 + annuo / 12);
-                totaleNetto *= (1 + annuo / 12);
-            }
-            if (i % 12 === 0) {
-                datiLordo.push(totaleLordo);
-                datiNetto.push(totaleNetto);
-                capitaleVersatoLordo.push(totaleVersatoLordo);
-                capitaleVersatoNetto.push(totaleVersatoNetto);
-            }
+            // Senza commissioni
+            sharesWithoutCommission += amount / price;
+            valuesWithoutCommission.push(sharesWithoutCommission * price);
+
+            // Con commissioni
+            const commissionCost = commission;
+            totalCommissions += commissionCost;
+            const adjustedPrice = price + commissionCost / (amount / price);
+            sharesWithCommission += amount / adjustedPrice;
+            valuesWithCommission.push(sharesWithCommission * price);
         }
-        
-        const totaleCommissioni = totaleVersatoLordo - totaleVersatoNetto;
-        const impatto = totaleLordo - totaleNetto;
-        const impattoPerc = (totaleCommissioni / totaleLordo) * 100;        
-        
-        impattoPercentuale.textContent = `Impatto Percentuale delle commissioni rispetto al rendimento lordo : ${totaleCommissioni.toFixed(2)} / ${totaleLordo.toFixed(2)} * 100 = ${impattoPerc.toFixed(2)}%`;
 
-        const totaleInvestito = (durata * 12 / intervallo) * mensile;
-        const guadagnoLordo = totaleLordo - totaleInvestito;
-        const guadagnoNetto = totaleNetto - totaleInvestito;
-        const rendimentoPercLordo = (guadagnoLordo / totaleInvestito) * 100;
-        const rendimentoPercNetto = (guadagnoNetto / totaleInvestito) * 100;
+        return { valuesWithoutCommission, valuesWithCommission, totalCommissions, capitalInvested, chartDates };
+    }
 
-        // Aggiorna i valori nella tabella
-        impattosusingoloacquisto.textContent = `${((comm / mensile) * 100).toFixed(2)}%`;
-        rendimentoTotaleLordo.textContent = `${rendimentoPercLordo.toFixed(2)}%`;
-        rendimentoTotaleNetto.textContent = `${rendimentoPercNetto.toFixed(2)}%`;
-        valoreTotaleLordo.textContent = `€${totaleLordo.toFixed(2)}`;
-        valoreTotaleNetto.textContent = `€${totaleNetto.toFixed(2)}`;
-        guadagnoTotaleLordo.textContent = `€${guadagnoLordo.toFixed(2)}`;
-        guadagnoTotaleNetto.textContent = `€${guadagnoNetto.toFixed(2)}`;
-        differenzaRendimento.textContent = `${(rendimentoPercLordo - rendimentoPercNetto).toFixed(2)}%`;
-        differenzaValore.textContent = `€${(totaleLordo - totaleNetto).toFixed(2)}`;
-        differenzaGuadagno.textContent = `€${(guadagnoLordo - guadagnoNetto).toFixed(2)}`;
-        totaleCommissioniText.textContent = `€${totaleCommissioni.toFixed(2)}€`;
+    function updateChart(dates, valuesWithoutCommission, valuesWithCommission, capitalInvested) {
+        if (chart) chart.destroy();
 
-        if (grafico) grafico.destroy();
-
-        grafico = new Chart(graficoCanvas, {
+        chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: Array.from({ length: (durata) }, (_, i) => i + 1),
+                labels: dates,
                 datasets: [
                     {
-                        label: 'Investimento Lordo',
-                        data: datiLordo,
+                        label: 'Senza Commissioni',
+                        data: valuesWithoutCommission,
                         borderColor: 'green',
                         fill: false,
                     },
                     {
-                        label: 'Investimento Netto',
-                        data: datiNetto,
+                        label: 'Con Commissioni',
+                        data: valuesWithCommission,
                         borderColor: 'red',
                         fill: false,
                     },
                     {
-                        label: 'Capitale Versato Lordo',
-                        data: capitaleVersatoLordo,
+                        label: 'Capitale Versato',
+                        data: capitalInvested,
                         borderColor: 'blue',
-                        borderDash: [5, 5],
-                        fill: false,
-                    },
-                    {
-                        label: 'Capitale Versato Netto',
-                        data: capitaleVersatoNetto,
-                        borderColor: 'orange',
-                        borderDash: [5, 5],
                         fill: false,
                     },
                 ],
             },
             options: {
                 responsive: true,
-                scales: {
-                    x: {
-                        title: { display: true, text: 'Anni' }
+                plugins: {
+                    legend: {
+                        position: 'top',
                     },
-                    y: { title: { display: true, text: 'Valore (€)' } },
                 },
             },
         });
     }
-
-    rendimento.addEventListener('input', () => {
-        aggiornaValori();
-        calcolaInvestimento();
-    });
-
-    anni.addEventListener('input', () => {
-        aggiornaValori();
-        calcolaInvestimento();
-    });
-
-    importoMensile.addEventListener('input', calcolaInvestimento);
-    commissioni.addEventListener('input', calcolaInvestimento);
-    frequenza.addEventListener('change', calcolaInvestimento);
-
-    // Calcolo iniziale al caricamento della pagina
-    aggiornaValori();
-    calcolaInvestimento();
 });
