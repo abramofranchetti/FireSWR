@@ -2,17 +2,19 @@ let btcEurData = [];
 let btcUsdData = [];
 let italyInflationData = [];
 let euInflationData = [];
-let foiData = [];  // Aggiunta
+let foiData = [];
+let eurUsdData = [];
 let charts = {};
 
 async function loadData() {
     try {
-        const [eurResponse, usdResponse, itInflationResponse, euInflationResponse, foiResponse] = await Promise.all([
+        const [eurResponse, usdResponse, itInflationResponse, euInflationResponse, foiResponse, eurUsdResponse] = await Promise.all([
             fetch('json/btc-eur.json'),
             fetch('json/btc-usd.json'),
             fetch('csv/datiinflazionemediaitalia.csv'),
             fetch('csv/datiinflazionemediaeuropa.csv'),
             fetch('csv/foi.csv'),
+            fetch('csv/eur_usd.csv')
         ]);
 
         btcEurData = await eurResponse.json();
@@ -22,6 +24,7 @@ async function loadData() {
         italyInflationData = await parseCSV(await itInflationResponse.text());
         euInflationData = await parseCSV(await euInflationResponse.text());
         foiData = await parseCSV(await foiResponse.text());
+        eurUsdData = await parseCSV(await eurUsdResponse.text());
 
         initializeDateFilters();
         createCharts();
@@ -131,6 +134,18 @@ function createCharts() {
                 borderColor: 'rgb(153, 51, 255)',
                 tension: 0.1,
                 pointRadius: 0,
+            }, {
+                label: 'Panieri FOI acquistabili con 10k EUR',
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1,
+                pointRadius: 0,
+                borderDash: [5, 5]
+            }, {
+                label: 'Panieri FOI acquistabili con 10k USD',
+                borderColor: 'rgb(255, 99, 132)',
+                tension: 0.1,
+                pointRadius: 0,
+                borderDash: [5, 5]
             }]
         },
         options: {
@@ -187,7 +202,10 @@ function updateChart() {
     // Calcola il potere d'acquisto in termini di paniere FOI
     const foiPurchasingPower = calculateFoiPurchasingPower(filteredEurData);
 
-    // Update chart data
+    // Calcola i panieri acquistabili con valuta fissa
+    const fixedEurPanieri = calculateFixedCurrencyFoiPower(filteredEurData, 10000, true);
+    const fixedUsdPanieri = calculateFixedCurrencyFoiPower(filteredEurData, 10000, false);
+
     charts.mainChart.data.datasets[0].data = filteredEurData.map(d => ({
         x: d.Date,
         y: d.Close
@@ -205,8 +223,17 @@ function updateChart() {
 
     charts.mainChart.data.datasets[3].data = avgLine;
 
-    // Aggiorna il grafico FOI
     charts.foiChart.data.datasets[0].data = foiPurchasingPower.map(d => ({
+        x: d.date,
+        y: d.value * 100
+    }));
+    
+    charts.foiChart.data.datasets[1].data = fixedEurPanieri.map(d => ({
+        x: d.date,
+        y: d.value * 100
+    }));
+    
+    charts.foiChart.data.datasets[2].data = fixedUsdPanieri.map(d => ({
         x: d.date,
         y: d.value * 100
     }));
@@ -257,6 +284,25 @@ function calculateFoiPurchasingPower(btcData) {
         
         // Calcola quanti panieri FOI si possono comprare con 1 BTC
         const numPanieri = d.Close / foiValue;
+        
+        return {
+            date: d.Date,
+            value: numPanieri
+        };
+    });
+}
+
+function calculateFixedCurrencyFoiPower(btcData, amount, isEuro) {
+    return btcData.map(d => {
+        const year = new Date(d.Date).getFullYear().toString();
+        const foiValue = foiData.find(f => f.date === year)?.value || 0;
+        const exchangeRate = eurUsdData.find(f => f.date === year)?.value || 1;
+        
+        if (foiValue === 0) return { date: d.Date, value: 0 };
+        
+        // Se USD, converti prima in EUR
+        const eurAmount = isEuro ? amount : amount / exchangeRate;
+        const numPanieri = eurAmount / foiValue;
         
         return {
             date: d.Date,
