@@ -4,19 +4,21 @@ let italyInflationData = [];
 let euInflationData = [];
 let foiData = [];
 let eurUsdData = [];
-let goldData = [];  // Aggiunta
+let goldData = [];
+let sp500Data = [];
 let charts = {};
 
 async function loadData() {
     try {
-        const [eurResponse, usdResponse, itInflationResponse, euInflationResponse, foiResponse, eurUsdResponse, goldResponse] = await Promise.all([
+        const [eurResponse, usdResponse, itInflationResponse, euInflationResponse, foiResponse, eurUsdResponse, goldResponse, sp500Response, sp500DaylyResponse] = await Promise.all([
             fetch('json/btc-eur.json'),
             fetch('json/btc-usd.json'),
             fetch('csv/datiinflazionemediaitalia.csv'),
             fetch('csv/datiinflazionemediaeuropa.csv'),
             fetch('csv/foi.csv'),
             fetch('csv/eur_usd.csv'),
-            fetch('csv/gold_month.csv')
+            fetch('csv/gold_month.csv'),
+            fetch('csv/sp500_month.csv')
         ]);
 
         btcEurData = await eurResponse.json();
@@ -28,6 +30,7 @@ async function loadData() {
         foiData = await parseCSV(await foiResponse.text());
         eurUsdData = await parseCSV(await eurUsdResponse.text());
         goldData = await parseGoldCSV(await goldResponse.text());
+        sp500Data = await parseGoldCSV(await sp500Response.text());
 
         initializeDateFilters();
         createCharts();
@@ -172,6 +175,12 @@ function createCharts() {
                 tension: 0.1,
                 pointRadius: 0,
                 borderDash: [5, 5]
+            }, {
+                label: 'Panieri FOI acquistabili con 0.2 S&P500',
+                borderColor: 'rgb(128, 128, 128)',
+                tension: 0.1,
+                pointRadius: 0,
+                borderDash: [5, 5]
             }]
         },
         options: {
@@ -235,6 +244,9 @@ function updateChart() {
     // Calcola i panieri acquistabili con 1kg di oro
     const goldFoiPower = calculateGoldFoiPower(filteredEurData, 0.5);
 
+    // Calcola i panieri acquistabili con 10 unità di SP500
+    const sp500FoiPower = calculateSP500FoiPower(filteredEurData, 0.2);
+
     charts.mainChart.data.datasets[0].data = filteredEurData.map(d => ({
         x: d.Date,
         y: d.Close
@@ -268,6 +280,11 @@ function updateChart() {
     }));
 
     charts.foiChart.data.datasets[3].data = goldFoiPower.map(d => ({
+        x: d.date,
+        y: d.value * 100
+    }));
+
+    charts.foiChart.data.datasets[4].data = sp500FoiPower.map(d => ({
         x: d.date,
         y: d.value * 100
     }));
@@ -351,7 +368,7 @@ function calculateGoldFoiPower(btcData, kgAmount) {
         const date = new Date(d.Date);
         const year = date.getFullYear().toString();
         const lastValue = toReturn.length > 0 ? toReturn[toReturn.length - 1].value : 0;
-        
+
         // Trova il valore di gennaio dell'anno corrente e dell'anno successivo
         const currentYearGold = goldData.find(g => g.date.startsWith(year));
         const nextYearGold = goldData.find(g => g.date.startsWith((parseInt(year) + 1).toString()));
@@ -377,6 +394,40 @@ function calculateGoldFoiPower(btcData, kgAmount) {
 
         // Calcola quanti panieri FOI si possono comprare con kgAmount di oro
         const numPanieri = (goldValue * kgAmount) / foiValue;
+        toReturn.push({ date: d.Date, value: numPanieri });
+    });
+    return toReturn;
+}
+
+function calculateSP500FoiPower(btcData, amount) {
+    let toReturn = [];
+    btcData.map(d => {
+        const date = new Date(d.Date);
+        const year = date.getFullYear().toString();
+        const lastValue = toReturn.length > 0 ? toReturn[toReturn.length - 1].value : 0;
+
+        const currentYearSP500 = sp500Data.find(g => g.date.startsWith(year));
+        const nextYearSP500 = sp500Data.find(g => g.date.startsWith((parseInt(year) + 1).toString()));
+        const foiValue = foiData.find(f => f.date === year)?.value || (lastValue || 0);
+
+        if (!currentYearSP500 || foiValue === 0) {
+            toReturn.push({ date: d.Date, value: (lastValue || 0) });
+            return;
+        }
+
+        const startOfYear = new Date(date.getFullYear(), 0, 1);
+        const endOfYear = new Date(date.getFullYear() + 1, 0, 1);
+        const progressOfYear = (date - startOfYear) / (endOfYear - startOfYear);
+
+        let sp500Value;
+        if (nextYearSP500) {
+            sp500Value = currentYearSP500.value +
+                (nextYearSP500.value - currentYearSP500.value) * progressOfYear;
+        } else {
+            sp500Value = currentYearSP500.value;
+        }
+
+        const numPanieri = (sp500Value * amount) / foiValue;
         toReturn.push({ date: d.Date, value: numPanieri });
     });
     return toReturn;
