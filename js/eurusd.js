@@ -44,7 +44,7 @@ $(document).ready(function () {
         const sampleRate = 10; // Sample every X data points
         data.forEach((item, index) => {
             const year = new Date(item.Date).getFullYear();
-            if (year <= 2000) { // sample data before 2000
+            if (year <= 2010) { // sample data before 2010
             if (index % sampleRate === 0) {
                 dates.push(item.Date);
                 exchangeRates.push(parseFloat(item.Close));
