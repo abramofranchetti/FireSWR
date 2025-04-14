@@ -201,7 +201,7 @@ function createMoneryValueChart(dates, grossValuesDollar, netValuesDollar, netti
     const ctx = document.getElementById('chartCanvas').getContext('2d');
     if (chartInstance) {
         chartInstance.destroy();
-    }    
+    }
 
     chartInstance = new Chart(ctx, {
         type: 'line',
@@ -568,6 +568,17 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
                 intersect: false,
             },
             plugins: {
+                annotation: {
+                    annotations: {
+                        zeroLine: {
+                            type: 'line',
+                            borderColor: 'red',
+                            borderWidth: 1,
+                            scaleID: 'y',
+                            value: 0
+                        }
+                    }
+                },
                 tooltip: {
                     mode: 'index',
                     intersect: false,
