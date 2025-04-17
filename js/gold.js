@@ -1,5 +1,6 @@
 let monthlyChart = null;
 let dailyChart = null;
+let pctDailyChart = null;
 let exchangeRates = [];
 let inflationData = {};
 let exchangeRatesMap = {};
@@ -180,7 +181,7 @@ function createDailyChart(data) {
                     borderWidth: 1
                 },
                 {
-                    label: 'Prezzo Oro (EUR) Infl. Adj.',
+                    label: 'Prezzo Oro (EUR) Italian Infl. Adj.',
                     data: inflationAdjustedEurValues,
                     borderColor: 'green',
                     backgroundColor: 'rgba(0, 255, 0, 0.1)',
@@ -204,6 +205,103 @@ function createDailyChart(data) {
                     title: {
                         display: true,
                         text: 'Prezzo'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function calculatePercentageChanges(values, startValue) {
+    return values.map(value => ((value / startValue) - 1) * 100);
+}
+
+function createPctDailyChart(data) {
+    const ctx = document.getElementById('pctDailyChart').getContext('2d');
+    if (pctDailyChart) pctDailyChart.destroy();
+    
+    const startDate = document.getElementById('pctStartDate').value;
+    const endDate = document.getElementById('pctEndDate').value;
+    
+    const filteredData = data.filter(item => 
+        item.Date >= startDate && 
+        item.Date <= endDate && 
+        item.Close !== null
+    );
+
+    if (filteredData.length === 0) return;
+
+    const startUsdPrice = filteredData[0].Close;
+    const usdValues = calculatePercentageChanges(
+        filteredData.map(item => item.Close),
+        startUsdPrice
+    );
+
+    // Calcola valori EUR
+    const eurValues = filteredData.map((item, i) => {
+        const exchangeRate = getExchangeRate(item.Date);
+        return item.Close / exchangeRate;
+    });
+    const startEurPrice = eurValues[0];
+    const eurPctValues = calculatePercentageChanges(eurValues, startEurPrice);
+
+    // Calcola valori EUR aggiustati per inflazione
+    const inflationAdjustedEurValues = adjustForInflationCumulative(
+        eurValues,
+        filteredData.map(item => item.Date),
+        inflationData
+    );
+    const startAdjPrice = inflationAdjustedEurValues[0];
+    const adjPctValues = calculatePercentageChanges(inflationAdjustedEurValues, startAdjPrice);
+
+    pctDailyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: filteredData.map(item => item.Date),
+            datasets: [
+                {
+                    label: 'Variazione % USD',
+                    data: usdValues,
+                    borderColor: 'gold',
+                    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                    fill: true,
+                    pointRadius: 0,
+                    borderWidth: 1
+                },
+                {
+                    label: 'Variazione % EUR',
+                    data: eurPctValues,
+                    borderColor: 'blue',
+                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                    fill: true,
+                    pointRadius: 0,
+                    borderWidth: 1
+                },
+                {
+                    label: 'Variazione % EUR Infl. Adj.',
+                    data: adjPctValues,
+                    borderColor: 'green',
+                    backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                    fill: true,
+                    pointRadius: 0,
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Variazioni % dal prezzo iniziale'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Variazione %'
                     }
                 }
             }
@@ -236,6 +334,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById('dailyStartDate').addEventListener('change', () => updateDailyChart(data));
         document.getElementById('dailyEndDate').addEventListener('change', () => updateDailyChart(data));
+
+        // Aggiungi event listeners per il grafico percentuale
+        document.getElementById('pctStartDate').addEventListener('change', () => updatePctDailyChart(data));
+        document.getElementById('pctEndDate').addEventListener('change', () => updatePctDailyChart(data));
+        
+        // Inizializza il grafico percentuale con gli stessi dati del grafico giornaliero
+        document.getElementById('pctStartDate').value = document.getElementById('dailyStartDate').value;
+        document.getElementById('pctEndDate').value = document.getElementById('dailyEndDate').value;
+        createPctDailyChart(data);
     })
     .catch(error => {
         console.error("Errore durante il caricamento dei dati:", error);
@@ -288,4 +395,8 @@ function updateMonthlyChart(data) {
 
 function updateDailyChart(data) {
     createDailyChart(data);
+}
+
+function updatePctDailyChart(data) {
+    createPctDailyChart(data);
 }
