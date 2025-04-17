@@ -3,7 +3,8 @@ name: ACWI
 on:
   schedule:
     - cron: "1 6 * * 1-5"
-
+  workflow_dispatch: # Allows manual triggering of the workflow  
+  
 jobs:
   update-json:
     runs-on: ubuntu-latest

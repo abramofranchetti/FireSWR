@@ -3,7 +3,8 @@ name: EURUSD=X
 on:
   schedule:
     - cron: "0 6 * * 1-5"
-
+  workflow_dispatch: # Allows manual triggering of the workflow  
+  
 jobs:
   update-json:
     runs-on: ubuntu-latest
