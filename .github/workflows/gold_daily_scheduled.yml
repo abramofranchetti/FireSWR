@@ -3,6 +3,7 @@ name: GC=F
 on:
   schedule:
     - cron: "5 6 * * 1-5"
+  workflow_dispatch: # Allows manual triggering of the workflow  
 
 jobs:
   update-json:
