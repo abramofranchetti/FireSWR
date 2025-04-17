@@ -4,6 +4,7 @@ let pctDailyChart = null;
 let exchangeRates = [];
 let inflationData = {};
 let exchangeRatesMap = {};
+let GC_F = []; // Aggiungo variabile globale per i dati giornalieri
 
 // Funzione per caricare i dati dell'inflazione
 function loadInflationData() {
@@ -312,37 +313,37 @@ function createPctDailyChart(data) {
 // Modifica la funzione di caricamento principale per includere i nuovi dati
 document.addEventListener('DOMContentLoaded', function() {
     Promise.all([
-        fetch('csv/gold_monthly-storico.csv').then(response => response.text()),
+        fetch('json/GC=F.json').then(response => response.json()),
         loadExchangeRates(),
         loadInflationData()
     ])
-    .then(([goldData]) => {
-        const monthlyData = parseMonthlyData(goldData);
-        initializeMonthleDateInputs(monthlyData);
-        createMonthlyChart(monthlyData);
+    .then(([dailyData]) => {
+        GC_F = dailyData; // Salvo i dati in variabile globale
+        // Inizializza e crea prima il grafico giornaliero
+        initializeDailyDateInputs(dailyData);
+        createDailyChart(dailyData);
 
-        document.getElementById('monthlyStartDate').addEventListener('change', () => updateMonthlyChart(monthlyData));
-        document.getElementById('monthlyEndDate').addEventListener('change', () => updateMonthlyChart(monthlyData));
+        document.getElementById('dailyStartDate').addEventListener('change', () => updateDailyChart(dailyData));
+        document.getElementById('dailyEndDate').addEventListener('change', () => updateDailyChart(dailyData));
         
-        // Carica i dati giornalieri
-        return fetch('json/GC=F.json')
-            .then(response => response.json());
-    })
-    .then(data => {
-        initializeDailyDateInputs(data);
-        createDailyChart(data);
-
-        document.getElementById('dailyStartDate').addEventListener('change', () => updateDailyChart(data));
-        document.getElementById('dailyEndDate').addEventListener('change', () => updateDailyChart(data));
-
-        // Aggiungi event listeners per il grafico percentuale
-        document.getElementById('pctStartDate').addEventListener('change', () => updatePctDailyChart(data));
-        document.getElementById('pctEndDate').addEventListener('change', () => updatePctDailyChart(data));
-        
-        // Inizializza il grafico percentuale con gli stessi dati del grafico giornaliero
         document.getElementById('pctStartDate').value = document.getElementById('dailyStartDate').value;
         document.getElementById('pctEndDate').value = document.getElementById('dailyEndDate').value;
-        createPctDailyChart(data);
+        createPctDailyChart(dailyData);
+
+        document.getElementById('pctStartDate').addEventListener('change', () => updatePctDailyChart(dailyData));
+        document.getElementById('pctEndDate').addEventListener('change', () => updatePctDailyChart(dailyData));
+
+        // Poi carica i dati mensili
+        return fetch('csv/gold_monthly-storico.csv')
+            .then(response => response.text())
+            .then(monthlyData => {
+                const parsedMonthlyData = parseMonthlyData(monthlyData);
+                initializeMonthleDateInputs(parsedMonthlyData);
+                createMonthlyChart(parsedMonthlyData);
+
+                document.getElementById('monthlyStartDate').addEventListener('change', () => updateMonthlyChart(parsedMonthlyData));
+                document.getElementById('monthlyEndDate').addEventListener('change', () => updateMonthlyChart(parsedMonthlyData));
+            });
     })
     .catch(error => {
         console.error("Errore durante il caricamento dei dati:", error);
@@ -351,13 +352,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function parseMonthlyData(csv) {
     const lines = csv.split('\n');
-    return lines.map(line => {
+    const monthlyData = lines.map(line => {
         const [date, price] = line.split(',');
         return {
             date: date,
             price: parseFloat(price)
         };
     }).filter(item => item.price && !isNaN(item.price));
+
+    // Aggiungi le medie mensili dal 2025-03 in poi
+    const lastMonthlyData = new Date(monthlyData[monthlyData.length-1].date);
+    const currentDate = new Date();
+    
+    // Se abbiamo superato marzo 2025 e abbiamo dati giornalieri
+    if (currentDate > new Date('2025-03-01') && GC_F && GC_F.length > 0) {
+        // Organizziamo i prezzi giornalieri per mese
+        const monthlyAverages = {};
+        GC_F.forEach(item => {
+            const date = new Date(item.Date);
+            if (date >= new Date('2025-03-01')) {
+                const monthKey = date.toISOString().substring(0, 7); // YYYY-MM
+                if (!monthlyAverages[monthKey]) {
+                    monthlyAverages[monthKey] = [];
+                }
+                if (item.Close) {
+                    monthlyAverages[monthKey].push(item.Close);
+                }
+            }
+        });
+
+        // Calcoliamo le medie mensili e le aggiungiamo al dataset
+        Object.keys(monthlyAverages).forEach(monthKey => {
+            const prices = monthlyAverages[monthKey];
+            if (prices.length > 0) {
+                const average = prices.reduce((a, b) => a + b, 0) / prices.length;
+                monthlyData.push({
+                    date: monthKey,
+                    price: average
+                });
+            }
+        });
+
+        // Ordiniamo i dati per data
+        monthlyData.sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+
+    return monthlyData;
 }
 
 function initializeMonthleDateInputs(data) {
