@@ -181,7 +181,7 @@ function createDailyChart(data) {
                     borderWidth: 1
                 },
                 {
-                    label: 'Prezzo Oro (EUR) Italian Infl. Adj.',
+                    label: 'Prezzo Oro (EUR) Italian Infl. Adj. (FOI)',
                     data: inflationAdjustedEurValues,
                     borderColor: 'green',
                     backgroundColor: 'rgba(0, 255, 0, 0.1)',
@@ -278,7 +278,7 @@ function createPctDailyChart(data) {
                     borderWidth: 1
                 },
                 {
-                    label: 'Variazione % EUR Infl. Adj.',
+                    label: 'Variazione % EUR Italian Infl. Adj. (FOI)',
                     data: adjPctValues,
                     borderColor: 'green',
                     backgroundColor: 'rgba(0, 255, 0, 0.1)',
