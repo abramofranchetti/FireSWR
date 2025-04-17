@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore recupero minus valenze</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/minus.js" defer></script>    
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Calcolatore recupero minus valenze</h1>
+        <h5 class="text-center">Calcola quanto dovrai guadagnare per utilizzare completamente il credito d'imposta.<br>
+        </h5>
+
+        <div class="form-group mb-4">
+            <label for="minusAmount">Importo della perdita realizzata (€)</label>
+            <input type="number" class="form-control" id="minusAmount" value="1000" min="0">
+        </div>
+
+        <div class="form-group mb-4">
+            <label>Tassazione dell'asset che ha generato la perdita</label>
+            <select class="form-control" id="taxRate">
+                <option value="26">26% - Azioni, ETF, Fondi</option>
+                <option value="12.5">12.5% - Titoli di Stato</option>
+            </select>
+        </div>
+
+        <div class="result-container mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4>🎒 Zainetto Fiscale 🎒</h4>
+                    <h2 id="taxCredit" class="text-danger">0€</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>Plusvalenza necessaria per utilizzare tutto il credito nello zainetto fiscale dalla vendita di un assett tassato al 26% (Azioni, ETF, Fondi)</h5>
+                        <h3 id="recovery26" class="text-primary">0€</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>Plusvalenza necessaria per utilizzare tutto il credito nello zainetto fiscale dalla vendita di un asset tassato al 12.5% (Titoli di Stato)</h5>
+                        <h3 id="recovery12" class="text-success">0€</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="disclaimer-container"></div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                fetch('html/disclaimer.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('disclaimer-container').innerHTML = data;
+                    });
+            });
+        </script>
+    </div>
+</body>
+
+</html>
