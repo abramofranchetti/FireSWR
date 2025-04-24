@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confronto tra Oro, SP500 e Petrolio</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/sp500_gold_oil.js" defer></script>    
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Confronto tra Oro, SP500 e Petrolio dal 1971</h1>
+        <h5 class="text-center">Performance relativa di Oro, SP500 Total Return e Petrolio WTI dal 1971</h5>
+        
+        <!-- Controlli visualizzazione -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <label for="scaleType" class="form-label">Tipo di scala:</label>
+                <select class="form-select" id="scaleType">
+                    <option value="percentuale">Scala Lineare</option>
+                    <option value="logaritmica">Scala Logaritmica</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="startDate" class="form-label">Data inizio:</label>
+                <input type="month" class="form-control" id="startDate" min="1971-08" max="2024-12">
+            </div>
+            <div class="col-md-3">
+                <label for="endDate" class="form-label">Data fine:</label>
+                <input type="month" class="form-control" id="endDate" min="1971-08" max="2025-03">
+            </div>
+        </div>
+
+        <!-- Grafico -->    
+        <div class="chart-container" style="position: relative; height:70vh; width:95%">
+            <canvas id="mainChart"></canvas>
+        </div>
+
+        <!-- Secondo Grafico - Petrolio in once d'oro -->
+        <div class="mt-5">
+            <h4 class="text-center">Prezzo del petrolio espresso in once d'oro</h4>
+            <div class="chart-container" style="position: relative; height:50vh; width:95%">
+                <canvas id="oilGoldChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Terzo Grafico - SP500 in once d'oro -->
+        <div class="mt-5">
+            <h4 class="text-center">SP500 espresso in once d'oro</h4>
+            <div class="chart-container" style="position: relative; height:50vh; width:95%">
+                <canvas id="sp500GoldChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div id="disclaimer-container"></div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                fetch('html/disclaimer.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('disclaimer-container').innerHTML = data;
+                    });
+            });
+        </script>
+    </div>
+</body>
+
+</html>
