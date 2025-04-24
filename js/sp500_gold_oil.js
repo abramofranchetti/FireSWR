@@ -6,9 +6,9 @@ async function loadCSVData(url) {
 
 async function createChart() {
     // Carica i dati
-    const goldData = await loadCSVData('../csv/xau_usd_montly.csv');
-    const oilData = await loadCSVData('../csv/WTI_montly.csv');
-    const sp500Data = await loadCSVData('../csv/sp500tr_shiller_1971.csv');
+    const goldData = await loadCSVData('csv/xau_usd_montly.csv');
+    const oilData = await loadCSVData('csv/WTI_montly.csv');
+    const sp500Data = await loadCSVData('csv/sp500tr_shiller_1971.csv');
 
     // Parsing dei dati
     const goldPrices = goldData.split('\n')        
