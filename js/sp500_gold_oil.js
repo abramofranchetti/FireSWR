@@ -92,7 +92,7 @@ async function createChart() {
             .filter(item => item.date <= endDate);
         const filteredSP500TR = normalizeData(allData.sp500TR, startDate)
             .filter(item => item.date <= endDate);
-        const filteredSP500 = normalizeData(sp500Prices, startDate)
+        const filteredSP500 = normalizeData(allData.sp500, startDate)
             .filter(item => item.date <= endDate);
 
         // Calcola il rapporto petrolio/oro
