@@ -95,7 +95,7 @@ async function createChart() {
         const filteredSP500 = normalizeData(allData.sp500, startDate)
             .filter(item => item.date <= endDate);
 
-        // Calcola il rapporto petrolio/oro
+        // Calcola il rapporto petrolio/oro e la sua variazione percentuale
         const oilGoldRatio = allData.oil.map(oilItem => {
             const goldItem = allData.gold.find(g =>
                 g.date.getFullYear() === oilItem.date.getFullYear() &&
@@ -104,9 +104,16 @@ async function createChart() {
             if (!goldItem) return null;
             return {
                 date: oilItem.date,
-                price: (oilItem.price / goldItem.price) * 100 // Barili per oncia * 100 per leggibilità
+                price: (oilItem.price / goldItem.price) * 100, // Barili per oncia * 100 per leggibilità
+                percentage: 0 // Verrà calcolato dopo
             };
         }).filter(item => item !== null);
+
+        // Calcola le variazioni percentuali
+        const baseValue = oilGoldRatio[0].price;
+        oilGoldRatio.forEach(item => {
+            item.percentage = ((item.price - baseValue) / baseValue) * 100;
+        });
 
         // Filtra i dati per data
         const filteredOilGoldRatio = oilGoldRatio
@@ -125,6 +132,12 @@ async function createChart() {
             };
         }).filter(item => item !== null);
 
+        // Calcola le variazioni percentuali per SP500/oro
+        const baseSP500Value = sp500GoldRatio[0].price;
+        sp500GoldRatio.forEach(item => {
+            item.percentage = ((item.price - baseSP500Value) / baseSP500Value) * 100;
+        });
+
         // Filtra i dati per data
         const filteredSP500GoldRatio = sp500GoldRatio
             .filter(item => item.date >= startDate && item.date <= endDate);
@@ -142,16 +155,25 @@ async function createChart() {
             };
         }).filter(item => item !== null);
 
+        // Calcola le variazioni percentuali per SP500 no TR/oro
+        const baseSP500NoTRValue = sp500NoTRGoldRatio[0].price;
+        sp500NoTRGoldRatio.forEach(item => {
+            item.percentage = ((item.price - baseSP500NoTRValue) / baseSP500NoTRValue) * 100;
+        });
+
         // Filtra i dati per data
         const filteredSP500NoTRGoldRatio = sp500NoTRGoldRatio
             .filter(item => item.date >= startDate && item.date <= endDate);
 
-        // Calcola la media dei rapporti
+        // Calcola le medie dei rapporti (sia assolute che percentuali)
         const oilGoldAverage = filteredOilGoldRatio.reduce((sum, item) => sum + item.price, 0) / filteredOilGoldRatio.length;
+        const oilGoldPercentageAverage = filteredOilGoldRatio.reduce((sum, item) => sum + item.percentage, 0) / filteredOilGoldRatio.length;
         const sp500GoldAverage = filteredSP500GoldRatio.reduce((sum, item) => sum + item.price, 0) / filteredSP500GoldRatio.length;
+        const sp500GoldPercentageAverage = filteredSP500GoldRatio.reduce((sum, item) => sum + item.percentage, 0) / filteredSP500GoldRatio.length;
         const sp500NoTRGoldAverage = filteredSP500NoTRGoldRatio.reduce((sum, item) => sum + item.price, 0) / filteredSP500NoTRGoldRatio.length;
+        const sp500NoTRGoldPercentageAverage = filteredSP500NoTRGoldRatio.reduce((sum, item) => sum + item.percentage, 0) / filteredSP500NoTRGoldRatio.length;
 
-        // Primo grafico (esistente)
+        // Primo grafico con scala logaritmica opzionale
         const ctx = document.getElementById('mainChart').getContext('2d');
 
         const config = {
@@ -251,15 +273,16 @@ async function createChart() {
         }
         chart = new Chart(ctx, config);
 
-        // Secondo grafico (petrolio/oro)
+        // Secondo grafico (petrolio/oro) - sempre scala lineare
+        const viewType = document.getElementById('oilGoldViewType').value;
         const oilGoldConfig = {
             type: 'line',
             data: {
                 datasets: [{
-                    label: 'Barili di petrolio per oncia d\'oro (x100)',
+                    label: viewType === 'absolute' ? 'Barili di petrolio per oncia d\'oro (x100)' : 'Variazione % rispetto al 1971',
                     data: filteredOilGoldRatio.map(item => ({
                         x: item.date,
-                        y: item.price
+                        y: viewType === 'absolute' ? item.price : item.percentage
                     })),
                     borderColor: '#8B4513',
                     borderWidth: 2,
@@ -270,7 +293,7 @@ async function createChart() {
                     label: 'Media del periodo',
                     data: filteredOilGoldRatio.map(item => ({
                         x: item.date,
-                        y: oilGoldAverage
+                        y: viewType === 'absolute' ? oilGoldAverage : oilGoldPercentageAverage
                     })),
                     borderColor: 'red',
                     borderWidth: 1,
@@ -302,10 +325,10 @@ async function createChart() {
                         }
                     },
                     y: {
-                        type: scaleType === 'logaritmica' ? 'logarithmic' : 'linear',
+                        type: 'linear',
                         title: {
                             display: true,
-                            text: 'Barili di petrolio per oncia d\'oro (x100)'
+                            text: viewType === 'absolute' ? 'Barili di petrolio per oncia d\'oro (x100)' : 'Variazione percentuale (%)'
                         }
                     }
                 },
@@ -324,17 +347,18 @@ async function createChart() {
         const oilGoldCtx = document.getElementById('oilGoldChart').getContext('2d');
         oilGoldChart = new Chart(oilGoldCtx, oilGoldConfig);
 
-        // Terzo grafico (SP500/oro)
+        // Terzo grafico (SP500/oro) - sempre scala lineare
+        const sp500ViewType = document.getElementById('sp500GoldViewType').value;
         const sp500GoldConfig = {
             type: 'line',
             data: {
                 datasets: [{
-                    label: 'SP500 per oncia d\'oro (x100)',
+                    label: sp500ViewType === 'absolute' ? 'SP500 TR per oncia d\'oro (x100)' : 'Variazione % rispetto al 1971',
                     data: filteredSP500GoldRatio.map(item => ({
                         x: item.date,
-                        y: item.price
+                        y: sp500ViewType === 'absolute' ? item.price : item.percentage
                     })),
-                    borderColor: '#6a0dad', // Viola
+                    borderColor: '#6a0dad',
                     borderWidth: 2,
                     fill: false,
                     pointRadius: 0
@@ -343,7 +367,7 @@ async function createChart() {
                     label: 'Media del periodo',
                     data: filteredSP500GoldRatio.map(item => ({
                         x: item.date,
-                        y: sp500GoldAverage
+                        y: sp500ViewType === 'absolute' ? sp500GoldAverage : sp500GoldPercentageAverage
                     })),
                     borderColor: 'red',
                     borderWidth: 1,
@@ -375,10 +399,10 @@ async function createChart() {
                         }
                     },
                     y: {
-                        type: scaleType === 'logaritmica' ? 'logarithmic' : 'linear',
+                        type: 'linear',
                         title: {
                             display: true,
-                            text: 'SP500 per oncia d\'oro (x100)'
+                            text: sp500ViewType === 'absolute' ? 'SP500 TR per oncia d\'oro (x100)' : 'Variazione percentuale (%)'
                         }
                     }
                 },
@@ -397,17 +421,18 @@ async function createChart() {
         const sp500GoldCtx = document.getElementById('sp500GoldChart').getContext('2d');
         sp500GoldChart = new Chart(sp500GoldCtx, sp500GoldConfig);
 
-        // Quarto grafico (SP500 normale/oro)
+        // Quarto grafico (SP500 normale/oro) - sempre scala lineare
+        const sp500NoTRViewType = document.getElementById('sp500NoTRGoldViewType').value;
         const sp500NoTRGoldConfig = {
             type: 'line',
             data: {
                 datasets: [{
-                    label: 'SP500 (senza dividendi) per oncia d\'oro (x100)',
+                    label: sp500NoTRViewType === 'absolute' ? 'SP500 per oncia d\'oro (x100)' : 'Variazione % rispetto al 1971',
                     data: filteredSP500NoTRGoldRatio.map(item => ({
                         x: item.date,
-                        y: item.price
+                        y: sp500NoTRViewType === 'absolute' ? item.price : item.percentage
                     })),
-                    borderColor: '#4169E1', // Royal Blue
+                    borderColor: '#4169E1',
                     borderWidth: 2,
                     fill: false,
                     pointRadius: 0
@@ -416,7 +441,7 @@ async function createChart() {
                     label: 'Media del periodo',
                     data: filteredSP500NoTRGoldRatio.map(item => ({
                         x: item.date,
-                        y: sp500NoTRGoldAverage
+                        y: sp500NoTRViewType === 'absolute' ? sp500NoTRGoldAverage : sp500NoTRGoldPercentageAverage
                     })),
                     borderColor: 'red',
                     borderWidth: 1,
@@ -448,10 +473,10 @@ async function createChart() {
                         }
                     },
                     y: {
-                        type: scaleType === 'logaritmica' ? 'logarithmic' : 'linear',
+                        type: 'linear',
                         title: {
                             display: true,
-                            text: 'SP500 per oncia d\'oro (x100)'
+                            text: sp500NoTRViewType === 'absolute' ? 'SP500 per oncia d\'oro (x100)' : 'Variazione percentuale (%)'
                         }
                     }
                 },
@@ -479,6 +504,9 @@ async function createChart() {
     document.getElementById('scaleType').addEventListener('change', createOrUpdateCharts);
     document.getElementById('startDate').addEventListener('change', createOrUpdateCharts);
     document.getElementById('endDate').addEventListener('change', createOrUpdateCharts);
+    document.getElementById('oilGoldViewType').addEventListener('change', createOrUpdateCharts);
+    document.getElementById('sp500GoldViewType').addEventListener('change', createOrUpdateCharts);
+    document.getElementById('sp500NoTRGoldViewType').addEventListener('change', createOrUpdateCharts);
 
     // Creazione grafici iniziali
     createOrUpdateCharts();

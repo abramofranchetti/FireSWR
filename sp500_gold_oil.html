@@ -16,7 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/date-fns"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
-    <script src="js/sp500_gold_oil.js" defer></script>    
+    <script src="js/sp500_gold_oil.js" defer></script>
 </head>
 
 <body class="bg-light">
@@ -26,8 +26,9 @@
         </div>
         <br>
         <h1 class="text-center">Confronto tra Oro, SP500 e Petrolio dal 1971</h1>
-        <h5 class="text-center">Performance relativa di Oro, SP500 Total Return e Petrolio WTI dal 1971 (in $ americani)</h5>
-        
+        <h5 class="text-center">Performance relativa di Oro, SP500 Total Return e Petrolio WTI dal 1971 (in $ americani)
+        </h5>
+
         <!-- Controlli visualizzazione -->
         <div class="row mb-4">
             <div class="col-md-3">
@@ -47,14 +48,20 @@
             </div>
         </div>
 
-        <!-- Grafico -->    
+        <!-- Grafico -->
         <div class="chart-container" style="position: relative; height:70vh; width:95%">
             <canvas id="mainChart"></canvas>
         </div>
-
+        <h1 class="text-center">Prezzi delle materie prime espresse in oro</h1>
         <!-- Secondo Grafico - Petrolio in once d'oro -->
         <div class="mt-5">
             <h4 class="text-center">Prezzo del petrolio espresso in once d'oro</h4>
+            <div class="text-center mb-3">
+                <select class="form-select d-inline-block w-auto" id="oilGoldViewType">
+                    <option value="absolute">Valore Assoluto</option>
+                    <option value="percentage">Variazione Percentuale</option>
+                </select>
+            </div>
             <div class="chart-container" style="position: relative; height:50vh; width:95%">
                 <canvas id="oilGoldChart"></canvas>
             </div>
@@ -62,7 +69,13 @@
 
         <!-- Terzo Grafico - SP500 in once d'oro -->
         <div class="mt-5">
-            <h4 class="text-center">SP500 TR  (con dividendi) espresso in once d'oro</h4>
+            <h4 class="text-center">SP500 TR (con dividendi) espresso in once d'oro</h4>
+            <div class="text-center mb-3">
+                <select class="form-select d-inline-block w-auto" id="sp500GoldViewType">
+                    <option value="absolute">Valore Assoluto</option>
+                    <option value="percentage">Variazione Percentuale</option>
+                </select>
+            </div>
             <div class="chart-container" style="position: relative; height:50vh; width:95%">
                 <canvas id="sp500GoldChart"></canvas>
             </div>
@@ -71,6 +84,12 @@
         <!-- Quarto Grafico - SP500 (senza dividendi) in once d'oro -->
         <div class="mt-5">
             <h4 class="text-center">SP500 (senza dividendi) espresso in once d'oro</h4>
+            <div class="text-center mb-3">
+                <select class="form-select d-inline-block w-auto" id="sp500NoTRGoldViewType">
+                    <option value="absolute">Valore Assoluto</option>
+                    <option value="percentage">Variazione Percentuale</option>
+                </select>
+            </div>
             <div class="chart-container" style="position: relative; height:50vh; width:95%">
                 <canvas id="sp500NoTRGoldChart"></canvas>
             </div>
