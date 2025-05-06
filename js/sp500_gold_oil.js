@@ -10,6 +10,7 @@ async function createChart() {
     const oilData = await loadCSVData('csv/WTI_montly.csv');
     const sp500TRData = await loadCSVData('csv/sp500tr_shiller_1971.csv');
     const sp500Data = await loadCSVData('csv/sp500_montly_historical.csv');
+    const btcUSDPrices = await fetch('json/btc-usd.json').then(response => response.json());
 
     // Parsing dei dati
     const goldPrices = goldData.split('\n')
@@ -73,11 +74,22 @@ async function createChart() {
     let oilGoldChart = null;
     let sp500GoldChart = null;
     let sp500NoTRGoldChart = null;
+    let sp500BTCChart = null;
+    let sp500NoTRBTCChart = null;
+    let goldBTCChart = null;
+
+    // Formatta i dati BTC nello stesso formato degli altri
+    const btcPrices = btcUSDPrices.map(item => ({
+        date: new Date(item.Date),
+        price: parseFloat(item.Close)
+    })).filter(item => !isNaN(item.price));
+
     let allData = {
         gold: goldPrices,
         oil: oilPrices,
         sp500TR: sp500TRPrices,
-        sp500: sp500Prices
+        sp500: sp500Prices,
+        btc: btcPrices
     };
 
     function createOrUpdateCharts() {
@@ -165,6 +177,75 @@ async function createChart() {
         const filteredSP500NoTRGoldRatio = sp500NoTRGoldRatio
             .filter(item => item.date >= startDate && item.date <= endDate);
 
+        // Calcola il rapporto SP500/BTC
+        const sp500BTCRatio = allData.sp500TR.map(sp500Item => {
+            const btcItem = allData.btc.find(b =>
+                b.date.getFullYear() === sp500Item.date.getFullYear() &&
+                b.date.getMonth() === sp500Item.date.getMonth()
+            );
+            if (!btcItem) return null;
+            return {
+                date: sp500Item.date,
+                price: (sp500Item.price / btcItem.price) * 100
+            };
+        }).filter(item => item !== null);
+
+        // Calcola le variazioni percentuali per SP500/BTC
+        const baseSP500BTCValue = sp500BTCRatio[0]?.price || 0;
+        sp500BTCRatio.forEach(item => {
+            item.percentage = ((item.price - baseSP500BTCValue) / baseSP500BTCValue) * 100;
+        });
+
+        // Filtra i dati per data
+        const filteredSP500BTCRatio = sp500BTCRatio
+            .filter(item => item.date >= startDate && item.date <= endDate);
+
+        // Calcola il rapporto SP500 senza dividendi/BTC
+        const sp500NoTRBTCRatio = allData.sp500.map(sp500Item => {
+            const btcItem = allData.btc.find(b =>
+                b.date.getFullYear() === sp500Item.date.getFullYear() &&
+                b.date.getMonth() === sp500Item.date.getMonth()
+            );
+            if (!btcItem) return null;
+            return {
+                date: sp500Item.date,
+                price: (sp500Item.price / btcItem.price) * 100
+            };
+        }).filter(item => item !== null);
+
+        // Calcola le variazioni percentuali per SP500 no TR/BTC
+        const baseSP500NoTRBTCValue = sp500NoTRBTCRatio[0]?.price || 0;
+        sp500NoTRBTCRatio.forEach(item => {
+            item.percentage = ((item.price - baseSP500NoTRBTCValue) / baseSP500NoTRBTCValue) * 100;
+        });
+
+        // Filtra i dati per data
+        const filteredSP500NoTRBTCRatio = sp500NoTRBTCRatio
+            .filter(item => item.date >= startDate && item.date <= endDate);
+
+        // Calcola il rapporto Oro/BTC
+        const goldBTCRatio = allData.gold.map(goldItem => {
+            const btcItem = allData.btc.find(b =>
+                b.date.getFullYear() === goldItem.date.getFullYear() &&
+                b.date.getMonth() === goldItem.date.getMonth()
+            );
+            if (!btcItem) return null;
+            return {
+                date: goldItem.date,
+                price: (goldItem.price / btcItem.price) * 100
+            };
+        }).filter(item => item !== null);
+
+        // Calcola le variazioni percentuali per Oro/BTC
+        const baseGoldBTCValue = goldBTCRatio[0]?.price || 0;
+        goldBTCRatio.forEach(item => {
+            item.percentage = ((item.price - baseGoldBTCValue) / baseGoldBTCValue) * 100;
+        });
+
+        // Filtra i dati per data
+        const filteredGoldBTCRatio = goldBTCRatio
+            .filter(item => item.date >= startDate && item.date <= endDate);
+
         // Calcola le medie dei rapporti (sia assolute che percentuali)
         const oilGoldAverage = filteredOilGoldRatio.reduce((sum, item) => sum + item.price, 0) / filteredOilGoldRatio.length;
         const oilGoldPercentageAverage = filteredOilGoldRatio.reduce((sum, item) => sum + item.percentage, 0) / filteredOilGoldRatio.length;
@@ -172,6 +253,12 @@ async function createChart() {
         const sp500GoldPercentageAverage = filteredSP500GoldRatio.reduce((sum, item) => sum + item.percentage, 0) / filteredSP500GoldRatio.length;
         const sp500NoTRGoldAverage = filteredSP500NoTRGoldRatio.reduce((sum, item) => sum + item.price, 0) / filteredSP500NoTRGoldRatio.length;
         const sp500NoTRGoldPercentageAverage = filteredSP500NoTRGoldRatio.reduce((sum, item) => sum + item.percentage, 0) / filteredSP500NoTRGoldRatio.length;
+        const sp500BTCAverage = filteredSP500BTCRatio.reduce((sum, item) => sum + item.price, 0) / filteredSP500BTCRatio.length;
+        const sp500BTCPercentageAverage = filteredSP500BTCRatio.reduce((sum, item) => sum + item.percentage, 0) / filteredSP500BTCRatio.length;
+        const sp500NoTRBTCAverage = filteredSP500NoTRBTCRatio.reduce((sum, item) => sum + item.price, 0) / filteredSP500NoTRBTCRatio.length;
+        const sp500NoTRBTCPercentageAverage = filteredSP500NoTRBTCRatio.reduce((sum, item) => sum + item.percentage, 0) / filteredSP500NoTRBTCRatio.length;
+        const goldBTCAverage = filteredGoldBTCRatio.reduce((sum, item) => sum + item.price, 0) / filteredGoldBTCRatio.length;
+        const goldBTCPercentageAverage = filteredGoldBTCRatio.reduce((sum, item) => sum + item.percentage, 0) / filteredGoldBTCRatio.length;
 
         // Primo grafico con scala logaritmica opzionale
         const ctx = document.getElementById('mainChart').getContext('2d');
@@ -494,6 +581,228 @@ async function createChart() {
         }
         const sp500NoTRGoldCtx = document.getElementById('sp500NoTRGoldChart').getContext('2d');
         sp500NoTRGoldChart = new Chart(sp500NoTRGoldCtx, sp500NoTRGoldConfig);
+
+        // Quinto grafico (SP500/BTC) - sempre scala lineare
+        const sp500BTCViewType = document.getElementById('sp500BTCViewType').value;
+        const sp500BTCConfig = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: sp500BTCViewType === 'absolute' ? 'SP500 TR per Bitcoin (x100)' : 'Variazione % dal primo dato',
+                    data: filteredSP500BTCRatio.map(item => ({
+                        x: item.date,
+                        y: sp500BTCViewType === 'absolute' ? item.price : item.percentage
+                    })),
+                    borderColor: '#F7931A',
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Media del periodo',
+                    data: filteredSP500BTCRatio.map(item => ({
+                        x: item.date,
+                        y: sp500BTCViewType === 'absolute' ? sp500BTCAverage : sp500BTCPercentageAverage
+                    })),
+                    borderColor: 'red',
+                    borderWidth: 1,
+                    borderDash: [5, 5],
+                    fill: false,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month',
+                            displayFormats: {
+                                month: 'MMM yyyy'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Data'
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            autoSkip: true,
+                            autoSkipPadding: 15
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: sp500BTCViewType === 'absolute' ? 'SP500 TR per Bitcoin (x100)' : 'Variazione percentuale (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            }
+        };
+
+        if (sp500BTCChart) {
+            sp500BTCChart.destroy();
+        }
+        const sp500BTCCtx = document.getElementById('sp500BTCChart').getContext('2d');
+        sp500BTCChart = new Chart(sp500BTCCtx, sp500BTCConfig);
+
+        // Sesto grafico (SP500 no TR/BTC) - sempre scala lineare
+        const sp500NoTRBTCViewType = document.getElementById('sp500NoTRBTCViewType').value;
+        const sp500NoTRBTCConfig = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: sp500NoTRBTCViewType === 'absolute' ? 'SP500 per Bitcoin (x100)' : 'Variazione % dal primo dato',
+                    data: filteredSP500NoTRBTCRatio.map(item => ({
+                        x: item.date,
+                        y: sp500NoTRBTCViewType === 'absolute' ? item.price : item.percentage
+                    })),
+                    borderColor: '#1E90FF',
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Media del periodo',
+                    data: filteredSP500NoTRBTCRatio.map(item => ({
+                        x: item.date,
+                        y: sp500NoTRBTCViewType === 'absolute' ? sp500NoTRBTCAverage : sp500NoTRBTCPercentageAverage
+                    })),
+                    borderColor: 'red',
+                    borderWidth: 1,
+                    borderDash: [5, 5],
+                    fill: false,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month',
+                            displayFormats: {
+                                month: 'MMM yyyy'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Data'
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            autoSkip: true,
+                            autoSkipPadding: 15
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: sp500NoTRBTCViewType === 'absolute' ? 'SP500 per Bitcoin (x100)' : 'Variazione percentuale (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            }
+        };
+
+        if (sp500NoTRBTCChart) {
+            sp500NoTRBTCChart.destroy();
+        }
+        const sp500NoTRBTCCtx = document.getElementById('sp500NoTRBTCChart').getContext('2d');
+        sp500NoTRBTCChart = new Chart(sp500NoTRBTCCtx, sp500NoTRBTCConfig);
+
+        // Settimo grafico (Oro/BTC) - sempre scala lineare
+        const goldBTCViewType = document.getElementById('goldBTCViewType').value;
+        const goldBTCConfig = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: goldBTCViewType === 'absolute' ? 'Once d\'oro per Bitcoin (x100)' : 'Variazione % dal primo dato',
+                    data: filteredGoldBTCRatio.map(item => ({
+                        x: item.date,
+                        y: goldBTCViewType === 'absolute' ? item.price : item.percentage
+                    })),
+                    borderColor: '#FFD700',
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Media del periodo',
+                    data: filteredGoldBTCRatio.map(item => ({
+                        x: item.date,
+                        y: goldBTCViewType === 'absolute' ? goldBTCAverage : goldBTCPercentageAverage
+                    })),
+                    borderColor: 'red',
+                    borderWidth: 1,
+                    borderDash: [5, 5],
+                    fill: false,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month',
+                            displayFormats: {
+                                month: 'MMM yyyy'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Data'
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            autoSkip: true,
+                            autoSkipPadding: 15
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: goldBTCViewType === 'absolute' ? 'Once d\'oro per Bitcoin (x100)' : 'Variazione percentuale (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            }
+        };
+
+        if (goldBTCChart) {
+            goldBTCChart.destroy();
+        }
+        const goldBTCCtx = document.getElementById('goldBTCChart').getContext('2d');
+        goldBTCChart = new Chart(goldBTCCtx, goldBTCConfig);
     }
 
     // Inizializzazione date
@@ -507,6 +816,9 @@ async function createChart() {
     document.getElementById('oilGoldViewType').addEventListener('change', createOrUpdateCharts);
     document.getElementById('sp500GoldViewType').addEventListener('change', createOrUpdateCharts);
     document.getElementById('sp500NoTRGoldViewType').addEventListener('change', createOrUpdateCharts);
+    document.getElementById('sp500BTCViewType').addEventListener('change', createOrUpdateCharts);
+    document.getElementById('sp500NoTRBTCViewType').addEventListener('change', createOrUpdateCharts);
+    document.getElementById('goldBTCViewType').addEventListener('change', createOrUpdateCharts);
 
     // Creazione grafici iniziali
     createOrUpdateCharts();

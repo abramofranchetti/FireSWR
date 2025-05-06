@@ -94,6 +94,48 @@
                 <canvas id="sp500NoTRGoldChart"></canvas>
             </div>
         </div>
+        <h2 class="text-center">Performance relativa di Oro, SP500 Total Return e SP500 misurati in bitcoin</h2>
+        <!-- Quinto Grafico - SP500 TR in Bitcoin -->
+        <div class="mt-5">
+            <h4 class="text-center">SP500 TR espresso in Bitcoin</h4>
+            <div class="text-center mb-3">
+                <select class="form-select d-inline-block w-auto" id="sp500BTCViewType">
+                    <option value="absolute">Valore Assoluto</option>
+                    <option value="percentage">Variazione Percentuale</option>
+                </select>
+            </div>
+            <div class="chart-container" style="position: relative; height:50vh; width:95%">
+                <canvas id="sp500BTCChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Sesto Grafico - SP500 (senza dividendi) in Bitcoin -->
+        <div class="mt-5">
+            <h4 class="text-center">SP500 (senza dividendi) espresso in Bitcoin</h4>
+            <div class="text-center mb-3">
+                <select class="form-select d-inline-block w-auto" id="sp500NoTRBTCViewType">
+                    <option value="absolute">Valore Assoluto</option>
+                    <option value="percentage">Variazione Percentuale</option>
+                </select>
+            </div>
+            <div class="chart-container" style="position: relative; height:50vh; width:95%">
+                <canvas id="sp500NoTRBTCChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Settimo Grafico - Oro in Bitcoin -->
+        <div class="mt-5">
+            <h4 class="text-center">Oro espresso in Bitcoin</h4>
+            <div class="text-center mb-3">
+                <select class="form-select d-inline-block w-auto" id="goldBTCViewType">
+                    <option value="absolute">Valore Assoluto</option>
+                    <option value="percentage">Variazione Percentuale</option>
+                </select>
+            </div>
+            <div class="chart-container" style="position: relative; height:50vh; width:95%">
+                <canvas id="goldBTCChart"></canvas>
+            </div>
+        </div>
 
         <!-- Disclaimer -->
         <div id="disclaimer-container"></div>
