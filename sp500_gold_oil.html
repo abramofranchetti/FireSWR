@@ -95,9 +95,9 @@
             </div>
         </div>
         <h2 class="text-center">Performance relativa di Oro, SP500 Total Return e SP500 misurati in bitcoin</h2>
-        <!-- Quinto Grafico - SP500 TR in Bitcoin -->
+        <!-- Quinto Grafico - Bitcoin in SP500 TR -->
         <div class="mt-5">
-            <h4 class="text-center">SP500 TR espresso in Bitcoin</h4>
+            <h4 class="text-center">Bitcoin espresso in SP500 TR</h4>
             <div class="text-center mb-3">
                 <select class="form-select d-inline-block w-auto" id="sp500BTCViewType">
                     <option value="absolute">Valore Assoluto</option>
@@ -109,7 +109,7 @@
             </div>
         </div>
 
-        <!-- Sesto Grafico - SP500 (senza dividendi) in Bitcoin -->
+        <!-- Sesto Grafico - Bitcoin espresso inSP500 (senza dividendi) -->
         <div class="mt-5">
             <h4 class="text-center">SP500 (senza dividendi) espresso in Bitcoin</h4>
             <div class="text-center mb-3">
@@ -123,9 +123,9 @@
             </div>
         </div>
 
-        <!-- Settimo Grafico - Oro in Bitcoin -->
+        <!-- Settimo Grafico - Bitcoin in Oro -->
         <div class="mt-5">
-            <h4 class="text-center">Oro espresso in Bitcoin</h4>
+            <h4 class="text-center">Bitcoin espresso in oro</h4>
             <div class="text-center mb-3">
                 <select class="form-select d-inline-block w-auto" id="goldBTCViewType">
                     <option value="absolute">Valore Assoluto</option>
@@ -134,6 +134,49 @@
             </div>
             <div class="chart-container" style="position: relative; height:50vh; width:95%">
                 <canvas id="goldBTCChart"></canvas>
+            </div>
+        </div>
+
+        <h2 class="text-center">Performance relativa di Bitcoin rispetto a Oro e SP500</h2>
+        <!-- Ottavo Grafico - SP500 TR in Bitcoin -->
+        <div class="mt-5">
+            <h4 class="text-center">SP500 misurato in Bitcoin TR</h4>
+            <div class="text-center mb-3">
+                <select class="form-select d-inline-block w-auto" id="btcSP500TRViewType">
+                    <option value="absolute">Valore Assoluto</option>
+                    <option value="percentage">Variazione Percentuale</option>
+                </select>
+            </div>
+            <div class="chart-container" style="position: relative; height:50vh; width:95%">
+                <canvas id="btcSP500TRChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Nono Grafico - SP500 in Bitcoin (senza dividendi) -->
+        <div class="mt-5">
+            <h4 class="text-center">SP500 misurato in Bitcoin</h4>
+            <div class="text-center mb-3">
+                <select class="form-select d-inline-block w-auto" id="btcSP500ViewType">
+                    <option value="absolute">Valore Assoluto</option>
+                    <option value="percentage">Variazione Percentuale</option>
+                </select>
+            </div>
+            <div class="chart-container" style="position: relative; height:50vh; width:95%">
+                <canvas id="btcSP500Chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Decimo Grafico - oro in Bitcoin -->
+        <div class="mt-5">
+            <h4 class="text-center">Oro misurato in Bitcoin</h4>
+            <div class="text-center mb-3">
+                <select class="form-select d-inline-block w-auto" id="btcGoldViewType">
+                    <option value="absolute">Valore Assoluto</option>
+                    <option value="percentage">Variazione Percentuale</option>
+                </select>
+            </div>
+            <div class="chart-container" style="position: relative; height:50vh; width:95%">
+                <canvas id="btcGoldChart"></canvas>
             </div>
         </div>
 

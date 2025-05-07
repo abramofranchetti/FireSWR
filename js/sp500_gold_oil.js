@@ -77,6 +77,9 @@ async function createChart() {
     let sp500BTCChart = null;
     let sp500NoTRBTCChart = null;
     let goldBTCChart = null;
+    let btcSP500TRChart = null;
+    let btcSP500Chart = null;
+    let btcGoldChart = null;
 
     // Formatta i dati BTC nello stesso formato degli altri
     const btcPrices = btcUSDPrices.map(item => ({
@@ -177,7 +180,7 @@ async function createChart() {
         const filteredSP500NoTRGoldRatio = sp500NoTRGoldRatio
             .filter(item => item.date >= startDate && item.date <= endDate);
 
-        // Calcola il rapporto SP500/BTC
+        // Calcola il rapporto BTC/SP500
         const sp500BTCRatio = allData.sp500TR.map(sp500Item => {
             const btcItem = allData.btc.find(b =>
                 b.date.getFullYear() === sp500Item.date.getFullYear() &&
@@ -186,7 +189,7 @@ async function createChart() {
             if (!btcItem) return null;
             return {
                 date: sp500Item.date,
-                price: (sp500Item.price / btcItem.price) * 100
+                price: (btcItem.price / sp500Item.price) * 100 
             };
         }).filter(item => item !== null);
 
@@ -209,7 +212,7 @@ async function createChart() {
             if (!btcItem) return null;
             return {
                 date: sp500Item.date,
-                price: (sp500Item.price / btcItem.price) * 100
+                price: (btcItem.price / sp500Item.price) * 100
             };
         }).filter(item => item !== null);
 
@@ -223,7 +226,7 @@ async function createChart() {
         const filteredSP500NoTRBTCRatio = sp500NoTRBTCRatio
             .filter(item => item.date >= startDate && item.date <= endDate);
 
-        // Calcola il rapporto Oro/BTC
+        // Calcola il rapporto BTC/Oro
         const goldBTCRatio = allData.gold.map(goldItem => {
             const btcItem = allData.btc.find(b =>
                 b.date.getFullYear() === goldItem.date.getFullYear() &&
@@ -232,7 +235,7 @@ async function createChart() {
             if (!btcItem) return null;
             return {
                 date: goldItem.date,
-                price: (goldItem.price / btcItem.price) * 100
+                price: (btcItem.price / goldItem.price) * 100
             };
         }).filter(item => item !== null);
 
@@ -803,6 +806,192 @@ async function createChart() {
         }
         const goldBTCCtx = document.getElementById('goldBTCChart').getContext('2d');
         goldBTCChart = new Chart(goldBTCCtx, goldBTCConfig);
+
+        // Ottavo grafico (BTC/SP500TR) - sempre scala lineare
+        const btcSP500TRViewType = document.getElementById('btcSP500TRViewType').value;
+        const btcSP500TRConfig = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: btcSP500TRViewType === 'absolute' ? 'Bitcoin per SP500 TR (x100)' : 'Variazione % dal primo dato',
+                    data: filteredSP500BTCRatio.map(item => ({
+                        x: item.date,
+                        y: btcSP500TRViewType === 'absolute' ? (1/item.price) * 100 : ((1/item.price - 1/baseSP500BTCValue) / (1/baseSP500BTCValue)) * 100
+                    })),
+                    borderColor: '#F7931A',
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month',
+                            displayFormats: {
+                                month: 'MMM yyyy'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Data'
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            autoSkip: true,
+                            autoSkipPadding: 15
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: btcSP500TRViewType === 'absolute' ? 'Bitcoin per SP500 TR (x100)' : 'Variazione percentuale (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            }
+        };
+
+        if (btcSP500TRChart) {
+            btcSP500TRChart.destroy();
+        }
+        const btcSP500TRCtx = document.getElementById('btcSP500TRChart').getContext('2d');
+        btcSP500TRChart = new Chart(btcSP500TRCtx, btcSP500TRConfig);
+
+        // Nono grafico (BTC/SP500) - sempre scala lineare
+        const btcSP500ViewType = document.getElementById('btcSP500ViewType').value;
+        const btcSP500Config = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: btcSP500ViewType === 'absolute' ? 'Bitcoin per SP500 (x100)' : 'Variazione % dal primo dato',
+                    data: filteredSP500NoTRBTCRatio.map(item => ({
+                        x: item.date,
+                        y: btcSP500ViewType === 'absolute' ? (1/item.price) * 100 : ((1/item.price - 1/baseSP500NoTRBTCValue) / (1/baseSP500NoTRBTCValue)) * 100
+                    })),
+                    borderColor: '#1E90FF',
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month',
+                            displayFormats: {
+                                month: 'MMM yyyy'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Data'
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            autoSkip: true,
+                            autoSkipPadding: 15
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: btcSP500ViewType === 'absolute' ? 'Bitcoin per SP500 (x100)' : 'Variazione percentuale (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            }
+        };
+
+        if (btcSP500Chart) {
+            btcSP500Chart.destroy();
+        }
+        const btcSP500Ctx = document.getElementById('btcSP500Chart').getContext('2d');
+        btcSP500Chart = new Chart(btcSP500Ctx, btcSP500Config);
+
+        // Decimo grafico (BTC/Gold) - sempre scala lineare
+        const btcGoldViewType = document.getElementById('btcGoldViewType').value;
+        const btcGoldConfig = {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: btcGoldViewType === 'absolute' ? 'Bitcoin per oncia d\'oro (x100)' : 'Variazione % dal primo dato',
+                    data: filteredGoldBTCRatio.map(item => ({
+                        x: item.date,
+                        y: btcGoldViewType === 'absolute' ? (1/item.price) * 100 : ((1/item.price - 1/baseGoldBTCValue) / (1/baseGoldBTCValue)) * 100
+                    })),
+                    borderColor: '#FFD700',
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month',
+                            displayFormats: {
+                                month: 'MMM yyyy'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Data'
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            autoSkip: true,
+                            autoSkipPadding: 15
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: btcGoldViewType === 'absolute' ? 'Bitcoin per oncia d\'oro (x100)' : 'Variazione percentuale (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            }
+        };
+
+        if (btcGoldChart) {
+            btcGoldChart.destroy();
+        }
+        const btcGoldCtx = document.getElementById('btcGoldChart').getContext('2d');
+        btcGoldChart = new Chart(btcGoldCtx, btcGoldConfig);
     }
 
     // Inizializzazione date
@@ -819,6 +1008,9 @@ async function createChart() {
     document.getElementById('sp500BTCViewType').addEventListener('change', createOrUpdateCharts);
     document.getElementById('sp500NoTRBTCViewType').addEventListener('change', createOrUpdateCharts);
     document.getElementById('goldBTCViewType').addEventListener('change', createOrUpdateCharts);
+    document.getElementById('btcSP500TRViewType').addEventListener('change', createOrUpdateCharts);
+    document.getElementById('btcSP500ViewType').addEventListener('change', createOrUpdateCharts);
+    document.getElementById('btcGoldViewType').addEventListener('change', createOrUpdateCharts);
 
     // Creazione grafici iniziali
     createOrUpdateCharts();
