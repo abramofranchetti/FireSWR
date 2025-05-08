@@ -262,10 +262,7 @@ $(document).ready(function () {
             const startDate = $('#startDate').val();
             const endDate = $('#endDate').val();
 
-            if (new Date(startDate) < minDate || new Date(endDate) > maxDate || startDate == '' || endDate == '') {
-                alert('Le date selezionate devono essere comprese tra ' + minDate.toISOString().split('T')[0] + ' e ' + maxDate.toISOString().split('T')[0]);
-                $('#startDate').val(minDate.toISOString().split('T')[0]);
-                $('#endDate').val(maxDate.toISOString().split('T')[0]);
+            if (new Date(startDate) < minDate || new Date(endDate) > maxDate || startDate == '' || endDate == '') {               
                 return;
             }
             const filteredData = filterDataByDate(mergedData, startDate, endDate);
