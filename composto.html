@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Differenza tra interesse composto e interesse semplice</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/composto.js" defer></script>    
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="btn btn-primary">🏠 Home</a>
+        </div>
+        <h1 class="text-center">Differenza tra interesse composto e interesse semplice</h1>
+        <h6 class="text-center my-4">La differenza tra l'interesse semplice e quello composto si calcola come sotto:</h6>
+        <div class="text-center my-4" id="formula">
+            \[\Delta I(t) = C \cdot ((1 + r)^t - 1 - r\cdot t)\]
+        </div>
+        <h6 class="text-center my-4">Nel grafico le linee verticali mostrano quando questa differenza è > 10%, 20% e così via. Si noti che la differenza tra i due rendimenti diventa significativa solo dopo parecchia anni di investimento.</h6>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="capitale">Capitale iniziale (€): <span id="capitaleValue">10000</span></label>
+                    <input type="range" class="form-control-range" id="capitale" min="1000" max="50000" step="500" value="10000">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="tasso">Tasso annuo: <span id="tassoValue">2%</span></label>
+                    <input type="range" class="form-control-range" id="tasso" min="0.01" max="0.15" step="0.005" value="0.02">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="anni">Durata (anni): <span id="anniValue">30</span></label>
+                    <input type="range" class="form-control-range" id="anni" min="5" max="50" step="1" value="30">
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container" style="position: relative; height:60vh; width:100%">
+            <canvas id="grafico"></canvas>
+        </div>
+    </div>
+
+     <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+</body>
+
+</html>
