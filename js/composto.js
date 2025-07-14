@@ -16,8 +16,9 @@ function updateChart() {
     const dataSemplice = labels.map(x => C * r * x);
     const dataDifferenza = labels.map(x => calcolaDifferenza(C, r, x));
 
-    // Calcolo i punti dove la differenza supera le soglie percentuali
-    const soglie = [10, 20, 30, 40, 50];
+    // Calcolo i punti dove la differenza supera le soglie percentuali (10% fino a 100%)
+    const soglie = [];
+    for (let s = 10; s <= 100; s += 10) soglie.push(s);
     const annotationLines = {};
     soglie.forEach(soglia => {
         for (let i = 1; i < labels.length; i++) {
