@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yield to Maturity</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/rendita.js" defer></script>    
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Andamento del capitale durante il prelievo di una rendita mensile costante/h1>
+        <h5 class="text-center">Il grafico mostra l'andamento del capitale nel tempo durante il prelievo di una rendita mensile. La rendita viene calcolata partendo dal netto richiesto aggiungendo le tasse e adeguandola all'inflazione.</h5>        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="capitaleIniziale">Capitale Iniziale (€)</label>
+                    <input type="number" class="form-control" id="capitaleIniziale" value="200000" step="1000">
+                </div>
+                <div class="form-group">
+                    <label for="rendimentoAnnuo">Rendimento Annuo Lordo (%)</label>
+                    <input type="number" class="form-control" id="rendimentoAnnuo" value="5" step="0.1">
+                </div>                
+                <div class="form-group">
+                    <label for="frequenzaPrelievo">Frequenza Prelievo</label>
+                    <select class="form-control" id="frequenzaPrelievo">
+                        <option value="12" selected>Mensile</option>
+                        <option value="2">Semestrale</option>
+                        <option value="1">Annuale</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="renditaNetta">Rendita Netta desiderata per il periodo selezionato (€)</label>
+                    <input type="number" class="form-control" id="renditaNetta" value="1500">
+                </div>
+                <div class="form-group">
+                    <label for="inflazioneAnnua">Inflazione Media Annua (%)</label>
+                    <input type="number" class="form-control" id="inflazioneAnnua" value="2" step="0.1">
+                </div>                
+            </div>
+            <div class="col-md-6">
+                <div class="info-box p-3 mb-3 bg-light rounded">
+                    <h5>Informazioni:</h5>                    
+                    <p>Rendita Lorda Iniziale: <span id="renditaLorda">0</span> €</p>
+                    <p>Durata Stimata: <span id="durataStimata">0</span> anni</p>                    
+                </div>
+            </div>
+        </div>
+        <div class="chart-container mt-4" style="position: relative; height:60vh;">
+            <canvas id="capitaleChart"></canvas>
+        </div>
+    </div>
+
+     <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+</body>
+
+</html>
