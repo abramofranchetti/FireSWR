@@ -34,7 +34,7 @@ function generateData(currentYield) {
     let yields = [];
     let prices = [];
 
-    for (let y = currentYield - 3; y <= currentYield + 3; y += 0.25) {
+    for (let y = currentYield - 5; y <= currentYield + 5; y += 0.25) {
         yields.push(y);
         prices.push(bondPrice(faceValue, couponRate, maturity, y));
     }
