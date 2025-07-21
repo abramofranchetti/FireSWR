@@ -43,6 +43,18 @@ function generateData(currentYield) {
     return { yields, prices, currentPrice, faceValue, couponRate, maturity };
 }
 
+function getTangentLine(faceValue, couponRate, maturity, yieldRate, yields) {
+    // Calcola la derivata numerica centrale
+    const delta = 0.01;
+    const price_minus = bondPrice(faceValue, couponRate, maturity, yieldRate - delta);
+    const price_plus = bondPrice(faceValue, couponRate, maturity, yieldRate + delta);
+    const price_current = bondPrice(faceValue, couponRate, maturity, yieldRate);
+    const slope = (price_plus - price_minus) / (2 * delta);
+
+    // Costruisci la retta tangente per tutti i punti del grafico
+    return yields.map(y => slope * (y - yieldRate) + price_current);
+}
+
 function updateChart() {
     const currentYield = parseFloat(document.getElementById("yieldSlider").value);
     const data = generateData(currentYield);
@@ -59,6 +71,9 @@ function updateChart() {
         Se i tassi salgono di 1% → Prezzo: <b>${priceUp1.toFixed(2)} €</b> (perdita -${loss} €)<br>
         <em>Nota l'asimmetria: il guadagno in caso di calo è maggiore della perdita in caso di aumento, grazie alla convessità.</em>
       `;
+
+    // Calcola la retta tangente
+    const tangentPrices = getTangentLine(data.faceValue, data.couponRate, data.maturity, currentYield, data.yields);
 
     if (chart) chart.destroy();
 
@@ -80,6 +95,14 @@ function updateChart() {
                 pointBackgroundColor: 'red',
                 pointRadius: 6,
                 showLine: false
+            }, {
+                label: 'Approssimazione lineare (Duration)',
+                data: tangentPrices,
+                borderColor: 'orange',
+                borderDash: [8, 4],
+                fill: false,
+                pointRadius: 0,
+                tension: 0
             }]
         },
         options: {
