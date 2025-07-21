@@ -78,8 +78,13 @@ function updateChart() {
     if (chart) chart.destroy();
 
     const ctx = document.getElementById('convexityChart');
+    if (window.innerWidth < 768) {
+        ctx.height = 400;
+    } else {
+        ctx.height = 500;
+    }
     chart = new Chart(ctx, {
-        type: 'line',
+        type: 'line',        
         data: {
             labels: data.yields.map(y => y.toFixed(2) + "%"),
             datasets: [{
@@ -87,7 +92,9 @@ function updateChart() {
                 data: data.prices,
                 borderColor: 'blue',
                 fill: false,
-                tension: 0.3
+                tension: 0.2,
+                pointRadius: 2,
+                borderWidth: 2
             }, {
                 label: 'Prezzo Attuale',
                 data: data.prices.map((v, i) => i === Math.floor(data.prices.length / 2) ? data.currentPrice : null),
@@ -98,8 +105,8 @@ function updateChart() {
             }, {
                 label: 'Approssimazione lineare (Duration)',
                 data: tangentPrices,
-                borderColor: 'orange',
-                borderDash: [8, 4],
+                borderColor: 'orange',                
+                borderWidth: 2, 
                 fill: false,
                 pointRadius: 0,
                 tension: 0
