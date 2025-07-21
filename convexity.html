@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convessità di un'Obbligazione</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/convexity.js" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;            
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        input[type=number],
+        input[type=range] {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+        }
+
+        canvas {
+            margin: 25px 0;
+            width: 100% !important;
+            height: auto !important;
+            max-height: 500px;
+        }
+
+        .highlight-point {
+            background: rgba(255, 0, 0, 0.1);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h5 {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h5 {
+                font-size: 1rem;
+            }
+
+            #highlightInfo {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Grafico di Convessità di un'Obbligazione</h1>
+        <h5 class="text-center">La convessità (convexity) di un'obbligazione è una misura che indica quanto cambia la
+            durata (duration) di un'obbligazione al variare dei tassi di interesse.
+            Più precisamente:
+            La duration misura la sensibilità del prezzo di un'obbligazione alle variazioni dei tassi di interesse
+            (variazione lineare).
+            La convexity misura la curvatura della relazione prezzo/rendimento, cioè quanto la risposta del prezzo non è
+            lineare ma “curva”.</h5>
+
+        <body>
+
+            <label>Valore nominale (€): <input type="number" id="faceValue" value="1000"
+                    oninput="updateChart()"></label>
+
+            <label>Cedola annuale (%) : <span id="couponLabel">5</span>%</label>
+            <input type="range" id="couponSlider" min="0" max="15" step="0.1" value="5"
+                oninput="updateCouponLabel(this.value)">
+
+            <label>Scadenza (anni) : <span id="maturityLabel">10</span></label>
+            <input type="range" id="maturitySlider" min="1" max="30" step="1" value="10"
+                oninput="updateMaturityLabel(this.value)">
+
+            <label>Rendimento attuale (%) : <span id="yieldLabel">4</span>%</label>
+            <input type="range" id="yieldSlider" min="0" max="10" step="0.1" value="4"
+                oninput="updateYieldLabel(this.value)">
+
+            <canvas id="convexityChart"></canvas>
+            <div id="highlightInfo" class="highlight-point"></div>
+
+    </div>
+
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
