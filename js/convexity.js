@@ -84,7 +84,7 @@ function updateChart() {
         ctx.height = 500;
     }
     chart = new Chart(ctx, {
-        type: 'line',        
+        type: 'line',
         data: {
             labels: data.yields.map(y => y.toFixed(2) + "%"),
             datasets: [{
@@ -105,8 +105,8 @@ function updateChart() {
             }, {
                 label: 'Approssimazione lineare (Duration)',
                 data: tangentPrices,
-                borderColor: 'orange',                
-                borderWidth: 2, 
+                borderColor: 'orange',
+                borderWidth: 2,
                 fill: false,
                 pointRadius: 0,
                 tension: 0
@@ -118,6 +118,46 @@ function updateChart() {
                 title: {
                     display: true,
                     text: 'Prezzo vs Rendimento (Convessità)'
+                },
+                annotation: {
+                    annotations: {
+                        zeroRateLine: {
+                            type: 'line',
+                            xMin: data.yields.findIndex(y => Math.abs(y) < 0.001),
+                            xMax: data.yields.findIndex(y => Math.abs(y) < 0.001),
+                            borderColor: 'red',
+                            borderWidth: 0.5,
+                            borderDash: [],
+                            label: {
+                                display: true,
+                                content: 'Tasso 0%',
+                            }
+                        },
+                        minusOneLine: {
+                            type: 'line',
+                            xMin: data.yields.findIndex(y => Math.abs(y - (currentYield - 1)) < 0.001),
+                            xMax: data.yields.findIndex(y => Math.abs(y - (currentYield - 1)) < 0.001),
+                            borderColor: 'green',
+                            borderWidth: 0.5,
+                            borderDash: [4, 4],
+                            label: {
+                                display: true,
+                                content: 'Tasso -1%',
+                            }
+                        },
+                        plusOneLine: {                            
+                            type: 'line',
+                            xMin: data.yields.findIndex(y => Math.abs(y - (currentYield + 1)) < 0.001),
+                            xMax: data.yields.findIndex(y => Math.abs(y - (currentYield + 1)) < 0.001),
+                            borderColor: 'green',
+                            borderWidth: 0.5,
+                            borderDash: [4, 4],
+                            label: {
+                                display: true,
+                                content: 'Tasso +1%',
+                            }
+                        }
+                    }
                 }
             },
             scales: {
