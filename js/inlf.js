@@ -187,13 +187,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             document.getElementById('cumulativeInflation').innerText = `Primo punto selezionato: ${italiaData.labels[firstPoint]}`;
                         } else {
                             secondPoint = index;
-                            const startIndex = firstPoint
-                            const endIndex = secondPoint;
+                            const startIndex = Math.min(firstPoint, secondPoint);
+                            const endIndex = Math.max(firstPoint, secondPoint);
                             const cumulativeInflation = calculateCumulativeInflation(italiaData.values, startIndex, endIndex);
+                            const years = Math.abs(endIndex - startIndex);
                             const svalutatedValue = Math.round(10000 / (1 + cumulativeInflation / 100));
-                            document.getElementById('cumulativeInflation').innerText = `Inflazione cumulata tra ${italiaData.labels[firstPoint]} e ${italiaData.labels[secondPoint]}: ${cumulativeInflation.toFixed(2)}%
-                    ${formatEuro(10000)} sarebbero diventati ${formatEuro(svalutatedValue)} con perdita del potere d'acquisto
-                    del ${(((svalutatedValue / 10000) - 1 ) * -100).toFixed(2)}%`;
+                            const rivalutatedValue = Math.round(10000 * (1 + cumulativeInflation / 100));
+                            const perditaPotere = (((svalutatedValue / 10000) - 1 ) * -100);
+                            const maggiorEsborso = ((rivalutatedValue / 10000) - 1) * 100;
+                            document.getElementById('cumulativeInflation').innerText =
+                                `Inflazione cumulata tra ${italiaData.labels[startIndex]} e ${italiaData.labels[endIndex]}: ${cumulativeInflation.toFixed(2)}%
+Il potere di acquisto del capitale iniziale di ${formatEuro(10000)} per via dell'inflazione cumulata del ${cumulativeInflation.toFixed(2)}% in ${years} anni è diventato ${formatEuro(svalutatedValue)} con una perdita di potere di acquisto del ${perditaPotere.toFixed(2)}%.
+Al contrario, per acquistare ciò che avresti acquistato ${years} anni fa con il capitale iniziale di ${formatEuro(10000)}, ora ti servirebbero ${formatEuro(rivalutatedValue)} rivalutati, con un esborso maggiorato del ${maggiorEsborso.toFixed(2)}%.`;
                             firstPoint = null;
                             secondPoint = null;
                         }
