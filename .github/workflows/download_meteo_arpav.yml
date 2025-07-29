@@ -1,0 +1,28 @@
+name: Scarica bollettino meteo ARPAV
+
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+jobs:
+  download-meteo-xml:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: pip install requests
+      - name: Scarica bollettino ARPAV
+        run: python py/download_meteo_xml.py
+      - name: Commit e push file XML
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add xml/bollettino_utenti.xml
+          git commit -m 'Aggiorna bollettino meteo ARPAV automatico' || echo "Nessuna modifica da committare"
+          git push
