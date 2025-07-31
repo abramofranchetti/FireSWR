@@ -22,9 +22,25 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.text())
         .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
         .then(data => {
+            // Data emissione e aggiornamento
+            let infoDate = '';
+            const dataEm = data.querySelector('data_emissione');
+            if (dataEm && dataEm.getAttribute('date')) {
+                infoDate += `<span class="badge badge-info mr-2">Emissione: ${dataEm.getAttribute('date')}</span>`;
+            }
+            const dataAgg = data.querySelector('data_aggiornamento');
+            if (dataAgg && dataAgg.getAttribute('date')) {
+                infoDate += `<span class="badge badge-warning">Aggiornamento: ${dataAgg.getAttribute('date')}</span>`;
+            }
+            if (infoDate) {
+                container.innerHTML = `<div class="mb-3 text-center">${infoDate}</div>`;
+            } else {
+                container.innerHTML = '';
+            }
+
             const bollettini = data.querySelectorAll('bollettino');
             if (bollettini.length === 0) {
-                container.innerHTML = '<div class="alert alert-warning">Nessun dato disponibile.</div>';
+                container.innerHTML += '<div class="alert alert-warning">Nessun dato disponibile.</div>';
                 return;
             }
 
@@ -130,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 html += '</div>';
             }
 
-            container.innerHTML = html;
+            container.innerHTML += html;
 
             // Overlay per immagini ingrandite
             if (!document.getElementById('meteo-img-modal')) {
