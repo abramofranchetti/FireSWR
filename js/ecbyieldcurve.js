@@ -113,14 +113,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     showLine: true,
                     pointRadius: 0
                 },
-                {
+                /*{
                     label: 'Par Yield (AAA)',
                     data: parCurve,
                     borderColor: 'green',
                     fill: false,
                     showLine: true,
                     pointRadius: 0
-                },
+                },*/
                 {
                     label: 'Spot (All Ratings)',
                     data: spotCurveAll,
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     borderDash: [8,4],
                     hidden: true,
                 },
-                {
+                /*{
                     label: 'Par Yield (All Ratings)',
                     data: parCurveAll,
                     borderColor: 'green',
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     pointRadius: 0,
                     borderDash: [8,4],       
                     hidden: true,             
-                }
+                }*/
             ];
             datasets.forEach(dataset => {
                 dataset.pointHitRadius = 12;
