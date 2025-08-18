@@ -1,0 +1,38 @@
+name: ECB YieldCurve
+
+on:
+  schedule:
+    - cron: "0 9 * * *" # Ogni giorno alle 9
+  workflow_dispatch:
+
+jobs:
+  update-ecb-xml:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Pull
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git pull --rebase origin main
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+      - name: Scarica XML BCE
+        run: python py/download_ecb_yieldcurve.py
+      - name: Configura Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Commit e push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add xml/data.xml
+          git commit -m "Aggiornamento automatico XML BCE curva rendimenti" --allow-empty
+          git push https://github.com/${{ github.repository }}.git HEAD:main

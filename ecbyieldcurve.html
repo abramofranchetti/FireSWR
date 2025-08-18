@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curva dei rendimenti BCE Spot vs Istant</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/ecbyieldcurve.js" defer></script>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <div class="text-center mb-2">
+            <span id="ecb-date" class="font-weight-bold text-primary"></span>
+        </div>
+        <h1 class="text-center">Curva dei rendimenti BCE Spot vs Istant vs Par Yield</h1>        
+        <h6 class="text-center">Obbligazioni area euro</h6>
+
+        <div class="my-4">
+            <canvas id="ecbYieldChart" height="80"></canvas>
+        </div>
+
+        <h6 class="text-center">Curve interpolate da 0 a 30 anni.
+        Le curve sono calcolate con la formula Svensson usando i parametri BETA0-BETA3, TAU1, TAU2.</h6>
+        <div class="mt-3 mb-4">
+            <ul class="list-unstyled text-left mx-auto" style="max-width: 600px;">
+                <li><b>Curva Spot</b>: mostra il rendimento che si otterrebbe oggi investendo in un titolo a una certa scadenza. È come vedere il tasso "attuale" per ogni durata.</li>
+                <li><b>Curva Istant Forward</b>: indica il rendimento atteso in futuro per investimenti che inizieranno tra qualche anno. Serve a capire le aspettative sui tassi nei prossimi anni. Utili per capire il funzionamento degli etf obbligazionari a duration costante.</li>
+                <li><b>Curva Par Yield</b>: rappresenta il tasso teorico che rende il prezzo di un titolo uguale al suo valore nominale. È utile per confrontare titoli diversi in modo semplice.</li>
+            </ul>
+        </div>
+
+        <!-- Disclaimer -->
+        <div id="disclaimer-container"></div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                fetch('html/disclaimer.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('disclaimer-container').innerHTML = data;
+                    });
+            });
+        </script>
+</body>
+
+</html>
