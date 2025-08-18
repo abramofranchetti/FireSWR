@@ -152,6 +152,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     hidden: true,             
                 }
             ];
+            datasets.forEach(dataset => {
+                dataset.pointHitRadius = 12;
+            });
 
             // Aggiungi i bottoni per mostrare solo AAA o solo All Ratings
             const chartContainer = document.getElementById('ecbYieldChart').parentNode;
@@ -176,7 +179,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         legend: {
                             display: true,
                         },
-                        title: { display: true, text: 'Curva Rendimenti BCE' }
+                        title: { display: true, text: 'Curva Rendimenti BCE' },
+                        tooltip: {
+                            enabled: true,
+                            mode: 'index',
+                            intersect: false,
+                        }
                     },
                     scales: {
                         x: {
