@@ -11,89 +11,57 @@ document.addEventListener('DOMContentLoaded', function () {
             const prepared = data.getElementsByTagNameNS(nsMessage, 'Prepared')[0]?.textContent || '';
             document.getElementById('ecb-date').textContent = prepared ? `Dati BCE aggiornati al: ${prepared.substring(0,10)}` : '';
 
-            // Estrai parametri BETA e TAU per bond AAA e All Ratings
+            // Estrai i tassi già calcolati dall'XML, distinguendo AAA e All Ratings
             const series = Array.from(data.getElementsByTagNameNS(nsGeneric, 'Series'));
-            let beta0, beta1, beta2, beta3, tau1, tau2;
-            let beta0_all, beta1_all, beta2_all, beta3_all, tau1_all, tau2_all;
+            const spotCurve = [], forwardCurve = [], parCurve = [];
+            const spotCurveAll = [], forwardCurveAll = [], parCurveAll = [];
             series.forEach(s => {
                 const values = s.getElementsByTagNameNS(nsGeneric, 'Value');
                 let key = '';
+                let title = '';
                 let rating = '';
                 for (let v of values) {
                     if (v.getAttribute('id') === 'DATA_TYPE_FM') key = v.getAttribute('value');
+                    if (v.getAttribute('id') === 'TITLE') title = v.getAttribute('value');
                     if (v.getAttribute('id') === 'TITLE_COMPL') rating = v.getAttribute('value');
                 }
-                const obs = s.getElementsByTagNameNS(nsGeneric, 'ObsValue')[0]?.getAttribute('value');
-                // AAA
-                if (rating.includes('triple A')) {
-                    if (key === 'BETA0') beta0 = parseFloat(obs);
-                    if (key === 'BETA1') beta1 = parseFloat(obs);
-                    if (key === 'BETA2') beta2 = parseFloat(obs);
-                    if (key === 'BETA3') beta3 = parseFloat(obs);
-                    if (key === 'TAU1') tau1 = parseFloat(obs);
-                    if (key === 'TAU2') tau2 = parseFloat(obs);
-                }
-                // All ratings
-                if (rating.includes('all ratings included')) {
-                    if (key === 'BETA0') beta0_all = parseFloat(obs);
-                    if (key === 'BETA1') beta1_all = parseFloat(obs);
-                    if (key === 'BETA2') beta2_all = parseFloat(obs);
-                    if (key === 'BETA3') beta3_all = parseFloat(obs);
-                    if (key === 'TAU1') tau1_all = parseFloat(obs);
-                    if (key === 'TAU2') tau2_all = parseFloat(obs);
+                const obs = s.getElementsByTagNameNS(nsGeneric, 'ObsValue')[0];
+                if (!obs) return;
+                const y = parseFloat(obs.getAttribute('value'));
+                let x = null;
+                // Prova a estrarre la scadenza dal DATA_TYPE_FM (es: SR_10Y, IF_10Y, PYS_NR_10Y)
+                let match = null;
+                // Gestione SR_xYxM, SR_xM, IF_xYxM, IF_xM, PYS_NR_xYxM, PYS_NR_xM
+                if ((match = key.match(/SR_(?:(\d+)Y)?(\d+)?M?/))) {
+                    const anni = match[1] ? parseFloat(match[1]) : 0;
+                    const mesi = match[2] ? parseFloat(match[2]) : 0;
+                    x = anni + mesi/12;
+                    if (rating.includes('triple A')) spotCurve.push({x, y});
+                    else if (rating.includes('all ratings included')) spotCurveAll.push({x, y});
+                } else if ((match = key.match(/IF_(?:(\d+)Y)?(\d+)?M?/))) {
+                    const anni = match[1] ? parseFloat(match[1]) : 0;
+                    const mesi = match[2] ? parseFloat(match[2]) : 0;
+                    x = anni + mesi/12;
+                    if (rating.includes('triple A')) forwardCurve.push({x, y});
+                    else if (rating.includes('all ratings included')) forwardCurveAll.push({x, y});
+                } else if ((match = key.match(/PY_(?:(\d+)Y)?(\d+)?M?/))) {
+                    const anni = match[1] ? parseFloat(match[1]) : 0;
+                    const mesi = match[2] ? parseFloat(match[2]) : 0;
+                    x = anni + mesi/12;
+                    if (rating.includes('triple A')) parCurve.push({x, y});
+                    else if (rating.includes('all ratings included')) parCurveAll.push({x, y});
                 }
             });
-
-            // Calcola le curve
-            const spotCurve = [];
-            const forwardCurve = [];
-            const parCurve = [];
-            const spotCurveAll = [];
-            const forwardCurveAll = [];
-            const parCurveAll = [];
-            for (let t = 0.1; t <= 30; t += 0.1) {
-                // AAA
-                let y = null, f = null, p = null;
-                if (beta0 !== undefined && beta1 !== undefined && beta2 !== undefined && beta3 !== undefined && tau1 !== undefined && tau2 !== undefined) {
-                    let term1 = (1 - Math.exp(-t/tau1)) / (t/tau1);
-                    let term2 = term1 - Math.exp(-t/tau1);
-                    let term3 = (1 - Math.exp(-t/tau2)) / (t/tau2) - Math.exp(-t/tau2);
-                    y = beta0 + beta1 * term1 + beta2 * term2 + beta3 * term3;
-                    f = beta0 + beta1 * Math.exp(-t/tau1) + beta2 * (t/tau1) * Math.exp(-t/tau1) + beta3 * (t/tau2) * Math.exp(-t/tau2);
-                    let sum = 0;
-                    for (let ti = 0.1; ti <= t; ti += 0.1) {
-                        let term1i = (1 - Math.exp(-ti/tau1)) / (ti/tau1);
-                        let term2i = term1i - Math.exp(-ti/tau1);
-                        let term3i = (1 - Math.exp(-ti/tau2)) / (ti/tau2) - Math.exp(-ti/tau2);
-                        sum += beta0 + beta1 * term1i + beta2 * term2i + beta3 * term3i;
-                    }
-                    p = sum / (t*10);
-                }
-                spotCurve.push({x: t, y: y});
-                forwardCurve.push({x: t, y: f});
-                parCurve.push({x: t, y: p});
-
-                // All ratings
-                let y_all = null, f_all = null, p_all = null;
-                if (beta0_all !== undefined && beta1_all !== undefined && beta2_all !== undefined && beta3_all !== undefined && tau1_all !== undefined && tau2_all !== undefined) {
-                    let term1a = (1 - Math.exp(-t/tau1_all)) / (t/tau1_all);
-                    let term2a = term1a - Math.exp(-t/tau1_all);
-                    let term3a = (1 - Math.exp(-t/tau2_all)) / (t/tau2_all) - Math.exp(-t/tau2_all);
-                    y_all = beta0_all + beta1_all * term1a + beta2_all * term2a + beta3_all * term3a;
-                    f_all = beta0_all + beta1_all * Math.exp(-t/tau1_all) + beta2_all * (t/tau1_all) * Math.exp(-t/tau1_all) + beta3_all * (t/tau2_all) * Math.exp(-t/tau2_all);
-                    let sum_all = 0;
-                    for (let ti = 0.1; ti <= t; ti += 0.1) {
-                        let term1ia = (1 - Math.exp(-ti/tau1_all)) / (ti/tau1_all);
-                        let term2ia = term1ia - Math.exp(-ti/tau1_all);
-                        let term3ia = (1 - Math.exp(-ti/tau2_all)) / (ti/tau2_all) - Math.exp(-ti/tau2_all);
-                        sum_all += beta0_all + beta1_all * term1ia + beta2_all * term2ia + beta3_all * term3ia;
-                    }
-                    p_all = sum_all / (t*10);
-                }
-                spotCurveAll.push({x: t, y: y_all});
-                forwardCurveAll.push({x: t, y: f_all});
-                parCurveAll.push({x: t, y: p_all});
+            // Ordina i punti per maturità (x) crescente
+            function sortCurve(curve) {
+                curve.sort((a, b) => a.x - b.x);
             }
+            sortCurve(spotCurve);
+            sortCurve(forwardCurve);
+            sortCurve(parCurve);
+            sortCurve(spotCurveAll);
+            sortCurve(forwardCurveAll);
+            sortCurve(parCurveAll);
 
             // Prepara solo la curva spot
             const datasets = [
@@ -113,14 +81,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     showLine: true,
                     pointRadius: 0
                 },
-                /*{
+                {
                     label: 'Par Yield (AAA)',
                     data: parCurve,
                     borderColor: 'green',
                     fill: false,
                     showLine: true,
                     pointRadius: 0
-                },*/
+                },
                 {
                     label: 'Spot (All Ratings)',
                     data: spotCurveAll,
@@ -141,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     borderDash: [8,4],
                     hidden: true,
                 },
-                /*{
+                {
                     label: 'Par Yield (All Ratings)',
                     data: parCurveAll,
                     borderColor: 'green',
@@ -150,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     pointRadius: 0,
                     borderDash: [8,4],       
                     hidden: true,             
-                }*/
+                }
             ];
             datasets.forEach(dataset => {
                 dataset.pointHitRadius = 12;
