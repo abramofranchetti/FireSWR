@@ -171,6 +171,19 @@
             <label id="tYearsValue">10 anni</label>
         </div>
 
+    <div class="slider-container">
+        <label for="methodSelect"><strong>Metodo di calcolo delle commissioni</strong></label>
+        <select id="methodSelect" onchange="updateValues()">
+            <option value="moltiplicativo" selected>Moltiplicativo</option>
+            <option value="drag">Drag sul rendimento</option>
+        </select>
+        <div style="font-size:0.95em; color:#555; margin-top:8px;">
+            <strong>Metodo Moltiplicativo:</strong> applica prima la crescita del capitale e poi la riduzione delle commissioni.<br>
+            <strong>Metodo Drag:</strong> sottrae le commissioni direttamente al rendimento annuo.<br>
+            La differenza è piccola, ma il Moltiplicativo penalizza leggermente di più il montante finale. I fondi solitamente applicano questo.
+        </div>
+    </div>
+
         <div class="results">
             <p>Rendimento senza spese: <strong id="noFeeReturn"></strong></p>
             <p>Rendimento con spese: <strong id="withFeeReturn"></strong></p>
@@ -184,15 +197,23 @@
     <script>
         let chart;
 
-        function calculateRendimenti(principal, x, y, t) {
+        function calculateRendimenti(principal, x, y, t, metodo) {
             const noFee = [];
             const withFee = [];
             let currentNoFee = principal;
             let currentWithFee = principal;
 
             for (let i = 1; i <= t; i++) {
+                // Calcolo senza spese
                 currentNoFee *= 1 + x / 100;
-                currentWithFee *= 1 + (x - y) / 100;
+
+                // Calcolo con spese
+                if (metodo === "moltiplicativo") {
+                    currentWithFee *= (1 + x / 100) * (1 - y / 100);
+                } else {
+                    // Metodo Drag
+                    currentWithFee *= 1 + (x - y) / 100;
+                }
 
                 noFee.push(currentNoFee);
                 withFee.push(currentWithFee);
@@ -205,12 +226,13 @@
             const xRate = parseFloat(document.getElementById("xRate").value);
             const yFee = parseFloat(document.getElementById("yFee").value);
             const tYears = parseInt(document.getElementById("tYears").value);
+            const metodo = document.getElementById("methodSelect").value;
 
             document.getElementById("xRateValue").textContent = `${xRate}%`;
             document.getElementById("yFeeValue").textContent = `${yFee}%`;
             document.getElementById("tYearsValue").textContent = `${tYears} anni`;
 
-            const { noFee, withFee } = calculateRendimenti(principal, xRate, yFee, tYears);
+            const { noFee, withFee } = calculateRendimenti(principal, xRate, yFee, tYears, metodo);
             const diff = noFee[noFee.length - 1] - withFee[withFee.length - 1];
 
             document.getElementById("noFeeReturn").textContent = `€ ${noFee[noFee.length - 1].toFixed(2)}`;
