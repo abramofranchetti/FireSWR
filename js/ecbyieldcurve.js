@@ -86,6 +86,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
+            // Dopo il sort delle curve, aggiungiamo il calcolo dei massimi
+            const maxSpot = spotCurve.reduce((max, point) => point.y > max.y ? point : max, spotCurve[0]);
+            const maxForward = forwardCurve.reduce((max, point) => point.y > max.y ? point : max, forwardCurve[0]);
+
             // Prepara solo la curva spot
             const datasets = [
                 {
@@ -255,10 +259,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 chart.update();
             });
             
-            // Aggiorna il testo delle duration
+            // Modifichiamo la parte dei testi delle duration aggiungendo i massimi
             const durationTextForward = `Spot-Forward: ${maxSpotForwardDiff.x.toFixed(1)} anni (diff: ${(maxSpotForwardDiff.diff * 100).toFixed(0)} bp)`;
             const durationTextPar = `Spot-Par: ${maxSpotParDiff.x.toFixed(1)} anni (diff: ${(maxSpotParDiff.diff * 100).toFixed(0)} bp)`;
+            const maxSpotText = `Massimo Spot: ${maxSpot.x.toFixed(1)} anni (${maxSpot.y.toFixed(2)}%)`;
+            const maxForwardText = `Massimo Forward: ${maxForward.x.toFixed(1)} anni (${maxForward.y.toFixed(2)}%)`;
+            const diffMaxForwardSpot = `Diff Max Forward-Spot: ${((maxForward.y - maxSpot.y)*100).toFixed(0)} bp`;
+
             document.getElementById('duration-info-forward').textContent = durationTextForward;
             document.getElementById('duration-info-par').textContent = durationTextPar;
+            document.getElementById('max-spot-info').textContent = maxSpotText;
+            document.getElementById('max-forward-info').textContent = maxForwardText;
+            document.getElementById('diff-max-forward-max-spot').textContent = diffMaxForwardSpot;
         });
 });
