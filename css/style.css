@@ -93,6 +93,15 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Stili specifici per il grafico */
+.chart-wrapper {
+    position: relative;
+    height: 60vh;
+    width: 100%;
+    margin: 20px 0;
+}
+
+/* Media queries per dispositivi mobili */
 @media (max-width: 768px) {
     .chart-container {
         height: 50vh !important;
@@ -100,5 +109,35 @@
     
     .container {
         padding: 10px;
+        margin: 10px;
+    }
+
+    .chart-wrapper {
+        height: 70vh;  /* Aumentiamo l'altezza relativa su mobile */
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h6 {
+        font-size: 0.9rem;
+    }
+
+    pre {
+        font-size: 0.8rem;
+        margin: 5px 0;
+    }
+
+    button {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+        margin: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-wrapper {
+        height: 80vh;  /* Ancora più alto per schermi molto piccoli */
     }
 }

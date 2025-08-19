@@ -28,8 +28,14 @@
         <h1 class="text-center">Curva dei rendimenti BCE Spot vs Istant</h1>        
         <h6 class="text-center">Obbligazioni area euro</h6>
 
-        <div class="my-4">
-            <canvas id="ecbYieldChart" height="80"></canvas>
+        <div class="chart-wrapper">
+            <canvas id="ecbYieldChart"></canvas>
+        </div>
+
+        <div class="text-center mb-3">
+            <pre>Duration dei punti di massima differenza:</pre>
+            <pre id="duration-info-forward"></pre>
+            <pre id="duration-info-par"></pre>
         </div>
 
         <h6 class="text-center">Curve interpolate da 0 a 30 anni.

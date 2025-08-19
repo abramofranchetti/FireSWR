@@ -63,6 +63,29 @@ document.addEventListener('DOMContentLoaded', function () {
             sortCurve(forwardCurveAll);
             sortCurve(parCurveAll);
 
+            // Calcola le differenze e trova i punti massimi
+            let maxSpotForwardDiff = { diff: 0, x: 0 };
+            let maxSpotParDiff = { diff: 0, x: 0 };
+
+            spotCurve.forEach((spot, i) => {
+                const forward = forwardCurve.find(f => f.x === spot.x);
+                const par = parCurve.find(p => p.x === spot.x);
+                
+                if (forward) {
+                    const diff = Math.abs(forward.y - spot.y);
+                    if (diff > maxSpotForwardDiff.diff) {
+                        maxSpotForwardDiff = { diff, x: spot.x };
+                    }
+                }
+                
+                if (par) {
+                    const diff = Math.abs(par.y - spot.y);
+                    if (diff > maxSpotParDiff.diff) {
+                        maxSpotParDiff = { diff, x: spot.x };
+                    }
+                }
+            });
+
             // Prepara solo la curva spot
             const datasets = [
                 {
@@ -143,9 +166,48 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: true,
+                            position: window.innerWidth < 768 ? 'bottom' : 'top',
+                            labels: {
+                                boxWidth: window.innerWidth < 768 ? 8 : 40,
+                                padding: window.innerWidth < 768 ? 8 : 10,
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                spotForwardLine: {
+                                    type: 'line',
+                                    xMin: maxSpotForwardDiff.x,
+                                    xMax: maxSpotForwardDiff.x,
+                                    borderColor: 'rgba(255, 0, 0, 0.5)',
+                                    borderWidth: 2,
+                                    label: {
+                                        content: 'Max Spot-Forward',
+                                        enabled: true,
+                                        position: 'bottom',
+                                        yAdjust: 30
+                                    }
+                                },
+                                spotParLine: {
+                                    type: 'line',
+                                    xMin: maxSpotParDiff.x,
+                                    xMax: maxSpotParDiff.x,
+                                    borderColor: 'rgba(0, 255, 0, 0.5)',
+                                    borderWidth: 2,
+                                    label: {
+                                        content: 'Max Spot-Par',
+                                        enabled: true,
+                                        position: 'bottom',
+                                        yAdjust: 10
+                                    }
+                                }
+                            }
                         },
                         title: { display: true, text: 'Curva Rendimenti BCE' },
                         tooltip: {
@@ -159,10 +221,20 @@ document.addEventListener('DOMContentLoaded', function () {
                             type: 'linear',
                             min: 0,
                             max: 30,
-                            title: { display: true, text: 'Maturità (anni)' }
+                            title: { display: true, text: 'Maturità (anni)' },
+                            ticks: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            }
                         },
                         y: {
-                            title: { display: true, text: 'Yield in %' }
+                            title: { display: true, text: 'Yield in %' },
+                            ticks: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            }
                         }
                     }
                 }
@@ -182,5 +254,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 chart.update();
             });
+            
+            // Aggiorna il testo delle duration
+            const durationTextForward = `Spot-Forward: ${maxSpotForwardDiff.x.toFixed(1)} anni (diff: ${(maxSpotForwardDiff.diff * 100).toFixed(0)} bp)`;
+            const durationTextPar = `Spot-Par: ${maxSpotParDiff.x.toFixed(1)} anni (diff: ${(maxSpotParDiff.diff * 100).toFixed(0)} bp)`;
+            document.getElementById('duration-info-forward').textContent = durationTextForward;
+            document.getElementById('duration-info-par').textContent = durationTextPar;
         });
 });
