@@ -63,11 +63,15 @@ document.addEventListener('DOMContentLoaded', function () {
             sortCurve(forwardCurveAll);
             sortCurve(parCurveAll);
 
-            // Calcola le differenze e trova i punti massimi
+            // Calcola le differenze e trova i punti massimi per AAA
             let maxSpotForwardDiff = { diff: 0, x: 0 };
             let maxSpotParDiff = { diff: 0, x: 0 };
+            // Per All Ratings
+            let maxSpotForwardDiffAll = { diff: 0, x: 0 };
+            let maxSpotParDiffAll = { diff: 0, x: 0 };
 
-            spotCurve.forEach((spot, i) => {
+            // Calcolo per AAA
+            spotCurve.forEach((spot) => {
                 const forward = forwardCurve.find(f => f.x === spot.x);
                 const par = parCurve.find(p => p.x === spot.x);
                 
@@ -86,9 +90,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            // Dopo il sort delle curve, aggiungiamo il calcolo dei massimi
+            // Calcolo per All Ratings
+            spotCurveAll.forEach((spot) => {
+                const forward = forwardCurveAll.find(f => f.x === spot.x);
+                const par = parCurveAll.find(p => p.x === spot.x);
+                
+                if (forward) {
+                    const diff = Math.abs(forward.y - spot.y);
+                    if (diff > maxSpotForwardDiffAll.diff) {
+                        maxSpotForwardDiffAll = { diff, x: spot.x };
+                    }
+                }
+                
+                if (par) {
+                    const diff = Math.abs(par.y - spot.y);
+                    if (diff > maxSpotParDiffAll.diff) {
+                        maxSpotParDiffAll = { diff, x: spot.x };
+                    }
+                }
+            });
+
+            // Calcolo massimi per entrambi i rating
             const maxSpot = spotCurve.reduce((max, point) => point.y > max.y ? point : max, spotCurve[0]);
             const maxForward = forwardCurve.reduce((max, point) => point.y > max.y ? point : max, forwardCurve[0]);
+            const maxSpotAll = spotCurveAll.reduce((max, point) => point.y > max.y ? point : max, spotCurveAll[0]);
+            const maxForwardAll = forwardCurveAll.reduce((max, point) => point.y > max.y ? point : max, forwardCurveAll[0]);
 
             // Prepara solo la curva spot
             const datasets = [
@@ -185,30 +211,62 @@ document.addEventListener('DOMContentLoaded', function () {
                         },
                         annotation: {
                             annotations: {
-                                spotForwardLine: {
+                                // AAA annotations
+                                spotForwardLineAAA: {
                                     type: 'line',
                                     xMin: maxSpotForwardDiff.x,
                                     xMax: maxSpotForwardDiff.x,
                                     borderColor: 'rgba(255, 0, 0, 0.5)',
                                     borderWidth: 2,
                                     label: {
-                                        content: 'Max Spot-Forward',
+                                        content: 'Max SF AAA',
                                         enabled: true,
                                         position: 'bottom',
                                         yAdjust: 30
                                     }
                                 },
-                                spotParLine: {
+                                spotParLineAAA: {
                                     type: 'line',
                                     xMin: maxSpotParDiff.x,
                                     xMax: maxSpotParDiff.x,
                                     borderColor: 'rgba(0, 255, 0, 0.5)',
                                     borderWidth: 2,
                                     label: {
-                                        content: 'Max Spot-Par',
+                                        content: 'Max SP AAA',
                                         enabled: true,
                                         position: 'bottom',
                                         yAdjust: 10
+                                    }
+                                },
+                                // All Ratings annotations
+                                spotForwardLineAll: {
+                                    display: false,
+                                    type: 'line',
+                                    xMin: maxSpotForwardDiffAll.x,
+                                    xMax: maxSpotForwardDiffAll.x,
+                                    borderColor: 'rgba(255, 0, 0, 0.5)',
+                                    borderWidth: 2,
+                                    borderDash: [8, 4],
+                                    label: {
+                                        content: 'Max SF All',
+                                        enabled: true,
+                                        position: 'bottom',
+                                        yAdjust: 50
+                                    }
+                                },
+                                spotParLineAll: {
+                                    type: 'line',
+                                    display: false,
+                                    xMin: maxSpotParDiffAll.x,
+                                    xMax: maxSpotParDiffAll.x,
+                                    borderColor: 'rgba(0, 255, 0, 0.5)',
+                                    borderWidth: 2,
+                                    borderDash: [8, 4],
+                                    label: {
+                                        content: 'Max SP All',
+                                        enabled: true,
+                                        position: 'bottom',
+                                        yAdjust: 70
                                     }
                                 }
                             }
@@ -249,27 +307,45 @@ document.addEventListener('DOMContentLoaded', function () {
                 chart.data.datasets.forEach(ds => {
                     ds.hidden = ds.label.includes('All Ratings');
                 });
+                chart.options.plugins.annotation.annotations.spotForwardLineAll.display = false;
+                chart.options.plugins.annotation.annotations.spotParLineAll.display = false;
+                chart.options.plugins.annotation.annotations.spotForwardLineAAA.display = true;
+                chart.options.plugins.annotation.annotations.spotParLineAAA.display = true;
                 chart.update();
             });
+
             // Funzione per mostrare solo All Ratings
             btnAll.addEventListener('click', function() {
                 chart.data.datasets.forEach(ds => {
                     ds.hidden = ds.label.includes('AAA');
                 });
+                chart.options.plugins.annotation.annotations.spotForwardLineAll.display = true;
+                chart.options.plugins.annotation.annotations.spotParLineAll.display = true;
+                chart.options.plugins.annotation.annotations.spotForwardLineAAA.display = false;
+                chart.options.plugins.annotation.annotations.spotParLineAAA.display = false;
                 chart.update();
             });
-            
-            // Modifichiamo la parte dei testi delle duration aggiungendo i massimi
-            const durationTextForward = `Spot-Forward: ${maxSpotForwardDiff.x.toFixed(1)} anni (diff: ${(maxSpotForwardDiff.diff * 100).toFixed(0)} bp)`;
-            const durationTextPar = `Spot-Par: ${maxSpotParDiff.x.toFixed(1)} anni (diff: ${(maxSpotParDiff.diff * 100).toFixed(0)} bp)`;
-            const maxSpotText = `Massimo Spot: ${maxSpot.x.toFixed(1)} anni (${maxSpot.y.toFixed(2)}%)`;
-            const maxForwardText = `Massimo Forward: ${maxForward.x.toFixed(1)} anni (${maxForward.y.toFixed(2)}%)`;
-            const diffMaxForwardSpot = `Diff Max Forward-Spot: ${((maxForward.y - maxSpot.y)*100).toFixed(0)} bp`;
 
-            document.getElementById('duration-info-forward').textContent = durationTextForward;
-            document.getElementById('duration-info-par').textContent = durationTextPar;
-            document.getElementById('max-spot-info').textContent = maxSpotText;
-            document.getElementById('max-forward-info').textContent = maxForwardText;
-            document.getElementById('diff-max-forward-max-spot').textContent = diffMaxForwardSpot;
+            // Aggiorna il testo delle duration nella tabella
+            document.getElementById('duration-info-forward-aaa').textContent = 
+                `${maxSpotForwardDiff.x.toFixed(1)} anni (${(maxSpotForwardDiff.diff * 100).toFixed(0)} bp)`;
+            document.getElementById('duration-info-forward-all').textContent = 
+                `${maxSpotForwardDiffAll.x.toFixed(1)} anni (${(maxSpotForwardDiffAll.diff * 100).toFixed(0)} bp)`;
+            document.getElementById('duration-info-par-aaa').textContent = 
+                `${maxSpotParDiff.x.toFixed(1)} anni (${(maxSpotParDiff.diff * 100).toFixed(0)} bp)`;
+            document.getElementById('duration-info-par-all').textContent = 
+                `${maxSpotParDiffAll.x.toFixed(1)} anni (${(maxSpotParDiffAll.diff * 100).toFixed(0)} bp)`;
+            document.getElementById('max-spot-info-aaa').textContent = 
+                `${maxSpot.x.toFixed(1)} anni (${maxSpot.y.toFixed(2)}%)`;
+            document.getElementById('max-spot-info-all').textContent = 
+                `${maxSpotAll.x.toFixed(1)} anni (${maxSpotAll.y.toFixed(2)}%)`;
+            document.getElementById('max-forward-info-aaa').textContent = 
+                `${maxForward.x.toFixed(1)} anni (${maxForward.y.toFixed(2)}%)`;
+            document.getElementById('max-forward-info-all').textContent = 
+                `${maxForwardAll.x.toFixed(1)} anni (${maxForwardAll.y.toFixed(2)}%)`;
+            document.getElementById('diff-max-forward-max-spot-aaa').textContent = 
+                `${((maxForward.y - maxSpot.y)*100).toFixed(0)} bp`;
+            document.getElementById('diff-max-forward-max-spot-all').textContent = 
+                `${((maxForwardAll.y - maxSpotAll.y)*100).toFixed(0)} bp`;
         });
 });

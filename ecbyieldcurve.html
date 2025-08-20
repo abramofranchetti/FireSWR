@@ -33,14 +33,43 @@
         </div>
 
         <div class="text-center mb-3">
-            <h6>Duration dei punti di massima differenza:</h6>
-            <li id="duration-info-forward"></li>
-            <li id="duration-info-par"></li>
-            <br>
-            <h6>Punti di massimo rendimento:</h6>
-            <li id="max-spot-info"></li>
-            <li id="max-forward-info"></li>
-            <li id="diff-max-forward-max-spot"></li>
+            <h6>Analisi delle curve dei rendimenti:</h6>
+            <table class="table table-sm table-bordered mx-auto" style="max-width: 800px;">
+                <thead>
+                    <tr>
+                        <th>Misura</th>
+                        <th>Rating AAA</th>
+                        <th>All Ratings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-left">Max diff Spot-Forward</td>
+                        <td id="duration-info-forward-aaa"></td>
+                        <td id="duration-info-forward-all"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Max diff Spot-Par</td>
+                        <td id="duration-info-par-aaa"></td>
+                        <td id="duration-info-par-all"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Massimo Spot</td>
+                        <td id="max-spot-info-aaa"></td>
+                        <td id="max-spot-info-all"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Massimo Forward</td>
+                        <td id="max-forward-info-aaa"></td>
+                        <td id="max-forward-info-all"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Diff Max Forward-Max Spot</td>
+                        <td id="diff-max-forward-max-spot-aaa"></td>
+                        <td id="diff-max-forward-max-spot-all"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <h6 class="text-center">Curve interpolate da 0 a 30 anni.
