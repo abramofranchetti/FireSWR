@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const indices = [
         { name: 'Cometa Crescita', file: 'csv/cometa.csv', delimiter: ',' ,color: 'rgba(220, 53, 69, ALPHA)'},
         { name: 'Solidarietà Veneto Dinamico', file: 'csv/solidarietaveneto.csv', delimiter: ',', color: 'rgba(100, 123, 255, ALPHA)'},
+        { name: 'Laborfonds Dinamico', file: 'csv/laborfonds.csv', delimiter: ',', color: 'rgba(40, 167, 69, ALPHA)'},
         { name: 'Benchmark', file: 'csv/acwi_xeon.csv', delimiter: ',', color: 'rgba(23, 162, 184, ALPHA)'},
         { name: 'Oro', file: 'csv/gold_month.csv', delimiter: ',', color: 'rgba(255, 215, 0, ALPHA)'},
         { name: 'S&P 500', file: 'csv/sp500_month.csv', delimiter: ',', color: 'rgba(100, 30, 80, ALPHA)'}        
