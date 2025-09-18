@@ -376,7 +376,8 @@ function createDrawdownChart(dates, drawdownNetEur, drawdownNetDollar) {
                     backgroundColor: 'rgba(54, 162, 235, 0.1)',
                     fill: false,
                     tension: 0.1,
-                    pointRadius: 0
+                    pointRadius: 0,
+                    hidden: true
                 }
             ]
         },
@@ -462,7 +463,8 @@ function createDrawdownValueChart(dates, drawdownNetEur, drawdownNetDollar) {
                     backgroundColor: 'rgba(54, 162, 235, 0.1)',
                     fill: false,
                     tension: 0.1,
-                    pointRadius: 0
+                    pointRadius: 0,
+                    hidden: true
                 }
             ]
         },
@@ -635,7 +637,10 @@ function runSimulation() {
     const drawdownNettissimoEurValore = [];
     const drawdownNettissimoDollarValore = [];
     // Legge i parametri di input
-    const initialCapitalEur = parseFloat($('#initialCapitalEur').val());
+    let initialCapitalEur = parseFloat($('#initialCapitalEur').val());
+    if (initialCapitalEur === 0) {
+        initialCapitalEur = 1;
+    }
     const monthlyDepositEur = parseFloat($('#monthlyDepositEur').val());
     const terFee = parseFloat($('#terFee').val()); // espresso in percentuale
     const startDate = new Date($('#startDate').val());
@@ -912,6 +917,11 @@ function runSimulation() {
     resultHtml += `<p><strong>Diff. Lordo - Nettissimo (tassazione effetiva sul totale lordo e spese TER):</strong> ${formatEuro(diffGrossNettissimoDollar)} (${formatPercent(diffGrossNettissimoPercDollar)})</p>`;
     resultHtml += `<p>Nota, questa percentuale può risultare < 26% perchè mostrando la differenza con il lordo, comprende anche il TER, che in quanto spesa, non partecipa al capital gain e non viene tassata.
               Inoltre, solo il gain viene tassato al 26% e non l'intera somma lorda.</p>`;
+    resultHtml += `</div>`;
+
+    resultHtml += `<div class="box">`;
+    resultHtml += `<p><strong>Comparazione tra quanto ottenuto e quanto avresti dovuto risparmiare senza investire per avere la stessa cifra nello stesso tempo:</strong></p>`;
+    resultHtml += `<p><strong>Avresti dovuto risparmiare:</strong> ${formatEuro((cumulativeContributionsEur+finalNettissimoEur)/(anniTotali*12))} al mese per ${(anniTotali).toFixed(1)} anni per avere la stessa cifra.</p>`;    
     resultHtml += `</div>`;
 
     resultHtml += `<div class="box">`;
