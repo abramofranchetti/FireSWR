@@ -639,7 +639,7 @@ function runSimulation() {
     // Legge i parametri di input
     let initialCapitalEur = parseFloat($('#initialCapitalEur').val());
     if (initialCapitalEur === 0) {
-        initialCapitalEur = 1;
+        initialCapitalEur = 1; // Evita divisioni per zero
     }
     const monthlyDepositEur = parseFloat($('#monthlyDepositEur').val());
     const terFee = parseFloat($('#terFee').val()); // espresso in percentuale
@@ -921,7 +921,7 @@ function runSimulation() {
 
     resultHtml += `<div class="box">`;
     resultHtml += `<p><strong>Comparazione tra quanto ottenuto e quanto avresti dovuto risparmiare senza investire per avere la stessa cifra nello stesso tempo:</strong></p>`;
-    resultHtml += `<p><strong>Avresti dovuto risparmiare:</strong> ${formatEuro((cumulativeContributionsEur+finalNettissimoEur)/(anniTotali*12))} al mese per ${(anniTotali).toFixed(1)} anni per avere la stessa cifra.</p>`;    
+    resultHtml += `<p><strong>Avresti dovuto risparmiare:</strong> ${formatEuro((finalNettissimoEur)/(anniTotali*12))} al mese per ${(anniTotali).toFixed(1)} anni per avere la stessa cifra.</p>`;    
     resultHtml += `</div>`;
 
     resultHtml += `<div class="box">`;
