@@ -39,6 +39,8 @@ function mergeData(historicalData, updatedData) {
 
 // Funzione per calcolare il drawdown giornaliero
 function calcolaDrawdownGiornaliero(valori) {
+    if (!valori || valori.length === 0) return [];
+
     let maxValore = valori[0];
     return valori.map(valore => {
         if (valore > maxValore) {
@@ -529,6 +531,11 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
     if (percentageChartInstance) {
         percentageChartInstance.destroy();
     }
+
+    const firstNonZeroEur = netValuesEur.find(value => value > 0) || 1;
+    const firstNonZeroRealEur = realNettissimoValuesEur.find(value => value > 0) || 1;
+    const firstNonZeroDollar = netValuesDollar.find(value => value > 0) || 1;
+
     percentageChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -536,7 +543,7 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
             datasets: [
                 {
                     label: 'Nettissimo (€)',
-                    data: netValuesEur.map((value, index) => ((value / netValuesEur[0]) - 1) * 100),
+                    data: netValuesEur.map((value, index) => ((value / firstNonZeroEur) - 1) * 100),
                     borderColor: 'rgba(255, 99, 132, 0.6)',
                     backgroundColor: 'rgba(255, 99, 132, 0.1)',
                     fill: false,
@@ -545,7 +552,7 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
                 },
                 {
                     label: 'Nettissimo Infl. Adjusted (€)',
-                    data: realNettissimoValuesEur.map((value, index) => ((value / realNettissimoValuesEur[0]) - 1) * 100),
+                    data: realNettissimoValuesEur.map((value, index) => ((value / firstNonZeroRealEur) - 1) * 100),
                     borderColor: 'rgba(107, 248, 107, 0.6)',
                     backgroundColor: 'rgba(107, 248, 107, 0.1)',
                     fill: false,
@@ -554,7 +561,7 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
                 },
                 {
                     label: 'Nettissimo ($)',
-                    data: netValuesDollar.map((value, index) => ((value / netValuesDollar[0]) - 1) * 100),
+                    data: netValuesDollar.map((value, index) => ((value / firstNonZeroDollar) - 1) * 100),
                     borderColor: 'rgba(54, 162, 235, 0.6)',
                     backgroundColor: 'rgba(54, 162, 235, 0.1)',
                     fill: false,
@@ -638,9 +645,7 @@ function runSimulation() {
     const drawdownNettissimoDollarValore = [];
     // Legge i parametri di input
     let initialCapitalEur = parseFloat($('#initialCapitalEur').val());
-    if (initialCapitalEur === 0) {
-        initialCapitalEur = 1; // Evita divisioni per zero
-    }
+    
     const monthlyDepositEur = parseFloat($('#monthlyDepositEur').val());
     const terFee = parseFloat($('#terFee').val()); // espresso in percentuale
     const startDate = new Date($('#startDate').val());
@@ -743,15 +748,34 @@ function runSimulation() {
         grossValuesEur.push(currentGrossEur);
         netValuesEur.push(currentNetEur);
         nettissimoValuesEur.push(currentNettissimoEur);
+
         // Calcola il drawdown giornaliero
-        drawdownNettissimoDollar.push((Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]) / Math.max(...nettissimoValuesDollar.slice(0, i + 1)));
-        drawdownNettissimoEur.push((Math.max(...nettissimoValuesEur.slice(0, i + 1)) - nettissimoValuesEur[i]) / Math.max(...nettissimoValuesEur.slice(0, i + 1)));
-        // in valore invece che %
-        drawdownNettissimoEurValore.push(Math.max(...nettissimoValuesEur.slice(0, i + 1)) - nettissimoValuesEur[i]);
-        drawdownNettissimoDollarValore.push(Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]);
+        drawdownNettissimoDollar.push(
+            nettissimoValuesDollar.length > 0 ? 
+            (Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]) / 
+            Math.max(Math.max(...nettissimoValuesDollar.slice(0, i + 1)), 0.000001) : 0
+        );
+        drawdownNettissimoEur.push(
+            nettissimoValuesEur.length > 0 ? 
+            (Math.max(...nettissimoValuesEur.slice(0, i + 1)) - nettissimoValuesEur[i]) / 
+            Math.max(Math.max(...nettissimoValuesEur.slice(0, i + 1)), 0.000001) : 0
+        );
+        
+        // Calcolo drawdown in valore assoluto
+        drawdownNettissimoEurValore.push(
+            Math.max(...nettissimoValuesEur.slice(0, i + 1)) - nettissimoValuesEur[i]
+        );
+
+        drawdownNettissimoDollarValore.push(
+            Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]
+        );
     }
     // Funzione per calcolare la deviazione standard annualizzata
     function calcolaDeviazioneStandardAnnualizzata(data) {
+        // Se tutti i valori sono 0 o non ci sono dati, ritorna 0
+        if (data.every(val => val === 0) || data.length === 0) {
+            return 0;
+        }
         const media = data.reduce((acc, val) => acc + val, 0) / data.length;
         const varianza = data.reduce((acc, val) => acc + Math.pow(val - media, 2), 0) / data.length;
         const deviazioneStandardGiornaliera = Math.sqrt(varianza);
@@ -764,7 +788,7 @@ function runSimulation() {
         if (index === 0) return 0;
         const prevNet = nettissimoValuesDollar[index - 1];
         const currNet = nettissimoValuesDollar[index];
-        return (currNet / prevNet) - 1;
+        return prevNet === 0 ? 0 : (currNet / prevNet) - 1;
     }).slice(1);
 
     // Calcola i rendimenti giornalieri in euro
@@ -772,7 +796,7 @@ function runSimulation() {
         if (index === 0) return 0;
         const prevNetEur = nettissimoValuesEur[index - 1];
         const currNetEur = nettissimoValuesEur[index];
-        return (currNetEur / prevNetEur) - 1;
+         return prevNetEur === 0 ? 0 : (currNetEur / prevNetEur) - 1;
     }).slice(1);
 
     const volatilitaNettissimoEur = calcolaDeviazioneStandardAnnualizzata(rendimentiGiornalieriNettissimoEur);
