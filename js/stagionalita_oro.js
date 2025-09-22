@@ -4,17 +4,16 @@ let seasonalityChart = null;
 async function loadData() {
     try {
         // Carica i dati dell'oro
-        const goldResponse = await fetch('csv/sp500_montly_historical.csv');
+        const goldResponse = await fetch('csv/gold_monthly-storico.csv');
         const goldText = await goldResponse.text();
         const goldData = goldText.split('\n')
             .map(line => {
-                // Gestione formato: '01/08/1978 103.30' (gg/mm/yyyy)
-                const [date, price] = line.trim().split(/\s+/);
+                const [date, price] = line.trim().split(',');
                 if (date && price) {
-                    const [day, month, year] = date.split('/');
-                    if (day && month && year) {
+                    const [year, month] = date.split('-');
+                    if (year && month) {
                         return {
-                            date: new Date(parseInt(year), parseInt(month) - 1, parseInt(day)),
+                            date: new Date(parseInt(year), parseInt(month) - 1, 1),
                             price: parseFloat(price.replace(',', '.'))
                         };
                     }
