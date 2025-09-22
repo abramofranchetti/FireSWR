@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisi stagionalità SP500</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="js/stagionalita_sp500.js"></script>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Analisi stagionalità sp500</h1>
+        <h5 class="text-center">Analisi della stagionalità del prezzo dell'sp500 dal 1975 al 2024. Calcolato come la media mobile a 12 mesi. 
+            L'intervallo di confidenza +/-1σ è rappresentato dall'area ombreggiata nel grafico. 
+            Questo intervallo indica la variabilità storica dei prezzi dell'sp500, dove ±1σ rappresenta una deviazione standard dalla media (volatilità).             
+        </h5>    
+        
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="startYear">Anno Iniziale:</label>
+                    <input class="form-control year-input" id="startYear" autocomplete="off" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="endYear">Anno Finale:</label>
+                    <input class="form-control year-input" id="endYear" autocomplete="off" />
+                </div>
+            </div>
+    <style>
+    .year-input[type="number"]::-webkit-inner-spin-button,
+    .year-input[type="number"]::-webkit-outer-spin-button {
+        opacity: 1;
+        height: 2em;
+        width: 2em;
+    }
+    .year-input[type="number"] {
+        font-weight: bold;
+        font-size: 1.1em;
+        text-align: center;
+        border: 2px solid #ffd700;
+        border-radius: 6px;
+        box-shadow: 0 1px 4px rgba(255,215,0,0.08);
+        transition: border-color 0.2s;
+    }
+    .year-input[type="number"]:focus {
+        border-color: #ffb300;
+        outline: none;
+        background: #fffbe6;
+    }
+    </style>
+            <div class="col-md-4">
+                <div class="form-check mt-4">
+                    <input type="checkbox" class="form-check-input" id="convertToEur" checked>
+                    <label class="form-check-label" for="convertToEur">Converti in Euro</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <canvas class="mt-4" id="seasonalityChart"></canvas>
+            </div>
+        </div>
+                    <div class="text-muted small mt-2" style="max-width:700px;margin:0 auto;">
+                        <strong>Nota:</strong> l'area ombreggiata rappresenta l'intervallo di attendibilità (media ± 1 deviazione standard) calcolato mese per mese. La linea mostra la media, mentre l'area indica la variabilità storica dei dati.
+                    </div>
+
+        <!-- Disclaimer -->
+        <div id="disclaimer-container"></div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                fetch('html/disclaimer.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('disclaimer-container').innerHTML = data;
+                    });
+            });
+        </script>
+    </div>
+</body>
+
+</html>
