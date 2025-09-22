@@ -32,15 +32,37 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="startYear">Anno Iniziale:</label>
-                    <select class="form-control" id="startYear"></select>
+                    <input class="form-control year-input" id="startYear" autocomplete="off" />
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="endYear">Anno Finale:</label>
-                    <select class="form-control" id="endYear"></select>
+                    <input class="form-control year-input" id="endYear" autocomplete="off" />
                 </div>
             </div>
+    <style>
+    .year-input[type="number"]::-webkit-inner-spin-button,
+    .year-input[type="number"]::-webkit-outer-spin-button {
+        opacity: 1;
+        height: 2em;
+        width: 2em;
+    }
+    .year-input[type="number"] {
+        font-weight: bold;
+        font-size: 1.1em;
+        text-align: center;
+        border: 2px solid #ffd700;
+        border-radius: 6px;
+        box-shadow: 0 1px 4px rgba(255,215,0,0.08);
+        transition: border-color 0.2s;
+    }
+    .year-input[type="number"]:focus {
+        border-color: #ffb300;
+        outline: none;
+        background: #fffbe6;
+    }
+    </style>
             <div class="col-md-4">
                 <div class="form-check mt-4">
                     <input type="checkbox" class="form-check-input" id="convertToEur" checked>

@@ -49,16 +49,17 @@ async function loadData() {
 
         // Imposta gli anni disponibili nei selettori
         const years = [...new Set(goldData.map(d => d.date.getFullYear()))].sort((a, b) => a - b);
-        const startYearSelect = document.getElementById('startYear');
-        const endYearSelect = document.getElementById('endYear');
-        startYearSelect.innerHTML = '';
-        endYearSelect.innerHTML = '';
-        years.forEach(year => {
-            startYearSelect.add(new Option(year, year));
-            endYearSelect.add(new Option(year, year));
-        });
-        startYearSelect.value = '1990';
-        endYearSelect.value = years[years.length - 1].toString();
+        // Sostituisci i <select> con <input type='number'>
+        const startYearInput = document.getElementById('startYear');
+        const endYearInput = document.getElementById('endYear');
+        startYearInput.type = 'number';
+        endYearInput.type = 'number';
+        startYearInput.min = years[0];
+        startYearInput.max = years[years.length - 1];
+        endYearInput.min = years[0];
+        endYearInput.max = years[years.length - 1];
+        startYearInput.value = 2010;
+        endYearInput.value = 2024;
 
         // Opzione visualizzazione: percentuale o assoluto
         let modeSelect = document.getElementById('seasonalityMode');
@@ -76,8 +77,8 @@ async function loadData() {
         }
 
         // Event listeners
-        startYearSelect.addEventListener('change', () => updateChart(goldData, monthlyRates));
-        endYearSelect.addEventListener('change', () => updateChart(goldData, monthlyRates));
+    startYearInput.addEventListener('change', () => updateChart(goldData, monthlyRates));
+    endYearInput.addEventListener('change', () => updateChart(goldData, monthlyRates));
         document.getElementById('convertToEur').addEventListener('change', () => updateChart(goldData, monthlyRates));
         modeSelect.addEventListener('change', () => updateChart(goldData, monthlyRates));
 
