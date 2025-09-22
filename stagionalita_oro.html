@@ -23,7 +23,10 @@
         </div>
         <br>
         <h1 class="text-center">Analisi stagionalità oro</h1>
-        <h5 class="text-center">Analisi della stagionalità del prezzo dell'oro dal 1975 al 2024. Calcolato come la media mobile a 12 mesi.</h5>
+        <h5 class="text-center">Analisi della stagionalità del prezzo dell'oro dal 1975 al 2024. Calcolato come la media mobile a 12 mesi. 
+            L'intervallo di confidenza +/-1σ è rappresentato dall'area ombreggiata nel grafico. 
+            Questo intervallo indica la variabilità storica dei prezzi dell'oro, dove ±1σ rappresenta una deviazione standard dalla media (volatilità).             
+        </h5>    
         
         <div class="row mb-4">
             <div class="col-md-4">
@@ -51,6 +54,9 @@
                 <canvas class="mt-4" id="seasonalityChart"></canvas>
             </div>
         </div>
+                    <div class="text-muted small mt-2" style="max-width:700px;margin:0 auto;">
+                        <strong>Nota:</strong> l'area ombreggiata rappresenta l'intervallo di attendibilità (media ± 1 deviazione standard) calcolato mese per mese. La linea mostra la media, mentre l'area indica la variabilità storica dei dati.
+                    </div>
 
         <!-- Disclaimer -->
         <div id="disclaimer-container"></div>

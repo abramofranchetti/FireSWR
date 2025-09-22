@@ -111,31 +111,46 @@ function calculateSeasonality(goldData, monthlyRates, startYear, endYear, conver
             dataByYear[year][month] = price;
         }
     });
+    // Funzione di supporto per media, varianza, std
+    function getStats(arr) {
+        if (!arr.length) return {mean: 0, variance: 0, std: 0};
+        const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
+        const variance = arr.reduce((a, b) => a + (b - mean) ** 2, 0) / arr.length;
+        const std = Math.sqrt(variance);
+        return {mean, variance, std};
+    }
     if (mode === 'absolute') {
-        // Media dei prezzi assoluti
         for (let year in dataByYear) {
             for (let m = 0; m < 12; m++) {
                 if (dataByYear[year][m] != null) monthlyData[m].push(dataByYear[year][m]);
             }
         }
-        return monthlyData.map(prices => prices.length ? (prices.reduce((a, b) => a + b, 0) / prices.length) : 0);
     } else {
-        // Media delle variazioni percentuali mese su mese
         // Per ogni anno, calcola la variazione % di ogni mese rispetto al mese precedente
-        for (let year in dataByYear) {
-            for (let m = 1; m < 12; m++) {
-                const prev = dataByYear[year][m - 1];
-                const curr = dataByYear[year][m];
-                if (prev != null && curr != null && prev !== 0) {
-                    const perc = ((curr - prev) / prev) * 100;
-                    monthlyData[m].push(perc);
+        for (let yearIdx = 0; yearIdx < Object.keys(dataByYear).length; yearIdx++) {
+            const year = Object.keys(dataByYear)[yearIdx];
+            const prevYear = Object.keys(dataByYear)[yearIdx - 1];
+            for (let m = 0; m < 12; m++) {
+                if (m === 0) {
+                    // Gennaio: usa dicembre dell'anno precedente se disponibile
+                    if (prevYear && dataByYear[prevYear][11] != null && dataByYear[year][0] != null && dataByYear[prevYear][11] !== 0) {
+                        const perc = ((dataByYear[year][0] - dataByYear[prevYear][11]) / dataByYear[prevYear][11]) * 100;
+                        monthlyData[0].push(perc);
+                    }
+                } else {
+                    const prev = dataByYear[year][m - 1];
+                    const curr = dataByYear[year][m];
+                    if (prev != null && curr != null && prev !== 0) {
+                        const perc = ((curr - prev) / prev) * 100;
+                        monthlyData[m].push(perc);
+                    }
                 }
             }
         }
-        // Il primo mese (gennaio) non ha variazione, lo mettiamo a 0 o null
-        monthlyData[0] = monthlyData[0].map(() => 0);
-        return monthlyData.map(prices => prices.length ? (prices.reduce((a, b) => a + b, 0) / prices.length) : 0);
     }
+    // Calcola stats per ogni mese
+    const stats = monthlyData.map(getStats);
+    return stats;
 }
 
 function updateChart(goldData, eurUsdRates) {
@@ -147,7 +162,11 @@ function updateChart(goldData, eurUsdRates) {
         alert('L\'anno iniziale deve essere minore o uguale all\'anno finale');
         return;
     }
-    const monthlyAverages = calculateSeasonality(goldData, eurUsdRates, startYear, endYear, convertToEur, mode);
+    const monthlyStats = calculateSeasonality(goldData, eurUsdRates, startYear, endYear, convertToEur, mode);
+    const means = monthlyStats.map(s => s.mean);
+    const stds = monthlyStats.map(s => s.std);
+    const upper = means.map((m, i) => m + stds[i]);
+    const lower = means.map((m, i) => m - stds[i]);
     const currency = convertToEur ? '€' : '$';
     const ctx = document.getElementById('seasonalityChart').getContext('2d');
     if (seasonalityChart) {
@@ -166,14 +185,43 @@ function updateChart(goldData, eurUsdRates) {
         data: {
             labels: ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
                 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
-            datasets: [{
-                label: label,
-                data: monthlyAverages,
-                borderColor: 'rgb(255, 215, 0)',
-                backgroundColor: 'rgba(255, 215, 0, 0.1)',
-                fill: true,
-                tension: 0.4
-            }]
+            datasets: [
+                {
+                    label: 'Intervallo ±1σ',
+                    data: upper,
+                    tension: 0.4,
+                    borderColor: 'rgba(100,100,255,0)',
+                    backgroundColor: 'rgba(100,100,255,0.15)',
+                    fill: {
+                        target: '1',
+                        above: 'rgba(100,100,255,0.15)',
+                        below: 'rgba(100,100,255,0.15)'
+                    },
+                    pointRadius: 0,
+                    borderWidth: 0,
+                    order: 1
+                },
+                {
+                    label: '',
+                    data: lower,
+                    tension: 0.4,
+                    borderColor: 'rgba(100,100,255,0)',
+                    backgroundColor: 'rgba(100,100,255,0.15)',
+                    fill: false,
+                    pointRadius: 0,
+                    borderWidth: 0,
+                    order: 1,                    
+                },
+                {
+                    label: label,
+                    data: means,
+                    borderColor: 'rgb(255, 215, 0)',
+                    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                    fill: false,
+                    tension: 0.4,
+                    pointRadius: 3
+                }
+            ]
         },
         options: {
             responsive: true,
@@ -188,9 +236,13 @@ function updateChart(goldData, eurUsdRates) {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
+                            if(context.dataset.label === 'Intervallo ±1σ' || context.dataset.label === 'Intervallo -1σ') return null;
                             return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}`;
                         }
                     }
+                },
+                legend: {
+                    display: true
                 }
             },
             scales: {
