@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			html += `<span style=\"color:#0077cc\">Reddito da capitale (pro-rata): <b>€${redditoCapitale.toFixed(2)}</b></span><br>`;
 			html += `<span style=\"color:#cc7700\">Reddito diverso: <b>€${redditoDiverso.toFixed(2)}</b></span><br>`;
 			if (redditoDiverso > 0.005) {
-				html += `<br><b>Credito d'imposta compensabile (minus necessaria per non pagare tasse sul reddito diverso):</b> <b>€${(creditoCompensabile).toFixed(2)}</b><br>`;
+				html += `<br><b>Minus necessaria per non pagare tasse sul reddito diverso:</b> <b>€${(creditoCompensabile).toFixed(2)}</b><br>`;
 			}
 			html += `<small>Secondo la normativa italiana (TUIR art. 44 e 67), la quota maturata fino alla vendita è reddito da capitale, l'eccedenza è reddito diverso.</small>`;
 
