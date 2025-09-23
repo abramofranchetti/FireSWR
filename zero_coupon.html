@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolo della capacità di recupero minusvalenze delle obbligazioni Zero Coupon</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/zero_coupon.js"></script>
+    <style>
+        .zc-form {
+            max-width: 500px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px #0001;
+            padding: 2em 2.5em;
+        }
+        .zc-form label {
+            display: block;
+            margin-top: 1em;
+            font-weight: 600;
+        }
+        .zc-form input {
+            width: 100%;
+            padding: 0.5em;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-top: 0.3em;
+        }
+        .zc-form button {
+            margin-top: 1.5em;
+            width: 100%;
+            padding: 0.7em;
+            background: #0077cc;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .zc-form button:hover {
+            background: #005fa3;
+        }
+        .zc-results {
+            max-width: 700px;
+            margin: 30px auto;
+            background: #f9f9f9;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px #0001;
+            padding: 2em 2.5em;
+        }
+        .zc-results h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Calcolo della capacità di recupero minusvalenze delle obbligazioni Zero Coupon</h1>        
+        <p class="text-muted text-center mt-3">
+            In Italia, le obbligazioni zero coupon sono soggette a un trattamento fiscale particolare. I guadagni derivanti dalla loro vendita o rimborso sono considerati "redditi diversi" solo se il prezzo di acquisto è inferiore al prezzo di vendita o rimborso. Questo significa che possono essere utilizzati per compensare minusvalenze pregresse nello "zainetto fiscale". Tuttavia, è importante considerare che gli interessi impliciti maturati durante il periodo di possesso non sono tassabili come redditi diversi, ma come redditi di capitale a meno che il prezzo di vendita non sia superiore al prezzo teorico di rimborso. Questo calcolatore ti aiuta a determinare la capacità di recupero delle minusvalenze in base al prezzo di acquisto, al prezzo di vendita e alla durata del possesso dell'obbligazione.
+        </p>
+    
+<form id="zeroCouponForm">
+
+        <div class="form-group mb-3">
+            <label for="tipoObbligazione" class="font-weight-bold">Tipo di obbligazione</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="tipoObbligazione"><i class="fas fa-landmark"></i></label>
+                </div>
+                <select id="tipoObbligazione" required class="custom-select">
+                    <option value="stato">Titolo di Stato (12,5%)</option>
+                    <option value="corporate">Obbligazione Corporate (26%)</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="dataAcquisto" class="font-weight-bold">Data di acquisto</label>
+            <input type="date" id="dataAcquisto" required class="form-control" placeholder="Seleziona la data di acquisto">
+        </div>
+        <div class="form-group mb-3">
+            <label for="dataScadenza" class="font-weight-bold">Data di scadenza</label>
+            <input type="date" id="dataScadenza" required class="form-control" placeholder="Seleziona la data di scadenza">
+        </div>
+        <div class="form-group mb-3">
+            <label for="prezzoAcquisto" class="font-weight-bold">Prezzo di acquisto (€)</label>
+            <input type="number" id="prezzoAcquisto" step="0.01" required class="form-control" placeholder="Es. 90">
+        </div>
+        <div class="form-group mb-3">
+            <label for="valoreNominale" class="font-weight-bold">Valore nominale (€)</label>
+            <input type="number" id="valoreNominale" step="0.01" required class="form-control" placeholder="Es. 100">
+        </div>
+        <div class="form-group mb-3">
+            <label for="dataVendita" class="font-weight-bold">Data di vendita <span class="text-muted">(opzionale)</span></label>
+            <input type="date" id="dataVendita" class="form-control" placeholder="Seleziona la data di vendita">
+        </div>
+        <div class="form-group mb-4">
+            <label for="prezzoVendita" class="font-weight-bold">Prezzo di vendita <span class="text-muted">(opzionale, €)</span></label>
+            <input type="number" id="prezzoVendita" step="0.01" class="form-control" placeholder="Es. 97">
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2">Calcola</button>
+
+        <script>
+        // Imposta valori di esempio al caricamento
+        document.addEventListener('DOMContentLoaded', function() {
+            const oggi = new Date();
+            const yyyy = oggi.getFullYear();
+            const mm = String(oggi.getMonth() + 1).padStart(2, '0');
+            const dd = String(oggi.getDate()).padStart(2, '0');
+            const dataAcq = `${yyyy}-${mm}-${dd}`;
+            const dataScad = `${yyyy + 5}-${mm}-${dd}`;
+            document.getElementById('tipoObbligazione').value = 'stato';
+            document.getElementById('dataAcquisto').value = dataAcq;
+            document.getElementById('dataScadenza').value = dataScad;
+            document.getElementById('prezzoAcquisto').value = 90;
+            document.getElementById('valoreNominale').value = 100;
+            document.getElementById('dataVendita').value = (yyyy + 3) + '-' + mm + '-' + dd;
+            document.getElementById('prezzoVendita').value = 97;
+        });
+        </script>
+    </form>
+
+    <div class="zc-results" id="zcResults" style="display:none;"></div>
+    <div class="chart-container mt-4" style="position: relative; height:60vh;">
+    <canvas id="zcChart" height="120"></canvas>
+    </div>
+    </div>
+     <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+</body>
+
+</html>
