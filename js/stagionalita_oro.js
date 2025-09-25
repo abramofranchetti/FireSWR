@@ -243,7 +243,21 @@ function updateChart(goldData, eurUsdRates) {
                 },
                 legend: {
                     display: true
-                }
+                },
+                annotation: {
+                    annotations: {
+                        zeroLine: {
+                            type: 'line',
+                            borderColor: 'red',
+                            borderWidth: 1,
+                            scaleID: 'y',
+                            value: 0,
+                            label: {
+                                display: false
+                            }
+                        }
+                    }
+                }                
             },
             scales: {
                 y: {
