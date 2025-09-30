@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         backgroundColor: 'rgba(0, 123, 255, 0.10)',
                         pointBackgroundColor: '#FFD700',
                         pointRadius: 4,
-                        fill: '+1', // fill verso il dataset successivo
+                        fill: '+1',
                         tension: 0.2,
                         order: 1
                     },
@@ -92,7 +92,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { display: true, labels: { color: '#333', font: { size: 16 } } },
-                    title: { display: false }
+                    title: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const idx = context.dataIndex;
+                                const grammiOro = dati[idx].grammiOro.toFixed(2);
+                                const stipendioEuro = dati[idx].stipendioEuro.toLocaleString('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+                                return ` ${grammiOro} g d'oro\n Stipendio euro: ${stipendioEuro}`;
+                            }
+                        }
+                    }
                 },
                 scales: {
                     x: { title: { display: true, text: 'Anno', color: '#333' }, ticks: { color: '#333' } },
