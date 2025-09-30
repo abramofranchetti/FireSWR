@@ -27,9 +27,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 .filter(s => oroMap[s.anno])
                 .map(s => ({
                     anno: s.anno,
-                    grammiOro: s.valore / oroMap[s.anno]
+                    grammiOro: s.valore / oroMap[s.anno],
+                    stipendioEuro: s.valore
                 }));
+
             mostraGrafico(datiGrafico);
+
+            // Calcolo per la scritta richiesta
+            if (datiGrafico.length > 1) {
+                const primo = datiGrafico[0];
+                const ultimoAnno = datiGrafico[datiGrafico.length - 1].anno;
+                const prezzoOroUltimoAnno = oroMap[ultimoAnno];
+                const valoreOroOggi = primo.grammiOro * prezzoOroUltimoAnno;
+                const valoreOroOggiRounded = valoreOroOggi.toLocaleString('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+                const stipendioInizialeRounded = primo.stipendioEuro.toLocaleString('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+                const testo = `Se oggi ti pagassero la stessa quantità di oro dell'inizio in euro il tuo stipendio sarebbe: <span style=\"color:#FFD700\">${valoreOroOggiRounded}</span><br><span style=\"font-size:0.95em;color:#888\">(lo stipendio in euro all'inizio era ${stipendioInizialeRounded})</span>`;
+                document.getElementById('stipendio-oro-oggi').innerHTML = testo;
+            }
         });
     });
 
