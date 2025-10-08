@@ -20,46 +20,124 @@
     <style>
         body {
             font-family: system-ui, sans-serif;
-            margin: 40px;
+            margin: 0;
             background: #f5f7fa;
             color: #333;
         }
 
+        .container {            
+            margin: 2rem auto;
+            padding: 1.5rem 1rem 2.5rem 1rem;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.08);
+        }
+
         h1 {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 18px;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a237e;
         }
 
         .filters {
-            text-align: center;
-            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem 1.2rem;
+            margin-bottom: 1.5rem;
         }
 
-        label {
-            margin: 0 10px;
+        .filters label {
+            margin: 0;
+            font-size: 1rem;
+            color: #333;
         }
 
-        button {
-            padding: 6px 12px;
+        .filters input[type="date"] {
+            border: 1px solid #bdbdbd;
+            border-radius: 5px;
+            padding: 3px 7px;
+            font-size: 1rem;
+            margin-left: 3px;
+        }
+
+        .filters button {
+            padding: 7px 16px;
             border: none;
             border-radius: 6px;
-            background-color: #007bff;
+            background-color: #1976d2;
             color: white;
             cursor: pointer;
             font-weight: 500;
+            font-size: 1rem;
+            margin-left: 2px;
+            margin-right: 2px;
+            transition: background 0.2s;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .filters button#resetZoomBtn {
+            background: #6c757d;
         }
 
-        canvas {
+        .filters button:hover {
+            background-color: #0d47a1;
+        }
+
+        .filters button#resetZoomBtn:hover {
+            background: #343a40;
+        }
+
+        .home-button {
+            font-size: 1.3rem;
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid #1976d2;
+            border-radius: 6px;
+            padding: 4px 14px;
+            background: #e3f2fd;
+            transition: background 0.2s, color 0.2s;
+        }
+        .home-button:hover {
+            background: #1976d2;
+            color: #fff;
+        }
+
+        #euriborChart {
+            width: 100% !important;
+            max-width: 100vw;
+            height: 500px !important;
+            min-height: 300px;
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+            padding: 6px;
+            margin: 0 auto 1.5rem auto;
             display: block;
-            margin: 0 auto;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 0.7rem 0.2rem 1.2rem 0.2rem;
+                border-radius: 10px;
+            }
+            h1 {
+                font-size: 1.2rem;
+                margin-bottom: 10px;
+            }
+            .filters label {
+                font-size: 0.98rem;
+            }
+            .filters button {
+                font-size: 0.98rem;
+                padding: 6px 10px;
+            }
+            #euriborChart {
+                height: 220px !important;
+            }
         }
     </style>
 </head>
@@ -79,7 +157,9 @@
             <button id="resetZoomBtn" style="background:#6c757d;">Reset Zoom</button>
         </div>
 
-        <canvas id="euriborChart" width="900" height="400"></canvas>
+        <div style="width:100%;max-width:100vw;">
+            <canvas id="euriborChart"></canvas>
+        </div>
 
         <script>
             const urls = {
@@ -87,8 +167,26 @@
                 euribor6m: 'https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR6MD_.HSTA?format=jsondata&detail=dataonly'
             };
 
-            const ctx = document.getElementById('euriborChart').getContext('2d');
+            const canvas = document.getElementById('euriborChart');
             let chart;
+            // Imposta la dimensione del canvas in base al device pixel ratio per evitare sgranature
+            function resizeCanvas() {
+                const dpr = window.devicePixelRatio || 1;
+                const container = canvas.parentElement;
+                const width = container.offsetWidth;
+                let height = 500;
+                if (window.innerWidth < 600) height = 220;
+                canvas.width = width * dpr;
+                canvas.height = height * dpr;
+                canvas.style.width = width + 'px';
+                canvas.style.height = height + 'px';
+            }
+            resizeCanvas();
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                if (chart) chart.resize();
+            });
+            const ctx = canvas.getContext('2d');
 
             // Imposta intervallo default = ultimi 10 anni
             const today = new Date();
@@ -149,7 +247,8 @@
                 const data6m = filtered6m.map(d => d.value);
 
                 if (chart) chart.destroy();
-
+                // Ridimensiona il canvas prima di ridisegnare
+                resizeCanvas();
                 chart = new Chart(ctx, {
                     type: 'line',
                     data: {
