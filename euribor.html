@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andamento Euribor 3M e 6M</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <!-- script src="js/ytm.js" defer></script>    -->
+
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            margin: 40px;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .filters {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin: 0 10px;
+        }
+
+        button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        canvas {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Andamento Euribor 3M e 6M</h1>
+
+        <div class="filters">
+            <label>Da: <input type="date" id="startDate"></label>
+            <label>A: <input type="date" id="endDate"></label>
+            <button id="updateBtn">Aggiorna</button>
+            <button id="resetZoomBtn" style="background:#6c757d;">Reset Zoom</button>
+        </div>
+
+        <canvas id="euriborChart" width="900" height="400"></canvas>
+
+        <script>
+            const urls = {
+                euribor3m: 'https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA?format=jsondata&detail=dataonly',
+                euribor6m: 'https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR6MD_.HSTA?format=jsondata&detail=dataonly'
+            };
+
+            const ctx = document.getElementById('euriborChart').getContext('2d');
+            let chart;
+
+            // Imposta intervallo default = ultimi 10 anni
+            const today = new Date();
+            const tenYearsAgo = new Date(today);
+            tenYearsAgo.setFullYear(today.getFullYear() - 10);
+            document.getElementById('startDate').value = tenYearsAgo.toISOString().split('T')[0];
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+
+            async function fetchEuriborData(url) {
+                const response = await fetch(url);
+                const data = await response.json();
+                // Nuova struttura: dataSets e structure sono alla radice
+                if (!data.dataSets || !data.dataSets[0] || !data.dataSets[0].series) {
+                    alert('Errore: dati Euribor non disponibili o struttura dati cambiata.');
+                    return [];
+                }
+                const seriesObj = data.dataSets[0].series;
+                const seriesKey = Object.keys(seriesObj)[0];
+                if (!seriesKey || !seriesObj[seriesKey] || !seriesObj[seriesKey].observations) {
+                    alert('Errore: dati Euribor non disponibili o struttura dati cambiata.');
+                    return [];
+                }
+                const observations = seriesObj[seriesKey].observations;
+                if (!data.structure || !data.structure.dimensions || !data.structure.dimensions.observation || !data.structure.dimensions.observation[0] || !data.structure.dimensions.observation[0].values) {
+                    alert('Errore: dati Euribor non disponibili o struttura dati cambiata.');
+                    return [];
+                }
+                const dates = data.structure.dimensions.observation[0].values.map(v => v.id);
+                const values = Object.values(observations).map(v => v[0]);
+
+                return dates.map((d, i) => ({ date: d, value: values[i] }));
+            }
+
+            function filterByDate(data, start, end) {
+                return data.filter(d => d.date >= start && d.date <= end);
+            }
+
+            async function loadChart() {
+                const start = document.getElementById('startDate').value;
+                const end = document.getElementById('endDate').value;
+
+                const [euribor3m, euribor6m] = await Promise.all([
+                    fetchEuriborData(urls.euribor3m),
+                    fetchEuriborData(urls.euribor6m)
+                ]);
+
+                const filtered3m = filterByDate(euribor3m, start, end);
+                const filtered6m = filterByDate(euribor6m, start, end);
+
+                // Se i dati sono vuoti, mostra un messaggio e non tentare di disegnare il grafico
+                if (filtered3m.length === 0 && filtered6m.length === 0) {
+                    alert('Nessun dato disponibile per il periodo selezionato.');
+                    return;
+                }
+
+                const labels = filtered3m.map(d => d.date);
+                const data3m = filtered3m.map(d => d.value);
+                const data6m = filtered6m.map(d => d.value);
+
+                if (chart) chart.destroy();
+
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Euribor 3M',
+                                data: data3m,
+                                borderColor: '#007bff',
+                                fill: false,
+                                tension: 0.2,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'Euribor 6M',
+                                data: data6m,
+                                borderColor: '#28a745',
+                                fill: false,
+                                tension: 0.2,
+                                pointRadius: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Data' },
+                                ticks: { maxTicksLimit: 12 }
+                            },
+                            y: {
+                                title: { display: true, text: 'Tasso (%)' }
+                            }
+                        },
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(3)}%`
+                                }
+                            },
+                            zoom: {
+                                pan: {
+                                    enabled: true,
+                                    mode: 'x',
+                                    modifierKey: 'ctrl'
+                                },
+                                zoom: {
+                                    wheel: { enabled: true },
+                                    pinch: { enabled: true },
+                                    mode: 'x'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            document.getElementById('updateBtn').addEventListener('click', loadChart);
+            document.getElementById('resetZoomBtn').addEventListener('click', () => chart.resetZoom());
+
+            // Aggiorna il grafico automaticamente al cambio data
+            document.getElementById('startDate').addEventListener('change', loadChart);
+            document.getElementById('endDate').addEventListener('change', loadChart);
+
+            loadChart();
+        </script>
+    </div>
+
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
