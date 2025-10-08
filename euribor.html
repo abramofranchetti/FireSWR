@@ -182,10 +182,11 @@
                 canvas.style.height = height + 'px';
             }
             resizeCanvas();
-            window.addEventListener('resize', () => {
-                resizeCanvas();
-                if (chart) chart.resize();
-            });
+            // Rimuovo il resize automatico su ogni scroll/resize per evitare bug su iPhone
+            // window.addEventListener('resize', () => {
+            //     resizeCanvas();
+            //     if (chart) chart.resize();
+            // });
             const ctx = canvas.getContext('2d');
 
             // Imposta intervallo default = ultimi 10 anni
@@ -247,7 +248,7 @@
                 const data6m = filtered6m.map(d => d.value);
 
                 if (chart) chart.destroy();
-                // Ridimensiona il canvas prima di ridisegnare
+                // Ridimensiona il canvas solo qui, prima di ridisegnare
                 resizeCanvas();
                 chart = new Chart(ctx, {
                     type: 'line',
