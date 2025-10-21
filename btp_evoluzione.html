@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>BTP Valore Evoluzione - Simulazione Monte Carlo</title>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <style>
+      body { font-family: Arial, Helvetica, sans-serif; margin: 0; }
+      .controls { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; margin-bottom:12px; }
+      .control { display:flex; flex-direction:column; font-size:14px; margin-right:8px; }
+      label { font-weight:600; font-size:13px; margin-bottom:4px; }         
+      input[type=number], select, textarea { padding:6px 8px; font-size:14px; }
+      button { padding:8px 12px; font-size:14px; cursor:pointer; }
+      #chart { width:100%; height:560px; }
+      .summary { margin-top:12px; font-size:14px; }
+      .controls .control.small { min-width:140px; }
+    </style>
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  </head>
+  <body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+    <h2>BTP 7 anni - Simulazione Monte Carlo rendimento netto cumulato (%)</h2>
+  <p>Definisci gli scaglioni di cedole (anni e % annua) e seleziona la frequenza dei pagamenti (trimestrale o semestrale). Il titolo è emesso a 100.</p>
+
+
+    <div class="controls">
+      <div class="control">
+        <label for="baseYield">Rendimento di mercato iniziale (annuo %)</label>
+        <input id="baseYield" type="number" step="0.01" value="3.10" />
+
+      <div class="control" style="min-width:260px;">
+        <label for="scaglioni">Scaglioni cedole (anni,%)</label>
+        <textarea id="scaglioni" rows="3" style="padding:6px; font-size:13px;">3,2.6
+2,3.1
+2,4.0</textarea>
+        <div style="font-size:12px; color:#444;">Formato: una riga = &lt;anni&gt;,&lt;cedola annua %&gt;. La durata totale è 7 anni; se la somma anni è diversa verrà troncata o completata.</div>
+      </div>
+
+      <div class="control">
+        <label for="scostamento">Scostamento tassi per simulazione (%)</label>
+        <input id="scostamento" type="number" step="0.01" value="1.00" />
+      </div>
+      </div>
+
+      <div class="control">
+        <label for="nsim">Simulazioni Monte Carlo</label>
+        <input id="nsim" type="number" min="100" step="100" value="200000" />
+      </div>
+
+      <div class="control">
+        <label for="tax">Tassazione cedole (%)</label>
+        <input id="tax" type="number" step="0.01" value="12.5" />
+      </div>
+
+      <div class="control">
+        <label for="premium">Premio a scadenza (%)</label>
+        <input id="premium" type="number" step="0.01" value="0.8" />
+      </div>
+
+      <div class="control">
+        <label for="mode">Modalità tassi</label>
+        <select id="mode">
+          <option value="shift">Shift costante per simulazione (Uniforme)</option>
+          <option value="rw">Random walk per trimestre (gaussiano)</option>
+        </select>
+      </div>
+
+      <div class="control small">
+        <label for="frequency">Frequenza cedole</label>
+        <select id="frequency">
+          <option value="4">Trimestrale (4/anno)</option>
+          <option value="2">Semestrale (2/anno)</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label for="reinvest">Reinvestire cedole</label>
+        <select id="reinvest">
+          <option value="yes">Sì (reinvestimento)</option>
+          <option value="no">No (non reinvestire)</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label for="seedNote">Nota</label>
+        <div style="font-weight:normal; font-size:12px;">Variazione ±1% dei tassi per simulazione (default). Premi "Esegui" per aggiornare.</div>
+      </div>
+
+      <div style="align-self:flex-end">
+        <button id="runBtn">Esegui simulazione</button>
+      </div>
+    </div>
+
+    <div id="chart"></div>
+
+    <div class="summary" id="summary"></div>
+
+    <script>
+  // Parametri del BTP
+  const YEARS = 7;
+  const FACE = 100.0;
+  // default periods per year (4 trimestrale)
+  const DEFAULT_PERIODS_PER_YEAR = 4;
+
+    // Build coupon schedule from dynamic scaglioni input (textarea)
+  function buildCouponScheduleFromScaglioni(scaglioniText, periodsPerYear) {
+      // parse lines like: "3,2.6" meaning 3 years at 2.6%
+      const parts = scaglioniText.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+      const schedule = [];
+      for (const line of parts) {
+        const m = line.split(',').map(x => x.trim());
+        if (m.length < 2) continue;
+        const years = parseFloat(m[0]);
+        const rate = parseFloat(m[1]);
+        if (isNaN(years) || isNaN(rate) || years <= 0) continue;
+        schedule.push({ years: years, rate: rate / 100.0 });
+      }
+
+  // convert to periodic coupons (1-based index up to totalPeriods)
+  periodsPerYear = (periodsPerYear == null) ? DEFAULT_PERIODS_PER_YEAR : periodsPerYear;
+  const totalPeriods = YEARS * periodsPerYear;
+      const couponsArr = new Array(totalPeriods + 1).fill(0);
+  let pIndex = 1;
+      for (const bucket of schedule) {
+        const periods = Math.round(bucket.years * periodsPerYear);
+        for (let k = 0; k < periods && pIndex <= totalPeriods; k++, pIndex++) {
+          couponsArr[pIndex] = FACE * bucket.rate / periodsPerYear;
+        }
+        if (pIndex > totalPeriods) break;
+      }
+      // if total years < 7, pad with 0 cedole
+      while (pIndex <= totalPeriods) {
+        couponsArr[pIndex] = 0;
+        pIndex++;
+      }
+      return couponsArr;
+    }
+
+    // Prezzo al tempo t (dopo il pagamento del coupon t) dato un rendimento trimestrale qy
+    function priceAfterCoupon(t, qy, couponsArr, totalPeriods) {
+      // Remaining payments are from t+1 ... totalPeriods plus redemption at totalPeriods
+      let pv = 0;
+      for (let j = t + 1; j <= totalPeriods; j++) {
+        pv += couponsArr[j] / Math.pow(1 + qy, j - t);
+      }
+      // redemption (without premium here)
+      pv += FACE / Math.pow(1 + qy, totalPeriods - t);
+      return pv;
+    }
+
+    // Monte Carlo
+    function runMonteCarlo(nsim, baseYieldAnnual, mode, taxPct, premiumPct, reinvestOpt, couponsArr, scostamentoPct, periodsPerYear) {
+      const baseYield = baseYieldAnnual / 100.0;
+      const taxRate = (taxPct == null) ? 0.125 : (taxPct / 100.0);
+      const premiumRate = (premiumPct == null) ? 0.008 : (premiumPct / 100.0);
+      const scost = (scostamentoPct == null) ? 0.01 : (scostamentoPct / 100.0);
+      const results = [];
+      const totalPeriods = YEARS * periodsPerYear;
+      for (let s = 0; s < nsim; s++) {
+        // determine per-simulation or per-period yields
+        const totalPeriods = YEARS * periodsPerYear;
+        let qySeries = new Array(totalPeriods + 1);
+        if (mode === 'shift') {
+          const shift = (Math.random() * 2 - 1) * scost; // uniform [-scost, +scost]
+          const annual = baseYield + shift;
+          const qy = annual / periodsPerYear;
+          for (let t = 1; t <= totalPeriods; t++) qySeries[t] = qy;
+        } else {
+          // random walk per period with small sd, but keep global clamp within ±scost
+          const sdPeriod = Math.max(0.0001, scost / periodsPerYear / 2.0); // heuristic sd tied to scostamento
+          let current = baseYield;
+          for (let t = 1; t <= totalPeriods; t++) {
+            current += gaussianRandom() * sdPeriod;
+            // clamp to base ±scost
+            current = Math.max(baseYield - scost, Math.min(baseYield + scost, current));
+            qySeries[t] = current / periodsPerYear;
+          }
+        }
+
+        // simulate portfolio value over time just after coupon payment each period
+        // We include time 0 as initial point (0% return)
+        let accumulated = 0; // reinvested coupons (net of tax)
+        const series = [];
+        // push t=0 initial value (no coupons yet)
+        series.push(0.0);
+        for (let t = 1; t <= totalPeriods; t++) {
+          const qy = qySeries[t];
+          if (reinvestOpt === 'yes') {
+            // previous reinvested coupons grow
+            accumulated = accumulated * (1 + qy);
+            // apply tax to coupon before reinvestment and add
+            const netCoupon = couponsArr[t] * (1 - taxRate);
+            accumulated += netCoupon;
+          } else {
+            // do not reinvest: keep accumulated as sum of net coupons (no growth)
+            accumulated += couponsArr[t] * (1 - taxRate);
+          }
+          // price after coupon t (price of remaining cashflows and redemption without premium)
+          const price = priceAfterCoupon(t, qy, couponsArr, totalPeriods);
+          // if final period, add premium to redemption (in priceAfterCoupon we didn't include premium)
+          const isFinal = (t === totalPeriods);
+          const redemptionPremium = isFinal ? FACE * premiumRate : 0;
+          const portfolio = price + accumulated + redemptionPremium;
+          const cumulPct = (portfolio - FACE) / FACE * 100.0;
+          series.push(cumulPct);
+        }
+        results.push(series);
+      }
+      return results;
+    }
+
+    // helper gaussian random (Box-Muller)
+    function gaussianRandom() {
+      let u = 0, v = 0;
+      while(u === 0) u = Math.random();
+      while(v === 0) v = Math.random();
+      return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    }
+
+    function aggregate(results) {
+      const nsim = results.length;
+      if (nsim === 0) return { mean: [], min: [], max: [] };
+      const length = results[0].length; // include t=0
+      const mean = new Array(length).fill(0);
+      const min = new Array(length).fill(Infinity);
+      const max = new Array(length).fill(-Infinity);
+      for (let i = 0; i < nsim; i++) {
+        const series = results[i];
+        for (let t = 0; t < length; t++) {
+          const v = series[t];
+          mean[t] += v;
+          if (v < min[t]) min[t] = v;
+          if (v > max[t]) max[t] = v;
+        }
+      }
+      for (let t = 0; t < length; t++) mean[t] = mean[t] / nsim;
+      return { mean, min, max };
+    }
+
+    // Plot — now the mean line is displayed as steps at coupon times
+    function plot(agg, xLabels, periodsPerYear) {
+      const upper = { x: xLabels, y: agg.max, name: 'Max', mode: 'lines', line: {width:0}, hoverinfo:'skip', showlegend:false };
+      const lower = { x: xLabels, y: agg.min, name: 'Range', mode: 'lines', fill: 'tonexty', fillcolor: 'rgba(0,123,167,0.15)', line: {width:0}, hoverinfo:'skip' };
+
+      // create stepped x/y for mean so the line is flat until next coupon (step post)
+      const stepX = [];
+      const stepY = [];
+  // xLabels now include t=0 ... total periods
+      for (let i = 0; i < xLabels.length; i++) {
+        const x = xLabels[i];
+        const y = agg.mean[i];
+        if (i === 0) {
+          // start at 0
+          stepX.push(x);
+          stepY.push(y);
+        } else {
+          // extend previous value until just before this x, then step up at x
+          stepX.push(x - 0.001);
+          stepY.push(agg.mean[i-1]);
+          stepX.push(x);
+          stepY.push(y);
+        }
+      }
+
+      const mean = { x: stepX, y: stepY, name: 'Media (step)', mode: 'lines', line: {color: 'rgb(0,123,167)', width:2}, hovertemplate: '%{y:.2f}%%<extra></extra>' };
+
+      const data = [ upper, lower, mean ];
+
+      const layout = {
+        title: 'Rendimento netto cumulato (%) con cedole',
+        xaxis: { title: 'Anni', tickmode: 'array', tickvals: xLabels, ticktext: xLabels.map(v => (v/periodsPerYear).toFixed(2)) },
+        yaxis: { title: 'Rendimento cumulato (%)' },
+        hovermode: 'closest',
+        legend: { orientation: 'h' }
+      };
+
+      Plotly.react('chart', data, layout, {responsive:true});
+    }
+
+    function buildXLabels(totalPeriods) {
+      const arr = [];
+      for (let t = 0; t <= totalPeriods; t++) arr.push(t);
+      return arr;
+    }
+
+    function showSummary(agg) {
+      const finalMean = agg.mean[agg.mean.length - 1];
+      const finalMin = agg.min[agg.min.length - 1];
+      const finalMax = agg.max[agg.max.length - 1];
+      document.getElementById('summary').innerHTML =
+        `<strong>Risultato a 7 anni:</strong> rendimento medio cumulato ${finalMean.toFixed(2)}% &nbsp; (min ${finalMin.toFixed(2)}%, max ${finalMax.toFixed(2)}%)`;
+    }
+
+    // UI wiring
+    document.getElementById('runBtn').addEventListener('click', () => {
+      const nsim = parseInt(document.getElementById('nsim').value, 10) || 1000;
+      const baseYield = parseFloat(document.getElementById('baseYield').value) || 3.0;
+      const mode = document.getElementById('mode').value;
+      const taxPct = parseFloat(document.getElementById('tax').value);
+      const premiumPct = parseFloat(document.getElementById('premium').value);
+      const reinvestOpt = document.getElementById('reinvest').value;
+      const scaglioniText = document.getElementById('scaglioni').value;
+      const scostamentoPct = parseFloat(document.getElementById('scostamento').value);
+      const periodsPerYear = parseInt(document.getElementById('frequency').value, 10) || DEFAULT_PERIODS_PER_YEAR;
+      const couponsArr = buildCouponScheduleFromScaglioni(scaglioniText, periodsPerYear);
+      const totalPeriods = YEARS * periodsPerYear;
+      document.getElementById('runBtn').disabled = true;
+      document.getElementById('runBtn').textContent = 'Eseguendo...';
+
+      // run in a timeout to keep UI responsive for big nsim
+      setTimeout(() => {
+        const results = runMonteCarlo(nsim, baseYield, mode, taxPct, premiumPct, reinvestOpt, couponsArr, scostamentoPct, periodsPerYear);
+        const agg = aggregate(results);
+        const xLabels = buildXLabels(totalPeriods);
+        plot(agg, xLabels, periodsPerYear);
+        showSummary(agg);
+        document.getElementById('runBtn').disabled = false;
+        document.getElementById('runBtn').textContent = 'Esegui simulazione';
+      }, 20);
+    });
+
+    // run default on load (with UI params)
+    window.addEventListener('load', () => document.getElementById('runBtn').click());
+    </script>
+     <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+  </body>
+</html>

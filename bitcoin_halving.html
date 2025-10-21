@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Halving Bitcoin discreto</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  /* Grafico compatto */
+  .chart-container {
+    max-width: 720px;
+    width: 100%;
+    height: 220px; /* compatto */
+    margin: 6px 0;
+    padding: 0;
+  }
+  canvas { display: block; }
+  pre#output {
+    white-space: pre-wrap;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+<h2>Simulazione discreta della creazione di Bitcoin</h2>
+
+<div class="chart-container">
+  <canvas id="halvingChart" aria-label="Grafico halving Bitcoin" role="img"></canvas>
+</div>
+
+<pre id="output"></pre>
+
+<!-- Chart.js dal CDN (usa versione compatibile moderna) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const SATOSHIS_PER_BTC = 100_000_000;
+const BLOCKS_PER_EPOCH = 210_000;
+const INITIAL_REWARD_BTC = 50;
+
+// Calcola dati per ogni halving
+let rewardSatoshi = Math.floor(INITIAL_REWARD_BTC * SATOSHIS_PER_BTC);
+let totalSatoshi = 0;
+let epoch = 0;
+let lines = [];
+
+const labels = [];
+const rewardSatoshiData = [];
+const rewardData = []; // legacy in BTC if needed elsewhere
+const totalData = [];
+
+while (rewardSatoshi > 0) {
+  const minedSatoshi = rewardSatoshi * BLOCKS_PER_EPOCH;
+  totalSatoshi += minedSatoshi;
+
+  const totalBTC = totalSatoshi / SATOSHIS_PER_BTC;
+  const rewardBTC = rewardSatoshi / SATOSHIS_PER_BTC;
+
+  labels.push(`#${epoch}`);
+  // manteniamo sia il valore in BTC (per testo) sia in satoshi per la scala destra
+  rewardData.push(rewardBTC);
+  rewardSatoshiData.push(rewardSatoshi);
+  totalData.push(totalBTC);
+
+  lines.push(
+    `Halving #${epoch.toString().padStart(2)} | Ricompensa: ${formatValue(rewardBTC)} | Totale emesso: ${formatValue(totalBTC)}`
+  );
+
+  rewardSatoshi = Math.floor(rewardSatoshi / 2);
+  epoch++;
+
+  // sicurezza contro loop infiniti
+  if (epoch > 100) break;
+}
+
+lines.push(`\nTotale finale: ${formatValue(totalSatoshi / SATOSHIS_PER_BTC)}`);
+document.getElementById("output").textContent = lines.join("\n");
+
+// Formattazione: mostra in satoshi se valore < 0.001 BTC
+function formatValue(btc) {
+  if (!isFinite(btc)) return String(btc);
+  const abs = Math.abs(btc);
+  if (abs === 0) return '0';
+  if (abs < 0.001) {
+    const sat = Math.round(btc * SATOSHIS_PER_BTC);
+    return `${sat} sat`;
+  }
+  // altrimenti mostra in BTC con precisione ragionevole
+  if (abs >= 1) return `${btc.toFixed(2)} BTC`;
+  return `${btc.toFixed(6)} BTC`;
+}
+
+function formatSatoshi(sat) {
+  if (!isFinite(sat)) return String(sat);
+  const sign = sat < 0 ? '-' : '';
+  const abs = Math.abs(Math.round(sat));
+  // usa formattazione locale italiana per separatori delle migliaia
+  return `${sign}${abs.toLocaleString('it-IT')} sat`;
+}
+
+// Crea il grafico compatto
+const ctx = document.getElementById('halvingChart').getContext('2d');
+
+// Calcola posizione "oggi circa" sull'asse X: stimiamo l'epoch corrente
+// come quello con ricompensa 3.125 BTC (halving 2024). Se non trovato,
+// usiamo l'epoch 4 come fallback.
+const TODAY_REWARD_SAT_EST = Math.round(3.125 * SATOSHIS_PER_BTC); // 312_500_000
+let todayIndex = rewardSatoshiData.findIndex(s => s === TODAY_REWARD_SAT_EST);
+if (todayIndex === -1) {
+  // fallback: usare la 4a halving (index 4) se presente, altrimenti ultimo indice non-zero
+  todayIndex = labels.indexOf('#4') !== -1 ? labels.indexOf('#4') : Math.max(0, labels.length - 1);
+}
+const todayLabel = labels[todayIndex];
+// usa indice numerico per l'annotazione (più robusto con asse category)
+const todayX = todayIndex;
+
+// Plugin custom per disegnare la linea verticale "oggi" se non si vuole dipendere
+// dal chartjs-plugin-annotation. Registriamo prima del render del chart.
+Chart.register({
+  id: 'todayLinePlugin',
+  afterDraw: (chart) => {
+    if (typeof todayX !== 'number' || todayX < 0) return;
+    const xScale = chart.scales.x;
+    if (!xScale) return;
+    const ctx = chart.ctx;
+    // calcola l'x pixel per l'indice todayX
+    const x = xScale.getPixelForTick(todayX);
+    ctx.save();
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255,0,0,0.9)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2,2]);
+    ctx.moveTo(x, chart.chartArea.top);
+    ctx.lineTo(x, chart.chartArea.bottom);
+    ctx.stroke();
+    ctx.restore();
+  }
+});
+
+const halvingChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Ricompensa per blocco (sat)',
+        data: rewardSatoshiData,
+        borderColor: '#007bff',
+        backgroundColor: 'rgba(0,123,255,0.12)',
+        borderWidth: 2.5,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        tension: 0,
+        stepped: 'middle',
+        fill: false,
+        yAxisID: 'y1',
+      },
+      {
+        label: 'Totale emesso (BTC)',
+        data: totalData,
+        borderColor: '#28a745',
+        backgroundColor: 'rgba(40,167,69,0.06)',
+        borderWidth: 1,
+        pointRadius: 1,
+        tension: 0.25,
+        yAxisID: 'y',
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        labels: { boxWidth: 12, boxHeight: 6, padding: 8, font: {size: 11} }
+      },
+      tooltip: {
+        padding: 6,
+        callbacks: {
+          label: function(context) {
+            const val = context.parsed.y;
+            const label = context.dataset.label ? context.dataset.label + ': ' : '';
+            // Se dataset collegato a y1 mostriamo satoshi
+            if (context.dataset.yAxisID === 'y1') {
+              return label + formatSatoshi(val);
+            }
+            return label + formatValue(val);
+          }
+        }
+      }
+    },
+    layout: { padding: 4 },
+    elements: { point: { hoverRadius: 4 } },
+    scales: {
+      x: {
+        ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10, font: {size: 11} },
+        grid: { display: false }
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function(value) {
+            // value è in BTC
+            return formatValue(value);
+          },
+          maxTicksLimit: 6,
+          font: {size: 11},
+          padding: 6
+        },
+        grid: { color: 'rgba(0,0,0,0.05)' }
+      }
+      ,
+      y1: {
+        position: 'right',
+        beginAtZero: true,
+        grid: { drawOnChartArea: false },
+        ticks: {
+          callback: function(value) {
+            // value è in satoshi
+            return formatSatoshi(value);
+          },
+          maxTicksLimit: 6,
+          font: {size: 11},
+          padding: 6
+        }
+      }
+    }
+  }
+});
+
+
+</script>
+</body>
+</html>
