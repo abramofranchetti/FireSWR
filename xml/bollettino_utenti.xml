@@ -1,907 +1,356 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <previsioni>
-<data_emissione date="26/10/2025 alle 13:00" />
-<data_aggiornamento date="27/10 alle 09.00" />
+<data_emissione date="27/10/2025 alle 13:00" />
 <meteogrammi>
 <meteogramma zoneid="1" name="Dolomiti Nord-Est">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura 2000m" type="text" value="max 3 C" />
-          <previsione title="Temperatura 3000m" type="text" value="max -6 C" />
-          <previsione title="Precipitazioni" type="text" value="Modeste locali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1600-1800 m" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura 2000m" type="text" value="min -3 C" />
-          <previsione title="Temperatura 3000m" type="text" value="min -8 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e2.png"/>
-          <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
           <previsione title="Temperatura 2000m" type="text" value="max 3 C" />
-          <previsione title="Temperatura 3000m" type="text" value="max -5 C" />
-					<previsione title="Precipitazioni" type="text" value="Modeste" />
+          <previsione title="Temperatura 3000m" type="text" value="max -4 C" />
+          <previsione title="Precipitazioni" type="text" value="Modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1500-1600 m" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Quota neve" type="text" value="Oltre i 1700-1900 m" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura 2000m" type="text" value="min -2 C" />
-          <previsione title="Temperatura 3000m" type="text" value="min -9 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min -3 C" />
+          <previsione title="Temperatura 3000m" type="text" value="min -8 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura 2000m" type="text" value="max 4 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura 2000m" type="text" value="max 6 C" />
           <previsione title="Temperatura 3000m" type="text" value="max -1 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="mer 29 ottobre">
+				<scadenza data="mer 29 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
          <previsione title="Cielo" type="text" value="Poco nuvoloso per velature" />
+          <previsione title="Temperatura 2000m" type="text" value="min 2 C" />
+          <previsione title="Temperatura 3000m" type="text" value="min 0 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
-				<scadenza data="gio 30 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a5.png"/>
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste intermittenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="20%" />
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per nubi alte" />
+          <previsione title="Temperatura 2000m" type="text" value="max 6 C" />
+          <previsione title="Temperatura 3000m" type="text" value="max 3 C" />
+					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Modeste locali" />
+					<previsione title="Probabilita' precipitazione" type="text" value="20%" />
+					<previsione title="Quota neve" type="text" value="Oltre i 2700-3000 m" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png"/>
+         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste locali" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="Oltre i 2700-3000 m" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 </meteogramma>
 
 <meteogramma zoneid="2" name="Dolomiti Sud-Ovest">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura 2000m" type="text" value="max 3 C" />
-          <previsione title="Temperatura 3000m" type="text" value="max -6 C" />
-          <previsione title="Precipitazioni" type="text" value="Modeste locali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1600-1800 m" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura 2000m" type="text" value="min -3 C" />
-          <previsione title="Temperatura 3000m" type="text" value="min -8 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e2.png"/>
-          <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
           <previsione title="Temperatura 2000m" type="text" value="max 3 C" />
-          <previsione title="Temperatura 3000m" type="text" value="max -5 C" />
-					<previsione title="Precipitazioni" type="text" value="Modeste" />
+          <previsione title="Temperatura 3000m" type="text" value="max -4 C" />
+          <previsione title="Precipitazioni" type="text" value="Modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1500-1600 m" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Quota neve" type="text" value="Oltre i 1700-1900 m" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura 2000m" type="text" value="min -2 C" />
-          <previsione title="Temperatura 3000m" type="text" value="min -9 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min -3 C" />
+          <previsione title="Temperatura 3000m" type="text" value="min -8 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura 2000m" type="text" value="max 4 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura 2000m" type="text" value="max 6 C" />
           <previsione title="Temperatura 3000m" type="text" value="max -1 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="mer 29 ottobre">
+				<scadenza data="mer 29 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
          <previsione title="Cielo" type="text" value="Poco nuvoloso per velature" />
+          <previsione title="Temperatura 2000m" type="text" value="min 2 C" />
+          <previsione title="Temperatura 3000m" type="text" value="min 0 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
-				<scadenza data="gio 30 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a5.png"/>
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste intermittenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="20%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-</meteogramma>
-
-<meteogramma zoneid="3" name="Belluno e Prealpi orientali">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura 1500m" type="text" value="max 8 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 3 C" />
-          <previsione title="Precipitazioni" type="text" value="Modeste locali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1700-2000 m" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
+				<scadenza data="mer 29 ottobre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura 1500m" type="text" value="min 2 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura 1500m" type="text" value="max 6 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 2 C" />
+         <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per nubi alte" />
+          <previsione title="Temperatura 2000m" type="text" value="max 6 C" />
+          <previsione title="Temperatura 3000m" type="text" value="max 3 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
+				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Modeste locali" />
+					<previsione title="Probabilita' precipitazione" type="text" value="20%" />
+					<previsione title="Quota neve" type="text" value="Oltre i 2700-3000 m" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png"/>
+         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste locali" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="Oltre i 2700-3000 m" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+</meteogramma>
+
+<meteogramma zoneid="3" name="Belluno e Prealpi orientali">
+				<scadenza data="lun 27 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura 1500m" type="text" value="max 6 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 2 C" />
+          <previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="" />
+				</scadenza>
 				<scadenza data="mar 28 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
           <previsione title="Temperatura 1500m" type="text" value="min 3 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min 1 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura 1500m" type="text" value="max 8 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 4 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 29 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="gio 30 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-</meteogramma>
-
-<meteogramma zoneid="4" name="Prealpi centrali">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura 1500m" type="text" value="max 8 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 3 C" />
-          <previsione title="Precipitazioni" type="text" value="Modeste locali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="20%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura 1500m" type="text" value="min 2 C" />
           <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="lun 27 ottobre pomeriggio">
+				<scadenza data="mar 28 ottobre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
-          <previsione title="Temperatura 1500m" type="text" value="max 6 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 2 C" />
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura 1500m" type="text" value="max 9 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 6 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per nubi basse" />
+          <previsione title="Temperatura 1500m" type="text" value="min 4 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min 2 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per nubi alte" />
+          <previsione title="Temperatura 1500m" type="text" value="max 7 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 4 C" />
+					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Modeste" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
+         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
+				  <previsione title="Precipitazioni" type="text" value="Moderate" />
+					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+</meteogramma>
+
+<meteogramma zoneid="4" name="Prealpi centrali">
+				<scadenza data="lun 27 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura 1500m" type="text" value="max 6 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 2 C" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="" />
+				</scadenza>
 				<scadenza data="mar 28 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
           <previsione title="Temperatura 1500m" type="text" value="min 3 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min 1 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura 1500m" type="text" value="max 8 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 4 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura 1500m" type="text" value="max 9 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 6 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="mer 29 ottobre">
+				<scadenza data="mer 29 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+         <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per nubi basse" />
+          <previsione title="Temperatura 1500m" type="text" value="min 4 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min 2 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per nubi alte" />
+          <previsione title="Temperatura 1500m" type="text" value="max 7 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 4 C" />
+					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="gio 30 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Precipitazioni" type="text" value="Modeste" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
+         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
+				  <previsione title="Precipitazioni" type="text" value="Moderate" />
+					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 </meteogramma>
 
 <meteogramma zoneid="5" name="Pedemontana orientale">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-          <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
+				<scadenza data="lun 27 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 13/15 C" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 2/4 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 14/16 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura" type="text" value="min 2/4 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura" type="text" value="max 14/16 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
           <previsione title="Temperatura" type="text" value="min 3/5 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
-				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
           <previsione title="Temperatura" type="text" value="max 15/17 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
-				<scadenza data="mer 29 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
 				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 </meteogramma>
 
 <meteogramma zoneid="6" name="Treviso e pianura orientale">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-          <previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mer 29 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-				<scadenza data="gio 30 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-</meteogramma>
-
-<meteogramma zoneid="7" name="Veneziano orientale">
-				<scadenza data="dom 26 ottobre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura" type="text" value="max 14/16 C" />
-          <previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da ovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da sudovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mer 29 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-				<scadenza data="gio 30 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-</meteogramma>
-
-<meteogramma zoneid="8" name="Prealpi occidentali">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura 1500m" type="text" value="max 8 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 3 C" />
-          <previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura 1500m" type="text" value="min 2 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
-          <previsione title="Temperatura 1500m" type="text" value="max 6 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 2 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura 1500m" type="text" value="min 3 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min 1 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura 1500m" type="text" value="max 8 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 4 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 29 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="gio 30 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-</meteogramma>
-
-<meteogramma zoneid="9" name="Vicenza e pedemontana">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
           <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 14/16 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mer 29 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-				<scadenza data="gio 30 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-</meteogramma>
-
-<meteogramma zoneid="10" name="Padova e pianura centrale">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura" type="text" value="max 16/18 C" />
-          <previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
-					<previsione title="Probabilita' precipitazione" type="text" value="20%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mer 29 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-				<scadenza data="gio 30 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-</meteogramma>
-
-<meteogramma zoneid="11" name="Venezia e laguna">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-          <previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 6/8 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da ovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da sudovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mer 29 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-				<scadenza data="gio 30 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-</meteogramma>
-
-<meteogramma zoneid="12" name="Delta del Po">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-          <previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da sudovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da sudovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 17/19 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mer 29 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-				<scadenza data="gio 30 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-</meteogramma>
-
-<meteogramma zoneid="13" name="Rovigo e pianura meridionale">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura" type="text" value="max 16/18 C" />
-          <previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 6/8 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 17/19 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mer 29 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-				<scadenza data="gio 30 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
-</meteogramma>
-
-<meteogramma zoneid="14" name="Verona e pedemontana">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura" type="text" value="max 16/18 C" />
-          <previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
@@ -910,65 +359,595 @@
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="min 6/8 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+</meteogramma>
+
+<meteogramma zoneid="7" name="Veneziano orientale">
+				<scadenza data="lun 27 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 14/16 C" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Deboli da sudovest" />
+					<previsione title="Attendibilita'" type="text" value="" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
+         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura" type="text" value="min 3/5 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="min 6/8 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+          <previsione title="Temperatura" type="text" value="max 16/18 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+</meteogramma>
+
+<meteogramma zoneid="8" name="Prealpi occidentali">
+				<scadenza data="lun 27 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura 1500m" type="text" value="max 6 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 2 C" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
+         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura 1500m" type="text" value="min 3 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura 1500m" type="text" value="max 9 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 6 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per nubi basse" />
+          <previsione title="Temperatura 1500m" type="text" value="min 4 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min 2 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per nubi alte" />
+          <previsione title="Temperatura 1500m" type="text" value="max 7 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 4 C" />
+					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Modeste" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
+         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
+				  <previsione title="Precipitazioni" type="text" value="Moderate" />
+					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+</meteogramma>
+
+<meteogramma zoneid="9" name="Vicenza e pedemontana">
+				<scadenza data="lun 27 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 14/16 C" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
+         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="min 6/8 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+          <previsione title="Temperatura" type="text" value="max 14/16 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+</meteogramma>
+
+<meteogramma zoneid="10" name="Padova e pianura centrale">
+				<scadenza data="lun 27 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
+         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="min 6/8 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
           <previsione title="Temperatura" type="text" value="max 16/18 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
-				<scadenza data="mer 29 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
+</meteogramma>
+
+<meteogramma zoneid="11" name="Venezia e laguna">
+				<scadenza data="lun 27 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Moderati da sudovest" />
+					<previsione title="Attendibilita'" type="text" value="" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
+         <previsione title="Cielo" type="text" value="Sereno con foschie/nebbie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="min 8/10 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+          <previsione title="Temperatura" type="text" value="max 16/18 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
 				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+</meteogramma>
+
+<meteogramma zoneid="12" name="Delta del Po">
+				<scadenza data="lun 27 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 16/18 C" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Moderati da sudovest" />
+					<previsione title="Attendibilita'" type="text" value="" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
+         <previsione title="Cielo" type="text" value="Sereno con foschie/nebbie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura" type="text" value="max 16/18 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="min 8/10 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+          <previsione title="Temperatura" type="text" value="max 18/20 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+</meteogramma>
+
+<meteogramma zoneid="13" name="Rovigo e pianura meridionale">
+				<scadenza data="lun 27 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 16/18 C" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
+         <previsione title="Cielo" type="text" value="Sereno con foschie/nebbie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura" type="text" value="max 16/18 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="min 6/8 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+          <previsione title="Temperatura" type="text" value="max 18/20 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+</meteogramma>
+
+<meteogramma zoneid="14" name="Verona e pedemontana">
+				<scadenza data="lun 27 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
+         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura" type="text" value="min 2/4 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 28 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="min 8/10 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+          <previsione title="Temperatura" type="text" value="max 16/18 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 </meteogramma>
 
 <meteogramma zoneid="15" name="Area del Garda">
-				<scadenza data="dom 26 ottobre pomeriggio">
+				<scadenza data="lun 27 ottobre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura" type="text" value="max 14/16 C" />
           <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da ovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 14/16 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da sudovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
@@ -978,135 +957,135 @@
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura" type="text" value="max 14/16 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="mer 29 ottobre">
+				<scadenza data="mer 29 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="min 8/10 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 </meteogramma>
 
 <meteogramma zoneid="16" name="Litorale nord">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura" type="text" value="max 14/16 C" />
-          <previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da ovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 14/16 C" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Deboli da sudovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+          <previsione title="Temperatura" type="text" value="min 3/5 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura" type="text" value="max 15/17 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="min 6/8 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
           <previsione title="Temperatura" type="text" value="max 16/18 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
-				<scadenza data="mer 29 ottobre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
-				</scadenza>
 				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 </meteogramma>
 
 <meteogramma zoneid="17" name="Litorale centrale">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura" type="text" value="max 15/17 C" />
-          <previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 6/8 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da ovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura" type="text" value="max 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da sudovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
@@ -1116,66 +1095,66 @@
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
           <previsione title="Temperatura" type="text" value="max 15/17 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="mer 29 ottobre">
+				<scadenza data="mer 29 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="min 8/10 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+          <previsione title="Temperatura" type="text" value="max 16/18 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 </meteogramma>
 
 <meteogramma zoneid="18" name="Litorale sud">
-				<scadenza data="dom 26 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
-          <previsione title="Temperatura" type="text" value="max 17/19 C" />
-          <previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
-					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="lun 27 ottobre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da sudovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="lun 27 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura" type="text" value="max 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Assenti" />
+          <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da sudovest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
@@ -1185,31 +1164,51 @@
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="mar 28 ottobre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 17/19 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
+          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+          <previsione title="Temperatura" type="text" value="max 16/18 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="mer 29 ottobre">
+				<scadenza data="mer 29 ottobre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="min 8/10 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Discreta" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mer 29 ottobre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+          <previsione title="Temperatura" type="text" value="max 18/20 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Deboli da nord" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="gio 30 ottobre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Qualche pioggia verso sera" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="ven 31 ottobre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-				  <previsione title="Precipitazioni" type="text" value="Modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="80%" />
+         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
@@ -1218,186 +1217,185 @@
 </meteogrammi>
 <bollettini>
 
-<bollettino bollettinoid="MV" name="Meteo Veneto" title="Bollettino del 26 ottobre">
-<evoluzionegenerale><![CDATA[Domenica il passaggio di una veloce saccatura in ingresso da nord-ovest porter&agrave; ad una rapida fase di maggiore nuvolosit&agrave; con qualche precipitazioni su zone montane settentrionali e parte della pianura centro-orientale. Luned&igrave; il passaggio di un secondo impulso determiner&agrave; una certa variabilit&agrave;, a tratti instabilit&agrave; sulle zone montane pi&ugrave; settentrionali. Da marted&igrave; e fino a mercoled&igrave;, aumento della pressione con tempo stabile seppur con aumento della nuvolosit&agrave; mercoled&igrave;. Gioved&igrave; comincer&agrave; ad avvicinarsi una saccatura da ovest, con avvezione in quota di correnti umide da sud-ovest, che determineranno molto nuvolosit&agrave; con precipitazioni, specie nella seconda parte della giornata.]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="26 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_0.png" caption="26 ottobre pomeriggio" />
+<bollettino bollettinoid="MV" name="Meteo Veneto" title="Bollettino del 27 ottobre">
+<evoluzionegenerale><![CDATA[Luned&igrave;, una piccola ondulazione nel flusso di correnti nord-occidentali porter&agrave; degli annuvolamenti e qualche tratto di instabilit&agrave; in montagna. Seguir&agrave; una rimonta del promontorio anticiclonico dal Mediterraneo che garantir&agrave; tempo in prevalenza stabile fino a mercoled&igrave;. Da gioved&igrave; una saccatura atlantica in approfondimento sul Mediterraneo occidentale porter&agrave; nuovi annuvolamenti e, soprattutto venerd&igrave;, la possibilit&agrave; di qualche precipitazione.]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="27 ottobre">
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_0.png" caption="27 ottobre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Previsione: </b>Graduale aumento della nuvolosit&agrave; e della probabilit&agrave; di deboli precipitazioni, dapprima sulle zone montane, poi, verso sera, anche su parte della pianura centro-orientale. Si tratter&agrave; di precipitazioni a carattere sparso, localmente a carattere di rovescio, in esaurimento entro fine giornata. Limite della neve oltre i 1600/1800 m sulle Dolomiti, 1700/2000 m sulle Prealpi. Temperature massime senza variazioni di rilievo, in diminuzione sui settori occidentali della pianura. Venti deboli, a tratti moderati, da ovest in pianura, alla sera rinforzi da nord-est sulla costa. In quota venti tesi/forti da nord-ovest.]]>
-					</text>
-				</giorno>
-				<giorno data="27 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_1.png" caption="27 ottobre mattina" />
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_2.png" caption="27 ottobre pomeriggio" />
-					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Sereno o poco nuvoloso per velature, salvo annuvolamenti irregolari sulle zone montane pi&ugrave; settentrionali, specie nel pomeriggio con cielo che diverr&agrave; in prevalenza nuvoloso.<br /><b>Precipitazioni: </b>Al mattino generalmente assenti. In seguito sulle Dolomiti pi&ugrave; settentrionali saranno probabili deboli precipitazioni, nevose oltre i 1500/1600 m, in esaurimento entro fine giornata; altrove generalmente assenti.<br /><b>Temperature: </b>Prevalentemente in diminuzione.<br /><b>Venti: </b>In quota da nord-ovest, da tesi a forti in serata. In pianura da ovest/sud-ovest deboli al mattino, moderati nel pomeriggio, a tratti anche tesi in prossimit&agrave; della costa.<br /><b>Mare: </b>Da calmo a poco mosso.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Previsione: </b>Cielo da poco a parzialmente nuvoloso su Prealpi e pianura, nuvoloso sulle Dolomiti, dove sar&agrave; possibile qualche modesta precipitazione, con limite neve intorno a 1700-1900 m. Rasserenamenti in serata. Temperature diurne in diminuzione. Venti in quota da nord-ovest tesi, anche forti alle quote pi&ugrave; alte, con possibile Foehn in qualche valle; in pianura moderati da sud-ovest.]]>
 					</text>
 				</giorno>
 				<giorno data="28 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_3.png" caption="28 ottobre mattina" />
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_4.png" caption="28 ottobre pomeriggio" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_1.png" caption="28 ottobre mattina" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_2.png" caption="28 ottobre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Tempo stabile e ben soleggiato; nelle ore pi&ugrave; fredde saranno probabili foschie e locali nebbie in pianura. <br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>Minime senza variazioni di rilievo, massime in ripresa o localmente stazionarie in pianura.<br /><b>Venti: </b>Deboli variabili in pianura; in quota al mattino venti da nord-ovest da tesi a moderati, in rotazione ed attenuazione da ovest nel pomeriggio.<br /><b>Mare: </b>Calmo.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Sereno o poco nuvoloso specie da met&agrave; giornata; nelle ore pi&ugrave; fredde possibile qualche foschia o locale nebbia in pianura, specie quella meridionale.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>In pianura pressoch&eacute; stazionarie o in locale lieve variazione; in montagna in rialzo, salvo stazionariet&agrave; o lieve calo delle minime nelle valli.<br /><b>Venti: </b>In quota inizialmente tesi/forti da nord-ovest, dalla mattina in attenuazione fino a moderati e in rotazione fino a disporsi da ovest a fine giornata; nelle valli e sulla pedemontana variabili con possibile residuo Foehn a inizio giornata. In pianura in prevalenza deboli variabili.<br /><b>Mare: </b>Poco mosso.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data="29 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_5.png" caption="29 ottobre" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_3.png" caption="29 ottobre mattina" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_4.png" caption="29 ottobre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tendenza per mercoled&igrave; 29: </b>Irregolarmente nuvoloso su Prealpi centro-occidentali e in pianura, con possibili riduzioni della visibilit&agrave; durante le ore pi&ugrave; fredde, su Dolomiti e Prealpi orientali da sereno o poco nuvoloso al mattino, a parzialmente nuvoloso nel pomeriggio per nubi medio-alte. Temperature minime in aumento, massime senza notevoli variazioni, in aumento in quota. Venti in quota moderati/tesi da sud-ovest, in rinforzo dalla serata; in pianura deboli variabili.
-<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Inizialmente poco nuvoloso per nubi alte, ma con aumento della nuvolosit&agrave; soprattutto a partire dalle ore centrali. Possibile qualche foschia o locale nebbia fino al primo mattino sulla pianura meridionale.<br /><b>Precipitazioni: </b>In prevalenza assenti, salvo probabilit&agrave; bassa (5-25%) di sporadiche debolissime precipitazioni sulle zone montane nel pomeriggio/sera.<br /><b>Temperature: </b>In aumento le minime e sulla pianura orientale  e in quota anche le massime, che saranno stazionarie sul resto della pianura e tendenti alla diminuzione nelle valli.<br /><b>Venti: </b>In quota inizialmente moderati occidentali, in intensificazione e rotazione fino a risultare tesi o a tratti anche forti da sud-ovest a partire dal pomeriggio; nelle valli variabili. In pianura deboli, o temporaneamente moderati, in prevalenza dai settori settentrionali.<br /><b>Mare: </b>Poco mosso.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
 					</text>
 				</giorno>
 				<giorno data="30 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_6.png" caption="30 ottobre" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_5.png" caption="30 ottobre" />
 					<text>
-                        <![CDATA[<b>Tendenza per gioved&igrave; 30: </b>Cielo molto nuvoloso o coperto, con graduale aumento della probabilit&agrave; di precipitazioni gi&agrave; nel corso della mattinata. Si tratter&agrave; di precipitazioni deboli sparse al mattino, moderate e diffuse nel pomeriggio, specie in pianura. Temperature minime in ulteriore aumento, massime senza notevoli variazioni. Venti in quota moderati/tesi da sud-ovest; in pianura rinforzi di Scirocco sulla costa e da nord-est nell'entroterra.
-Previsore: R.R.<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
+                        <![CDATA[<b>Tendenza per gioved&igrave; 30: </b>Cielo nuvoloso o molto nuvoloso, con possibilit&agrave; di qualche precipitazione a fine giornata. Temperature in aumento, salvo stazionariet&agrave; delle massime in pianura.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+					</text>
+				</giorno>
+				<giorno data="31 ottobre">
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MV_6.png" caption="31 ottobre" />
+					<text>
+                        <![CDATA[<b>Tendenza per venerd&igrave; 31: </b>Molto nuvoloso o coperto con probabili modeste precipitazioni intermittenti. Temperature in aumento.
+Previsore:ms.<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
 					</text>
 				</giorno>
 </bollettino>
 
-<bollettino bollettinoid="DM" name="Dolomiti Meteo" title="Bollettino del 26 ottobre">
-<evoluzionegenerale><![CDATA[Una vasta depressione centrata sul Nord Europa convoglia correnti mediamente occidentali, un p&ograve; fresche per il periodo e solo a tratti umide sul Nord Italia fino a luned&igrave;. Marted&igrave; pressione in aumento e correnti in quota da nordovest decisamente meno umide e pi&ugrave; stabili. Da mercoled&igrave; rotazione delle correnti in quota da sudovest via via pi&ugrave; umide con molte nubi e qualche debole precipitazione gioved&igrave;. ]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="26 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_0.png" caption="26 ottobre pomeriggio" />
+<bollettino bollettinoid="DM" name="Dolomiti Meteo" title="Bollettino del 27 ottobre">
+<evoluzionegenerale><![CDATA[Persiste sulla regione un flusso di correnti atlantiche provenienti dalle medie latitudini relativamente umide e fresche che mantengono condizioni di variabilit&agrave; con temperature di qualche grado inferiori alle medie stagionali. Dopo una breve fase stabile per un modesto promontorio di origine mediterranea che interesser&agrave; le Alpi tra marted&igrave; e gran parte di mercoled&igrave; con temperature che tenderanno ad allinearsi alla norma, dal pomeriggio/sera di mercoled&igrave; il tempo tender&agrave; a divenire variabile a tratti lievemente instabile per la marginale influenza di una nuova saccatura atlantica. Questa saccatura attiver&agrave; un flusso di correnti miti e umide dai quadranti meridionali, determinando delle precipitazioni in prevalenza modeste e delle scarse nevicate a quote alte. ]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="27 ottobre">
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_0.png" caption="27 ottobre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Previsione: </b>Variabilit&agrave; con nubi aumento fino a tratti nuvoloso specie su Bellunese. Schiarite in serata. Precipitazioni: nel pomeriggio possibile qualche breve piovasco qua e l&agrave;, un p&ograve; pi&ugrave; probabile su Bellunese (30-50%) o isolato rovescio tra Prealpi e pedemontana orientale,  Eventuale limite neve a 1600-1800 m su Dolomiti, 1700-2000 m su Prealpi. Accumuli isolati ed irrisori (0-5 mm). In serata precipitazioni assenti. Temperature massime stazionarie o in lieve aumento. Prealpi - a 1500 m: max 8, a 2000 m: max 3. Dolomiti - a 2000 m: max 3, a 3000 m: max -6 Venti in quota da nordovest in rinforzo a tesi/forti verso sera, deboli variabili in valle ]]>
-					</text>
-				</giorno>
-				<giorno data="27 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_1.png" caption="27 ottobre mattina" />
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_2.png" caption="27 ottobre pomeriggio" />
-					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Al mattino in genere nuvoloso sulle Dolomiti poco o parzialmente nuvoloso sulle Prealpi; dalle ore centrali nuvolosit&agrave; pi&ugrave; compatta specie su Dolomiti nord, irregolarmente nuvoloso con schiarite sulle Prealpi specie occidentali. In serata/notte tendenza a schiarite ovunque.<br /><b>Precipitazioni: </b>Al mattino generalmente assenti salvo qualche leggero fiocco di neve in quota (10%) sulle Dolomiti settentrionali. Dal pomeriggio e fino a sera probabilit&agrave; in aumento su Dolomiti nord specie ungo la cresta di confine con l' Alto Adige (40-60%) per deboli precipitazioni, via via meno probabili verso sud (20-40%) dove saranno per lo pi&ugrave; limitate alle cime. Limite neve a 1500-1600 m. Generalmente assenti su Prealpi (0-10%) o al pi&ugrave; qualche fiocco sulle cime. Accumuli di poco conto, al pi&ugrave; localmente fino a 5-10 cm oltre i 2000 m sui settori pi&ugrave; settentrionali. <br /><b>Temperature: </b>Temperature minime senza notevoli variazioni, massime staionarie o in lieve calo. Su  Prealpi - a 1500 m: min 2 max 6, a 2000 m: min -1 max 2 Dolomiti - a 2000 m: min -3 max 3, a 3000 m: min -8 max -5<br /><b>Venti: </b>Venti in quota in rinforzo fino a forti nel pomeriggio da ovest/nordovest , deboli variabili nelle valli, a 10-30 km/h a 2000 m e 30-70 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Previsione: </b>Sulle Prealpi in genere poco nuvoloso o nuvoloso e senza fenomeni di rilievo; sulle Dolomiti inizialmente poco o parzialmente nuvoloso con una graduale intensificazione della nuvolosit&agrave;  associata a possibili modesti fenomeni (40-50%) da locali a sparsi, specie verso il tramonto, nevosi oltre i 1700-1900 mm. In serata tendenza a schiarite su tutte le zone montane. Temperature in lieve o contenuta diminuzione; previste punte massime di 11&deg;/14&deg;C nelle basse conche prealpine, di 7/10&deg;C tra gli 800 e i 1200 m e di 1&deg;/2&deg;C a 2000 m. Venti da ovest, nord ovest in genere tesi oltre i 2600-2800 m  in ulteriore rinforzo fino a forti a fine giornata con possibili locali episodi di Foehn in alcune valli nella notte. ]]>
 					</text>
 				</giorno>
 				<giorno data="28 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_3.png" caption="28 ottobre mattina" />
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_4.png" caption="28 ottobre pomeriggio" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_1.png" caption="28 ottobre mattina" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_2.png" caption="28 ottobre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Cielo sereno o al pi&ugrave; poco nuvoloso per qualche velatura nel pomeriggio.  <br /><b>Precipitazioni: </b>Assenti (0%)<br /><b>Temperature: </b>Temperature in lieve aumento. Prealpi - a 1500 m: min 3 max 8, a 2000 m: min 1 max 4 Dolomiti - a 2000 m: min -2 max 4, a 3000 m: min -9 max -1<br /><b>Venti: </b>Venti in quota da nordovest, forti nella notte e fino al primo mattino oi in in attenuazione a moderati/tesi nel pomeriggio, deboli variabili nelle valli, a 10-20 km/h a 2000 m e 30-70 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Salvo una residua e modesta nuvolosit&agrave; nelle prime ore, tempo stabile con cielo in prevalenza sereno soprattutto al mattino, in genere sereno e poco nuvoloso per sottili e innocue velature nel pomeriggio.  <br /><b>Precipitazioni: </b>Assenti (0%)<br /><b>Temperature: </b>Minime in quota in lieve o contenuto aumento, stazionarie o in lieve calo nelle valli; massime in aumento a tutte le quote. Su Prealpi a 1500 m: min 3&deg;C, max 9&deg;C; a 2000 m: min -1&deg;C max 6&deg;C. Su Dolomiti a 2000 m: min -3&deg;C max 6&deg;C; a 3000 m: min -8&deg;C max -1&deg;C.<br /><b>Venti: </b>Nelle valli in genere deboli con locali rinforzi di Foehn in alcune valli tra la notte e al mattino; in quota da ovest, nord ovest, forti nella notte e fino al primo mattino, poi in parziale attenuazione fino a moderati/tesi nel pomeriggio, a 15-30 km/h a 2000 m e a 35-70 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data="29 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_5.png" caption="29 ottobre" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_3.png" caption="29 ottobre mattina" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_4.png" caption="29 ottobre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tendenza per mercoled&igrave; 29: </b>Su Dolomiti fino al pomeriggio poco nuvoloso per velature, poi aumento delle nubi fino a nuvoloso verso sera. Su Prealpi, specie zone a ridosso della pedemontana e a partire dal veronese comparsa di nubi basse gi&agrave; al mattino in estensione a vicentino e bellunese in giornata fino a nuvoloso dal pomeriggio. Temperature stazionarie nelle valli, in aumento in quota. Venti in quota da sudovest, moderati al mattino in rinforzo verso sera.
+                        <![CDATA[<b>Tempo atteso: </b>Fino al pomeriggio poco nuvoloso per velature, poi graduale aumento della nuvolosit&agrave; fino a cielo nuvoloso o parzialmente verso sera, specie sulle Prealpi, soprattutto sulle zone a ridosso della pedemontana e a partire dal Veronese.<br /><b>Precipitazioni: </b>Al mattino assenti (0%); nel pomeriggio in gran parte assenti ma verso sera non si esclude (10-20%) un po' di pioviggine nell'area prealpina, specie in quella centro-occidentale.<br /><b>Temperature: </b>In lieve o contenuto aumento, salvo le massime nelle valli che saranno in lieve diminuzione e in quota nell'area prealpina.  Su Prealpi a 1500 m: min 4&deg;C, max 7&deg;C; a 2000 m: min 2&deg;C max 4&deg;C. Su Dolomiti a 2000 m: min 2&deg;C max 6&deg;C; a 3000 m: min 0&deg;C max 3&deg;C.<br /><b>Venti: </b>Nelle valli in genere deboli; in quota da sud ovest, moderati al mattino in rinforzo verso sera fino a tesi a tratti forti, a 25-35 km/h a 2000 m e a 25-50 km/h a 3000 m.
 <br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
 					</text>
 				</giorno>
 				<giorno data="30 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_6.png" caption="30 ottobre" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_5.png" caption="30 ottobre" />
 					<text>
-                        <![CDATA[<b>Tendenza per gioved&igrave; 30: </b>Nuvoloso o molto nuvoloso con possibili deboli o debolissime piogge a tratti specie su Prealpi, meno probabili su Dolomiti con qualche eventuale fiocco oltre i 2600-2800 m. Temperature minime in aumento, massime stazionarie. Venti in quota moderati/tesi da sudovest, deboli variabili nelle valli. 
-Previsore: DDL<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Tendenza per gioved&igrave; 30: </b>Nuvoloso o molto nuvoloso con possibili deboli o debolissime piogge pi&ugrave; probabili sulle Prealpi, meno probabili su Dolomiti con qualche eventuale fiocco oltre i 2700-3000 m. Temperature minime in aumento, massime stazionarie o in lieve aumento in quota, in lieve calo nelle valli. Venti in quota in prevalenza moderati da sud ovest, deboli variabili nelle valli. 
+<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+					</text>
+				</giorno>
+				<giorno data="31 ottobre">
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_DM_6.png" caption="31 ottobre" />
+					<text>
+                        <![CDATA[<b>Tendenza per venerd&igrave; 31: </b>Tempo variabile a tratti leggermente instabile con qualche breve e modesta nevicata oltre i 2800-3000m. Temperature in lieve aumento salvo risultare stazionarie le massime nelle valli. Modesta escursione termica giornaliera. Venti in alta montagna da sud ovest, da moderati al mattino a deboli dal pomeriggio. 
+Previsore: M.Padoan<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
 					</text>
 				</giorno>
 <quota_zero_termico>
-<previsione data="26 ottobre">2000</previsione>
-<previsione data="27 ottobre">2000</previsione>
-<previsione data="28 ottobre">2500</previsione>
-<previsione data="29 ottobre">3200</previsione>
+<previsione data="27 ottobre">2100</previsione>
+<previsione data="28 ottobre">2800</previsione>
+<previsione data="29 ottobre">3300</previsione>
 <previsione data="30 ottobre">3000</previsione>
+<previsione data="31 ottobre">3100</previsione>
 </quota_zero_termico>
-<previsioni_localita data="27 ottobre">
+<previsioni_localita data="28 ottobre">
 <localita nome="Bosco C.N.">
-<tmin value="4" /><tmax value="9" />
-<scadenza data="lun 27 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Pomeriggio"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Sera"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+<tmin value="5" /><tmax value="12" />
+<scadenza data="mar 28 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Mattina"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Pomeriggio"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Sera"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
 </scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Asiago">
-<tmin value="-2" /><tmax value="9" />
-<scadenza data="lun 27 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Sera"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+<tmin value="-4" /><tmax value="13" />
+<scadenza data="mar 28 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Mattina"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Pomeriggio"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Sera"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
 </scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Belluno">
-<tmin value="2" /><tmax value="12" />
-<scadenza data="lun 27 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+<tmin value="0" /><tmax value="16" />
+<scadenza data="mar 28 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Mattina"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Pomeriggio"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Sera"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
 </scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Agordo">
-<tmin value="0" /><tmax value="10" />
-<scadenza data="lun 27 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="lun 27 ottobre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+<tmin value="-2" /><tmax value="14" />
+<scadenza data="mar 28 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Mattina"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Pomeriggio"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Sera"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
 </scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Arabba">
-<tmin value="0" /><tmax value="5" />
-<scadenza data="lun 27 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Pomeriggio"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="lun 27 ottobre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="40%" />
-</scadenza><pioggia value="0" /><neve value="0-2" />
+<tmin value="-2" /><tmax value="10" />
+<scadenza data="mar 28 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Mattina"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Pomeriggio"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Sera"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Cortina d'Ampezzo">
-<tmin value="1" /><tmax value="8" />
-<scadenza data="lun 27 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Pomeriggio"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="40%" />
-</scadenza><scadenza data="lun 27 ottobre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><pioggia value="0-3" /><neve value="0" />
+<tmin value="-1" /><tmax value="12" />
+<scadenza data="mar 28 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Mattina"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Pomeriggio"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Sera"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Pieve di Cadore">
-<tmin value="1" /><tmax value="10" />
-<scadenza data="lun 27 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Pomeriggio"><cielo value="Nuvoloso" /><probabilita_pioggia value="40%" />
-</scadenza><scadenza data="lun 27 ottobre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><pioggia value="0-3" /><neve value="0" />
+<tmin value="-1" /><tmax value="14" />
+<scadenza data="mar 28 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Mattina"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Pomeriggio"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Sera"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Auronzo di Cadore">
-<tmin value="0" /><tmax value="10" />
-<scadenza data="lun 27 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
-</scadenza><scadenza data="lun 27 ottobre Pomeriggio"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="lun 27 ottobre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><pioggia value="0-3" /><neve value="0" />
+<tmin value="-2" /><tmax value="12" />
+<scadenza data="mar 28 ottobre Notte"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Mattina"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Pomeriggio"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="mar 28 ottobre Sera"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 </previsioni_localita>
 </bollettino>
 
-<bollettino bollettinoid="MP" name="Meteo Pianura Veneta" title="Bollettino del 26 ottobre">
-<evoluzionegenerale><![CDATA[Domenica il passaggio di una veloce saccatura in ingresso da nord-ovest porter&agrave; ad una rapida fase di maggiore nuvolosit&agrave; con qualche precipitazioni su zone montane settentrionali e parte della pianura centro-orientale. Luned&igrave; il passaggio di un secondo impulso determiner&agrave; una certa variabilit&agrave;, a tratti instabilit&agrave; sulle zone montane pi&ugrave; settentrionali. Da marted&igrave; e fino a mercoled&igrave;, aumento della pressione con tempo stabile seppur con aumento della nuvolosit&agrave; mercoled&igrave;. Gioved&igrave; comincer&agrave; ad avvicinarsi una saccatura da ovest, con avvezione in quota di correnti umide da sud-ovest, che determineranno molto nuvolosit&agrave; con precipitazioni, specie nella seconda parte della giornata.]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="26 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_0.png" caption="26 ottobre pomeriggio" />
+<bollettino bollettinoid="MP" name="Meteo Pianura Veneta" title="Bollettino del 27 ottobre">
+<evoluzionegenerale><![CDATA[Luned&igrave;, una piccola ondulazione nel flusso di correnti nord-occidentali porter&agrave; degli annuvolamenti. Seguir&agrave; una rimonta del promontorio anticiclonico dal Mediterraneo che garantir&agrave; tempo in prevalenza stabile fino a mercoled&igrave;. Da gioved&igrave;, una saccatura atlantica in approfondimento sul Mediterraneo occidentale porter&agrave; nuovi annuvolamenti e, soprattutto venerd&igrave;, la possibilit&agrave; di qualche precipitazione.]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="27 ottobre">
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_0.png" caption="27 ottobre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Previsione: </b>Inizialmente sereno o poco nuvoloso, poi graduale aumento della nuvolosit&agrave; e dal tardo pomeriggio/sera della probabilit&agrave; di deboli precipitazioni, dapprima sulle zone pedemontane, poi, verso sera, anche su parte della pianura centro-orientale. Si tratter&agrave; di precipitazioni a carattere sparso, localmente a carattere di rovescio, in esaurimento entro fine giornata. Temperature massime senza variazioni di rilievo sui settori centro orientali, in calo altrove. Venti deboli/moderati nel pomeriggio, alla sera rinforzi da nord-est sulla costa. ]]>
-					</text>
-				</giorno>
-				<giorno data="27 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_1.png" caption="27 ottobre mattina" />
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_2.png" caption="27 ottobre pomeriggio" />
-					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Sereno o poco nuvoloso per velature. Al primo mattino possibili locali nebbie.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>Prevalentemente in diminuzione.<br /><b>Venti: </b>Da ovest/sud-ovest deboli al mattino, moderati nel pomeriggio, a tratti anche tesi in prossimit&agrave; della costa.<br /><b>Mare: </b>Da calmo a poco mosso.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Previsione: </b>Cielo poco o parzialmente nuvoloso. Temperature diurne in diminuzione. Venti moderati da sud-ovest.]]>
 					</text>
 				</giorno>
 				<giorno data="28 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_3.png" caption="28 ottobre mattina" />
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_4.png" caption="28 ottobre pomeriggio" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_1.png" caption="28 ottobre mattina" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_2.png" caption="28 ottobre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Tempo stabile e ben soleggiato; nelle ore pi&ugrave; fredde saranno probabili foschie e locali nebbie.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>Minime senza variazioni di rilievo, massime in ripresa o localmente stazionarie.<br /><b>Venti: </b>Deboli variabili.<br /><b>Mare: </b>Calmo.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Sereno o poco nuvoloso specie da met&agrave; giornata; nelle ore pi&ugrave; fredde possibile qualche foschia o locale nebbia specie sulle zone meridionali.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>Pressoch&eacute; stazionarie o in locale lieve variazione.<br /><b>Venti: </b>In prevalenza deboli variabili.<br /><b>Mare: </b>Poco mosso.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data="29 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_5.png" caption="29 ottobre" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_3.png" caption="29 ottobre mattina" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_4.png" caption="29 ottobre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tendenza per mercoled&igrave; 29: </b>Irregolarmente nuvoloso, con possibili riduzioni della visibilit&agrave; durante le ore pi&ugrave; fredde. Temperature minime in aumento, massime senza notevoli variazioni. Venti deboli variabili.
-<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Inizialmente poco nuvoloso per nubi alte, ma con aumento della nuvolosit&agrave; soprattutto a partire dalle ore centrali. Possibile qualche foschia o locale nebbia fino al primo mattino sulla pianura meridionale.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>In aumento le minime e sulla pianura orientale anche le massime, che saranno stazionarie sulle restanti zone.<br /><b>Venti: </b>Deboli, o temporaneamente moderati, in prevalenza dai settori settentrionali.<br /><b>Mare: </b>Poco mosso.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
 					</text>
 				</giorno>
 				<giorno data="30 ottobre">
-					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_6.png" caption="30 ottobre" />
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_5.png" caption="30 ottobre" />
 					<text>
-                        <![CDATA[<b>Tendenza per gioved&igrave; 30: </b>Cielo molto nuvoloso o coperto, con graduale aumento della probabilit&agrave; di precipitazioni gi&agrave; nel corso della mattinata. Si tratter&agrave; di precipitazioni deboli sparse al mattino, moderate e diffuse nel pomeriggio, specie in pianura. Temperature minime in ulteriore aumento, massime senza notevoli variazioni. Rinforzi di Scirocco sulla costa e da nord-est nell'entroterra.
-Previsore: R.R.<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
+                        <![CDATA[<b>Tendenza per gioved&igrave; 30: </b>Cielo nuvoloso o molto nuvoloso, con possibilit&agrave; di qualche precipitazione a fine giornata. Temperature minime in aumento, massime senza notevoli variazioni.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+					</text>
+				</giorno>
+				<giorno data="31 ottobre">
+					<img src="https://www.arpa.veneto.it/previsioni/it/images/map_MP_6.png" caption="31 ottobre" />
+					<text>
+                        <![CDATA[<b>Tendenza per venerd&igrave; 31: </b>Molto nuvoloso o coperto con probabili modeste precipitazioni intermittenti. Temperature in aumento.
+Previsore:ms.<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
 					</text>
 				</giorno>
 </bollettino>
