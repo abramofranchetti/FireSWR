@@ -82,12 +82,14 @@
                 .then(data => {
                     const timestamps = data.chart.result[0].timestamp;
                     const adjClose = data.chart.result[0].indicators.adjclose[0].adjclose;
+                    const close = data.chart.result[0].indicators.quote[0].close;
                     const formattedData = timestamps.map((timestamp, index) => {
                         return {
                             Date: new Date(timestamp * 1000).toISOString().split('T')[0],
-                            Close: adjClose[index]
+                            AdjClose: adjClose[index],
+                            Close: close[index]
                         };
-                    });
+                    });                    
 
                     const jsonString = JSON.stringify(formattedData, null, 2);
                     const blob = new Blob([jsonString], { type: 'application/json' });
