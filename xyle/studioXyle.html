@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Studio Rendimento XYLE.MI vs SP500</title>
+    <title>Studio Rendimento XYLE.MI vs S&P500</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -40,15 +40,15 @@
         </div>
         <br>
         <h1 class="text-center">Studio Rendimento XYLE.MI vs SP500</h1>
-        <h5 class="text-center">Studio comparativo di strategia covered call XYLE.MI (XYLU) e il suo sottostante SP500.
+        <h5 class="text-center">Studio comparativo di strategia covered call XYLE.MI (XYLU) e il suo sottostante S&P500.
             Ho
-            usato l'etf CSSPX.MI (iShares Core S&P 500). Investimento Iniziale al 11/07/2023, data di quotazione
+            usato l'etf VUAA.MI (Vanguard S&P 500 Accumulating). Investimento Iniziale al 11/07/2023, data di quotazione
             dell'ETF XYLE.MI
         </h5>
         <form>
             <div class="form-group mt-4">
                 <label for="montante">Capitale inizale $:</label>
-                <input type="number" class="form-control" id="montante" value="1000000">
+                <input type="number" class="form-control" id="montante" value="100000" step="1000">
             </div>
             <div class="form-group mt-4">
                 <label for="modalita">Modalità calcolo compravendita quote ETF:</label>
@@ -112,7 +112,7 @@
             try {
                 const [xyleResp, csspxResp, distribuzioniResp] = await Promise.all([
                     fetch('XYLE.MI.json'),
-                    fetch('CSSPX.MI.json'),
+                    fetch('VUAA.MI.json'),
                     fetch('Distribuzioni_XYLE.txt')
                 ]);
 
@@ -167,7 +167,7 @@
                 const xyleCloseSeries = [];
 
                 // Calcolo valore cumulativo
-                let csspxInitialPrice = 426.07;
+                let csspxInitialPrice = 76.36;
                 let xyleAdjInitialPrice = 11.35;
                 let xyleCloseInitialPrice = 13.62;
 
@@ -316,7 +316,7 @@
                         plugins: {
                             title: {
                                 display: true,
-                                text: 'XYLE.MI vs S&P500 (CSSPX)'
+                                text: 'XYLE.MI vs S&P500 (VUAA.MI)'
                             },
                             tooltip: {
                                 callbacks: {
