@@ -108,6 +108,7 @@
     <script>        
         async function loadAndPlot() {
             const initialCapital = parseFloat(document.getElementById('montante').value);             
+            const modalita = parseFloat(modalitaSelect.value);
             try {
                 const [xyleResp, csspxResp, distribuzioniResp] = await Promise.all([
                     fetch('XYLE.MI.json'),
@@ -397,9 +398,7 @@
         });
         document.addEventListener('DOMContentLoaded', loadAndPlot);
         const modalitaSelect = document.getElementById('modalita');
-        modalitaSelect.addEventListener('change', loadAndPlot);
-        const modalita = parseFloat(modalitaSelect.value);
-        
+        modalitaSelect.addEventListener('change', loadAndPlot);                
     </script>
 </body>
 
