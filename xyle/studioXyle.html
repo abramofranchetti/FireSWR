@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Rendimento XYLE.MI vs SP500</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <!--<script src="js/ytm.js" defer></script>   -->
+
+    <style>
+        /* Stile per il grafico */
+        #xyleChart {
+            max-height: 500px;
+            width: 100%;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 500px;
+            width: 100%;
+        }
+    </style>
+
+
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Studio Rendimento XYLE.MI vs SP500</h1>
+        <h5 class="text-center">Studio comparativo di strategia covered call XYLE.MI (XYLU) e il suo sottostante SP500.
+            Ho
+            usato l'etf CSSPX.MI (iShares Core S&P 500). Investimento Iniziale al 11/07/2023, data di quotazione
+            dell'ETF XYLE.MI
+        </h5>
+        <form>
+            <div class="form-group mt-4">
+                <label for="montante">Capitale inizale $:</label>
+                <input type="number" class="form-control" id="montante" value="1000000">
+            </div>
+            <div class="form-group mt-4">
+                <label for="modalita">Modalità calcolo compravendita quote ETF:</label>
+                <select class="form-control" id="modalita">
+                <option value="0">Discreta (solo quote intere, come nella reatà)</option>
+                <option value="1">Continua (anche quote frazionarie, per simulazione)</option>
+                </select>
+                
+            </div>
+        </form>
+        <!-- Grafico XYLE vs SP500 -->
+        <div class="chart-container">
+            <canvas id="xyleChart"></canvas>
+        </div>
+        <p class="small text-muted mt-2">Legenda:
+        <ul>
+            <li><strong>Rige verdi</strong> = Date di stacco dividendi XYLE</li>
+            <li><strong>S&P500 Accumulo</strong> = S&P500 (con aggiustamento dividendi), </li>
+            <li><strong>XYLE Accumulo</strong> = XYLE con reinvestimento dividendi, </li>
+            <li><strong>XYLE Distribuzione</strong> = XYLE senza reinvestimento dei dividendi.</li>
+            <li><strong>S&P500 con vendite</strong> = S&P500 con vendite per coprire i dividendi di XYLE (va confrontato
+                con la riga arancione).</li>
+        </ul>
+        </p>
+        <div class="container mt-4">
+            <h3 class="text-center">Tabella Dividendi</h3>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Data di Stacco</th>
+                        <th>Dividendo Lordo XYLE ($)</th>
+                        <th>Dividendo Netto XYLE ($)</th>
+                        <th>Quote SP500 Vendute</th>
+                        <th>Dividendo Lordo SP500 (da vendita) ($)</th>
+                        <th>Dividendo Netto SP500 (da vendita) ($)</th>
+                    </tr>
+                </thead>
+                <tbody id="dividendiTableBody">
+                    <!-- Righe generate dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('../html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+    <script>        
+        async function loadAndPlot() {
+            const initialCapital = parseFloat(document.getElementById('montante').value);             
+            try {
+                const [xyleResp, csspxResp, distribuzioniResp] = await Promise.all([
+                    fetch('XYLE.MI.json'),
+                    fetch('CSSPX.MI.json'),
+                    fetch('Distribuzioni_XYLE.txt')
+                ]);
+
+                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');
+
+                const [xyleRaw, csspxRaw, distribuzioniRaw] = await Promise.all([
+                    xyleResp.json(),
+                    csspxResp.json(),
+                    distribuzioniResp.text()
+                ]);
+
+                let distribuzioni = [];
+                // Parsing distribuzioni
+                distribuzioni = distribuzioniRaw.split('\n').slice(1).map(line => {
+                    const parts = line.split(' ');
+                    if (parts.length < 2) return null; // Salta righe malformate
+
+                    const data = parts[0]?.trim();
+                    const importo = parts[1]?.replace('$', '').trim();
+
+                    if (!data || isNaN(parseFloat(importo))) return null; // Salta righe con dati mancanti
+
+                    // Converti data da giorno-mese-anno a anno-mese-giorno
+                    const [day, month, year] = data.split('-');
+                    const formattedDate = `${year}-${month}-${day}`;
+
+                    return {
+                        date: formattedDate,
+                        amount: parseFloat(importo)
+                    };
+                }).filter(Boolean); // Rimuove eventuali null
+
+                // mappa data->valori
+                const mapXYLE = new Map();
+                xyleRaw.forEach(item => {
+                    if (!item.Date) return;
+                    mapXYLE.set(item.Date, { adj: item.AdjClose ?? null, close: item.Close ?? null });
+                });
+
+                const mapCSSPX = new Map();
+                csspxRaw.forEach(item => {
+                    if (!item.Date) return;
+                    mapCSSPX.set(item.Date, { adj: item.AdjClose ?? null });
+                });
+
+                // unione delle date
+                const dateSet = new Set([...mapXYLE.keys(), ...mapCSSPX.keys()]);
+                const labels = Array.from(dateSet).sort((a, b) => new Date(a) - new Date(b));
+
+                const csspxAdjSeries = [];
+                const xyleAdjSeries = [];
+                const xyleCloseSeries = [];
+
+                // Calcolo valore cumulativo
+                let csspxInitialPrice = 426.07;
+                let xyleAdjInitialPrice = 11.35;
+                let xyleCloseInitialPrice = 13.62;
+
+                const csspxCumulative = [];
+                const xyleAdjCumulative = [];
+                const xyleCloseCumulative = [];
+                const distribuzioniCSSPXVirtuali = []
+
+                // Nuova serie CSSPX con vendite
+                const csspxAdjustedCumulative = [];
+                let csspxShares = modalita>0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Calcola il numero iniziale di quote di CSSPX
+                const xyleShares = modalita>0 ? initialCapital / xyleAdjInitialPrice : Math.floor(initialCapital / xyleAdjInitialPrice); // Calcola il numero iniziale di quote di XYLE
+
+                labels.forEach(d => {
+                    const c = mapCSSPX.get(d);
+                    const x = mapXYLE.get(d);
+
+                    const csspxAdj = c ? Number(c.adj) : null;
+                    const xyleAdj = x ? Number(x.adj) : null;
+                    const xyleClose = x ? Number(x.close) : null;
+
+                    // Imposta i prezzi iniziali
+                    if (csspxAdj != null && csspxInitialPrice == null) csspxInitialPrice = csspxAdj;
+                    if (xyleAdj != null && xyleAdjInitialPrice == null) xyleAdjInitialPrice = xyleAdj;
+                    if (xyleClose != null && xyleCloseInitialPrice == null) xyleCloseInitialPrice = xyleClose;
+
+                    // Calcola valore cumulativo
+                    csspxCumulative.push(csspxInitialPrice != null && csspxAdj != null ? (initialCapital / csspxInitialPrice) * csspxAdj : null);
+                    xyleAdjCumulative.push(xyleAdjInitialPrice != null && xyleAdj != null ? (initialCapital / xyleAdjInitialPrice) * xyleAdj : null);
+                    xyleCloseCumulative.push(xyleCloseInitialPrice != null && xyleClose != null ? (initialCapital / xyleCloseInitialPrice) * xyleClose : null);
+                });
+
+                // Calcolo serie con vendite CSSPX
+                csspxShares = modalita > 0 ?initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Reset numero quote CSSPX
+                labels.forEach(d => {
+                    const c = mapCSSPX.get(d);
+                    const x = mapXYLE.get(d);
+
+                    const csspxAdj = c ? Number(c.adj) : null;
+                    const xyleAdj = x ? Number(x.adj) : null;
+                    const xyleClose = x ? Number(x.close) : null;
+
+                    // Calcola dividendo totale di XYLE in questa data
+                    const distribuzione = distribuzioni.find(dist => dist.date === d);
+                    if (distribuzione && csspxAdj != null) {
+                        const totalDividend = distribuzione.amount * xyleShares; // Dividendo totale
+                        const sharesToSell = modalita>0?(totalDividend / csspxAdj): Math.ceil(totalDividend / csspxAdj);
+                        csspxShares -= sharesToSell; // Aggiorna il numero di quote di CSSPX
+                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: sharesToSell * csspxAdj }); // Valore vendite
+                    }
+
+                    csspxAdjustedCumulative.push(csspxAdj != null ? csspxShares * csspxAdj : null);
+                });
+
+                const annotations = distribuzioni.map(dist => ({
+                    type: 'line',
+                    scaleID: 'x',
+                    value: dist.date,
+                    borderColor: 'rgba(0, 255, 0, 0.7)',
+                    borderWidth: 1,
+                    label: {
+                        content: 'Dividendo',
+                        enabled: false,
+                        position: 'top'
+                    }
+                }));
+
+                annotations.push({
+                    type: 'line',
+                    scaleID: 'y',
+                    value: initialCapital,
+                    borderColor: 'rgba(255, 0, 0, 0.7)',
+                    borderWidth: 1,
+                    label: {
+                        content: 'Capitale Iniziale',
+                        enabled: false,
+                        position: 'top'
+                    }
+                });
+
+
+                populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali);
+
+
+
+                const ctx = document.getElementById('xyleChart').getContext('2d');
+                // distrugge eventuale chart precedente
+                if (window._xyleChart) {
+                    window._xyleChart.destroy();
+                }
+
+                window._xyleChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: '(S&P500) - Accumulo',
+                                data: csspxCumulative,
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                                spanGaps: true,
+                                tension: 0.2,
+                                borderWidth: 2,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'XYLE - Accumulo (reinvestimento dividendi lordi)',
+                                data: xyleAdjCumulative,
+                                borderColor: 'rgba(40, 167, 69, 1)',
+                                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                                spanGaps: true,
+                                tension: 0.2,
+                                borderWidth: 2,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'XYLE - Distribuzione (senza reinvestimento dividendi)',
+                                data: xyleCloseCumulative,
+                                borderColor: 'rgba(255, 159, 64, 1)',
+                                backgroundColor: 'rgba(255, 159, 64, 0.08)',
+                                spanGaps: true,
+                                tension: 0.2,
+                                borderWidth: 2,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'S&P500 (con vendite equivalenti ai dividendi XYLE)',
+                                data: csspxAdjustedCumulative,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                                spanGaps: true,
+                                tension: 0.2,
+                                borderWidth: 2,
+                                pointRadius: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'XYLE.MI vs S&P500 (CSSPX)'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        const v = context.raw;
+                                        return context.dataset.label + ': ' + (v == null ? 'n/a' : v.toFixed(2) + ' $');
+                                    }
+                                }
+                            },
+                            annotation: {
+                                annotations: annotations
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Date' },
+                                ticks: {
+                                    maxRotation: 90,
+                                    autoSkip: true,
+                                    maxTicksLimit: 12
+                                },
+                                grid: {
+                                    display: false // Disabilita le linee verticali di sfondo
+                                }
+                            },
+                            y: {
+                                title: { display: true, text: 'Valore ($)' },
+                                beginAtZero: false
+                            }
+                        }
+                    }
+                });
+
+            } catch (err) {
+                console.error(err);
+                const container = document.getElementById('disclaimer-container');
+                const msg = document.createElement('div');
+                msg.className = 'alert alert-warning mt-3';
+                msg.innerHTML = '<strong>Attenzione:</strong> impossibile caricare i file JSON localmente. Se stai aprendo il file via <code>file://</code>, prova a servire la cartella con un server HTTP (es. <code>python -m http.server</code> dalla root del progetto) e ricarica la pagina.';
+                container.appendChild(msg);
+            }
+        }
+
+        function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali) {
+            const tableBody = document.getElementById('dividendiTableBody');
+            tableBody.innerHTML = '';
+
+            distribuzioni.forEach(dist => {
+                const { date, amount } = dist;
+
+                // Calcolo dividendi XYLE
+                const lordoXYLE = amount * xyleShares;
+                const nettoXYLE = lordoXYLE * 0.74; // Tassazione 26%
+                const distribuzioneCSSPX = distribuzioniCSSPXVirtuali.find(d => d.date === date);
+                //{ date: d, num_stock_selled: sharesToSell, csspxValueAtDate:csspxAdj, amount: sharesToSell * csspxAdj }); // Valore vendite
+                const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
+                const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
+                const plusvalenza = distribuzioneCSSPX.csspxValueAtDate > csspxInitialPrice ? distribuzioneCSSPX.csspxValueAtDate - csspxInitialPrice : 0;
+                const tassePagate = plusvalenza * distribuzioneCSSPX.num_stock_selled * 0.26;
+                const nettoSp500 = lordoVenduto - tassePagate;
+                const percentualeTasse = lordoVenduto > 0 ? (tassePagate / lordoVenduto) * 100 : 0;
+
+                // Crea riga tabella
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                        <td>${date}</td>
+                        <td>${lordoXYLE.toFixed(2)}</td>
+                        <td>${nettoXYLE.toFixed(2)} Tasse: 26%</td>
+                        <td>${quoteSp500Vendute}</td>
+                        <td>${lordoVenduto.toFixed(2)}</td>
+                        <td>${nettoSp500.toFixed(2)} Tasse: ${percentualeTasse.toFixed(2)}%</td>
+                    `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', loadAndPlot);
+        });
+        document.addEventListener('DOMContentLoaded', loadAndPlot);
+        const modalitaSelect = document.getElementById('modalita');
+        modalitaSelect.addEventListener('change', loadAndPlot);
+        const modalita = parseFloat(modalitaSelect.value);
+        
+    </script>
+</body>
+
+</html>

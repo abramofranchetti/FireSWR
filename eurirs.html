@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Andamento EURIRS 10-30 anni</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+    .container {
+      margin: 2rem auto;
+      padding: 1.5rem 1rem 2.5rem 1rem;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 18px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a237e;
+    }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    .filters label {
+      margin: 0;
+      font-size: 1rem;
+      color: #333;
+    }
+    .filters input[type="date"] {
+      border: 1px solid #bdbdbd;
+      border-radius: 5px;
+      padding: 3px 7px;
+      font-size: 1rem;
+      margin-left: 3px;
+    }
+    .filters button {
+      padding: 7px 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: #1976d2;
+      color: white;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 1rem;
+      margin-left: 2px;
+      margin-right: 2px;
+      transition: background 0.2s;
+    }
+    .filters button#resetZoomBtn {
+      background: #6c757d;
+    }
+    .filters button:hover {
+      background-color: #0d47a1;
+    }
+    .filters button#resetZoomBtn:hover {
+      background: #343a40;
+    }
+    #eurirsChart {
+      width: 100% !important;
+      max-width: 100vw;
+      height: 500px !important;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.08);
+      padding: 6px;
+      margin: 0 auto 1.5rem auto;
+      display: block;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 0.7rem 0.2rem 1.2rem 0.2rem;
+        border-radius: 10px;
+      }
+      h1 { font-size: 1.2rem; margin-bottom: 10px; }
+      #eurirsChart { height: 220px !important; }
+    }
+  </style>
+</head>
+
+<body class="bg-light">
+  <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+    <div class="text-center mb-4">
+      <a href="/FireSWR" class="btn btn-outline-primary">🏠 Home</a>
+    </div>
+
+    <h1>Andamento EURIRS (10-30 anni)</h1>
+
+    <div class="filters">
+      <label>Da: <input type="date" id="startDate"></label>
+      <label>A: <input type="date" id="endDate"></label>
+      <button id="updateBtn">Aggiorna</button>
+      <button id="resetZoomBtn">Reset Zoom</button>
+    </div>
+
+    <canvas id="eurirsChart"></canvas>
+  </div>
+
+  <script>
+    const urls = {
+      eurirs10: 'https://data-api.ecb.europa.eu/service/data/IRS/M.U2.EUR.SR.RT.S130.IRS.MA._Z.10Y.HSTA?format=jsondata&detail=dataonly',
+      eurirs15: 'https://data-api.ecb.europa.eu/service/data/IRS/M.U2.EUR.SR.RT.S130.IRS.MA._Z.15Y.HSTA?format=jsondata&detail=dataonly',
+      eurirs20: 'https://data-api.ecb.europa.eu/service/data/IRS/M.U2.EUR.SR.RT.S130.IRS.MA._Z.20Y.HSTA?format=jsondata&detail=dataonly',
+      eurirs25: 'https://data-api.ecb.europa.eu/service/data/IRS/M.U2.EUR.SR.RT.S130.IRS.MA._Z.25Y.HSTA?format=jsondata&detail=dataonly',
+      eurirs30: 'https://data-api.ecb.europa.eu/service/data/IRS/M.U2.EUR.SR.RT.S130.IRS.MA._Z.30Y.HSTA?format=jsondata&detail=dataonly'
+    };
+
+    async function fetchData(url) {
+      const res = await fetch(url);
+      const json = await res.json();
+      const series = json.dataSets[0].series;
+      const key = Object.keys(series)[0];
+      const obs = series[key].observations;
+      const dates = json.structure.dimensions.observation[0].values.map(v => v.id);
+      return dates.map((d, i) => ({ date: d, value: Object.values(obs)[i]?.[0] ?? null }));
+    }
+
+    function filterByDate(data, start, end) {
+      return data.filter(d => d.date >= start && d.date <= end);
+    }
+
+    const colors = {
+      eurirs10: '#1565c0',
+      eurirs15: '#2e7d32',
+      eurirs20: '#f9a825',
+      eurirs25: '#8e24aa',
+      eurirs30: '#d32f2f'
+    };
+
+    const ctx = document.getElementById('eurirsChart').getContext('2d');
+    let chart;
+
+    async function loadChart() {
+      const start = document.getElementById('startDate').value;
+      const end = document.getElementById('endDate').value;
+
+      const results = await Promise.all(Object.values(urls).map(fetchData));
+      const labels = results[0].map(d => d.date);
+      const datasets = Object.keys(urls).map((k, i) => ({
+        label: k.toUpperCase(),
+        data: filterByDate(results[i], start, end).map(d => d.value),
+        borderColor: Object.values(colors)[i],
+        fill: false,
+        tension: 0.2,
+        pointRadius: 0
+      }));
+
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          scales: {
+            x: { title: { display: true, text: 'Data' }, ticks: { maxTicksLimit: 12 } },
+            y: { title: { display: true, text: 'Tasso (%)' } }
+          },
+          plugins: {
+            legend: { position: 'bottom' },
+            zoom: {
+              pan: { enabled: true, mode: 'x', modifierKey: 'ctrl' },
+              zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' }
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(3)}%`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    const today = new Date();
+    const tenYearsAgo = new Date(today);
+    tenYearsAgo.setFullYear(today.getFullYear() - 10);
+    document.getElementById('startDate').value = tenYearsAgo.toISOString().split('T')[0];
+    document.getElementById('endDate').value = today.toISOString().split('T')[0];
+
+    document.getElementById('updateBtn').addEventListener('click', loadChart);
+    document.getElementById('resetZoomBtn').addEventListener('click', () => chart.resetZoom());
+
+    document.getElementById('startDate').addEventListener('change', loadChart);
+    document.getElementById('endDate').addEventListener('change', loadChart);
+
+    loadChart();
+  </script>
+</body>
+</html>
