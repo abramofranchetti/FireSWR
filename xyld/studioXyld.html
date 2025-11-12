@@ -122,11 +122,7 @@
                     xyleResp.json(),
                     csspxResp.json(),
                     distribuzioniResp.text()
-                ]);
-
-                csspxRaw.forEach(item => {
-                    item.AdjClose = item.Close;
-                });
+                ]);                
 
                 let distribuzioni = [];
                 // Parsing distribuzioni
@@ -171,7 +167,7 @@
                 const xyleCloseSeries = [];
 
                 // Calcolo valore cumulativo
-                let csspxInitialPrice = 143.72;
+                let csspxInitialPrice = 116.35;
                 let xyleAdjInitialPrice = 15.64;
                 let xyleCloseInitialPrice = 39.75;
 
@@ -373,7 +369,7 @@
 
                 // Calcolo dividendi XYLE
                 const lordoXYLE = amount * xyleShares;
-                const nettoXYLE = lordoXYLE * 0.74; // Tassazione 26%
+                const nettoXYLE = lordoXYLE * 0.63; // Tassazione 37%
                 const distribuzioneCSSPX = distribuzioniCSSPXVirtuali.find(d => d.date === date);
                 //{ date: d, num_stock_selled: sharesToSell, csspxValueAtDate:csspxAdj, amount: sharesToSell * csspxAdj }); // Valore vendite
                 const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
@@ -388,7 +384,7 @@
                 row.innerHTML = `
                         <td>${date}</td>
                         <td>${lordoXYLE.toFixed(2)}</td>
-                        <td>${nettoXYLE.toFixed(2)} Tasse: 26%</td>
+                        <td>${nettoXYLE.toFixed(2)} Tasse: 37% (15+26)</td>
                         <td>${quoteSp500Vendute}</td>
                         <td>${lordoVenduto.toFixed(2)}</td>
                         <td>${nettoSp500.toFixed(2)} Tasse: ${percentualeTasse.toFixed(2)}%</td>
