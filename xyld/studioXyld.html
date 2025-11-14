@@ -42,7 +42,7 @@
         <h1 class="text-center">Studio Rendimento XYLD vs Decumulo equivalente da S&P500</h1>
         <h5 class="text-center">Studio comparativo di strategia covered call XYLD e il suo sottostante S&P500 in USA.
             Ho
-            usato l'etf VOO (Vanguard S&P 500 Accumulating). Investimento Iniziale al 11/07/2023, data di quotazione
+            usato l'etf VOO (Vanguard S&P 500 Accumulating). Investimento Iniziale al 24/06/2013, data di quotazione
             dell'ETF XYLD versione USA
         </h5>
         <p>Il grafico mostra come andrebbe una strategia che vende quote di SP500 per ottenere mensilmente lo stesso dividendo lordo staccato dall'ETF covered call. L'analisi della versione europea dello stesso ETF è <a href="../xyle/studioXyle.html">qui.</a></p>
@@ -180,7 +180,7 @@
                 // Nuova serie CSSPX con vendite
                 const csspxAdjustedCumulative = [];
                 let csspxShares = modalita>0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Calcola il numero iniziale di quote di CSSPX
-                const xyleShares = modalita>0 ? initialCapital / xyleAdjInitialPrice : Math.floor(initialCapital / xyleAdjInitialPrice); // Calcola il numero iniziale di quote di XYLE
+                const xyleShares = modalita>0 ? initialCapital / xyleCloseInitialPrice : Math.floor(initialCapital / xyleCloseInitialPrice); // Calcola il numero iniziale di quote di XYLE
 
                 labels.forEach(d => {
                     const c = mapCSSPX.get(d);
@@ -217,7 +217,7 @@
                         const totalDividend = distribuzione.amount * xyleShares; // Dividendo totale
                         const sharesToSell = modalita>0?(totalDividend / csspxAdj): Math.ceil(totalDividend / csspxAdj);
                         csspxShares -= sharesToSell; // Aggiorna il numero di quote di CSSPX
-                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: sharesToSell * csspxAdj }); // Valore vendite
+                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: sharesToSell * csspxAdj, xyle_value:  xyleClose }); // Valore vendite
                     }
 
                     csspxAdjustedCumulative.push(csspxAdj != null ? csspxShares * csspxAdj : null);
@@ -372,7 +372,8 @@
                 const lordoXYLE = amount * xyleShares;
                 const nettoXYLE = lordoXYLE * 0.63; // Tassazione 37%
                 const distribuzioneCSSPX = distribuzioniCSSPXVirtuali.find(d => d.date === date);
-                //{ date: d, num_stock_selled: sharesToSell, csspxValueAtDate:csspxAdj, amount: sharesToSell * csspxAdj }); // Valore vendite
+                const percentualeDist = ((nettoXYLE / xyleShares / (distribuzioneCSSPX.xyle_value)) * 100);                
+                const percentualeDistLord = ((lordoXYLE / xyleShares / (distribuzioneCSSPX.xyle_value)) * 100);                
                 const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
                 const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
                 const plusvalenza = distribuzioneCSSPX ? distribuzioneCSSPX.csspxValueAtDate > csspxInitialPrice ? distribuzioneCSSPX.csspxValueAtDate - csspxInitialPrice : 0 : 0;
@@ -384,8 +385,8 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                         <td>${date}</td>
-                        <td>${lordoXYLE.toFixed(2)}</td>
-                        <td>${nettoXYLE.toFixed(2)} Tasse: 37% (15+26)</td>
+                        <td>${lordoXYLE.toFixed(2)} (=${percentualeDistLord.toFixed(2)}%)</td>
+                        <td>${nettoXYLE.toFixed(2)} Tasse: 37% (15+26) (=${percentualeDist.toFixed(2)}%)</td>
                         <td>${quoteSp500Vendute}</td>
                         <td>${lordoVenduto.toFixed(2)}</td>
                         <td>${nettoSp500.toFixed(2)} Tasse: ${percentualeTasse.toFixed(2)}%</td>

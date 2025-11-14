@@ -42,7 +42,7 @@
         <h1 class="text-center">Studio Rendimento QYLD.MI vs Decumulo equivalente da Nasdaq 100</h1>
         <h5 class="text-center">Studio comparativo di strategia covered call QYLD.MI e il suo sottostante Nasdaq 100.
             Ho
-            usato l'etf XNAS.MI (iShares Nasdaq 100 Accumulating). Investimento Iniziale al 11/07/2023, data di quotazione
+            usato l'etf XNAS.MI (iShares Nasdaq 100 Accumulating). Investimento Iniziale al 25/11/2022, data di quotazione
             dell'ETF QYLD.MI UCITS
         </h5>
         <p>Il grafico mostra come andrebbe una strategia che vende quote di Nasdaq 100 per ottenere mensilmente lo stesso dividendo lordo staccato dall'ETF covered call. L'analisi dell'omologo sull'S&P500 è <a href="../xyle/studioXyle.html">qui.</a></p>
@@ -192,7 +192,7 @@
                 // Nuova serie CSSPX con vendite
                 const csspxAdjustedCumulative = [];
                 let csspxShares = modalita>0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Calcola il numero iniziale di quote di CSSPX
-                const xyleShares = modalita>0 ? initialCapital / xyleAdjInitialPrice : Math.floor(initialCapital / xyleAdjInitialPrice); // Calcola il numero iniziale di quote di XYLE
+                const xyleShares = modalita>0 ? initialCapital / xyleCloseInitialPrice : Math.floor(initialCapital / xyleCloseInitialPrice); // Calcola il numero iniziale di quote di XYLE
 
                 labels.forEach(d => {
                     const c = mapCSSPX.get(d);
