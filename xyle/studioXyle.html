@@ -75,23 +75,27 @@
         </ul>
         </p>
         <div class="container mt-4">
-            <h3 class="text-center">Tabella Dividendi</h3>
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>Data di Stacco</th>
-                        <th>Dividendo Lordo XYLE ($)</th>
-                        <th>Dividendo Netto XYLE ($)</th>
-                        <th>Quote SP500 Vendute</th>
-                        <th>Dividendo Lordo SP500 (da vendita) ($)</th>
-                        <th>Dividendo Netto SP500 (da vendita) ($)</th>
-                    </tr>
-                </thead>
-                <tbody id="dividendiTableBody">
-                    <!-- Righe generate dinamicamente -->
-                </tbody>
-            </table>
-        </div>
+    <h3 class="text-center">Tabella Dividendi</h3>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Data di Stacco</th>
+                    <th>Dividendo Lordo XYLE ($)</th>
+                    <th>Dividendo Lordo XYLE (€)</th>
+                    <th>Dividendo Netto XYLE ($)</th>
+                    <th>Dividendo Netto XYLE (€)</th>
+                    <th>Quote SP500 Vendute</th>
+                    <th>Dividendo Lordo SP500 (da vendita) ($)</th>
+                    <th>Dividendo Netto SP500 (da vendita) ($)</th>
+                </tr>
+            </thead>
+            <tbody id="dividendiTableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
 
     </div>
     <!-- Disclaimer -->
@@ -111,18 +115,20 @@
             const initialCapital = parseFloat(document.getElementById('montante').value);             
             const modalita = parseFloat(modalitaSelect.value);
             try {
-                const [xyleResp, csspxResp, distribuzioniResp] = await Promise.all([
+                const [xyleResp, csspxResp, distribuzioniResp,cambioEurUsdResp] = await Promise.all([
                     fetch('XYLE.MI.json'),
                     fetch('VUAA.MI.json'),
-                    fetch('Distribuzioni_XYLE.txt')
+                    fetch('Distribuzioni_XYLE.txt'),
+                    fetch('cambio_eur_usd.json')
                 ]);
 
-                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');
+                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok || !cambioEurUsdResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');
 
-                const [xyleRaw, csspxRaw, distribuzioniRaw] = await Promise.all([
+                const [xyleRaw, csspxRaw, distribuzioniRaw, cambioEurUsdRaw] = await Promise.all([
                     xyleResp.json(),
                     csspxResp.json(),
-                    distribuzioniResp.text()
+                    distribuzioniResp.text(),
+                    cambioEurUsdResp.json()
                 ]);
 
                 let distribuzioni = [];
@@ -159,6 +165,12 @@
                     mapCSSPX.set(item.Date, { adj: item.AdjClose ?? null });
                 });
 
+                const mapCambio = new Map();
+                cambioEurUsdRaw.forEach(item => {
+                    if(!item.Date) return;
+                    mapCambio.set(item.Date, {cambio: item.Close ?? null});
+                });
+
                 // unione delle date
                 const dateSet = new Set([...mapXYLE.keys(), ...mapCSSPX.keys()]);
                 const labels = Array.from(dateSet).sort((a, b) => new Date(a) - new Date(b));
@@ -184,7 +196,7 @@
 
                 labels.forEach(d => {
                     const c = mapCSSPX.get(d);
-                    const x = mapXYLE.get(d);
+                    const x = mapXYLE.get(d);                    
 
                     const csspxAdj = c ? Number(c.adj) : null;
                     const xyleAdj = x ? Number(x.adj) : null;
@@ -250,7 +262,7 @@
                 });
 
 
-                populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali);
+                populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali, mapCambio);
 
 
 
@@ -361,16 +373,18 @@
             }
         }
 
-        function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali) {
+        function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali, mapCambio) {
             const tableBody = document.getElementById('dividendiTableBody');
             tableBody.innerHTML = '';
 
             distribuzioni.forEach(dist => {
                 const { date, amount } = dist;
-
+                const cambioAlGiorno = mapCambio.get(dist.date).cambio;
                 // Calcolo dividendi XYLE
                 const lordoXYLE = amount * xyleShares;
+                const lordoXYLE_EUR = lordoXYLE / cambioAlGiorno;
                 const nettoXYLE = lordoXYLE * 0.74; // Tassazione 26%
+                const nettoXYLE_EUR = nettoXYLE / cambioAlGiorno; // Tassazione 26%
                 const distribuzioneCSSPX = distribuzioniCSSPXVirtuali.find(d => d.date === date);
                 //{ date: d, num_stock_selled: sharesToSell, csspxValueAtDate:csspxAdj, amount: sharesToSell * csspxAdj }); // Valore vendite
                 const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
@@ -379,13 +393,15 @@
                 const tassePagate = plusvalenza * distribuzioneCSSPX.num_stock_selled * 0.26;
                 const nettoSp500 = lordoVenduto - tassePagate;
                 const percentualeTasse = lordoVenduto > 0 ? (tassePagate / lordoVenduto) * 100 : 0;
-
+                
                 // Crea riga tabella
                 const row = document.createElement('tr');
                 row.innerHTML = `
                         <td>${date}</td>
                         <td>${lordoXYLE.toFixed(2)}</td>
+                        <td>${lordoXYLE_EUR.toFixed(2)}</td>
                         <td>${nettoXYLE.toFixed(2)} Tasse: 26%</td>
+                        <td>${nettoXYLE_EUR.toFixed(2)} Tasse: 26%</td>
                         <td>${quoteSp500Vendute}</td>
                         <td>${lordoVenduto.toFixed(2)}</td>
                         <td>${nettoSp500.toFixed(2)} Tasse: ${percentualeTasse.toFixed(2)}%</td>
