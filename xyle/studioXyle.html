@@ -229,7 +229,7 @@
                         const totalDividend = distribuzione.amount * xyleShares; // Dividendo totale
                         const sharesToSell = modalita>0?(totalDividend / csspxAdj): Math.ceil(totalDividend / csspxAdj);
                         csspxShares -= sharesToSell; // Aggiorna il numero di quote di CSSPX
-                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: sharesToSell * csspxAdj }); // Valore vendite
+                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: sharesToSell * csspxAdj, xyle_value:  xyleClose}); // Valore vendite
                     }
 
                     csspxAdjustedCumulative.push(csspxAdj != null ? csspxShares * csspxAdj : null);
@@ -380,13 +380,13 @@
             distribuzioni.forEach(dist => {
                 const { date, amount } = dist;
                 const cambioAlGiorno = mapCambio.get(dist.date).cambio;
+                const distribuzioneCSSPX = distribuzioniCSSPXVirtuali.find(d => d.date === date);
                 // Calcolo dividendi XYLE
                 const lordoXYLE = amount * xyleShares;
                 const lordoXYLE_EUR = lordoXYLE / cambioAlGiorno;
                 const nettoXYLE = lordoXYLE * 0.74; // Tassazione 26%
-                const nettoXYLE_EUR = nettoXYLE / cambioAlGiorno; // Tassazione 26%
-                const distribuzioneCSSPX = distribuzioniCSSPXVirtuali.find(d => d.date === date);
-                //{ date: d, num_stock_selled: sharesToSell, csspxValueAtDate:csspxAdj, amount: sharesToSell * csspxAdj }); // Valore vendite
+                const nettoXYLE_EUR = nettoXYLE / cambioAlGiorno;                
+                const percentualeDist = ((nettoXYLE_EUR / xyleShares / (distribuzioneCSSPX.xyle_value/cambioAlGiorno)) * 100);                
                 const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
                 const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
                 const plusvalenza = distribuzioneCSSPX.csspxValueAtDate > csspxInitialPrice ? distribuzioneCSSPX.csspxValueAtDate - csspxInitialPrice : 0;
@@ -401,7 +401,7 @@
                         <td>${lordoXYLE.toFixed(2)}</td>
                         <td>${lordoXYLE_EUR.toFixed(2)}</td>
                         <td>${nettoXYLE.toFixed(2)} Tasse: 26%</td>
-                        <td>${nettoXYLE_EUR.toFixed(2)} Tasse: 26%</td>
+                        <td>${nettoXYLE_EUR.toFixed(2)} Tasse: 26% (=${percentualeDist.toFixed(2)}%)</td>
                         <td>${quoteSp500Vendute}</td>
                         <td>${lordoVenduto.toFixed(2)}</td>
                         <td>${nettoSp500.toFixed(2)} Tasse: ${percentualeTasse.toFixed(2)}%</td>
