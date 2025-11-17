@@ -92,6 +92,8 @@
             </thead>
             <tbody id="dividendiTableBody">
             </tbody>
+            <tfoot id="dividendiTableFoot">                
+            </tfoot>
         </table>
     </div>
 </div>
@@ -375,6 +377,10 @@
         function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali, mapCambio) {
             const tableBody = document.getElementById('dividendiTableBody');
             tableBody.innerHTML = '';
+            let sommaNettiXyle=0;
+            let sommaNettiSp500=0;
+            let sommaLordiSp500=0;
+            let sommaDifferenza=0;
 
             distribuzioni.forEach(dist => {
                 const { date, amount } = dist;
@@ -403,7 +409,25 @@
                         <td>${(nettoSp500 - nettoXYLE).toFixed(2)}  (${(((nettoSp500 - nettoXYLE) / nettoXYLE) * 100).toFixed(2)}%)</td>
                     `;
                 tableBody.appendChild(row);
+                sommaDifferenza+=nettoSp500 - nettoXYLE;
+                sommaNettiSp500+=nettoSp500;
+                sommaLordiSp500+=lordoVenduto;
+                sommaNettiXyle+=nettoXYLE;
             });
+
+            const tableFoot = document.getElementById('dividendiTableFoot');
+            tableFoot.innerHTML = '';
+            const row = document.createElement('tr');
+                row.innerHTML = `
+                        <td>Tot:</td>
+                        <td></td>                        
+                        <td>${sommaNettiXyle.toFixed(2)} Tasse: 26%</td>                        
+                        <td></td>
+                        <td></td>
+                        <td>${sommaNettiSp500.toFixed(2)} Tasse: ${((sommaLordiSp500-sommaNettiSp500)/sommaLordiSp500*100).toFixed(2)}%</td>
+                        <td>${sommaDifferenza.toFixed(2)} (${(((sommaNettiSp500 - sommaNettiXyle) / sommaNettiXyle) * 100).toFixed(2)}%)</td>
+                    `;
+            tableFoot.appendChild(row);
         }
         
         document.querySelectorAll('input').forEach(input => {
