@@ -89,10 +89,14 @@
                     <th>Quote SP500 Vendute</th>
                     <th>Dividendo Lordo SP500 (da vendita) ($)</th>
                     <th>Dividendo Netto SP500 (da vendita) ($)</th>
+                    <th>Dividendo Netto SP500 (da vendita) (€)</th>
+                    <th>Differenza tra i netti €</th>
                 </tr>
             </thead>
             <tbody id="dividendiTableBody">
             </tbody>
+            <tfoot id="dividendiTableFoot">                
+            </tfoot>
         </table>
     </div>
 </div>
@@ -377,6 +381,11 @@
             const tableBody = document.getElementById('dividendiTableBody');
             tableBody.innerHTML = '';
 
+            let sommaNettiXyle=0;
+            let sommaNettiSp500=0;
+            let sommaLordiSp500=0;
+            let sommaDifferenza=0;
+
             distribuzioni.forEach(dist => {
                 const { date, amount } = dist;
                 const cambioAlGiorno = mapCambio.get(dist.date).cambio;
@@ -389,9 +398,11 @@
                 const percentualeDist = ((nettoXYLE_EUR / xyleShares / (distribuzioneCSSPX.xyle_value/cambioAlGiorno)) * 100);                
                 const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
                 const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
+                const lordoVendutoEur = lordoVenduto / cambioAlGiorno;
                 const plusvalenza = distribuzioneCSSPX.csspxValueAtDate > csspxInitialPrice ? distribuzioneCSSPX.csspxValueAtDate - csspxInitialPrice : 0;
                 const tassePagate = plusvalenza * distribuzioneCSSPX.num_stock_selled * 0.26;
                 const nettoSp500 = lordoVenduto - tassePagate;
+                const nettoSp500Eur = nettoSp500 / cambioAlGiorno;
                 const percentualeTasse = lordoVenduto > 0 ? (tassePagate / lordoVenduto) * 100 : 0;
                 
                 // Crea riga tabella
@@ -405,9 +416,32 @@
                         <td>${quoteSp500Vendute}</td>
                         <td>${lordoVenduto.toFixed(2)}</td>
                         <td>${nettoSp500.toFixed(2)} Tasse: ${percentualeTasse.toFixed(2)}%</td>
+                        <td>${nettoSp500Eur.toFixed(2)}</td>
+                        <td>${(nettoSp500Eur - nettoXYLE_EUR).toFixed(2)}  (${(((nettoSp500 - nettoXYLE) / nettoXYLE) * 100).toFixed(2)}%)</td>
                     `;
                 tableBody.appendChild(row);
+                sommaDifferenza+=nettoSp500Eur - nettoXYLE_EUR;
+                sommaNettiSp500+=nettoSp500Eur;
+                sommaLordiSp500+=lordoVendutoEur;
+                sommaNettiXyle+=nettoXYLE_EUR;
             });
+
+            const tableFoot = document.getElementById('dividendiTableFoot');
+            tableFoot.innerHTML = '';
+            const row = document.createElement('tr');
+                row.innerHTML = `
+                        <td>Tot:</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>                    
+                        <td>${sommaNettiXyle.toFixed(2)} Tasse: 26%</td>                        
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>${sommaNettiSp500.toFixed(2)} Tasse: ${((sommaLordiSp500-sommaNettiSp500)/sommaLordiSp500*100).toFixed(2)}%</td>
+                        <td>${sommaDifferenza.toFixed(2)} (${(((sommaNettiSp500 - sommaNettiXyle) / sommaNettiXyle) * 100).toFixed(2)}%)</td>
+                    `;
+            tableFoot.appendChild(row);
         }
         
         document.querySelectorAll('input').forEach(input => {
