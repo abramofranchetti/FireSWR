@@ -170,9 +170,9 @@
                 const xyleCloseSeries = [];
 
                 // Calcolo valore cumulativo
-                let csspxInitialPrice = 116.35;
-                let xyleAdjInitialPrice = 15.64;
-                let xyleCloseInitialPrice = 39.75;
+                let csspxInitialPrice = mapCSSPX.size ? mapCSSPX.get([...mapCSSPX.keys()].sort((a,b)=>new Date(a)-new Date(b))[0]).adj : null;
+                let xyleAdjInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a,b)=>new Date(a)-new Date(b))[0]).adj : null;
+                let xyleCloseInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a,b)=>new Date(a)-new Date(b))[0]).close : null;
 
                 const csspxCumulative = [];
                 const xyleAdjCumulative = [];
