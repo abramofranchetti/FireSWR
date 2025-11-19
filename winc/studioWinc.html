@@ -29,8 +29,6 @@
             width: 100%;
         }
     </style>
-
-
 </head>
 
 <body class="bg-light">
@@ -40,10 +38,9 @@
         </div>
         <br>
         <h1 class="text-center">Studio Rendimento WINC.MI vs Decumulo equivalente da ACWE</h1>
-        <h5 class="text-center">Studio comparativo di strategia covered call WINC.DE e il suo sottostante.
-            Ho
-            usato l'etf ACWE.MI (SPDR All Country World UCITS Accumulating). Investimento Iniziale al 2024-03-26, data di quotazione
-            dell'ETF WINC.DE UCITS
+        <h5 class="text-center">
+            Studio comparativo di strategia covered call WINC.DE e il suo sottostante.
+            Ho usato l'etf ACWE.MI (SPDR All Country World UCITS Accumulating).
         </h5>
         <p>Il grafico mostra come andrebbe una strategia che vende quote di ACWE per ottenere mensilmente lo stesso dividendo lordo staccato dall'ETF covered call.</p>
         <form>
@@ -58,6 +55,11 @@
                 <option value="1">Continua (anche quote frazionarie, per simulazione)</option>
                 </select>
                 
+            </div>
+            <!-- Selettore di data di inizio -->
+            <div class="form-group mt-4">
+                <label for="startDate">Data di inizio analisi:</label>
+                <input type="date" class="form-control" id="startDate">
             </div>
         </form>
         <!-- Grafico WINC vs SP500 -->
@@ -112,7 +114,7 @@
         });
     </script>
     <script>        
-        async function loadAndPlot() {
+        async function loadAndPlot() {            
             const initialCapital = parseFloat(document.getElementById('montante').value);             
             const modalita = parseFloat(modalitaSelect.value);
             try {
@@ -123,14 +125,28 @@
                     fetch('cambio_eur_usd.json')
                 ]);
 
-                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok || !cambioEurUsdResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');
+                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok || !cambioEurUsdResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');                
 
-                const [xyleRaw, csspxRaw, distribuzioniRaw, cambioEurUsdRaw] = await Promise.all([
+                let [xyleRaw, csspxRaw, distribuzioniRaw, cambioEurUsdRaw] = await Promise.all([
                     xyleResp.json(),
                     csspxResp.json(),
                     distribuzioniResp.text(),
                     cambioEurUsdResp.json()
                 ]);
+
+                const startDateInput = document.getElementById('startDate');
+                var startDateValue = startDateInput.value;
+                if (!startDateValue) {                                        
+                        startDateInput.value = xyleRaw[0].Date;                    
+                }                
+                const startDate = startDateInput.value;
+                if(startDate>xyleRaw[xyleRaw.length-1].Date){                 
+                    return;
+                }
+
+                // Filtra i dati in base alla data di inizio selezionata
+                xyleRaw = xyleRaw.filter(item => new Date(item.Date) >= new Date(startDate));
+                csspxRaw = csspxRaw.filter(item => new Date(item.Date) >= new Date(startDate));                
 
                 let distribuzioni = [];
                 // Parsing distribuzioni
@@ -151,7 +167,8 @@
                         date: formattedDate,
                         amount: parseFloat(importo)
                     };
-                }).filter(Boolean); // Rimuove eventuali null
+                }).filter(Boolean)
+                .filter(dist => new Date(dist.date) >= new Date(startDate)); // Rimuove eventuali null
 
                 // mappa data->valori
                 const mapXYLE = new Map();
@@ -435,7 +452,9 @@
         });
         document.addEventListener('DOMContentLoaded', loadAndPlot);
         const modalitaSelect = document.getElementById('modalita');
-        modalitaSelect.addEventListener('change', loadAndPlot);                
+        modalitaSelect.addEventListener('change', loadAndPlot);                                   
+        const startDateInput = document.getElementById('startDate');        
+        startDateInput.addEventListener('change', loadAndPlot);            
     </script>
 </body>
 
