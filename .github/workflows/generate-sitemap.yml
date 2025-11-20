@@ -18,6 +18,9 @@ jobs:
         with:
           additional-extensions: doc docx ppt pptx  
           base-url-path: https://abramofranchetti.github.io/FireSWR/
+          exclude-paths: >
+            /excluded 
+            /base.html
 
       - name: Commit sitemap
         uses: stefanzweifel/git-auto-commit-action@v5
