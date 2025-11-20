@@ -1,0 +1,26 @@
+name: Generate Sitemap
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate sitemap
+        uses: cicirello/generate-sitemap@v1
+        with:
+          additional-extensions: doc docx ppt pptx  
+          base-url-path: https://abramofranchetti.github.io/FireSWR/
+
+      - name: Commit sitemap
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update sitemap"
+          file_pattern: sitemap.xml
