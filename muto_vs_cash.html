@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mutuo versus Cash</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <!--<script src="js/ytm.js" defer></script>    -->
+    <style>
+    :root{--bg:#f7f7f8;--card:#fff;--accent:#2b7be4;--mutuo:#d9534f;--cash:#5cb85c}
+    body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:18px; background:var(--bg); color:#222}
+    h1{font-size:20px;margin:0 0 8px}
+    .grid{display:grid;grid-template-columns:340px 1fr;gap:16px}
+    .panel{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(20,20,40,0.06)}
+    label{display:block;font-size:13px;margin:8px 0 4px}
+    input[type="number"], input[type="range"], select{width:100%;padding:6px;border-radius:6px;border:1px solid #e2e6ef}
+    .small{font-size:12px;color:#666}
+    .row{display:flex;gap:8px}
+    .row > *{flex:1}
+    canvas{background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3));border-radius:6px;max-height:400px;display:block}
+    .stats{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+    .stat{background:#f3f6fb;padding:8px;border-radius:8px;min-width:150px}
+    .mutuo-dot{width:12px;height:12px;background:var(--mutuo);border-radius:50%;display:inline-block;margin-right:6px}
+    .cash-dot{width:12px;height:12px;background:var(--cash);border-radius:50%;display:inline-block;margin-right:6px}
+    footer{margin-top:12px;font-size:12px;color:#666}
+    .controls-title{font-weight:600;margin-top:6px}
+  </style>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+          <h1>Mutuo vs Cash — Simulatore dinamico</h1>
+  <p class="small">Differenza tra scenario con mutuo ventennale al 4% e senza mutuo al variare del rendimento. Modifica il tasso del mutuo o la durata per vedere come si modifica il risultato .</p>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="controls-title">Parametri base</div>
+      <label>Prezzo casa / capitale (&#8364;)</label>
+      <input id="principal" type="number" value="200000" min="0" step="1000">
+
+      <label>Tasso mutuo annuo nominale (%)</label>
+      <input id="mortgageRate" type="number" value="4.0" step="0.01" min="0">
+
+      <label>Durata mutuo (anni)</label>
+      <input id="years" type="number" value="20" min="1">
+
+      <div style="margin-top:20px" class="small"><strong>Legenda:</strong><br>Verde = Conviene il mutuo<br>Rosso = Conviene pagare in cash</div>
+    </div>
+
+    <div class="panel">
+      <canvas id="chart" height="360"></canvas>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Funzioni finanziarie
+    function monthlyMortgagePayment(principal, annualRatePct, years){
+      const r = annualRatePct/100/12;
+      const n = years*12;
+      if(r === 0) return principal / n;
+      return principal * r / (1 - Math.pow(1+r, -n));
+    }
+
+    // calcola valore futuro di un versamento periodico (in testa o in coda), e di un capitale iniziale
+    // returns array evoluzione mensile
+    function simulate(principal, monthlyContribution, initialLump, monthlyRate, months){
+      const arr = [];
+      let balance = initialLump;
+      for(let m=0;m<=months;m++){
+        arr.push(balance);
+        // apply monthly return
+        balance = balance * (1+monthlyRate);
+        // contribution at end of period
+        balance += monthlyContribution;
+      }
+      return arr;
+    }
+
+    // helper convert annual net rate to monthly
+    function annualNetToMonthly(annualPct){
+      return Math.pow(1+annualPct, 1/12)-1;
+    }
+
+    const ctx = document.getElementById('chart').getContext('2d');
+    let chart;
+
+    function runSimulation(){
+      const principal = parseFloat(document.getElementById('principal').value);
+      const mortgageRate = parseFloat(document.getElementById('mortgageRate').value);
+      const years = parseInt(document.getElementById('years').value,10);
+      const taxRate = 0.26;
+      const bollo = 0.002;
+      const deductionPct = 0.19;
+      const deductionCap = 4000;
+
+      // monthly mortgage payment
+      const monthlyPay = monthlyMortgagePayment(principal, mortgageRate, years);
+      const months = years*12;
+
+      // stima semplificata della detrazione: calcola interessi annui pagati e applica detrazione fino al cap
+      function computeYearlyMortgageInterestsRemainingBalance(principal, annualRate, years){
+        const r = annualRate/100/12;
+        const n = years*12;
+        let bal = principal;
+        const monthly = monthlyMortgagePayment(principal, annualRate, years);
+        const yearlyInterests = [];
+        for(let y=0;y<years;y++){
+          let yearInterest = 0;
+          for(let m=0;m<12;m++){
+            const interest = bal * r;
+            yearInterest += interest;
+            const principalPay = monthly - interest;
+            bal -= principalPay;
+          }
+          yearlyInterests.push(yearInterest);
+        }
+        return yearlyInterests;
+      }
+
+      const yearlyInterests = computeYearlyMortgageInterestsRemainingBalance(principal, mortgageRate, years);
+
+      // Helper function to calculate final balance for a given gross investment rate
+      function calculateFinalBalance(investRateGross, isMutuo){
+        const netAnnual = investRateGross * (1 - taxRate) - bollo;
+        const monthlyNetRate = annualNetToMonthly(Math.max(netAnnual, -0.9999999));
+
+        if(isMutuo){
+          // MUTUO scenario: initial lump = principal
+          let mutuoBal = principal;
+          for(let m=0;m<=months;m++){
+            mutuoBal = mutuoBal * (1+monthlyNetRate);
+            if(m>0 && m%12===0){
+              const yearIndex = (m/12)-1;
+              const interestThisYear = yearlyInterests[yearIndex] || 0;
+              const deduction = Math.min(interestThisYear * deductionPct, deductionCap);
+              mutuoBal += deduction;
+            }
+          }
+          return mutuoBal;
+        } else {
+          // CASH scenario: invest monthly payment
+          let cashBal = 0;
+          for(let m=0;m<=months;m++){
+            cashBal = cashBal * (1+monthlyNetRate);
+            cashBal += monthlyPay;
+          }
+          return cashBal;
+        }
+      }
+
+      // Generate data points: vary investment rate from -5% to 10%
+      const minRate = -5;
+      const maxRate = 10;
+      const steps = 31; // 0.5% step
+      const investRates = [];
+      const diffValues = [];
+
+      for(let i=0;i<steps;i++){
+        const rate = minRate + (i / (steps-1)) * (maxRate - minRate);
+        const cashFinal = calculateFinalBalance(rate/100, false);
+        const mutFinal = calculateFinalBalance(rate/100, true);
+        const diff = mutFinal - cashFinal;
+
+        investRates.push(rate.toFixed(1));
+        diffValues.push(diff);
+      }
+
+      // create fill colors: green where diff > 0, red where diff < 0
+      const backgroundColors = diffValues.map(d => d >= 0 ? 'rgba(92,184,92,0.15)' : 'rgba(217,83,79,0.15)');
+
+      // draw chart with difference
+      const datasets = [
+        {
+          label: 'Differenza (Mutuo - Cash)',
+          data: diffValues,
+          borderColor: '#1f77b4',
+          borderWidth: 2.5,
+          backgroundColor: backgroundColors,
+          segment: {
+            backgroundColor: (ctx) => {
+              const value = ctx.p1DataIndex !== undefined ? diffValues[ctx.p1DataIndex] : diffValues[ctx.p0DataIndex];
+              return value >= 0 ? 'rgba(92,184,92,0.15)' : 'rgba(217,83,79,0.15)';
+            }
+          },
+          tension: 0.25,
+          fill: true,
+          pointRadius: 2,
+          pointBackgroundColor: '#1f77b4',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 1
+        }
+      ];
+
+      if(chart){
+        chart.data.labels = investRates;
+        chart.data.datasets = datasets;
+        chart.update();
+      }
+      else{
+        chart = new Chart(ctx, {
+          type:'line',
+          data:{labels:investRates, datasets:datasets},
+          options:{
+            responsive:true,
+            maintainAspectRatio:true,
+            plugins:{
+              legend:{position:'top'},
+              filler:{propagate:true}
+            },
+            scales:{
+              y:{
+                ticks:{callback: v => '€' + (v/1000).toFixed(0) + 'k'},
+                grid:{drawBorder:true}
+              },
+              x:{
+                type:'category',
+                title:{display:true, text:'Rendimento lordo annuo dell\'investimento (%)'}
+              }
+            }
+          }
+        });
+      }
+
+    }
+
+    // run initially
+    runSimulation();
+
+    // Add event listeners to all inputs
+    document.getElementById('principal').addEventListener('change', runSimulation);
+    document.getElementById('principal').addEventListener('input', runSimulation);
+    document.getElementById('mortgageRate').addEventListener('change', runSimulation);
+    document.getElementById('mortgageRate').addEventListener('input', runSimulation);
+    document.getElementById('years').addEventListener('change', runSimulation);
+    document.getElementById('years').addEventListener('input', runSimulation);
+  </script>
+     <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+</body>
+
+</html>
