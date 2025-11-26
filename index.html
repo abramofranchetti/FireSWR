@@ -55,6 +55,27 @@
             color: var(--text-light);
             font-size: 1.1rem;
         }
+        .search-container {
+            margin-top: 18px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #search-box {
+            width: 100%;
+            max-width: 760px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            font-size: 1rem;
+        }
+
+        #search-box:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 4px 12px rgba(82, 48, 44, 0.06);
+        }
         
         .section {
             margin-bottom: 50px;
@@ -67,6 +88,33 @@
             padding-bottom: 15px;
             border-bottom: 3px solid var(--color-primary);
             text-align: left;
+        }
+
+        .section-title a.section-link {
+            color: inherit;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .section-title a.section-link:hover {
+            text-decoration: underline;
+            color: var(--color-primary-hover);
+        }
+
+        .copy-link {
+            margin-left: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            padding: 6px 8px;
+            border-radius: 8px;
+        }
+
+        .copy-link:hover {
+            background: rgba(0,0,0,0.04);
+            color: var(--color-primary);
         }
         
         .button-grid {
@@ -281,11 +329,14 @@
         <header>
             <h1>🎯 Calcolatori Finanziari</h1>
             <p class="subtitle">Strumenti per l'analisi di investimenti, FIRE e pianificazione finanziaria</p>
+            <div class="search-container">
+                <input id="search-box" type="search" placeholder="Cerca calcolatore (es. SWR, PAC, TFR...)" aria-label="Cerca calcolatore">
+            </div>
         </header>
 
         <!-- Sezione: Pianificazione Pensionistica e FIRE -->
-        <section class="section">
-            <h2 class="section-title">📊 Pianificazione Pensionistica e FIRE</h2>
+        <section id="pianificazione" class="section">
+            <h2 class="section-title"><a class="section-link" href="#pianificazione">📊 Pianificazione Pensionistica e FIRE</a><button class="copy-link" data-target="pianificazione" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/dwz.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-piggy-bank"></i></div>
@@ -321,8 +372,8 @@
         </section>
 
         <!-- Sezione: Calcolatori di Investimenti -->
-        <section class="section">
-            <h2 class="section-title">💼 Calcolatori di Investimenti</h2>
+        <section id="investimenti" class="section">
+            <h2 class="section-title"><a class="section-link" href="#investimenti">💼 Calcolatori di Investimenti</a><button class="copy-link" data-target="investimenti" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/pac.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
@@ -370,8 +421,8 @@
         </section>
 
         <!-- Sezione: Obbligazioni e Reddito Fisso -->
-        <section class="section">
-            <h2 class="section-title">💰 Obbligazioni e Reddito Fisso</h2>
+        <section id="obbligazioni" class="section">
+            <h2 class="section-title"><a class="section-link" href="#obbligazioni">💰 Obbligazioni e Reddito Fisso</a><button class="copy-link" data-target="obbligazioni" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/ytm.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
@@ -425,8 +476,8 @@
         </section>
 
         <!-- Sezione: Analisi Mercati Azionari -->
-        <section class="section">
-            <h2 class="section-title">📈 Analisi Mercati Azionari</h2>
+        <section id="mercati" class="section">
+            <h2 class="section-title"><a class="section-link" href="#mercati">📈 Analisi Mercati Azionari</a><button class="copy-link" data-target="mercati" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/sp500_gold_oil.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
@@ -450,8 +501,8 @@
         </section>
 
         <!-- Sezione: Materie Prime e Valute -->
-        <section class="section">
-            <h2 class="section-title">💎 Materie Prime e Valute</h2>
+        <section id="materie-prime" class="section">
+            <h2 class="section-title"><a class="section-link" href="#materie-prime">💎 Materie Prime e Valute</a><button class="copy-link" data-target="materie-prime" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/gold.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-ring"></i></div>
@@ -475,8 +526,8 @@
         </section>
 
         <!-- Sezione: Inflazione e Potere d'Acquisto -->
-        <section class="section">
-            <h2 class="section-title">💸 Inflazione e Potere d'Acquisto</h2>
+        <section id="inflazione" class="section">
+            <h2 class="section-title"><a class="section-link" href="#inflazione">💸 Inflazione e Potere d'Acquisto</a><button class="copy-link" data-target="inflazione" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/infl.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
@@ -506,8 +557,8 @@
         </section>
 
         <!-- Sezione: Covered Call - Strategie di Reddito -->
-        <section class="section">
-            <h2 class="section-title">🎯 Covered Call - Strategie di Reddito</h2>
+        <section id="covered-call" class="section">
+            <h2 class="section-title"><a class="section-link" href="#covered-call">🎯 Covered Call - Strategie di Reddito</a><button class="copy-link" data-target="covered-call" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/xyle/studioXyle.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
@@ -549,8 +600,8 @@
         </section>
 
         <!-- Sezione: Utilità Diverse -->
-        <section class="section">
-            <h2 class="section-title">🛠️ Utilità e Strumenti</h2>
+        <section id="utilita" class="section">
+            <h2 class="section-title"><a class="section-link" href="#utilita">🛠️ Utilità e Strumenti</a><button class="copy-link" data-target="utilita" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/rlc.html" class="button-card utility">
                     <div class="button-icon"><i class="fas fa-redo"></i></div>
@@ -604,8 +655,8 @@
         </section>
 
         <!-- Sezione: Download Dati -->
-        <section class="section">
-            <h2 class="section-title">📥 Download Dati Storici</h2>
+        <section id="download" class="section">
+            <h2 class="section-title"><a class="section-link" href="#download">📥 Download Dati Storici</a><button class="copy-link" data-target="download" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/json/sp500.json" class="button-card download" download="^SP500TR.json">
                     <div class="button-icon"><i class="fas fa-download"></i></div>
@@ -645,6 +696,7 @@
         
         <script>
              document.addEventListener('DOMContentLoaded', function () {
+                 // Carica disclaimer
                  fetch('html/disclaimer.html')
                      .then(response => response.text())
                      .then(data => {
@@ -673,6 +725,79 @@
                              li.style.fontSize = '0.95rem';
                          });
                      });
+
+                 // Funzionalità di ricerca dinamica
+                 const searchBox = document.getElementById('search-box');
+                 const cards = Array.from(document.querySelectorAll('.button-card'));
+                 const sections = Array.from(document.querySelectorAll('section.section'));
+
+                 // Prepara testo ricercabile per ciascuna card
+                 cards.forEach(card => {
+                     const title = (card.querySelector('.button-title')?.textContent || '');
+                     const desc = (card.querySelector('.button-description')?.textContent || '');
+                     const label = (card.querySelector('.button-label')?.textContent || '');
+                     card.dataset.search = (title + ' ' + desc + ' ' + label).toLowerCase();
+                 });
+
+                 function filterCards() {
+                     const q = (searchBox?.value || '').trim().toLowerCase();
+                     cards.forEach(card => {
+                         const match = q === '' || (card.dataset.search || '').includes(q);
+                         card.style.display = match ? '' : 'none';
+                     });
+
+                     // Nascondi le sezioni che non hanno card visibili
+                     sections.forEach(sec => {
+                         const visible = Array.from(sec.querySelectorAll('.button-card')).some(c => c.style.display !== 'none');
+                         sec.style.display = visible ? '' : 'none';
+                     });
+                 }
+
+                 if (searchBox) {
+                     searchBox.addEventListener('input', filterCards);
+                 }
+
+                 // Gestione hash per scrollare alle sezioni (es. #investimenti)
+                 function scrollToHash() {
+                     if (location.hash) {
+                         const id = decodeURIComponent(location.hash.slice(1));
+                         const el = document.getElementById(id);
+                         if (el) {
+                             setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+                         }
+                     }
+                 }
+
+                 // Esegui all'avvio e quando cambia l'hash
+                 scrollToHash();
+                 window.addEventListener('hashchange', scrollToHash);
+
+                 // Funzionalità copia URL per ogni sezione
+                 const copyButtons = Array.from(document.querySelectorAll('.copy-link'));
+                 function getFullUrlForId(id) {
+                     // Usa pathname + hash per creare URL relativo
+                     const path = location.pathname || window.location.href;
+                     // Se la pagina viene servita da file://, costruisci un URL compatto
+                     const base = (location.origin && location.origin !== 'null') ? (location.origin + location.pathname) : window.location.href.split('#')[0];
+                     return base.split('#')[0] + '#' + encodeURIComponent(id);
+                 }
+
+                 copyButtons.forEach(btn => {
+                     btn.addEventListener('click', async (ev) => {
+                         const target = btn.dataset.target;
+                         if (!target) return;
+                         const url = getFullUrlForId(target);
+                         try {
+                             await navigator.clipboard.writeText(url);
+                             const old = btn.textContent;
+                             btn.textContent = 'Copiato!';
+                             setTimeout(() => btn.textContent = old, 1200);
+                         } catch (e) {
+                             // fallback: seleziona e copia usando prompt
+                             prompt('Copia l\'URL della sezione:', url);
+                         }
+                     });
+                 });
              });
         </script>
     </div>
