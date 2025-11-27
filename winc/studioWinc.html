@@ -453,7 +453,7 @@
                 // Calcolo dividendi XYLE
                 const lordoXYLE = amount * xyleShares;
                 const nettoXYLE = lordoXYLE * 0.74; // Tassazione 26%
-                const percentualeDist = distribuzioneCSSPX && distribuzioneCSSPX.xyle_value && cambioAlGiorno ? ((nettoXYLE / xyleShares / (distribuzioneCSSPX.xyle_value / cambioAlGiorno)) * 100) : 0;
+                const percentualeDist = (nettoXYLE / xyleShares / (distribuzioneCSSPX.xyle_value / cambioAlGiorno)) * 100;
                 const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
                 const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
                 const commission = distribuzioneCSSPX ? (distribuzioneCSSPX.commission || 0) : 0;
@@ -470,7 +470,7 @@
                 row.innerHTML = `
                         <td>${date}</td>
                         <td>${lordoXYLE.toFixed(2)}</td>                        
-                        <td>${nettoXYLE.toFixed(2)} Tasse: 26%</td>                        
+                        <td>${nettoXYLE.toFixed(2)} Tasse: 26% (=${percentualeDist.toFixed(2)}%)</td>                        
                         <td>${quoteSp500Vendute}</td>
                         <td>${lordoVenduto.toFixed(2)}</td>
                         <td>${nettoSp500.toFixed(2)} Tasse: ${percentualeTasse.toFixed(2)}% Comm: ${commission.toFixed(2)}€</td>
