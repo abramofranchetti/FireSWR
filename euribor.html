@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Andamento Euribor 3M e 6M</title>
+    <title>Andamento Euribor 3M e 6M vs €STR</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -148,7 +148,7 @@
             <a href="/FireSWR" class="home-button">🏠 Home</a>
         </div>
         <br>
-        <h1 class="text-center">Andamento Euribor 3M e 6M</h1>
+        <h1 class="text-center">Andamento Euribor 3M e 6M vs €STR</h1>
 
         <div class="filters">
             <label>Da: <input type="date" id="startDate"></label>
@@ -164,7 +164,10 @@
         <script>
             const urls = {
                 euribor3m: 'https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA?format=jsondata&detail=dataonly',
-                euribor6m: 'https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR6MD_.HSTA?format=jsondata&detail=dataonly'
+                euribor6m: 'https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR6MD_.HSTA?format=jsondata&detail=dataonly',
+                eurstrinst: 'https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2X2A25.WT?format=jsondata&detail=dataonly',
+                eurstr3m: 'https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2QQF32.CR?format=jsondata&detail=dataonly',
+                eurstr6m: 'https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2QQF40.CR?format=jsondata&detail=dataonly'
             };
 
             const canvas = document.getElementById('euriborChart');
@@ -215,27 +218,42 @@
                     alert('Errore: dati Euribor non disponibili o struttura dati cambiata.');
                     return [];
                 }
-                const dates = data.structure.dimensions.observation[0].values.map(v => v.id);
+                const rawDates = data.structure.dimensions.observation[0].values.map(v => v.id);
                 const values = Object.values(observations).map(v => v[0]);
+
+                // Normalizza le date a YYYY-MM quando possibile. Alcune serie
+                // (es. EURSTR) possono avere formati con giorno (YYYY-MM-DD)
+                // mentre Euribor usa YYYY-MM; troncare al mese permette di
+                // allineare le serie sull'asse mensile di Euribor.
+                const dates = rawDates.map(d => (typeof d === 'string' && d.length >= 7) ? d.slice(0, 7) : d);
 
                 return dates.map((d, i) => ({ date: d, value: values[i] }));
             }
 
             function filterByDate(data, start, end) {
-                return data.filter(d => d.date >= start && d.date <= end);
+                // Confronto su precisione mensile: converti start/end in YYYY-MM
+                const s = start && start.length >= 7 ? start.slice(0, 7) : start;
+                const e = end && end.length >= 7 ? end.slice(0, 7) : end;
+                return data.filter(d => d.date >= s && d.date <= e);
             }
 
             async function loadChart() {
                 const start = document.getElementById('startDate').value;
                 const end = document.getElementById('endDate').value;
 
-                const [euribor3m, euribor6m] = await Promise.all([
+                const [euribor3m, euribor6m,eurstrinst,eurstr3m,eurstr6m] = await Promise.all([
                     fetchEuriborData(urls.euribor3m),
-                    fetchEuriborData(urls.euribor6m)
+                    fetchEuriborData(urls.euribor6m),
+                    fetchEuriborData(urls.eurstrinst),
+                    fetchEuriborData(urls.eurstr3m),
+                    fetchEuriborData(urls.eurstr6m)
                 ]);
 
                 const filtered3m = filterByDate(euribor3m, start, end);
                 const filtered6m = filterByDate(euribor6m, start, end);
+                const filteredeurstrinst = filterByDate(eurstrinst, start, end);
+                const filteredeurstr3m = filterByDate(eurstr3m, start, end);
+                const filteredeurstr6m = filterByDate(eurstr6m, start, end);
 
                 // Se i dati sono vuoti, mostra un messaggio e non tentare di disegnare il grafico
                 if (filtered3m.length === 0 && filtered6m.length === 0) {
@@ -243,9 +261,24 @@
                     return;
                 }
 
-                const labels = filtered3m.map(d => d.date);
-                const data3m = filtered3m.map(d => d.value);
-                const data6m = filtered6m.map(d => d.value);
+                // Usa le date di Euribor come asse principale (comanda la serie).
+                // Preferiamo Euribor 3M; se non disponibile usiamo Euribor 6M.
+                let baseSeries = filtered3m.length ? filtered3m : (filtered6m.length ? filtered6m : []);
+                const labels = baseSeries.map(d => d.date);
+
+                // Mappa una serie sui label definiti da Euribor, inserendo `null`
+                // per le date in cui la serie non ha valore (ad es. EURSTR prima
+                // del 2019/2020).
+                function mapToSeries(fullLabels, series) {
+                    const m = new Map(series.map(s => [s.date, s.value]));
+                    return fullLabels.map(d => m.has(d) ? m.get(d) : null);
+                }
+
+                const data3m = mapToSeries(labels, filtered3m);
+                const data6m = mapToSeries(labels, filtered6m);
+                const dataeurstrinst = mapToSeries(labels, filteredeurstrinst);
+                const dataeurstr3m = mapToSeries(labels, filteredeurstr3m);
+                const dataeurstr6m = mapToSeries(labels, filteredeurstr6m);
 
                 if (chart) chart.destroy();
                 // Ridimensiona il canvas solo qui, prima di ridisegnare
@@ -269,7 +302,38 @@
                                 borderColor: '#28a745',
                                 fill: false,
                                 tension: 0.2,
-                                pointRadius: 0
+                                pointRadius: 0,
+                                hidden: true
+                            },
+                            {
+                                label: 'EURSTR Istantaneo',
+                                data: dataeurstrinst,
+                                borderColor: 'rgba(255,87,51,0.6)',
+                                borderWidth: 1.5,
+                                fill: false,
+                                tension: 0,
+                                pointRadius: 0,
+                                stepped: true
+                            },
+                            {
+                                label: 'EURSTR 3M Comp.',
+                                data: dataeurstr3m,
+                                borderColor: 'rgba(255,51,168,0.45)',
+                                borderWidth: 1.5,
+                                fill: false,
+                                tension: 0,
+                                pointRadius: 0,
+                                hidden: true
+                            },
+                            {
+                                label: 'EURSTR 6M Comp.',
+                                data: dataeurstr6m,
+                                borderColor: 'rgba(142,51,255,0.45)',
+                                borderWidth: 1.5,
+                                fill: false,
+                                tension: 0,
+                                pointRadius: 0,
+                                hidden: true
                             }
                         ]
                     },
@@ -288,7 +352,10 @@
                             legend: { position: 'bottom' },
                             tooltip: {
                                 callbacks: {
-                                    label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(3)}%`
+                                    label: ctx => {
+                                        const y = ctx.parsed && isFinite(ctx.parsed.y) ? ctx.parsed.y : null;
+                                        return `${ctx.dataset.label}: ${y !== null ? y.toFixed(3) + '%' : 'N/A'}`;
+                                    }
                                 }
                             },
                             zoom: {
