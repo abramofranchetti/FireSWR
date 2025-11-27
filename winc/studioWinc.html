@@ -45,22 +45,50 @@
         <p>Il grafico mostra come andrebbe una strategia che vende quote di ACWE per ottenere mensilmente lo stesso dividendo lordo staccato dall'ETF covered call.</p>
         <form>
             <div class="form-group mt-4">
-                <label for="montante">Capitale inizale $:</label>
-                <input type="number" class="form-control" id="montante" value="100000" step="1000">
-            </div>
-            <div class="form-group mt-4">
-                <label for="modalita">Modalità calcolo compravendita quote ETF:</label>
-                <select class="form-control" id="modalita">
-                <option value="0">Discreta (solo quote intere, come nella reatà)</option>
-                <option value="1">Continua (anche quote frazionarie, per simulazione)</option>
-                </select>
-                
-            </div>
-            <!-- Selettore di data di inizio -->
-            <div class="form-group mt-4">
                 <label for="startDate">Data di inizio analisi:</label>
                 <input type="date" class="form-control" id="startDate">
             </div>
+            <div class="form-row mt-2">
+                <div class="form-group col-md-6">
+                    <label for="montante">Capitale inizale $:</label>
+                    <input type="number" class="form-control" id="montante" value="100000" step="1000">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="modalita">Modalità calcolo compravendita quote ETF:</label>
+                    <select class="form-control" id="modalita">
+                    <option value="0">Discreta (solo quote intere, come nella reatà)</option>
+                    <option value="1">Continua (anche quote frazionarie, per simulazione)</option>
+                    </select>                
+                </div>
+            </div>            
+            <div class="form-group mt-2">
+                <label for="sellCommissionType">Tipo commissione vendita</label>
+                <select class="form-control" id="sellCommissionType">
+                    <option value="euro">Euro (€)</option>
+                    <option value="percent">Percentuale (%)</option>
+                </select>
+            </div>
+            <div class="form-row mt-2">                
+                <div class="form-group col-md-3">
+                    <label for="sellCommission">Commissioni di vendita (€)</label>
+                    <input type="number" class="form-control" id="sellCommission" value="7" step="0.01">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="sellCommissionPercent">Commissioni di vendita (%)</label>
+                    <input type="number" class="form-control" id="sellCommissionPercent" value="0.2" step="0.01">
+                    <small class="form-text text-muted">Es. 0.2 = 0.2%</small>
+                </div>                    
+                <div class="form-group col-md-3">
+                    <label for="sellCommissionMin">Commissione minima (€)</label>
+                    <input type="number" class="form-control" id="sellCommissionMin" value="7" step="0.01">
+                    <small class="form-text text-muted">0 = ignorata</small>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="sellCommissionMax">Commissione massima (€)</label>
+                    <input type="number" class="form-control" id="sellCommissionMax" value="19" step="0.01">
+                    <small class="form-text text-muted">0 = ignorata</small>
+                </div>
+            </div>            
         </form>
         <!-- Grafico WINC vs SP500 -->
         <div class="chart-container">
@@ -114,9 +142,14 @@
         });
     </script>
     <script>        
-        async function loadAndPlot() {            
+            async function loadAndPlot() {            
             const initialCapital = parseFloat(document.getElementById('montante').value);             
             const modalita = parseFloat(modalitaSelect.value);
+            const sellCommissionType = document.getElementById('sellCommissionType').value || 'euro';
+            const sellCommission = parseFloat(document.getElementById('sellCommission').value) || 7; // Commissione di vendita in euro (flat)
+            const sellCommissionPercent = parseFloat(document.getElementById('sellCommissionPercent').value) || 0.2; // percentuale (es. 0.2 = 0.2%)
+            const sellCommissionMin = parseFloat(document.getElementById('sellCommissionMin').value) || 0; // minima in euro
+            const sellCommissionMax = parseFloat(document.getElementById('sellCommissionMax').value) || 0; // massima in euro
             try {
                 const [xyleResp, csspxResp, distribuzioniResp,cambioEurUsdResp] = await Promise.all([
                     fetch('WINC.DE.json'),
@@ -247,7 +280,20 @@
                         const totalDividend = distribuzione.amount * xyleShares; // Dividendo totale
                         const sharesToSell = modalita>0?(totalDividend / csspxAdj): Math.ceil(totalDividend / csspxAdj);
                         csspxShares -= sharesToSell; // Aggiorna il numero di quote di CSSPX
-                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: sharesToSell * csspxAdj, xyle_value:  xyleClose}); // Valore vendite
+                        // Calcola commissione in euro: o flat per operazione, o percentuale sul valore della vendita
+                        const saleValue = sharesToSell * csspxAdj;
+                        let commissionPerSale = 0;
+                        if (sellCommissionType === 'percent') {
+                            commissionPerSale = (sellCommissionPercent / 100) * saleValue;
+                            // Applica soglie min/max se almeno una è > 0; se entrambe = 0 vengono ignorate
+                            if (!(sellCommissionMin === 0 && sellCommissionMax === 0)) {
+                                if (sellCommissionMin > 0) commissionPerSale = Math.max(commissionPerSale, sellCommissionMin);
+                                if (sellCommissionMax > 0) commissionPerSale = Math.min(commissionPerSale, sellCommissionMax);
+                            }
+                        } else {
+                            commissionPerSale = sellCommission;
+                        }
+                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: saleValue, xyle_value:  xyleClose, commission: commissionPerSale}); // Valore vendite
                     }
 
                     csspxAdjustedCumulative.push(csspxAdj != null ? csspxShares * csspxAdj : null);
@@ -398,20 +444,25 @@
             let sommaNettiSp500=0;
             let sommaLordiSp500=0;
             let sommaDifferenza=0;
+            let sommaCommissioni=0;
 
             distribuzioni.forEach(dist => {
                 const { date, amount } = dist;
                 const cambioAlGiorno = mapCambio.get(dist.date).cambio;
                 const distribuzioneCSSPX = distribuzioniCSSPXVirtuali.find(d => d.date === date);
                 // Calcolo dividendi XYLE
-                const lordoXYLE = amount * xyleShares;                
+                const lordoXYLE = amount * xyleShares;
                 const nettoXYLE = lordoXYLE * 0.74; // Tassazione 26%
-                const percentualeDist = ((nettoXYLE / xyleShares / (distribuzioneCSSPX.xyle_value/cambioAlGiorno)) * 100);                
+                const percentualeDist = distribuzioneCSSPX && distribuzioneCSSPX.xyle_value && cambioAlGiorno ? ((nettoXYLE / xyleShares / (distribuzioneCSSPX.xyle_value / cambioAlGiorno)) * 100) : 0;
                 const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
                 const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
-                const plusvalenza = distribuzioneCSSPX.csspxValueAtDate > csspxInitialPrice ? distribuzioneCSSPX.csspxValueAtDate - csspxInitialPrice : 0;
-                const tassePagate = plusvalenza * distribuzioneCSSPX.num_stock_selled * 0.26;
-                const nettoSp500 = lordoVenduto - tassePagate;
+                const commission = distribuzioneCSSPX ? (distribuzioneCSSPX.commission || 0) : 0;
+                // Calcolo plusvalenza tassabile: (prezzo vendita - prezzo carico) * n_quote - commissioni
+                const plusvalenzaPerQuota = distribuzioneCSSPX ? (distribuzioneCSSPX.csspxValueAtDate - csspxInitialPrice) : 0;
+                const totalePlusvalenza = (plusvalenzaPerQuota > 0 && distribuzioneCSSPX) ? plusvalenzaPerQuota * distribuzioneCSSPX.num_stock_selled : 0;
+                const taxableGain = Math.max(0, totalePlusvalenza - commission);
+                const tassePagate = taxableGain * 0.26;
+                const nettoSp500 = lordoVenduto - tassePagate - commission;
                 const percentualeTasse = lordoVenduto > 0 ? (tassePagate / lordoVenduto) * 100 : 0;
                 
                 // Crea riga tabella
@@ -422,7 +473,7 @@
                         <td>${nettoXYLE.toFixed(2)} Tasse: 26%</td>                        
                         <td>${quoteSp500Vendute}</td>
                         <td>${lordoVenduto.toFixed(2)}</td>
-                        <td>${nettoSp500.toFixed(2)} Tasse: ${percentualeTasse.toFixed(2)}%</td>
+                        <td>${nettoSp500.toFixed(2)} Tasse: ${percentualeTasse.toFixed(2)}% Comm: ${commission.toFixed(2)}€</td>
                         <td>${(nettoSp500 - nettoXYLE).toFixed(2)}  (${(((nettoSp500 - nettoXYLE) / nettoXYLE) * 100).toFixed(2)}%)</td>
                     `;
                 tableBody.appendChild(row);
@@ -430,6 +481,7 @@
                 sommaNettiSp500+=nettoSp500;
                 sommaLordiSp500+=lordoVenduto;
                 sommaNettiXyle+=nettoXYLE;
+                sommaCommissioni+=commission;
             });
 
             const tableFoot = document.getElementById('dividendiTableFoot');
@@ -441,7 +493,7 @@
                         <td>${sommaNettiXyle.toFixed(2)} Tasse: 26%</td>                        
                         <td></td>
                         <td></td>
-                        <td>${sommaNettiSp500.toFixed(2)} Tasse: ${((sommaLordiSp500-sommaNettiSp500)/sommaLordiSp500*100).toFixed(2)}%</td>
+                        <td>${sommaNettiSp500.toFixed(2)} Tasse: ${sommaLordiSp500>0?((sommaLordiSp500-sommaNettiSp500)/sommaLordiSp500*100).toFixed(2):'0.00'}% (Commissioni Tot: ${sommaCommissioni.toFixed(2)}€)</td>
                         <td>${sommaDifferenza.toFixed(2)} (${(((sommaNettiSp500 - sommaNettiXyle) / sommaNettiXyle) * 100).toFixed(2)}%)</td>
                     `;
             tableFoot.appendChild(row);
@@ -455,6 +507,17 @@
         modalitaSelect.addEventListener('change', loadAndPlot);                                   
         const startDateInput = document.getElementById('startDate');        
         startDateInput.addEventListener('change', loadAndPlot);            
+        const sellCommissionTypeSelect = document.getElementById('sellCommissionType');
+        const sellCommissionPercentGroup = document.getElementById('sellCommissionPercentGroup');        
+        // Mostra/nascondi campo percentuale e min/max in base al tipo selezionato
+        sellCommissionTypeSelect.addEventListener('change', function () {                        
+            loadAndPlot();
+        });
+        // Rerun on min/max changes
+        const sellCommissionMin = document.getElementById('sellCommissionMin');
+        const sellCommissionMax = document.getElementById('sellCommissionMax');
+        if (sellCommissionMin) sellCommissionMin.addEventListener('input', loadAndPlot);
+        if (sellCommissionMax) sellCommissionMax.addEventListener('input', loadAndPlot);
     </script>
 </body>
 
