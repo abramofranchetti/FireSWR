@@ -42,11 +42,6 @@
             display: block;
             margin-bottom: 6px;
         }
-
-        .metric-value {
-            white-space: pre-line;
-            font-family: monospace;
-        }
     </style>
 </head>
 
@@ -134,7 +129,7 @@
         <div class="mt-4" id="metricsContainer">
             <h4 class="text-center mb-3">Metriche Serie</h4>
             <div class="row g-2">
-                <div class="col-md-6 col-lg-3">
+                <div class="col-md-6 col-lg-3 pb-1">
                     <div class="metric-card"
                         style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
                         <strong style="color: #3693eb; font-size: 0.95rem;">ACWE - Accumulo</strong>
@@ -142,7 +137,7 @@
                             Calcolo in corso...</div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
+                <div class="col-md-6 col-lg-3 pb-1">
                     <div class="metric-card"
                         style="background: linear-gradient(135deg, rgba(40,167,69,0.1) 0%, rgba(40,167,69,0.05) 100%); border-left: 4px solid rgba(40,167,69,0.8);">
                         <strong style="color: #28a745; font-size: 0.95rem;">WINC - Total Return</strong>
@@ -150,7 +145,7 @@
                             Calcolo in corso...</div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
+                <div class="col-md-6 col-lg-3 pb-1">
                     <div class="metric-card"
                         style="background: linear-gradient(135deg, rgba(75,192,192,0.1) 0%, rgba(75,192,192,0.05) 100%); border-left: 4px solid rgba(75,192,192,0.8);">
                         <strong style="color: #20b2aa; font-size: 0.95rem;">ACWE - Con Vendite</strong>
@@ -200,7 +195,7 @@
         <div id="taxCardsContainer" class="mt-4">
             <h4 class="text-center mb-3">Impatto Fiscale</h4>
             <div class="row g-3">
-                <div class="col-md-6">
+                <div class="col-md-6 pb-1">
                     <div class="metric-card"
                         style="background: linear-gradient(135deg, rgba(40,167,69,0.1) 0%, rgba(40,167,69,0.05) 100%); border-left: 4px solid rgba(40,167,69,0.8);">
                         <strong style="color: #28a745;">WINC - Tax Metrics</strong>
@@ -217,20 +212,16 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="metric-card"
-                        style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
+                    <div class="metric-card" style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
                         <strong style="color: #3693eb;">ACWE (con vendite) - Tax Metrics</strong>
-                        <div class="metric-value" style="font-size: 0.9rem; line-height: 1.6;">
-                            <div>Tax Drag: <span id="acweTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span>
-                            </div>
+                        <div class="metric-value" style="font-size: 0.9rem;">
+                            <div>Tax Drag: <span id="acweTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span></div>
                             <div>Tax Efficiency: <span id="acweTaxEff"
                                     style="font-weight: bold; color: #28a745;">n/a</span></div>
                             <hr style="margin: 6px 0;">
                             <div>Lordo: <span id="acweLordoTot" style="font-weight: bold;">0.00</span> €</div>
-                            <div>Netto: <span id="acweNettoTot" style="font-weight: bold; color: #3693eb;">0.00</span> €
-                            </div>
-                            <div><small>Comm: <span id="acweCommissioniTot" style="font-weight: bold;">0.00</span>
-                                    €</small></div>
+                            <div>Netto: <span id="acweNettoTot" style="font-weight: bold; color: #3693eb;">0.00</span> €</div>
+                            <div>Comm:  <span id="acweCommissioniTot" style="font-weight: bold;">0.00</span>€</div>                            
                         </div>
                     </div>
                 </div>
