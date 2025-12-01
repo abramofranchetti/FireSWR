@@ -29,6 +29,11 @@
             width: 100%;
         }
     </style>
+    <style>
+        .metric-card { background:#f8f9fa; border:1px solid #e9ecef; border-radius:6px; padding:10px; min-height:88px; }
+        .metric-card strong { display:block; margin-bottom:6px; }
+        .metric-value { white-space:pre-line; font-family: monospace; }
+    </style>
 </head>
 
 <body class="bg-light">
@@ -89,6 +94,13 @@
                     <small class="form-text text-muted">0 = ignorata</small>
                 </div>
             </div>            
+            <div class="form-row mt-2">
+                <div class="form-group col-md-3">
+                    <label for="riskFree">Risk-free (%) (per calcolo Sharpe)</label>
+                    <input type="number" class="form-control" id="riskFree" value="0.5" step="0.01">
+                    <small class="form-text text-muted">Tasso risk-free annuo (es. 0.5 = 0.5%)</small>
+                </div>
+            </div>            
         </form>
         <!-- Grafico WINC vs SP500 -->
         <div class="chart-container">
@@ -104,6 +116,35 @@
                 con la riga arancione).</li>
         </ul>
         </p>
+        <div class="mt-3" id="metricsContainer">
+            <h4>Metriche Serie</h4>
+            <div class="row">
+                <div class="col-md-3 pb-2">
+                    <div class="metric-card">
+                        <strong>ACWE - Accumulo</strong>
+                        <div id="metrics-acwe" class="metric-value">Calcolo in corso...</div>
+                    </div>
+                </div>                
+                <div class="col-md-3 pb-2">
+                    <div class="metric-card">
+                        <strong>WINC - Total Return</strong>
+                        <div id="metrics-winc" class="metric-value">Calcolo in corso...</div>
+                    </div>
+                </div>
+                <div class="col-md-3 pb-2">
+                    <div class="metric-card">
+                        <strong>ACWE - Con Vendite</strong>
+                        <div id="metrics-acwe-sold" class="metric-value">Calcolo in corso...</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <strong>WINC - Netto (senza dividendi)</strong>
+                        <div id="metrics-winc-netto" class="metric-value">Calcolo in corso...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="container mt-4">
     <h3 class="text-center">Tabella Dividendi</h3>
 
@@ -150,6 +191,8 @@
             const sellCommissionPercent = parseFloat(document.getElementById('sellCommissionPercent').value) || 0.2; // percentuale (es. 0.2 = 0.2%)
             const sellCommissionMin = parseFloat(document.getElementById('sellCommissionMin').value) || 0; // minima in euro
             const sellCommissionMax = parseFloat(document.getElementById('sellCommissionMax').value) || 0; // massima in euro
+            const riskFreePercent = parseFloat(document.getElementById('riskFree').value);
+            const riskFreeAnnual = !isNaN(riskFreePercent) ? (riskFreePercent / 100) : 0.005; // default 0.5% se non valido
             try {
                 const [xyleResp, csspxResp, distribuzioniResp,cambioEurUsdResp] = await Promise.all([
                     fetch('WINC.DE.json'),
@@ -426,6 +469,76 @@
                         }
                     }
                 });
+
+                // Calcola metriche (deviazione standard annualizzata e Sharpe annualizzato)
+                // rfAnnual deve essere espresso in decimale (es. 0.005 = 0.5%)
+                function computeMetrics(series, labels, rfAnnual = 0) {
+                    const returns = [];
+                    const days = [];
+                    let lastVal = null;
+                    let lastDate = null;
+                    for (let i = 0; i < labels.length; i++) {
+                        const v = series[i];
+                        const d = labels[i];
+                        if (v == null || lastVal == null) {
+                            lastVal = v;
+                            lastDate = d;
+                            continue;
+                        }
+                        if (lastVal === 0) {
+                            lastVal = v;
+                            lastDate = d;
+                            continue;
+                        }
+                        const r = v / lastVal - 1;
+                        returns.push(r);
+                        const dayDiff = (new Date(d) - new Date(lastDate)) / (1000 * 3600 * 24);
+                        days.push(dayDiff);
+                        lastVal = v;
+                        lastDate = d;
+                    }
+
+                    if (returns.length === 0) return { stdAnn: NaN, sharpe: NaN, periodsPerYear: NaN };
+
+                    const n = returns.length;
+                    const mean = returns.reduce((a, b) => a + b, 0) / n;
+                    // sample standard deviation
+                    let variance = 0;
+                    if (n > 1) {
+                        variance = returns.map(r => (r - mean) * (r - mean)).reduce((a, b) => a + b, 0) / (n - 1);
+                    } else {
+                        variance = 0;
+                    }
+                    const std = Math.sqrt(variance);
+
+                    // stima giorni medi tra osservazioni
+                    const avgDays = days.length ? (days.reduce((a, b) => a + b, 0) / days.length) : 365;
+                    const periodsPerYear = avgDays > 0 ? 365 / avgDays : 1;
+
+                    // annualizza media e deviazione (usando approccio aritmetico)
+                    const meanAnn = mean * periodsPerYear;
+                    const stdAnn = std * Math.sqrt(periodsPerYear);
+                    const rfAnn = rfAnnual || 0;
+                    const rfPeriod = rfAnn / periodsPerYear;
+                    const sharpe = stdAnn > 0 ? ((meanAnn - rfAnn) / stdAnn) : NaN;
+                    const periodSharpe = std > 0 ? ((mean - rfPeriod) / std) : NaN; // Sharpe base periodale sull'intero periodo corretto per rf
+                    return { stdAnn: stdAnn, sharpe: sharpe, periodsPerYear: periodsPerYear, periodSharpe: periodSharpe };
+                }
+
+                function fmt(x) {
+                    if (isNaN(x) || x === null) return 'n/a';
+                    return (x * 100).toFixed(2) + '%';
+                }
+
+                const mAcwe = computeMetrics(csspxCumulative, labels, riskFreeAnnual);
+                const mAcweSold = computeMetrics(csspxAdjustedCumulative, labels, riskFreeAnnual);
+                const mWinc = computeMetrics(xyleAdjCumulative, labels, riskFreeAnnual);
+                const mWincNetto = computeMetrics(xyleCloseCumulative, labels, riskFreeAnnual);
+
+                document.getElementById('metrics-acwe').innerText = `Dev.std (ann): ${fmt(mAcwe.stdAnn)}\nSharpe (ann): ${isNaN(mAcwe.sharpe) ? 'n/a' : mAcwe.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mAcwe.periodSharpe) ? 'n/a' : mAcwe.periodSharpe.toFixed(3)}`;
+                document.getElementById('metrics-acwe-sold').innerText = `Dev.std (ann): ${fmt(mAcweSold.stdAnn)}\nSharpe (ann): ${isNaN(mAcweSold.sharpe) ? 'n/a' : mAcweSold.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mAcweSold.periodSharpe) ? 'n/a' : mAcweSold.periodSharpe.toFixed(3)}`;
+                document.getElementById('metrics-winc').innerText = `Dev.std (ann): ${fmt(mWinc.stdAnn)}\nSharpe (ann): ${isNaN(mWinc.sharpe) ? 'n/a' : mWinc.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mWinc.periodSharpe) ? 'n/a' : mWinc.periodSharpe.toFixed(3)}`;
+                document.getElementById('metrics-winc-netto').innerText = `Dev.std (ann): ${fmt(mWincNetto.stdAnn)}\nSharpe (ann): ${isNaN(mWincNetto.sharpe) ? 'n/a' : mWincNetto.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mWincNetto.periodSharpe) ? 'n/a' : mWincNetto.periodSharpe.toFixed(3)}`;
 
             } catch (err) {
                 console.error(err);
