@@ -30,9 +30,23 @@
         }
     </style>
     <style>
-        .metric-card { background:#f8f9fa; border:1px solid #e9ecef; border-radius:6px; padding:10px; min-height:88px; }
-        .metric-card strong { display:block; margin-bottom:6px; }
-        .metric-value { white-space:pre-line; font-family: monospace; }
+        .metric-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 10px;
+            min-height: 88px;
+        }
+
+        .metric-card strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .metric-value {
+            white-space: pre-line;
+            font-family: monospace;
+        }
     </style>
 </head>
 
@@ -47,7 +61,8 @@
             Studio comparativo di strategia covered call WINC.DE e il suo sottostante.
             Ho usato l'etf ACWE.MI (SPDR All Country World UCITS Accumulating).
         </h5>
-        <p>Il grafico mostra come andrebbe una strategia che vende quote di ACWE per ottenere mensilmente lo stesso dividendo lordo staccato dall'ETF covered call.</p>
+        <p>Il grafico mostra come andrebbe una strategia che vende quote di ACWE per ottenere mensilmente lo stesso
+            dividendo lordo staccato dall'ETF covered call.</p>
         <form>
             <div class="form-group mt-4">
                 <label for="startDate">Data di inizio analisi:</label>
@@ -61,11 +76,11 @@
                 <div class="form-group col-md-6">
                     <label for="modalita">Modalità calcolo compravendita quote ETF:</label>
                     <select class="form-control" id="modalita">
-                    <option value="0">Discreta (solo quote intere, come nella reatà)</option>
-                    <option value="1">Continua (anche quote frazionarie, per simulazione)</option>
-                    </select>                
+                        <option value="0">Discreta (solo quote intere, come nella reatà)</option>
+                        <option value="1">Continua (anche quote frazionarie, per simulazione)</option>
+                    </select>
                 </div>
-            </div>            
+            </div>
             <div class="form-group mt-2">
                 <label for="sellCommissionType">Tipo commissione vendita</label>
                 <select class="form-control" id="sellCommissionType">
@@ -73,7 +88,7 @@
                     <option value="percent">Percentuale (%)</option>
                 </select>
             </div>
-            <div class="form-row mt-2">                
+            <div class="form-row mt-2">
                 <div class="form-group col-md-3">
                     <label for="sellCommission">Commissioni di vendita (€)</label>
                     <input type="number" class="form-control" id="sellCommission" value="7" step="0.01">
@@ -82,7 +97,7 @@
                     <label for="sellCommissionPercent">Commissioni di vendita (%)</label>
                     <input type="number" class="form-control" id="sellCommissionPercent" value="0.2" step="0.01">
                     <small class="form-text text-muted">Es. 0.2 = 0.2%</small>
-                </div>                    
+                </div>
                 <div class="form-group col-md-3">
                     <label for="sellCommissionMin">Commissione minima (€)</label>
                     <input type="number" class="form-control" id="sellCommissionMin" value="7" step="0.01">
@@ -93,14 +108,14 @@
                     <input type="number" class="form-control" id="sellCommissionMax" value="19" step="0.01">
                     <small class="form-text text-muted">0 = ignorata</small>
                 </div>
-            </div>            
+            </div>
             <div class="form-row mt-2">
                 <div class="form-group col-md-3">
                     <label for="riskFree">Risk-free (%) (per calcolo Sharpe)</label>
                     <input type="number" class="form-control" id="riskFree" value="0.5" step="0.01">
                     <small class="form-text text-muted">Tasso risk-free annuo (es. 0.5 = 0.5%)</small>
                 </div>
-            </div>            
+            </div>
         </form>
         <!-- Grafico WINC vs SP500 -->
         <div class="chart-container">
@@ -116,58 +131,112 @@
                 con la riga arancione).</li>
         </ul>
         </p>
-        <div class="mt-3" id="metricsContainer">
-            <h4>Metriche Serie</h4>
-            <div class="row">
-                <div class="col-md-3 pb-2">
-                    <div class="metric-card">
-                        <strong>ACWE - Accumulo</strong>
-                        <div id="metrics-acwe" class="metric-value">Calcolo in corso...</div>
-                    </div>
-                </div>                
-                <div class="col-md-3 pb-2">
-                    <div class="metric-card">
-                        <strong>WINC - Total Return</strong>
-                        <div id="metrics-winc" class="metric-value">Calcolo in corso...</div>
+        <div class="mt-4" id="metricsContainer">
+            <h4 class="text-center mb-3">Metriche Serie</h4>
+            <div class="row g-2">
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
+                        <strong style="color: #3693eb; font-size: 0.95rem;">ACWE - Accumulo</strong>
+                        <div id="metrics-acwe" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...</div>
                     </div>
                 </div>
-                <div class="col-md-3 pb-2">
-                    <div class="metric-card">
-                        <strong>ACWE - Con Vendite</strong>
-                        <div id="metrics-acwe-sold" class="metric-value">Calcolo in corso...</div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(40,167,69,0.1) 0%, rgba(40,167,69,0.05) 100%); border-left: 4px solid rgba(40,167,69,0.8);">
+                        <strong style="color: #28a745; font-size: 0.95rem;">WINC - Total Return</strong>
+                        <div id="metrics-winc" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...</div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="metric-card">
-                        <strong>WINC - Netto (senza dividendi)</strong>
-                        <div id="metrics-winc-netto" class="metric-value">Calcolo in corso...</div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(75,192,192,0.1) 0%, rgba(75,192,192,0.05) 100%); border-left: 4px solid rgba(75,192,192,0.8);">
+                        <strong style="color: #20b2aa; font-size: 0.95rem;">ACWE - Con Vendite</strong>
+                        <div id="metrics-acwe-sold" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...</div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(255,159,64,0.1) 0%, rgba(255,159,64,0.05) 100%); border-left: 4px solid rgba(255,159,64,0.8);">
+                        <strong style="color: #ff9f40; font-size: 0.95rem;">WINC - Netto</strong>
+                        <div id="metrics-winc-netto" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...</div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="container mt-4">
-    <h3 class="text-center">Tabella Dividendi</h3>
+            <h3 class="text-center">Tabella Dividendi</h3>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Data di Stacco</th>                    
-                    <th>Dividendo Lordo WINC (€)</th>                    
-                    <th>Dividendo Netto WINC (€)</th>
-                    <th>Quote ACWE Vendute</th>
-                    <th>Dividendo Lordo ACWE (da vendita) (€)</th>
-                    <th>Dividendo Netto ACWE (da vendita) (€)</th>
-                    <th>Differenza tra i netti</th>
-                </tr>
-            </thead>
-            <tbody id="dividendiTableBody">
-            </tbody>
-            <tfoot id="dividendiTableFoot">                
-            </tfoot>
-        </table>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Data di Stacco</th>
+                            <th>Dividendo Lordo WINC (€)</th>
+                            <th>Dividendo Netto WINC (€)</th>
+                            <th>Quote ACWE Vendute</th>
+                            <th>Dividendo Lordo ACWE (da vendita) (€)</th>
+                            <th>Dividendo Netto ACWE (da vendita) (€)</th>
+                            <th>Differenza tra i netti</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dividendiTableBody">
+                    </tbody>
+                    <tfoot id="dividendiTableFoot">
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="chart-container mt-3" style="height:320px;">
+            <canvas id="taxComparisonChart"></canvas>
+        </div>
+        <!-- Sezione statica per Tax Metrics e grafico confronto netti -->
+        <div id="taxCardsContainer" class="mt-4">
+            <h4 class="text-center mb-3">Impatto Fiscale</h4>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(40,167,69,0.1) 0%, rgba(40,167,69,0.05) 100%); border-left: 4px solid rgba(40,167,69,0.8);">
+                        <strong style="color: #28a745;">WINC - Tax Metrics</strong>
+                        <div class="metric-value" style="font-size: 0.9rem; line-height: 1.6;">
+                            <div>Tax Drag: <span id="wincTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span>
+                            </div>
+                            <div>Tax Efficiency: <span id="wincTaxEff"
+                                    style="font-weight: bold; color: #28a745;">n/a</span></div>
+                            <hr style="margin: 6px 0;">
+                            <div>Lordo: <span id="wincLordoTot" style="font-weight: bold;">0.00</span> €</div>
+                            <div>Netto: <span id="wincNettoTot" style="font-weight: bold; color: #28a745;">0.00</span> €
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
+                        <strong style="color: #3693eb;">ACWE (con vendite) - Tax Metrics</strong>
+                        <div class="metric-value" style="font-size: 0.9rem; line-height: 1.6;">
+                            <div>Tax Drag: <span id="acweTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span>
+                            </div>
+                            <div>Tax Efficiency: <span id="acweTaxEff"
+                                    style="font-weight: bold; color: #28a745;">n/a</span></div>
+                            <hr style="margin: 6px 0;">
+                            <div>Lordo: <span id="acweLordoTot" style="font-weight: bold;">0.00</span> €</div>
+                            <div>Netto: <span id="acweNettoTot" style="font-weight: bold; color: #3693eb;">0.00</span> €
+                            </div>
+                            <div><small>Comm: <span id="acweCommissioniTot" style="font-weight: bold;">0.00</span>
+                                    €</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
     </div>
     <!-- Disclaimer -->
@@ -182,9 +251,9 @@
                 });
         });
     </script>
-    <script>        
-            async function loadAndPlot() {            
-            const initialCapital = parseFloat(document.getElementById('montante').value);             
+    <script>
+        async function loadAndPlot() {
+            const initialCapital = parseFloat(document.getElementById('montante').value);
             const modalita = parseFloat(modalitaSelect.value);
             const sellCommissionType = document.getElementById('sellCommissionType').value || 'euro';
             const sellCommission = parseFloat(document.getElementById('sellCommission').value) || 7; // Commissione di vendita in euro (flat)
@@ -194,14 +263,14 @@
             const riskFreePercent = parseFloat(document.getElementById('riskFree').value);
             const riskFreeAnnual = !isNaN(riskFreePercent) ? (riskFreePercent / 100) : 0.005; // default 0.5% se non valido
             try {
-                const [xyleResp, csspxResp, distribuzioniResp,cambioEurUsdResp] = await Promise.all([
+                const [xyleResp, csspxResp, distribuzioniResp, cambioEurUsdResp] = await Promise.all([
                     fetch('WINC.DE.json'),
                     fetch('ACWE.MI.json'),
                     fetch('Distribuzioni_WINC.txt'),
                     fetch('cambio_eur_usd.json')
                 ]);
 
-                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok || !cambioEurUsdResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');                
+                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok || !cambioEurUsdResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');
 
                 let [xyleRaw, csspxRaw, distribuzioniRaw, cambioEurUsdRaw] = await Promise.all([
                     xyleResp.json(),
@@ -212,17 +281,17 @@
 
                 const startDateInput = document.getElementById('startDate');
                 var startDateValue = startDateInput.value;
-                if (!startDateValue) {                                        
-                        startDateInput.value = xyleRaw[0].Date;                    
-                }                
+                if (!startDateValue) {
+                    startDateInput.value = xyleRaw[0].Date;
+                }
                 const startDate = startDateInput.value;
-                if(startDate>xyleRaw[xyleRaw.length-1].Date){                 
+                if (startDate > xyleRaw[xyleRaw.length - 1].Date) {
                     return;
                 }
 
                 // Filtra i dati in base alla data di inizio selezionata
                 xyleRaw = xyleRaw.filter(item => new Date(item.Date) >= new Date(startDate));
-                csspxRaw = csspxRaw.filter(item => new Date(item.Date) >= new Date(startDate));                
+                csspxRaw = csspxRaw.filter(item => new Date(item.Date) >= new Date(startDate));
 
                 let distribuzioni = [];
                 // Parsing distribuzioni
@@ -244,7 +313,7 @@
                         amount: parseFloat(importo)
                     };
                 }).filter(Boolean)
-                .filter(dist => new Date(dist.date) >= new Date(startDate)); // Rimuove eventuali null
+                    .filter(dist => new Date(dist.date) >= new Date(startDate)); // Rimuove eventuali null
 
                 // mappa data->valori
                 const mapXYLE = new Map();
@@ -261,8 +330,8 @@
 
                 const mapCambio = new Map();
                 cambioEurUsdRaw.forEach(item => {
-                    if(!item.Date) return;
-                    mapCambio.set(item.Date, {cambio: item.Close ?? null});
+                    if (!item.Date) return;
+                    mapCambio.set(item.Date, { cambio: item.Close ?? null });
                 });
 
                 // unione delle date
@@ -274,9 +343,9 @@
                 const xyleCloseSeries = [];
 
                 // Calcolo valore cumulativo
-                let csspxInitialPrice = mapCSSPX.size ? mapCSSPX.get([...mapCSSPX.keys()].sort((a,b)=>new Date(a)-new Date(b))[0]).adj : null;
-                let xyleAdjInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a,b)=>new Date(a)-new Date(b))[0]).adj : null;
-                let xyleCloseInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a,b)=>new Date(a)-new Date(b))[0]).close : null;
+                let csspxInitialPrice = mapCSSPX.size ? mapCSSPX.get([...mapCSSPX.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let xyleAdjInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let xyleCloseInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
 
                 const csspxCumulative = [];
                 const xyleAdjCumulative = [];
@@ -285,12 +354,12 @@
 
                 // Nuova serie CSSPX con vendite
                 const csspxAdjustedCumulative = [];
-                let csspxShares = modalita>0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Calcola il numero iniziale di quote di CSSPX
-                const xyleShares = modalita>0 ? initialCapital / xyleCloseInitialPrice : Math.floor(initialCapital / xyleCloseInitialPrice); // Calcola il numero iniziale di quote di XYLE
+                let csspxShares = modalita > 0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Calcola il numero iniziale di quote di CSSPX
+                const xyleShares = modalita > 0 ? initialCapital / xyleCloseInitialPrice : Math.floor(initialCapital / xyleCloseInitialPrice); // Calcola il numero iniziale di quote di XYLE
 
                 labels.forEach(d => {
                     const c = mapCSSPX.get(d);
-                    const x = mapXYLE.get(d);                    
+                    const x = mapXYLE.get(d);
 
                     const csspxAdj = c ? Number(c.adj) : null;
                     const xyleAdj = x ? Number(x.adj) : null;
@@ -308,7 +377,7 @@
                 });
 
                 // Calcolo serie con vendite CSSPX
-                csspxShares = modalita > 0 ?initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Reset numero quote CSSPX
+                csspxShares = modalita > 0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Reset numero quote CSSPX
                 labels.forEach(d => {
                     const c = mapCSSPX.get(d);
                     const x = mapXYLE.get(d);
@@ -321,7 +390,7 @@
                     const distribuzione = distribuzioni.find(dist => dist.date === d);
                     if (distribuzione && csspxAdj != null) {
                         const totalDividend = distribuzione.amount * xyleShares; // Dividendo totale
-                        const sharesToSell = modalita>0?(totalDividend / csspxAdj): Math.ceil(totalDividend / csspxAdj);
+                        const sharesToSell = modalita > 0 ? (totalDividend / csspxAdj) : Math.ceil(totalDividend / csspxAdj);
                         csspxShares -= sharesToSell; // Aggiorna il numero di quote di CSSPX
                         // Calcola commissione in euro: o flat per operazione, o percentuale sul valore della vendita
                         const saleValue = sharesToSell * csspxAdj;
@@ -336,7 +405,7 @@
                         } else {
                             commissionPerSale = sellCommission;
                         }
-                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: saleValue, xyle_value:  xyleClose, commission: commissionPerSale}); // Valore vendite
+                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: saleValue, xyle_value: xyleClose, commission: commissionPerSale }); // Valore vendite
                     }
 
                     csspxAdjustedCumulative.push(csspxAdj != null ? csspxShares * csspxAdj : null);
@@ -553,11 +622,17 @@
         function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali, mapCambio) {
             const tableBody = document.getElementById('dividendiTableBody');
             tableBody.innerHTML = '';
-            let sommaNettiXyle=0;
-            let sommaNettiSp500=0;
-            let sommaLordiSp500=0;
-            let sommaDifferenza=0;
-            let sommaCommissioni=0;
+            let sommaNettiXyle = 0;
+            let sommaLordoXyle = 0;
+            let sommaNettiSp500 = 0;
+            let sommaLordiSp500 = 0;
+            let sommaDifferenza = 0;
+            let sommaCommissioni = 0;
+
+            // raccolte per il grafico di confronto
+            const chartLabels = [];
+            const nettoWincSeries = [];
+            const nettoAcweSeries = [];
 
             distribuzioni.forEach(dist => {
                 const { date, amount } = dist;
@@ -566,6 +641,10 @@
                 // Calcolo dividendi XYLE
                 const lordoXYLE = amount * xyleShares;
                 const nettoXYLE = lordoXYLE * 0.74; // Tassazione 26%
+                sommaLordoXyle += lordoXYLE;
+                // push per grafico
+                chartLabels.push(date);
+                nettoWincSeries.push(Number(nettoXYLE.toFixed(2)));
                 const percentualeDist = (nettoXYLE / xyleShares / (distribuzioneCSSPX.xyle_value / cambioAlGiorno)) * 100;
                 const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
                 const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
@@ -576,8 +655,9 @@
                 const taxableGain = Math.max(0, totalePlusvalenza - commission);
                 const tassePagate = taxableGain * 0.26;
                 const nettoSp500 = lordoVenduto - tassePagate - commission;
+                nettoAcweSeries.push(Number(nettoSp500.toFixed(2)));
                 const percentualeTasse = lordoVenduto > 0 ? (tassePagate / lordoVenduto) * 100 : 0;
-                
+
                 // Crea riga tabella
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -590,40 +670,92 @@
                         <td>${(nettoSp500 - nettoXYLE).toFixed(2)}  (${(((nettoSp500 - nettoXYLE) / nettoXYLE) * 100).toFixed(2)}%)</td>
                     `;
                 tableBody.appendChild(row);
-                sommaDifferenza+=nettoSp500 - nettoXYLE;
-                sommaNettiSp500+=nettoSp500;
-                sommaLordiSp500+=lordoVenduto;
-                sommaNettiXyle+=nettoXYLE;
-                sommaCommissioni+=commission;
+                sommaDifferenza += nettoSp500 - nettoXYLE;
+                sommaNettiSp500 += nettoSp500;
+                sommaLordiSp500 += lordoVenduto;
+                sommaNettiXyle += nettoXYLE;
+                sommaCommissioni += commission;
             });
 
             const tableFoot = document.getElementById('dividendiTableFoot');
             tableFoot.innerHTML = '';
             const row = document.createElement('tr');
-                row.innerHTML = `
+            // Calcola Tax Drag e Tax Efficiency per le due strategie
+            const taxDragWinc = sommaLordoXyle > 0 ? (sommaLordoXyle - sommaNettiXyle) / sommaLordoXyle : NaN;
+            const taxEffWinc = sommaLordoXyle > 0 ? sommaNettiXyle / sommaLordoXyle : NaN;
+
+            const taxDragAcwe = sommaLordiSp500 > 0 ? (sommaLordiSp500 - sommaNettiSp500) / sommaLordiSp500 : NaN;
+            const taxEffAcwe = sommaLordiSp500 > 0 ? sommaNettiSp500 / sommaLordiSp500 : NaN;
+
+            // Aggiorna i campi delle card statiche (non ricrearle dinamicamente)
+            const setText = (id, text) => { const el = document.getElementById(id); if (el) el.innerText = text; };
+            setText('wincTaxDrag', isNaN(taxDragWinc) ? 'n/a' : (taxDragWinc * 100).toFixed(2) + '%');
+            setText('wincTaxEff', isNaN(taxEffWinc) ? 'n/a' : (taxEffWinc * 100).toFixed(2) + '%');
+            setText('wincLordoTot', sommaLordoXyle.toFixed(2));
+            setText('wincNettoTot', sommaNettiXyle.toFixed(2));
+
+            setText('acweTaxDrag', isNaN(taxDragAcwe) ? 'n/a' : (taxDragAcwe * 100).toFixed(2) + '%');
+            setText('acweTaxEff', isNaN(taxEffAcwe) ? 'n/a' : (taxEffAcwe * 100).toFixed(2) + '%');
+            setText('acweLordoTot', sommaLordiSp500.toFixed(2));
+            setText('acweNettoTot', sommaNettiSp500.toFixed(2));
+            setText('acweCommissioniTot', sommaCommissioni.toFixed(2));
+            row.innerHTML = `
                         <td>Tot:</td>
                         <td></td>                        
                         <td>${sommaNettiXyle.toFixed(2)} Tasse: 26%</td>                        
                         <td></td>
                         <td></td>
-                        <td>${sommaNettiSp500.toFixed(2)} Tasse: ${sommaLordiSp500>0?((sommaLordiSp500-sommaNettiSp500)/sommaLordiSp500*100).toFixed(2):'0.00'}% (Commissioni Tot: ${sommaCommissioni.toFixed(2)}€)</td>
+                        <td>${sommaNettiSp500.toFixed(2)} Tasse: ${sommaLordiSp500 > 0 ? ((sommaLordiSp500 - sommaNettiSp500) / sommaLordiSp500 * 100).toFixed(2) : '0.00'}% (Commissioni Tot: ${sommaCommissioni.toFixed(2)}€)</td>
                         <td>${sommaDifferenza.toFixed(2)} (${(((sommaNettiSp500 - sommaNettiXyle) / sommaNettiXyle) * 100).toFixed(2)}%)</td>
                     `;
             tableFoot.appendChild(row);
+
+            // Aggiorna o crea il grafico usando il canvas statico
+            const ctxEl = document.getElementById('taxComparisonChart');
+            if (ctxEl) {
+                const ctx2 = ctxEl.getContext('2d');
+                if (window._taxComparisonChart) {
+                    window._taxComparisonChart.data.labels = chartLabels;
+                    window._taxComparisonChart.data.datasets[0].data = nettoWincSeries;
+                    window._taxComparisonChart.data.datasets[1].data = nettoAcweSeries;
+                    window._taxComparisonChart.update();
+                } else {
+                    window._taxComparisonChart = new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [
+                                { label: 'Dividendi netti WINC (€)', data: nettoWincSeries, backgroundColor: 'rgba(40,167,69,0.8)' },
+                                { label: 'Vendite ACWE - netto (€)', data: nettoAcweSeries, backgroundColor: 'rgba(54,162,235,0.8)' }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: { mode: 'index', intersect: false },
+                            scales: {
+                                x: { title: { display: true, text: 'Date' }, ticks: { maxRotation: 90, autoSkip: true, maxTicksLimit: 12 } },
+                                y: { beginAtZero: true, title: { display: true, text: '€' } }
+                            },
+                            plugins: { legend: { position: 'top' } }
+                        }
+                    });
+                }
+            }
         }
-        
+
         document.querySelectorAll('input').forEach(input => {
             input.addEventListener('input', loadAndPlot);
         });
         document.addEventListener('DOMContentLoaded', loadAndPlot);
         const modalitaSelect = document.getElementById('modalita');
-        modalitaSelect.addEventListener('change', loadAndPlot);                                   
-        const startDateInput = document.getElementById('startDate');        
-        startDateInput.addEventListener('change', loadAndPlot);            
+        modalitaSelect.addEventListener('change', loadAndPlot);
+        const startDateInput = document.getElementById('startDate');
+        startDateInput.addEventListener('change', loadAndPlot);
         const sellCommissionTypeSelect = document.getElementById('sellCommissionType');
-        const sellCommissionPercentGroup = document.getElementById('sellCommissionPercentGroup');        
+        const sellCommissionPercentGroup = document.getElementById('sellCommissionPercentGroup');
         // Mostra/nascondi campo percentuale e min/max in base al tipo selezionato
-        sellCommissionTypeSelect.addEventListener('change', function () {                        
+        sellCommissionTypeSelect.addEventListener('change', function () {
             loadAndPlot();
         });
         // Rerun on min/max changes
