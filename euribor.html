@@ -167,7 +167,8 @@
                 euribor6m: 'https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR6MD_.HSTA?format=jsondata&detail=dataonly',
                 eurstrinst: 'https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2X2A25.WT?format=jsondata&detail=dataonly',
                 eurstr3m: 'https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2QQF32.CR?format=jsondata&detail=dataonly',
-                eurstr6m: 'https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2QQF40.CR?format=jsondata&detail=dataonly'
+                eurstr6m: 'https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2QQF40.CR?format=jsondata&detail=dataonly',
+                eurirs10a: 'https://data-api.ecb.europa.eu/service/data/IRS/M.I9.L.L40.CI.0000.EUR.N.Z?format=jsondata&detail=dataonly'
             };
 
             const canvas = document.getElementById('euriborChart');
@@ -241,12 +242,13 @@
                 const start = document.getElementById('startDate').value;
                 const end = document.getElementById('endDate').value;
 
-                const [euribor3m, euribor6m,eurstrinst,eurstr3m,eurstr6m] = await Promise.all([
+                const [euribor3m, euribor6m,eurstrinst,eurstr3m,eurstr6m,eurirs10a] = await Promise.all([
                     fetchEuriborData(urls.euribor3m),
                     fetchEuriborData(urls.euribor6m),
                     fetchEuriborData(urls.eurstrinst),
                     fetchEuriborData(urls.eurstr3m),
-                    fetchEuriborData(urls.eurstr6m)
+                    fetchEuriborData(urls.eurstr6m),
+                    fetchEuriborData(urls.eurirs10a)
                 ]);
 
                 const filtered3m = filterByDate(euribor3m, start, end);
@@ -254,9 +256,10 @@
                 const filteredeurstrinst = filterByDate(eurstrinst, start, end);
                 const filteredeurstr3m = filterByDate(eurstr3m, start, end);
                 const filteredeurstr6m = filterByDate(eurstr6m, start, end);
+                const filteredeurirs10a = filterByDate(eurirs10a, start, end);
 
                 // Se i dati sono vuoti, mostra un messaggio e non tentare di disegnare il grafico
-                if (filtered3m.length === 0 && filtered6m.length === 0) {
+                if (filtered3m.length === 0 && filtered6m.length === 0 && filteredeurstrinst.length === 0 && filteredeurstr3m.length === 0 && filteredeurstr6m.length === 0) {
                     alert('Nessun dato disponibile per il periodo selezionato.');
                     return;
                 }
@@ -279,6 +282,7 @@
                 const dataeurstrinst = mapToSeries(labels, filteredeurstrinst);
                 const dataeurstr3m = mapToSeries(labels, filteredeurstr3m);
                 const dataeurstr6m = mapToSeries(labels, filteredeurstr6m);
+                const dataeurirs10a = mapToSeries(labels, filteredeurirs10a);
 
                 if (chart) chart.destroy();
                 // Ridimensiona il canvas solo qui, prima di ridisegnare
@@ -334,6 +338,15 @@
                                 tension: 0,
                                 pointRadius: 0,
                                 hidden: true
+                            },
+                            {
+                                label: 'EURIRS 10Y',
+                                data: dataeurirs10a,
+                                borderColor: 'rgba(142,55,240,0.7)',
+                                borderWidth: 1.5,
+                                fill: false,
+                                tension: 0,
+                                pointRadius: 0                                
                             }
                         ]
                     },
