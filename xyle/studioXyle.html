@@ -42,10 +42,13 @@
         <h1 class="text-center">Studio Rendimento XYLE.MI vs Decumulo equivalente da S&P500</h1>
         <h5 class="text-center">Studio comparativo di strategia covered call XYLE.MI (XYLU) e il suo sottostante S&P500.
             Ho
-            usato l'etf VUAA.MI (Vanguard S&P 500 UCITS Accumulating). Investimento Iniziale al 11/07/2023, data di quotazione
+            usato l'etf VUAA.MI (Vanguard S&P 500 UCITS Accumulating). Investimento Iniziale al 11/07/2023, data di
+            quotazione
             dell'ETF XYLE.MI UCITS
         </h5>
-        <p>Il grafico mostra come andrebbe una strategia che vende quote di SP500 per ottenere mensilmente lo stesso dividendo lordo staccato dall'ETF covered call. L'analisi della versione americana NON ucits dello stesso ETF è <a href="../xyld/studioXyld.html">qui.</a></p>
+        <p>Il grafico mostra come andrebbe una strategia che vende quote di SP500 per ottenere mensilmente lo stesso
+            dividendo lordo staccato dall'ETF covered call. L'analisi della versione americana NON ucits dello stesso
+            ETF è <a href="../xyld/studioXyld.html">qui.</a></p>
         <form>
             <div class="form-group mt-4">
                 <label for="montante">Capitale inizale $:</label>
@@ -54,10 +57,16 @@
             <div class="form-group mt-4">
                 <label for="modalita">Modalità calcolo compravendita quote ETF:</label>
                 <select class="form-control" id="modalita">
-                <option value="0">Discreta (solo quote intere, come nella reatà)</option>
-                <option value="1">Continua (anche quote frazionarie, per simulazione)</option>
+                    <option value="0">Discreta (solo quote intere, come nella reatà)</option>
+                    <option value="1">Continua (anche quote frazionarie, per simulazione)</option>
                 </select>
-                
+            </div>
+            <div class="form-row mt-2">
+                <div class="form-group col-md-3">
+                    <label for="riskFree">Risk-free (%) (per calcolo Sharpe)</label>
+                    <input type="number" class="form-control" id="riskFree" value="0.5" step="0.01">
+                    <small class="form-text text-muted">Tasso risk-free annuo (es. 0.5 = 0.5%)</small>
+                </div>
             </div>
         </form>
         <!-- Grafico XYLE vs SP500 -->
@@ -74,32 +83,69 @@
                 con la riga arancione).</li>
         </ul>
         </p>
+        <div class="mt-4" id="metricsContainer">
+            <h4 class="text-center mb-3">Metriche Serie</h4>
+            <div class="row g-2">
+                <div class="col-md-6 col-lg-3 pb-1">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
+                        <strong style="color: #3693eb; font-size: 0.95rem;">S&P500 - Accumulo</strong>
+                        <div id="metrics-acwe" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...</div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 pb-1">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(40,167,69,0.1) 0%, rgba(40,167,69,0.05) 100%); border-left: 4px solid rgba(40,167,69,0.8);">
+                        <strong style="color: #28a745; font-size: 0.95rem;">XYLE - Total Return</strong>
+                        <div id="metrics-winc" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...</div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 pb-1">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(75,192,192,0.1) 0%, rgba(75,192,192,0.05) 100%); border-left: 4px solid rgba(75,192,192,0.8);">
+                        <strong style="color: #20b2aa; font-size: 0.95rem;">S&P500 - Con Vendite</strong>
+                        <div id="metrics-acwe-sold" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...</div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(255,159,64,0.1) 0%, rgba(255,159,64,0.05) 100%); border-left: 4px solid rgba(255,159,64,0.8);">
+                        <strong style="color: #ff9f40; font-size: 0.95rem;">XYLE - Netto</strong>
+                        <div id="metrics-winc-netto" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="container mt-4">
-    <h3 class="text-center">Tabella Dividendi</h3>
+            <h3 class="text-center">Tabella Dividendi</h3>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Data di Stacco</th>
-                    <th>Dividendo Lordo XYLE ($)</th>
-                    <th>Dividendo Lordo XYLE (€)</th>
-                    <th>Dividendo Netto XYLE ($)</th>
-                    <th>Dividendo Netto XYLE (€)</th>
-                    <th>Quote SP500 Vendute</th>
-                    <th>Dividendo Lordo SP500 (da vendita) ($)</th>
-                    <th>Dividendo Netto SP500 (da vendita) ($)</th>
-                    <th>Dividendo Netto SP500 (da vendita) (€)</th>
-                    <th>Differenza tra i netti €</th>
-                </tr>
-            </thead>
-            <tbody id="dividendiTableBody">
-            </tbody>
-            <tfoot id="dividendiTableFoot">                
-            </tfoot>
-        </table>
-    </div>
-</div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Data di Stacco</th>
+                            <th>Dividendo Lordo XYLE ($)</th>
+                            <th>Dividendo Lordo XYLE (€)</th>
+                            <th>Dividendo Netto XYLE ($)</th>
+                            <th>Dividendo Netto XYLE (€)</th>
+                            <th>Quote SP500 Vendute</th>
+                            <th>Dividendo Lordo SP500 (da vendita) ($)</th>
+                            <th>Dividendo Netto SP500 (da vendita) ($)</th>
+                            <th>Dividendo Netto SP500 (da vendita) (€)</th>
+                            <th>Differenza tra i netti €</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dividendiTableBody">
+                    </tbody>
+                    <tfoot id="dividendiTableFoot">
+                    </tfoot>
+                </table>
+            </div>
+        </div>
 
     </div>
     <!-- Disclaimer -->
@@ -114,12 +160,15 @@
                 });
         });
     </script>
-    <script>        
+    <script>
         async function loadAndPlot() {
-            const initialCapital = parseFloat(document.getElementById('montante').value);             
+            const initialCapital = parseFloat(document.getElementById('montante').value);
             const modalita = parseFloat(modalitaSelect.value);
+            const riskFreePercent = parseFloat(document.getElementById('riskFree').value);
+            const riskFreeAnnual = !isNaN(riskFreePercent) ? (riskFreePercent / 100) : 0.005; // default 0.5% se non valido
+            
             try {
-                const [xyleResp, csspxResp, distribuzioniResp,cambioEurUsdResp] = await Promise.all([
+                const [xyleResp, csspxResp, distribuzioniResp, cambioEurUsdResp] = await Promise.all([
                     fetch('XYLE.MI.json'),
                     fetch('VUAA.MI.json'),
                     fetch('Distribuzioni_XYLE.txt'),
@@ -171,8 +220,8 @@
 
                 const mapCambio = new Map();
                 cambioEurUsdRaw.forEach(item => {
-                    if(!item.Date) return;
-                    mapCambio.set(item.Date, {cambio: item.Close ?? null});
+                    if (!item.Date) return;
+                    mapCambio.set(item.Date, { cambio: item.Close ?? null });
                 });
 
                 // unione delle date
@@ -184,9 +233,9 @@
                 const xyleCloseSeries = [];
 
                 // Calcolo valore cumulativo
-                let csspxInitialPrice = mapCSSPX.size ? mapCSSPX.get([...mapCSSPX.keys()].sort((a,b)=>new Date(a)-new Date(b))[0]).adj : null;
-                let xyleAdjInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a,b)=>new Date(a)-new Date(b))[0]).adj : null;
-                let xyleCloseInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a,b)=>new Date(a)-new Date(b))[0]).close : null;
+                let csspxInitialPrice = mapCSSPX.size ? mapCSSPX.get([...mapCSSPX.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let xyleAdjInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let xyleCloseInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
 
                 const csspxCumulative = [];
                 const xyleAdjCumulative = [];
@@ -195,12 +244,12 @@
 
                 // Nuova serie CSSPX con vendite
                 const csspxAdjustedCumulative = [];
-                let csspxShares = modalita>0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Calcola il numero iniziale di quote di CSSPX
-                const xyleShares = modalita>0 ? initialCapital / xyleCloseInitialPrice : Math.floor(initialCapital / xyleCloseInitialPrice); // Calcola il numero iniziale di quote di XYLE
+                let csspxShares = modalita > 0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Calcola il numero iniziale di quote di CSSPX
+                const xyleShares = modalita > 0 ? initialCapital / xyleCloseInitialPrice : Math.floor(initialCapital / xyleCloseInitialPrice); // Calcola il numero iniziale di quote di XYLE
 
                 labels.forEach(d => {
                     const c = mapCSSPX.get(d);
-                    const x = mapXYLE.get(d);                    
+                    const x = mapXYLE.get(d);
 
                     const csspxAdj = c ? Number(c.adj) : null;
                     const xyleAdj = x ? Number(x.adj) : null;
@@ -218,7 +267,7 @@
                 });
 
                 // Calcolo serie con vendite CSSPX
-                csspxShares = modalita > 0 ?initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Reset numero quote CSSPX
+                csspxShares = modalita > 0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Reset numero quote CSSPX
                 labels.forEach(d => {
                     const c = mapCSSPX.get(d);
                     const x = mapXYLE.get(d);
@@ -231,9 +280,9 @@
                     const distribuzione = distribuzioni.find(dist => dist.date === d);
                     if (distribuzione && csspxAdj != null) {
                         const totalDividend = distribuzione.amount * xyleShares; // Dividendo totale
-                        const sharesToSell = modalita>0?(totalDividend / csspxAdj): Math.ceil(totalDividend / csspxAdj);
+                        const sharesToSell = modalita > 0 ? (totalDividend / csspxAdj) : Math.ceil(totalDividend / csspxAdj);
                         csspxShares -= sharesToSell; // Aggiorna il numero di quote di CSSPX
-                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: sharesToSell * csspxAdj, xyle_value:  xyleClose}); // Valore vendite
+                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: sharesToSell * csspxAdj, xyle_value: xyleClose }); // Valore vendite
                     }
 
                     csspxAdjustedCumulative.push(csspxAdj != null ? csspxShares * csspxAdj : null);
@@ -367,6 +416,76 @@
                     }
                 });
 
+                // Calcola metriche (deviazione standard annualizzata e Sharpe annualizzato)
+                // rfAnnual deve essere espresso in decimale (es. 0.005 = 0.5%)
+                function computeMetrics(series, labels, rfAnnual = 0) {
+                    const returns = [];
+                    const days = [];
+                    let lastVal = null;
+                    let lastDate = null;
+                    for (let i = 0; i < labels.length; i++) {
+                        const v = series[i];
+                        const d = labels[i];
+                        if (v == null || lastVal == null) {
+                            lastVal = v;
+                            lastDate = d;
+                            continue;
+                        }
+                        if (lastVal === 0) {
+                            lastVal = v;
+                            lastDate = d;
+                            continue;
+                        }
+                        const r = v / lastVal - 1;
+                        returns.push(r);
+                        const dayDiff = (new Date(d) - new Date(lastDate)) / (1000 * 3600 * 24);
+                        days.push(dayDiff);
+                        lastVal = v;
+                        lastDate = d;
+                    }
+
+                    if (returns.length === 0) return { stdAnn: NaN, sharpe: NaN, periodsPerYear: NaN };
+
+                    const n = returns.length;
+                    const mean = returns.reduce((a, b) => a + b, 0) / n;
+                    // sample standard deviation
+                    let variance = 0;
+                    if (n > 1) {
+                        variance = returns.map(r => (r - mean) * (r - mean)).reduce((a, b) => a + b, 0) / (n - 1);
+                    } else {
+                        variance = 0;
+                    }
+                    const std = Math.sqrt(variance);
+
+                    // stima giorni medi tra osservazioni
+                    const avgDays = days.length ? (days.reduce((a, b) => a + b, 0) / days.length) : 365;
+                    const periodsPerYear = avgDays > 0 ? 365 / avgDays : 1;
+
+                    // annualizza media e deviazione (usando approccio aritmetico)
+                    const meanAnn = mean * periodsPerYear;
+                    const stdAnn = std * Math.sqrt(periodsPerYear);
+                    const rfAnn = rfAnnual || 0;
+                    const rfPeriod = rfAnn / periodsPerYear;
+                    const sharpe = stdAnn > 0 ? ((meanAnn - rfAnn) / stdAnn) : NaN;
+                    const periodSharpe = std > 0 ? ((mean - rfPeriod) / std) : NaN; // Sharpe base periodale sull'intero periodo corretto per rf
+                    return { stdAnn: stdAnn, sharpe: sharpe, periodsPerYear: periodsPerYear, periodSharpe: periodSharpe };
+                }
+
+                function fmt(x) {
+                    if (isNaN(x) || x === null) return 'n/a';
+                    return (x * 100).toFixed(2) + '%';
+                }
+
+                const mAcwe = computeMetrics(csspxCumulative, labels, riskFreeAnnual);
+                const mAcweSold = computeMetrics(csspxAdjustedCumulative, labels, riskFreeAnnual);
+                const mWinc = computeMetrics(xyleAdjCumulative, labels, riskFreeAnnual);
+                const mWincNetto = computeMetrics(xyleCloseCumulative, labels, riskFreeAnnual);
+
+                document.getElementById('metrics-acwe').innerText = `Dev.std (ann): ${fmt(mAcwe.stdAnn)}\nSharpe (ann): ${isNaN(mAcwe.sharpe) ? 'n/a' : mAcwe.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mAcwe.periodSharpe) ? 'n/a' : mAcwe.periodSharpe.toFixed(3)}`;
+                document.getElementById('metrics-acwe-sold').innerText = `Dev.std (ann): ${fmt(mAcweSold.stdAnn)}\nSharpe (ann): ${isNaN(mAcweSold.sharpe) ? 'n/a' : mAcweSold.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mAcweSold.periodSharpe) ? 'n/a' : mAcweSold.periodSharpe.toFixed(3)}`;
+                document.getElementById('metrics-winc').innerText = `Dev.std (ann): ${fmt(mWinc.stdAnn)}\nSharpe (ann): ${isNaN(mWinc.sharpe) ? 'n/a' : mWinc.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mWinc.periodSharpe) ? 'n/a' : mWinc.periodSharpe.toFixed(3)}`;
+                document.getElementById('metrics-winc-netto').innerText = `Dev.std (ann): ${fmt(mWincNetto.stdAnn)}\nSharpe (ann): ${isNaN(mWincNetto.sharpe) ? 'n/a' : mWincNetto.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mWincNetto.periodSharpe) ? 'n/a' : mWincNetto.periodSharpe.toFixed(3)}`;
+
             } catch (err) {
                 console.error(err);
                 const container = document.getElementById('disclaimer-container');
@@ -381,10 +500,10 @@
             const tableBody = document.getElementById('dividendiTableBody');
             tableBody.innerHTML = '';
 
-            let sommaNettiXyle=0;
-            let sommaNettiSp500=0;
-            let sommaLordiSp500=0;
-            let sommaDifferenza=0;
+            let sommaNettiXyle = 0;
+            let sommaNettiSp500 = 0;
+            let sommaLordiSp500 = 0;
+            let sommaDifferenza = 0;
 
             distribuzioni.forEach(dist => {
                 const { date, amount } = dist;
@@ -394,8 +513,8 @@
                 const lordoXYLE = amount * xyleShares;
                 const lordoXYLE_EUR = lordoXYLE / cambioAlGiorno;
                 const nettoXYLE = lordoXYLE * 0.74; // Tassazione 26%
-                const nettoXYLE_EUR = nettoXYLE / cambioAlGiorno;                
-                const percentualeDist = ((nettoXYLE_EUR / xyleShares / (distribuzioneCSSPX.xyle_value/cambioAlGiorno)) * 100);                
+                const nettoXYLE_EUR = nettoXYLE / cambioAlGiorno;
+                const percentualeDist = ((nettoXYLE_EUR / xyleShares / (distribuzioneCSSPX.xyle_value / cambioAlGiorno)) * 100);
                 const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
                 const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
                 const lordoVendutoEur = lordoVenduto / cambioAlGiorno;
@@ -404,7 +523,7 @@
                 const nettoSp500 = lordoVenduto - tassePagate;
                 const nettoSp500Eur = nettoSp500 / cambioAlGiorno;
                 const percentualeTasse = lordoVenduto > 0 ? (tassePagate / lordoVenduto) * 100 : 0;
-                
+
                 // Crea riga tabella
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -420,16 +539,16 @@
                         <td>${(nettoSp500Eur - nettoXYLE_EUR).toFixed(2)}  (${(((nettoSp500 - nettoXYLE) / nettoXYLE) * 100).toFixed(2)}%)</td>
                     `;
                 tableBody.appendChild(row);
-                sommaDifferenza+=nettoSp500Eur - nettoXYLE_EUR;
-                sommaNettiSp500+=nettoSp500Eur;
-                sommaLordiSp500+=lordoVendutoEur;
-                sommaNettiXyle+=nettoXYLE_EUR;
+                sommaDifferenza += nettoSp500Eur - nettoXYLE_EUR;
+                sommaNettiSp500 += nettoSp500Eur;
+                sommaLordiSp500 += lordoVendutoEur;
+                sommaNettiXyle += nettoXYLE_EUR;
             });
 
             const tableFoot = document.getElementById('dividendiTableFoot');
             tableFoot.innerHTML = '';
             const row = document.createElement('tr');
-                row.innerHTML = `
+            row.innerHTML = `
                         <td>Tot:</td>
                         <td></td>
                         <td></td>
@@ -438,12 +557,12 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td>${sommaNettiSp500.toFixed(2)} Tasse: ${((sommaLordiSp500-sommaNettiSp500)/sommaLordiSp500*100).toFixed(2)}%</td>
+                        <td>${sommaNettiSp500.toFixed(2)} Tasse: ${((sommaLordiSp500 - sommaNettiSp500) / sommaLordiSp500 * 100).toFixed(2)}%</td>
                         <td>${sommaDifferenza.toFixed(2)} (${(((sommaNettiSp500 - sommaNettiXyle) / sommaNettiXyle) * 100).toFixed(2)}%)</td>
                     `;
             tableFoot.appendChild(row);
         }
-        
+
         document.querySelectorAll('input').forEach(input => {
             input.addEventListener('input', loadAndPlot);
         });
