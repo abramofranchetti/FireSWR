@@ -53,10 +53,12 @@
         <br>
         <h1 class="text-center">Studio Rendimento WINC vs Decumulo equivalente da ACWE</h1>
         <h5 class="text-center">
-            Studio comparativo di strategia covered call iShares World Equity High Income Active UCITS ETF USD Inc (WINC.DE) e il suo sottostante.
+            Studio comparativo di strategia covered call iShares World Equity High Income Active UCITS ETF USD Inc
+            (WINC.DE) e il suo sottostante.
             Ho usato l'etf ACWE (SPDR All Country World UCITS Accumulating) come benchmark.
         </h5>
-        <p class="text-center">Il grafico mostra come andrebbe una strategia che vende quote di ACWE per ottenere mensilmente lo stesso
+        <p class="text-center">Il grafico mostra come andrebbe una strategia che vende quote di ACWE per ottenere
+            mensilmente lo stesso
             dividendo lordo staccato dall'ETF covered call.</p>
         <form>
             <div class="form-group mt-4">
@@ -212,24 +214,150 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="metric-card" style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
                         <strong style="color: #3693eb;">ACWE (con vendite) - Tax Metrics</strong>
                         <div class="metric-value" style="font-size: 0.9rem;">
-                            <div>Tax Drag: <span id="acweTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span></div>
+                            <div>Tax Drag: <span id="acweTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span>
+                            </div>
                             <div>Tax Efficiency: <span id="acweTaxEff"
                                     style="font-weight: bold; color: #28a745;">n/a</span></div>
                             <hr style="margin: 6px 0;">
                             <div>Lordo: <span id="acweLordoTot" style="font-weight: bold;">0.00</span> €</div>
-                            <div>Netto: <span id="acweNettoTot" style="font-weight: bold; color: #3693eb;">0.00</span> €</div>
-                            <div>Comm:  <span id="acweCommissioniTot" style="font-weight: bold;">0.00</span>€</div>                            
+                            <div>Netto: <span id="acweNettoTot" style="font-weight: bold; color: #3693eb;">0.00</span> €
+                            </div>
+                            <div>Comm: <span id="acweCommissioniTot" style="font-weight: bold;">0.00</span>€</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        <section id="approfondimento-arbitraggio" style="margin-top:1.5rem;padding-top:1rem;">
+            <h3>Assenza di arbitraggio e calibrazione implicita del premio delle call</h3>
+
+            <p>
+                Un risultato interessante emerso dall’analisi è che la quantità di valore estratto tramite la vendita di
+                call
+                sembra “calibrata” per mantenere il capitale del sottostante sostanzialmente costante nel lungo periodo.
+                Questa non è una coincidenza: deriva direttamente dal <strong>principio di assenza di
+                    arbitraggio</strong>, che è alla base
+                dell’intero pricing delle opzioni.
+            </p>
+
+            <p>
+                Il premio di una call non può essere superiore al valore atteso dell’upside che l’investitore rinuncia
+                oltre lo strike.
+                In misura risk–neutral questo valore è dato da:
+            </p>
+
+            <p style="text-align:center;">
+                $$ C = e^{-rT}\,\mathbb{E}^{\mathbb{Q}}[(S_T - K)^+] $$
+            </p>
+
+            <p>
+                Se fosse possibile ottenere con una covered call un premio sistematicamente maggiore della crescita
+                attesa del sottostante,
+                allora un investitore potrebbe costruire una strategia di arbitraggio priva di rischio:
+                acquistare il sottostante, vendere call “troppo care” e coprirsi con strumenti lineari.
+                Questo genererebbe un profitto certo e immediato, il che violerebbe l’assunzione fondamentale dei
+                mercati
+                finanziari efficienti.
+            </p>
+
+            <p>
+                Il mercato quindi “impone” che:
+            </p>
+
+            <p style="text-align:center;">
+                $$ \text{Valore estratto via call} \;\approx\; \text{upside ceduto} $$
+            </p>
+
+            <p>
+                Per questo motivo, la distribuzione ottenuta vendendo call non può superare ciò che si otterrebbe
+                vendendo in modo dinamico
+                le quote del sottostante: il premio è <strong>tarato</strong> per riflettere esattamente il valore della
+                crescita futura ceduta.
+                Allo stesso modo, estrarre più valore del premio equivarrebbe a vendere “troppo” del sottostante,
+                portando inevitabilmente
+                a una riduzione progressiva del capitale.
+            </p>
+        </section>
+
+        <section id="riassunto-covered-call" style="margin-top:1.5rem;border-top:1px solid #ddd;padding-top:1rem;">
+            <h3>Conclusioni</h3>
+            <p>
+                <strong>Il rendimento di una strategia covered call non può superare il rendimento ottenibile liquidando
+                    dinamicamente il sottostante, a parità di rischio, perché il prezzo dell’opzione incorpora già tutta
+                    l’informazione sul sottostante.</strong>
+            </p>
+
+            <p>
+                Vendere una call coperta equivale a monetizzare oggi una parte del potenziale upside futuro.
+                Allo stesso modo, vendere progressivamente una quota del sottostante fornisce liquidità immediata in
+                cambio di una riduzione proporzionale della partecipazione alla crescita futura.
+                Il premio della call rappresenta quindi il valore atteso dell’upside ceduto: questo crea una relazione
+                strutturale tra covered call e liquidazione dinamica del sottostante.
+            </p>
+
+            <div style="background:#f9f9f9;border:1px solid #eee;padding:0.8rem;border-radius:6px;">
+                <h4 style="margin:0 0 0.6rem 0;">Formule essenziali</h4>
+
+                <p><em>Posizione covered call:</em></p>
+                <p>
+                    $$ \text{Covered Call} = S_0 - C $$
+                </p>
+
+                <p><em>Payoff a scadenza:</em></p>
+                <p>
+                    $$ \text{Payoff}_{CC}(T) = S_T - \max(S_T - K, 0) = \min(S_T, K) $$
+                </p>
+
+                <p><em>Prezzo della call (misura risk-neutral):</em></p>
+                <p>
+                    $$ C = e^{-rT}\,\mathbb{E}^{\mathbb{Q}}[(S_T - K)^+] $$
+                </p>
+
+                <p><em>Strategia equivalente tramite vendita dinamica di sottostante:</em></p>
+                <p>
+                    Occorre vendere una quota \( q \) del sottostante tale che:
+                    $$ q S_0 = C $$
+                    quindi la posizione diventa:
+                    $$ \text{Synthetic} = (1 - q) S_0. $$
+                </p>
+
+                <p><em>Equivalenza dei valori iniziali:</em></p>
+                <p>
+                    $$ \text{Covered Call}(0) = S_0 - C $$
+                    $$ \text{Synthetic}(0) = S_0 - q S_0 $$
+                    Imponendo \( q S_0 = C \) segue direttamente:
+                    $$ \text{Covered Call}(0) = \text{Synthetic}(0). $$
+                </p>
+            </div>
+
+            <p>
+                <strong>Interpretazione pratica:</strong> il premio della call è pari al valore atteso dell’upside che
+                si rinuncia oltre lo strike.
+                Nessuna strategia covered call può generare un rendimento superiore a quello ottenibile vendendo
+                dinamicamente il sottostante con lo stesso profilo di rischio; se lo facesse, esisterebbe un arbitraggio
+                e i prezzi delle opzioni si adeguerebbero immediatamente.
+            </p>
+
+            <p>
+                Nella pratica reale possono emergere differenze dovute a tassazione, costi di transazione, frequenza
+                delle vendite e limiti di frazionamento, ma la relazione teorica di fondo resta valida: la covered call
+                non crea rendimento aggiuntivo, lo anticipa e lo redistribuisce nel tempo.
+            </p>
+        </section>
 
     </div>
+    </div>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]] },
+            svg: { fontCache: "global" }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     <!-- Disclaimer -->
     <div id="disclaimer-container"></div>
 
