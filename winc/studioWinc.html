@@ -116,18 +116,22 @@
         </form>
         <!-- Grafico WINC vs SP500 -->
         <div class="chart-container">
-            <canvas id="xyleChart"></canvas>
+            <canvas id="xyleChart"></canvas>            
         </div>
-        <p class="small text-muted mt-2">Legenda:
-        <ul>
-            <li><strong>Rige verdi</strong> = Date di stacco dividendi WINC</li>
-            <li><strong>ACWE Accumulo</strong> = ACWE (con aggiustamento dividendi), </li>
-            <li><strong>WINC Accumulo</strong> = WINC con reinvestimento dividendi, </li>
-            <li><strong>WINC Distribuzione</strong> = WINC senza reinvestimento dei dividendi.</li>
-            <li><strong>ACWE con vendite</strong> = ACWE con vendite per coprire i dividendi di WINC (va confrontato
+        <p class="small text-muted mt-2 mb-0">Legenda:
+        <ul style="list-style-type: none; padding-left: 0; line-height: 0.5;">
+            <li class="pl-2 small text-muted mt-2"><strong>Rige verdi verticali</strong> = Date di stacco dividendi WINC</li>
+            <li class="pl-2 small text-muted mt-2"><strong>ACWE Accumulo</strong> = ACWE (con aggiustamento dividendi), </li>
+            <li class="pl-2 small text-muted mt-2"><strong>WINC Accumulo</strong> = WINC con reinvestimento dividendi, </li>
+            <li class="pl-2 small text-muted mt-2"><strong>WINC Distribuzione</strong> = WINC senza reinvestimento dei dividendi.</li>
+            <li class="pl-2 small text-muted mt-2"><strong>ACWE con vendite</strong> = ACWE con vendite per coprire i dividendi di WINC (va confrontato
                 con la riga arancione).</li>
         </ul>
         </p>
+        <!-- Grafico Dividendi -->
+        <div class="chart-container mt-3" style="height:320px;">
+            <canvas id="taxComparisonChart"></canvas>
+        </div>        
         <div class="mt-4" id="metricsContainer">
             <h4 class="text-center mb-3">Metriche Serie</h4>
             <div class="row g-2">
@@ -167,7 +171,6 @@
         </div>
         <div class="container mt-4">
             <h3 class="text-center">Tabella Dividendi</h3>
-
             <div class="table-responsive">
                 <table class="table table-bordered table-striped">
                     <thead>
@@ -187,11 +190,6 @@
                     </tfoot>
                 </table>
             </div>
-        </div>
-
-
-        <div class="chart-container mt-3" style="height:320px;">
-            <canvas id="taxComparisonChart"></canvas>
         </div>
         <!-- Sezione statica per Tax Metrics e grafico confronto netti -->
         <div id="taxCardsContainer" class="mt-4">
