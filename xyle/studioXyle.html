@@ -29,6 +29,20 @@
             width: 100%;
         }
     </style>
+     <style>
+        .metric-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 10px;
+            min-height: 88px;
+        }
+
+        .metric-card strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+    </style>
 
 
 </head>
@@ -73,16 +87,20 @@
         <div class="chart-container">
             <canvas id="xyleChart"></canvas>
         </div>
-        <p class="small text-muted mt-2">Legenda:
-        <ul>
-            <li><strong>Rige verdi</strong> = Date di stacco dividendi XYLE</li>
-            <li><strong>S&P500 Accumulo</strong> = S&P500 (con aggiustamento dividendi), </li>
-            <li><strong>XYLE Accumulo</strong> = XYLE con reinvestimento dividendi, </li>
-            <li><strong>XYLE Distribuzione</strong> = XYLE senza reinvestimento dei dividendi.</li>
-            <li><strong>S&P500 con vendite</strong> = S&P500 con vendite per coprire i dividendi di XYLE (va confrontato
+        <p class="small text-muted mt-2 mb-0">Legenda:
+        <ul style="list-style-type: none; padding-left: 0; line-height: 1;">
+            <li class="pl-2 small text-muted mt-2"><strong>Rige verdi</strong> = Date di stacco dividendi XYLE</li>
+            <li class="pl-2 small text-muted mt-2"><strong>S&P500 Accumulo</strong> = S&P500 (con aggiustamento dividendi), </li>
+            <li class="pl-2 small text-muted mt-2"><strong>XYLE Accumulo</strong> = XYLE con reinvestimento dividendi, </li>
+            <li class="pl-2 small text-muted mt-2"><strong>XYLE Distribuzione</strong> = XYLE senza reinvestimento dei dividendi.</li>
+            <li class="pl-2 small text-muted mt-2"><strong>S&P500 con vendite</strong> = S&P500 con vendite per coprire i dividendi di XYLE (va confrontato
                 con la riga arancione).</li>
         </ul>
         </p>
+        <!-- Grafico Dividendi -->
+        <div class="chart-container mt-3" style="height:320px;">
+            <canvas id="taxComparisonChart"></canvas>
+        </div>
         <div class="mt-4" id="metricsContainer">
             <h4 class="text-center mb-3">Metriche Serie</h4>
             <div class="row g-2">
@@ -146,7 +164,44 @@
                 </table>
             </div>
         </div>
-
+<!-- Sezione statica per Tax Metrics e grafico confronto netti -->
+        <div id="taxCardsContainer" class="mt-4">
+            <h4 class="text-center mb-3">Impatto Fiscale</h4>
+            <div class="row g-3">
+                <div class="col-md-6 pb-1">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(40,167,69,0.1) 0%, rgba(40,167,69,0.05) 100%); border-left: 4px solid rgba(40,167,69,0.8);">
+                        <strong style="color: #28a745;">XYLE - Tax Metrics</strong>
+                        <div class="metric-value" style="font-size: 0.9rem; line-height: 1.6;">
+                            <div>Tax Drag: <span id="wincTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span>
+                            </div>
+                            <div>Tax Efficiency: <span id="wincTaxEff"
+                                    style="font-weight: bold; color: #28a745;">n/a</span></div>
+                            <hr style="margin: 6px 0;">
+                            <div>Lordo: <span id="wincLordoTot" style="font-weight: bold;">0.00</span> €</div>
+                            <div>Netto: <span id="wincNettoTot" style="font-weight: bold; color: #28a745;">0.00</span> €
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
+                        <strong style="color: #3693eb;">S&p500 (con vendite) - Tax Metrics</strong>
+                        <div class="metric-value" style="font-size: 0.9rem;">
+                            <div>Tax Drag: <span id="acweTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span>
+                            </div>
+                            <div>Tax Efficiency: <span id="acweTaxEff"
+                                    style="font-weight: bold; color: #28a745;">n/a</span></div>
+                            <hr style="margin: 6px 0;">
+                            <div>Lordo: <span id="acweLordoTot" style="font-weight: bold;">0.00</span> €</div>
+                            <div>Netto: <span id="acweNettoTot" style="font-weight: bold; color: #3693eb;">0.00</span> €
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- Disclaimer -->
     <div id="disclaimer-container"></div>
@@ -416,13 +471,14 @@
                     }
                 });
 
-                // Calcola metriche (deviazione standard annualizzata e Sharpe annualizzato)
-                // rfAnnual deve essere espresso in decimale (es. 0.005 = 0.5%)
+                // Calcola metriche (deviazione standard, Sharpe e Sortino, tutti annualizzati)
+                // rfAnnual = risk-free annualizzato in decimale (es. 0.01 = 1%)
                 function computeMetrics(series, labels, rfAnnual = 0) {
                     const returns = [];
                     const days = [];
                     let lastVal = null;
                     let lastDate = null;
+
                     for (let i = 0; i < labels.length; i++) {
                         const v = series[i];
                         const d = labels[i];
@@ -438,37 +494,79 @@
                         }
                         const r = v / lastVal - 1;
                         returns.push(r);
+
                         const dayDiff = (new Date(d) - new Date(lastDate)) / (1000 * 3600 * 24);
                         days.push(dayDiff);
+
                         lastVal = v;
                         lastDate = d;
                     }
 
-                    if (returns.length === 0) return { stdAnn: NaN, sharpe: NaN, periodsPerYear: NaN };
+                    if (returns.length === 0)
+                        return {
+                            stdAnn: NaN,
+                            sharpe: NaN,
+                            sortino: NaN,
+                            periodsPerYear: NaN
+                        };
 
                     const n = returns.length;
+
+                    // --- MEAN ---
                     const mean = returns.reduce((a, b) => a + b, 0) / n;
-                    // sample standard deviation
+
+                    // --- STANDARD DEVIATION ---
                     let variance = 0;
                     if (n > 1) {
-                        variance = returns.map(r => (r - mean) * (r - mean)).reduce((a, b) => a + b, 0) / (n - 1);
-                    } else {
-                        variance = 0;
+                        variance = returns
+                            .map(r => (r - mean) ** 2)
+                            .reduce((a, b) => a + b, 0) / (n - 1);
                     }
                     const std = Math.sqrt(variance);
 
-                    // stima giorni medi tra osservazioni
-                    const avgDays = days.length ? (days.reduce((a, b) => a + b, 0) / days.length) : 365;
+                    // --- DOWNSIDE DEVIATION (Sortino) ---
+                    const MAR = 0; // Minimum Acceptable Return = 0%
+                    const downsideValues = returns.map(r => Math.min(0, r - MAR));
+                    const downsideVariance =
+                        downsideValues
+                            .map(x => x * x)
+                            .reduce((a, b) => a + b, 0) / n; // qui non si usa n-1
+                    const downsideDev = Math.sqrt(downsideVariance);
+
+                    // --- PERIODICITY ---
+                    const avgDays = days.length
+                        ? days.reduce((a, b) => a + b, 0) / days.length
+                        : 365;
+
                     const periodsPerYear = avgDays > 0 ? 365 / avgDays : 1;
 
-                    // annualizza media e deviazione (usando approccio aritmetico)
+                    // --- ANNUALIZZAZIONE ---
                     const meanAnn = mean * periodsPerYear;
                     const stdAnn = std * Math.sqrt(periodsPerYear);
-                    const rfAnn = rfAnnual || 0;
+                    const downsideDevAnn = downsideDev * Math.sqrt(periodsPerYear);
+
+                    // --- RISK-FREE ---
+                    const rfAnn = rfAnnual;
                     const rfPeriod = rfAnn / periodsPerYear;
-                    const sharpe = stdAnn > 0 ? ((meanAnn - rfAnn) / stdAnn) : NaN;
-                    const periodSharpe = std > 0 ? ((mean - rfPeriod) / std) : NaN; // Sharpe base periodale sull'intero periodo corretto per rf
-                    return { stdAnn: stdAnn, sharpe: sharpe, periodsPerYear: periodsPerYear, periodSharpe: periodSharpe };
+
+                    // --- SHARPE ---
+                    const sharpe = stdAnn > 0 ? (meanAnn - rfAnn) / stdAnn : NaN;
+                    const periodSharpe = std > 0 ? (mean - rfPeriod) / std : NaN;
+
+                    // --- SORTINO ---
+                    const sortino = downsideDevAnn > 0 ? (meanAnn - rfAnn) / downsideDevAnn : NaN;
+                    const periodSortino = downsideDev > 0 ? (mean - rfPeriod) / downsideDev : NaN;
+
+                    return {
+                        stdAnn,
+                        sharpe,
+                        sortino,
+                        periodsPerYear,
+                        periodSharpe,
+                        periodSortino,
+                        downsideDevAnn,
+                        downsideDev
+                    };
                 }
 
                 function fmt(x) {
@@ -481,17 +579,40 @@
                 const mWinc = computeMetrics(xyleAdjCumulative, labels, riskFreeAnnual);
                 const mWincNetto = computeMetrics(xyleCloseCumulative, labels, riskFreeAnnual);
 
-                document.getElementById('metrics-acwe').innerText = `Dev.std (ann): ${fmt(mAcwe.stdAnn)}\nSharpe (ann): ${isNaN(mAcwe.sharpe) ? 'n/a' : mAcwe.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mAcwe.periodSharpe) ? 'n/a' : mAcwe.periodSharpe.toFixed(3)}`;
-                document.getElementById('metrics-acwe-sold').innerText = `Dev.std (ann): ${fmt(mAcweSold.stdAnn)}\nSharpe (ann): ${isNaN(mAcweSold.sharpe) ? 'n/a' : mAcweSold.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mAcweSold.periodSharpe) ? 'n/a' : mAcweSold.periodSharpe.toFixed(3)}`;
-                document.getElementById('metrics-winc').innerText = `Dev.std (ann): ${fmt(mWinc.stdAnn)}\nSharpe (ann): ${isNaN(mWinc.sharpe) ? 'n/a' : mWinc.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mWinc.periodSharpe) ? 'n/a' : mWinc.periodSharpe.toFixed(3)}`;
-                document.getElementById('metrics-winc-netto').innerText = `Dev.std (ann): ${fmt(mWincNetto.stdAnn)}\nSharpe (ann): ${isNaN(mWincNetto.sharpe) ? 'n/a' : mWincNetto.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mWincNetto.periodSharpe) ? 'n/a' : mWincNetto.periodSharpe.toFixed(3)}`;
+                document.getElementById('metrics-acwe').innerText =
+                    `Dev.std (ann): ${fmt(mAcwe.stdAnn)}
+Sharpe (ann): ${isNaN(mAcwe.sharpe) ? 'n/a' : mAcwe.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mAcwe.periodSharpe) ? 'n/a' : mAcwe.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mAcwe.sortino) ? 'n/a' : mAcwe.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mAcwe.periodSortino) ? 'n/a' : mAcwe.periodSortino.toFixed(3)}`;
+
+                document.getElementById('metrics-acwe-sold').innerText =
+                    `Dev.std (ann): ${fmt(mAcweSold.stdAnn)}
+Sharpe (ann): ${isNaN(mAcweSold.sharpe) ? 'n/a' : mAcweSold.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mAcweSold.periodSharpe) ? 'n/a' : mAcweSold.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mAcweSold.sortino) ? 'n/a' : mAcweSold.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mAcweSold.periodSortino) ? 'n/a' : mAcweSold.periodSortino.toFixed(3)}`;
+
+                document.getElementById('metrics-winc').innerText =
+                    `Dev.std (ann): ${fmt(mWinc.stdAnn)}
+Sharpe (ann): ${isNaN(mWinc.sharpe) ? 'n/a' : mWinc.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mWinc.periodSharpe) ? 'n/a' : mWinc.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mWinc.sortino) ? 'n/a' : mWinc.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mWinc.periodSortino) ? 'n/a' : mWinc.periodSortino.toFixed(3)}`;
+
+                document.getElementById('metrics-winc-netto').innerText =
+                    `Dev.std (ann): ${fmt(mWincNetto.stdAnn)}
+Sharpe (ann): ${isNaN(mWincNetto.sharpe) ? 'n/a' : mWincNetto.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mWincNetto.periodSharpe) ? 'n/a' : mWincNetto.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mWincNetto.sortino) ? 'n/a' : mWincNetto.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.periodSortino.toFixed(3)}`;
 
             } catch (err) {
                 console.error(err);
                 const container = document.getElementById('disclaimer-container');
                 const msg = document.createElement('div');
                 msg.className = 'alert alert-warning mt-3';
-                msg.innerHTML = '<strong>Attenzione:</strong> impossibile caricare i file JSON localmente. Se stai aprendo il file via <code>file://</code>, prova a servire la cartella con un server HTTP (es. <code>python -m http.server</code> dalla root del progetto) e ricarica la pagina.';
+                msg.innerHTML = '<strong>Attenzione:</strong> impossibile caricare i file JSON localmente.';
                 container.appendChild(msg);
             }
         }
@@ -504,6 +625,12 @@
             let sommaNettiSp500 = 0;
             let sommaLordiSp500 = 0;
             let sommaDifferenza = 0;
+            let sommaLordoXyle = 0;
+
+            // raccolte per il grafico di confronto
+            const chartLabels = [];
+            const nettoWincSeries = [];
+            const nettoAcweSeries = [];
 
             distribuzioni.forEach(dist => {
                 const { date, amount } = dist;
@@ -523,7 +650,10 @@
                 const nettoSp500 = lordoVenduto - tassePagate;
                 const nettoSp500Eur = nettoSp500 / cambioAlGiorno;
                 const percentualeTasse = lordoVenduto > 0 ? (tassePagate / lordoVenduto) * 100 : 0;
-
+                
+                chartLabels.push(date);
+                nettoWincSeries.push(Number(nettoXYLE_EUR.toFixed(2)));
+                nettoAcweSeries.push(Number(nettoSp500Eur.toFixed(2)));
                 // Crea riga tabella
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -543,11 +673,31 @@
                 sommaNettiSp500 += nettoSp500Eur;
                 sommaLordiSp500 += lordoVendutoEur;
                 sommaNettiXyle += nettoXYLE_EUR;
+                sommaLordoXyle += lordoXYLE_EUR;
             });
 
             const tableFoot = document.getElementById('dividendiTableFoot');
             tableFoot.innerHTML = '';
             const row = document.createElement('tr');
+
+            // Calcola Tax Drag e Tax Efficiency per le due strategie
+            const taxDragWinc = sommaLordoXyle > 0 ? (sommaLordoXyle - sommaNettiXyle) / sommaLordoXyle : NaN;
+            const taxEffWinc = sommaLordoXyle > 0 ? sommaNettiXyle / sommaLordoXyle : NaN;
+
+            const taxDragAcwe = sommaLordiSp500 > 0 ? (sommaLordiSp500 - sommaNettiSp500) / sommaLordiSp500 : NaN;
+            const taxEffAcwe = sommaLordiSp500 > 0 ? sommaNettiSp500 / sommaLordiSp500 : NaN;
+
+            // Aggiorna i campi delle card statiche (non ricrearle dinamicamente)
+            const setText = (id, text) => { const el = document.getElementById(id); if (el) el.innerText = text; };
+            setText('wincTaxDrag', isNaN(taxDragWinc) ? 'n/a' : (taxDragWinc * 100).toFixed(2) + '%');
+            setText('wincTaxEff', isNaN(taxEffWinc) ? 'n/a' : (taxEffWinc * 100).toFixed(2) + '%');
+            setText('wincLordoTot', sommaLordoXyle.toFixed(2));
+            setText('wincNettoTot', sommaNettiXyle.toFixed(2));
+
+            setText('acweTaxDrag', isNaN(taxDragAcwe) ? 'n/a' : (taxDragAcwe * 100).toFixed(2) + '%');
+            setText('acweTaxEff', isNaN(taxEffAcwe) ? 'n/a' : (taxEffAcwe * 100).toFixed(2) + '%');
+            setText('acweLordoTot', sommaLordiSp500.toFixed(2));
+            setText('acweNettoTot', sommaNettiSp500.toFixed(2));            
             row.innerHTML = `
                         <td>Tot:</td>
                         <td></td>
@@ -561,6 +711,39 @@
                         <td>${sommaDifferenza.toFixed(2)} (${(((sommaNettiSp500 - sommaNettiXyle) / sommaNettiXyle) * 100).toFixed(2)}%)</td>
                     `;
             tableFoot.appendChild(row);
+
+            // Aggiorna o crea il grafico usando il canvas statico
+            const ctxEl = document.getElementById('taxComparisonChart');
+            if (ctxEl) {
+                const ctx2 = ctxEl.getContext('2d');
+                if (window._taxComparisonChart) {
+                    window._taxComparisonChart.data.labels = chartLabels;
+                    window._taxComparisonChart.data.datasets[0].data = nettoWincSeries;
+                    window._taxComparisonChart.data.datasets[1].data = nettoAcweSeries;
+                    window._taxComparisonChart.update();
+                } else {
+                    window._taxComparisonChart = new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [
+                                { label: 'Dividendi netti XYLE (€)', data: nettoWincSeries, backgroundColor: 'rgba(40,167,69,0.8)' },
+                                { label: 'Vendite S&p500 - netto (€)', data: nettoAcweSeries, backgroundColor: 'rgba(54,162,235,0.8)' }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: { mode: 'index', intersect: false },
+                            scales: {
+                                x: { title: { display: true, text: 'Date' }, ticks: { maxRotation: 90, autoSkip: true, maxTicksLimit: 12 } },
+                                y: { beginAtZero: true, title: { display: true, text: '€' } }
+                            },
+                            plugins: { legend: { position: 'top' } }
+                        }
+                    });
+                }
+            }
         }
 
         document.querySelectorAll('input').forEach(input => {
