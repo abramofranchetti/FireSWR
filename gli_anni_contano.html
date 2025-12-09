@@ -102,11 +102,42 @@
             let n = anni * 12;                  // mesi totali
             return versamentoMensile * ((Math.pow(1 + r, n) - 1) / r);
         }
+        // --- Plugin linea verticale + etichetta "Oggi" ---
+        const lineaVerticale = {
+            id: 'lineaVerticale',
+            afterDraw(chart, args, options) {
+                if (options.posizione === undefined) return;
 
+                const ctx = chart.ctx;
+                const x = chart.scales.x.getPixelForValue(options.posizione);
+
+                // Linea verticale
+                ctx.save();
+                ctx.strokeStyle = 'red';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x, chart.chartArea.top);
+                ctx.lineTo(x, chart.chartArea.bottom);
+                ctx.stroke();
+
+                // Etichetta "Oggi"
+                ctx.fillStyle = 'red';
+                ctx.font = "bold 14px Arial";
+                ctx.textAlign = "left";
+                ctx.textBaseline = "center";
+                ctx.fillText("Oggi", x, chart.chartArea.top+15);
+
+                ctx.restore();
+            }
+        };
         // ------------------- Setup del grafico -------------------------------
         let ctx = document.getElementById('grafico');
         let grafico = new Chart(ctx, {
             type: 'line',
+            plugins: [{
+                ...lineaVerticale,
+                options: { posizione: 0 } // verrà aggiornato dinamicamente
+            }],
             data: {
                 labels: [],
                 datasets: [{
@@ -182,13 +213,19 @@
                 // Scenario B:
                 // parte solo da anno 0 oggi
                 let iB = i - anniFa;
-                datiB.push(iB >= 0 ? calcolaMontante(versamentoB, iB, rendimento) : 0);
+                if (iB >= 0) {
+                    datiB.push(calcolaMontante(versamentoB, iB, rendimento));
+                } else {
+                    datiB.push(null); // nessun punto mostrato
+                }
+
 
             }
 
             grafico.data.labels = labels;
             grafico.data.datasets[0].data = datiA;
             grafico.data.datasets[1].data = datiB;
+            grafico.options.plugins.lineaVerticale = { posizione: anniFa };
             grafico.update();
         }
 
