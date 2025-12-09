@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gli Anni Contano - Il potere del tempo negli investimenti</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <!-- <script src="js/ytm.js" defer></script>    -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f6f6f6;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: auto;
+            box-shadow: 0px 0px 10px #ccc;
+        }
+
+        input,
+        label {
+            margin: 6px 0;
+        }
+
+        .result-box {
+            background: #e8f0ff;
+            padding: 10px;
+            border-left: 4px solid #4A6CF7;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Gli Anni Contano - Il potere del tempo negli investimenti</h1>
+        <h2 class="text-center">Per capire perché iniziare prima vale più che investire di più</h2>
+        <h6 class="text-center">Questa simulazione mostra in modo intuitivo quanto il tempo influenzi il risultato di un
+            investimento. Ti permette di confrontare due scenari: da un lato, cosa sarebbe successo se avessi iniziato
+            un piano di accumulo anni fa e smettessi di versare oggi rimanendo investito; dall'altro, quanto dovresti
+            versare ogni mese iniziando da zero per ottenere la stessa cifra in futuro. Regolando gli slider puoi vedere
+            come anche piccoli importi investiti molto presto crescono più velocemente di importi maggiori iniziati
+            tardi. È uno strumento pensato per visualizzare, in modo pratico e immediato, la potenza dell'interesse
+            composto e l'importanza di iniziare a investire il prima possibile.</h6>
+        <label>Quanti anni fa hai iniziato a versare nel PAC:</label>
+        <input id="anni_fa" type="range" min="1" max="30" value="20" oninput="aggiorna()" />
+        <span id="val_anni_fa">20</span> anni fa
+        <br><br>
+
+        <label>Versamento mensile originario (€):</label>
+        <input id="versamento" type="number" value="200" oninput="aggiorna()" />
+        <br><br>
+
+        <label>Rendimento medio annuo atteso (%):</label>
+        <input id="rendimento" type="number" value="7" step="0.1" oninput="aggiorna()" /> %
+        <br><br>
+
+        <label>Tra quanti anni confrontare i risultati:</label>
+        <input id="anni_futuri" type="range" min="5" max="40" value="20" oninput="aggiorna()" />
+        <span id="val_anni_futuri">20</span> anni
+        <br><br>
+
+        <canvas id="grafico" height="120"></canvas>
+
+        <div class="result-box">
+            <h3>Risultato simulazione</h3>
+            <p>
+                Se avessi iniziato <b id="r_anni_fa">20</b> anni fa e poi smettessi oggi,<br>
+                con un versamento di <b id="r_versamento">200</b> €/mese,<br>
+                avresti tra <b id="r_anni_futuri">20</b> anni:
+                <b style="color:#1b5;">€ <span id="r_capitale_A"></span></b>
+            </p>
+            <p>
+                Per ottenere lo stesso capitale iniziando da oggi dovresti investire:
+                <b style="color:#b51;">€ <span id="r_versamento_B"></span> / mese</b>
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        // ---------------- Funzione per calcolare il montante ------------------
+        function calcolaMontante(versamentoMensile, anni, rendimentoAnnuo) {
+            let r = rendimentoAnnuo / 100 / 12; // rendimento mensile
+            let n = anni * 12;                  // mesi totali
+            return versamentoMensile * ((Math.pow(1 + r, n) - 1) / r);
+        }
+
+        // ------------------- Setup del grafico -------------------------------
+        let ctx = document.getElementById('grafico');
+        let grafico = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Scenario A (iniziato anni fa, smetti oggi)',
+                    borderColor: '#1b5',
+                    data: [],
+                    fill: false,
+                    tension: 0.2
+                }, {
+                    label: 'Scenario B (inizi oggi, versamento calcolato)',
+                    borderColor: '#b51',
+                    data: [],
+                    fill: false,
+                    tension: 0.2
+                }]
+            }
+        });
+
+        // ------------------ Funzione principale di aggiornamento -------------
+        function aggiorna() {
+            let anniFa = parseInt(document.getElementById("anni_fa").value);
+            let versamento = parseFloat(document.getElementById("versamento").value);
+            let rendimento = parseFloat(document.getElementById("rendimento").value);
+            let anniFuturi = parseInt(document.getElementById("anni_futuri").value);
+
+            document.getElementById("val_anni_fa").innerText = anniFa;
+            document.getElementById("val_anni_futuri").innerText = anniFuturi;
+
+            // Scenario A: hai già investito in passato e smetti oggi
+            let capitaleA = calcolaMontante(versamento, anniFa, rendimento);
+            let capitaleAFuturo = capitaleA * Math.pow(1 + rendimento / 100, anniFuturi);
+
+            // Scenario B: inizi oggi – vogliamo trovare il versamento necessario
+            function trovaVersamentoMensile() {
+                let r = rendimento / 100 / 12;
+                let n = anniFuturi * 12;
+                return capitaleAFuturo * r / (Math.pow(1 + r, n) - 1);
+            }
+            let versamentoB = trovaVersamentoMensile();
+
+            // Aggiornamento testo
+            document.getElementById("r_capitale_A").innerText = capitaleAFuturo.toFixed(0);
+            document.getElementById("r_versamento_B").innerText = versamentoB.toFixed(2);
+            document.getElementById("r_anni_fa").innerText = anniFa;
+            document.getElementById("r_versamento").innerText = versamento;
+            document.getElementById("r_anni_futuri").innerText = anniFuturi;
+
+            let labels = [];
+            let datiA = [];
+            let datiB = [];
+
+            // Anni totali nel grafico = anni passati + anni futuri
+            let anniTotali = anniFa + anniFuturi;
+
+            for (let i = 0; i <= anniTotali; i++) {
+                if (i < anniFa) {
+                    labels.push("Anno " + (i - anniFa));  // anni negativi = investimento passato
+                } else {
+                    labels.push("Anno " + (i - anniFa));  // da 0 in poi = crescita futura
+                }
+
+                // Scenario A:
+                // per i primi anni A stai versando ogni mese
+                if (i <= anniFa) {
+                    datiA.push(calcolaMontante(versamento, i, rendimento));
+                } else {
+                    let anniDopoStop = i - anniFa;
+                    let valore = calcolaMontante(versamento, anniFa, rendimento) *
+                        Math.pow(1 + rendimento / 100, anniDopoStop);
+                    datiA.push(valore);
+                }
+
+                // Scenario B:
+                // parte solo da anno 0 oggi
+                let iB = i - anniFa;
+                datiB.push(iB >= 0 ? calcolaMontante(versamentoB, iB, rendimento) : 0);
+
+            }
+
+            grafico.data.labels = labels;
+            grafico.data.datasets[0].data = datiA;
+            grafico.data.datasets[1].data = datiB;
+            grafico.update();
+        }
+
+        aggiorna();
+    </script>
+
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
