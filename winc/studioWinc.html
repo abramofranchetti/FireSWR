@@ -353,6 +353,97 @@
                 </p>
             </section>
         </div>
+        <div class="container mt-4">
+            <section id="approfondimento-call-asimmetria" style="margin-top:2rem; padding-top:1rem;">
+
+                <h3 style="text-align:center; margin-bottom:2rem;">
+                    Approfondimento: Asimmetria del payoff delle opzioni call
+                </h3>
+
+                <p>
+                    Le strategie <strong>covered call</strong> introducono una forte <strong>asimmetria</strong>
+                    nella distribuzione dei rendimenti. A differenza di un asset tradizionale, che tende a
+                    seguire una <strong>distribuzione normale</strong> simmetrica, un ETF covered call
+                    mostra una distribuzione <strong>troncata a destra</strong>.
+                </p>
+
+                <p>
+                    Questo accade perché la vendita della call limita il potenziale di guadagno
+                    (upside oltre lo strike), mentre il rischio di perdita (downside) rimane
+                    quasi completamente aperto.
+                </p>
+
+                <p>
+                    Il risultato è una distribuzione dei rendimenti che <strong>non è normale</strong>,
+                    con conseguente inutilità o distorsione di metriche come
+                    <strong>deviazione standard</strong>, <strong>Sharpe ratio</strong> e
+                    <strong>Sortino ratio</strong>.
+                </p>
+
+                <h4 style="margin-top:2rem;">📌 Perché nasce l'asimmetria</h4>
+                <ul>
+                    <li>I ribassi del sottostante restano quasi tutti → downside aperto.</li>
+                    <li>I rialzi oltre lo strike sono limitati → upside troncato.</li>
+                    <li>La distribuzione si sposta a sinistra → <strong>media &lt; mediana &lt; moda</strong>.</li>
+                </ul>
+
+                <h4 style="margin-top:2rem;">🔍 Confronto visivo delle distribuzioni</h4>
+
+                <!-- IMMAGINE 1 -->
+                <div style="display:flex; align-items:center; gap:1.5rem; margin:2rem 0; flex-wrap:wrap;">
+                    <img src="./img/campana_tagliata.png" alt="Campana assimmetrica"
+                        style="max-width:460px; width:100%; border:1px solid #ccc; border-radius:8px;">
+                    <p style="flex:1; font-size:1.1rem; line-height:1.55;">
+                        La <strong>campana tagliata</strong> è tipica dei rendimenti dei covered call.
+                        La <strong>coda destra è troncata</strong> perché l’upside è limitato,
+                        mentre la <strong>coda sinistra</strong> rimane intatta.
+                        È la rappresentazione più immediata della perdita del potenziale di rialzo.
+                    </p>
+                </div>
+
+                <!-- IMMAGINE 2 -->
+                <div style="display:flex; align-items:center; gap:1.5rem; margin:2rem 0; flex-wrap:wrap;">
+                    <img src="./img/compare_campana_1.png" alt="Confronto distribuzione normale"
+                        style="max-width:460px; width:100%; border:1px solid #ccc; border-radius:8px;">
+                    <p style="flex:1; font-size:1.1rem; line-height:1.55;">
+                        Qui vediamo la differenza tra una <strong>distribuzione normale</strong> e una
+                        <strong>distribuzione troncata</strong>. La curva simmetrica rappresenta un asset
+                        tradizionale, mentre quella asimmetrica evidenzia come un covered call limiti i
+                        guadagni ma non le perdite.
+                    </p>
+                </div>
+
+                <!-- IMMAGINE 3 -->
+                <div style="display:flex; align-items:center; gap:1.5rem; margin:2rem 0; flex-wrap:wrap;">
+                    <img src="./img/compare_campana_2.png" alt="Confronto distribuzioni"
+                        style="max-width:460px; width:100%; border:1px solid #ccc; border-radius:8px;">
+                    <p style="flex:1; font-size:1.1rem; line-height:1.55;">
+                        Questa seconda visualizzazione mostra come la parte destra della distribuzione
+                        sia <strong>tagliata nettamente</strong>. Ciò implica rendimenti più stabili ma un
+                        <strong>ritorno medio inferiore</strong>, poiché i grandi rialzi non contribuiscono più.
+                    </p>
+                </div>
+
+                <!-- IMMAGINE 4 -->
+                <div style="display:flex; align-items:center; gap:1.5rem; margin:2rem 0; flex-wrap:wrap;">
+                    <img src="./img/funzionamento_call.png" alt="Payoff call venduta"
+                        style="max-width:460px; width:100%; border:1px solid #ccc; border-radius:8px;">
+                    <p style="flex:1; font-size:1.1rem; line-height:1.55;">
+                        L'immagine mostra il <strong>payoff di una call venduta</strong>: oltre lo strike
+                        il rendimento si appiattisce (cap), mentre a sinistra il prezzo può scendere senza limiti.
+                        Questo meccanismo è la causa primaria dell’asimmetria tipica dei covered call.
+                    </p>
+                </div>
+
+                <h4 style="margin-top:2rem;">🎯 Implicazioni pratiche</h4>
+                <ul>
+                    <li><strong>Deviazione standard più bassa</strong>, ma rischio non realmente ridotto.</li>
+                    <li><strong>Sharpe</strong> e <strong>Sortino</strong> risultano fuorvianti.</li>
+                    <li>L’asset non segue una distribuzione normale → molte metriche classiche sono inaffidabili.</li>
+                </ul>
+
+            </section>
+        </div>
     </div>
     </div>
     <script>
