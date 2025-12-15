@@ -3,8 +3,17 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>PAC reale S&P 500 – il tempo conta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAC reale S&P 500 - il tempo conta</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
 
     <style>
         body {
@@ -52,14 +61,18 @@
     </style>
 </head>
 
-<body>
-    <div class="container">
-        <h1 class="text-center">Gli Anni Contano - Il potere del tempo negli investimenti simulazione con dati SP500
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Gli Anni Contano - Il potere del tempo negli investimenti simulazione con dati S&P500
         </h1>
         <h2 class="text-center">Per capire perché iniziare prima vale più che investire di più</h2>
         <h6 class="text-center">Questa simulazione mostra in modo intuitivo quanto il tempo influenzi il risultato di un
             investimento. Ti permette di confrontare due scenari: da un lato, cosa sarebbe successo se avessi iniziato
-            un piano di accumulo anni fa e smettessi di versare oggi rimanendo investito; dall'altro, quanto dovresti
+            un piano di accumulo anni fa e smettessi di versare a un certo punto rimanendo investito; dall'altro, quanto dovresti
             versare ogni mese iniziando da zero per ottenere la stessa cifra in futuro. Regolando gli slider puoi vedere
             come anche piccoli importi investiti molto presto crescono più velocemente di importi maggiori iniziati
             tardi. È uno strumento pensato per visualizzare, in modo pratico e immediato, la potenza dell'interesse
