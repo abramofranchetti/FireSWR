@@ -79,9 +79,7 @@
     <input type=" number" id="anniPAC" value="10" oninput="aggiorna()">
 
         <label>Anni dopo lo stop (resti investito)</label>
-        <input type="number" id="anniFuturi" value="10" oninput="aggiorna()">
-
-        <button onclick="aggiorna()">Simula</button>
+        <input type="number" id="anniFuturi" value="10" oninput="aggiorna()">        
 
         <canvas id="grafico" height="120"></canvas>
 
@@ -97,7 +95,7 @@
                 <b>$ <span id="capA">--</span></b>
             </p>
             <p>
-                Versamento mensile necessario iniziando oggi:
+                Versamento mensile iniziando alla fine del PAC A (scenario B):
                 <b>$ <span id="versB">--</span></b>
                 <br>
                 Capitale versato scenario B:
@@ -253,7 +251,7 @@
 
                     ctx.fillStyle = 'red';
                     ctx.font = "bold 14px Arial";
-                    ctx.fillText("Oggi", x + 4, chart.chartArea.top + 15);
+                    ctx.fillText("Stop Versamenti", x + 4, chart.chartArea.top + 15);
                     ctx.restore();
                 }
             };
@@ -265,13 +263,13 @@
                     labels,
                     datasets: [
                         {
-                            label: 'Scenario A -- PAC storico',
+                            label: 'Scenario A -- iniziato anni fa poi fermato',
                             data: dataA,
                             borderColor: '#1b5',
                             tension: 0.15
                         },
                         {
-                            label: 'Scenario B -- Inizio oggi',
+                            label: 'Scenario B -- Iniziato allo stop dei versamenti A',
                             data: dataB,
                             borderColor: '#c33',
                             tension: 0.15
