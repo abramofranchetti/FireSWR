@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PAC reale S&P 500 – il tempo conta</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f6f6f6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        label {
+            margin-top: 12px;
+            display: block;
+            font-weight: bold;
+        }
+
+        select,
+        input,
+        button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            font-size: 15px;
+        }
+
+        button {
+            margin-top: 16px;
+            cursor: pointer;
+        }
+
+        .result {
+            background: #eef4ff;
+            padding: 16px;
+            margin-top: 20px;
+            border-left: 4px solid #4a6cf7;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center">Gli Anni Contano - Il potere del tempo negli investimenti simulazione con dati SP500
+        </h1>
+        <h2 class="text-center">Per capire perché iniziare prima vale più che investire di più</h2>
+        <h6 class="text-center">Questa simulazione mostra in modo intuitivo quanto il tempo influenzi il risultato di un
+            investimento. Ti permette di confrontare due scenari: da un lato, cosa sarebbe successo se avessi iniziato
+            un piano di accumulo anni fa e smettessi di versare oggi rimanendo investito; dall'altro, quanto dovresti
+            versare ogni mese iniziando da zero per ottenere la stessa cifra in futuro. Regolando gli slider puoi vedere
+            come anche piccoli importi investiti molto presto crescono più velocemente di importi maggiori iniziati
+            tardi. È uno strumento pensato per visualizzare, in modo pratico e immediato, la potenza dell'interesse
+            composto e l'importanza di iniziare a investire il prima possibile.</h6>
+        <p>
+            Simulazione basata su dati storici mensili reali. Lo strumento non tiene conto di tasse, commissioni o
+            inflazione.
+        </p>
+
+        <label>Data di inizio PAC</label>
+        <select id="dataInizio" oninput="aggiorna()"></select>
+
+        <label>Versamento mensile ($)</label>
+        <input type="number" id="versamento" value="200" oninput="aggiorna()"">
+
+    <label>Durata PAC (anni)</label>
+    <input type=" number" id="anniPAC" value="10" oninput="aggiorna()">
+
+        <label>Anni dopo lo stop (resti investito)</label>
+        <input type="number" id="anniFuturi" value="10" oninput="aggiorna()">
+
+        <button onclick="aggiorna()">Simula</button>
+
+        <canvas id="grafico" height="120"></canvas>
+
+        <div class="result">
+            <p>
+                Versamento mensile scenario A:
+                <b>$ <span id="versA">--</span></b>
+                <br>
+                Capitale versato scenario A:
+                <b>$ <span id="capVersA">--</span></b>
+                <br>
+                Capitale finale scenario A:
+                <b>$ <span id="capA">--</span></b>
+            </p>
+            <p>
+                Versamento mensile necessario iniziando oggi:
+                <b>$ <span id="versB">--</span></b>
+                <br>
+                Capitale versato scenario B:
+                <b>$ <span id="capVersB">--</span></b>
+                <br>
+                Capitale finale scenario B:
+                <b>$ <span id="capB">--</span></b>
+            </p>
+        </div>
+    </div>
+    <div id="disclaimer-container"></div>
+
+    <script>
+        let sp500 = [];
+        let chart;
+
+        // ===================== CSV =====================
+        async function caricaCSV() {
+            const response = await fetch('./csv/sp500_montly_historical.csv');
+            const text = await response.text();
+
+            sp500 = text.trim().split('\n').map(r => {
+                const [date, value] = r.trim().split(' ');
+                const [d, m, y] = date.split('/');
+                return {
+                    date: new Date(y, m - 1, d),
+                    value: parseFloat(value)
+                };
+            });
+
+            popolaDate();
+            aggiorna();
+        }
+
+        // ===================== DATE =====================
+        function popolaDate() {
+            const sel = document.getElementById("dataInizio");
+            sel.innerHTML = "";
+
+            let defaultIndex = 0;
+
+            sp500.forEach((p, i) => {
+                const opt = document.createElement("option");
+                opt.value = i;
+                opt.text = `${String(p.date.getMonth() + 1).padStart(2, '0')}/${p.date.getFullYear()}`;
+                sel.appendChild(opt);
+
+                if (p.date.getFullYear() === 2000 && defaultIndex === 0) {
+                    defaultIndex = i;
+                }
+            });
+
+            sel.value = defaultIndex;
+        }
+
+        // ===================== SIMULAZIONI =====================
+        function simulaScenarioCompleto(start, anniPAC, anniFuturi, versamento) {
+            const mesiPAC = anniPAC * 12;
+            const mesiFuturi = anniFuturi * 12;
+            const mesiTotali = mesiPAC + mesiFuturi;
+
+            let quote = 0;
+            let capitale = [];
+            let versato = 0;
+
+            for (let i = 0; i < mesiTotali; i++) {
+                if (i < mesiPAC) {
+                    quote += versamento / sp500[start + i].value;
+                    versato += versamento;
+                }
+                capitale.push(quote * sp500[start + i].value);
+            }
+
+            return {
+                capitale,
+                capitaleFinale: capitale[capitale.length - 1],
+                capitaleVersato: versato
+            };
+        }
+
+        function simulaPAC(start, mesi, versamento) {
+            let quote = 0;
+            let versato = 0;
+
+            for (let i = 0; i < mesi; i++) {
+                quote += versamento / sp500[start + i].value;
+                versato += versamento;
+            }
+
+            return {
+                capitaleFinale: quote * sp500[start + mesi - 1].value,
+                capitaleVersato: versato
+            };
+        }
+
+        function trovaVersamento(target, start, anni) {
+            let min = 0, max = 5000;
+
+            for (let i = 0; i < 40; i++) {
+                const mid = (min + max) / 2;
+                const cap = simulaPAC(start, anni * 12, mid).capitaleFinale;
+                cap > target ? max = mid : min = mid;
+            }
+            return (min + max) / 2;
+        }
+
+        // ===================== GRAFICO =====================
+        function disegnaGrafico(start, anniPAC, anniFuturi, versamento, versamentoB) {
+            const mesiPAC = anniPAC * 12;
+            const mesiTotali = (anniPAC + anniFuturi) * 12;
+
+            let labels = [];
+            let dataA = [];
+            let dataB = [];
+
+            let quoteA = 0;
+            let quoteB = 0;
+
+            for (let i = 0; i < mesiTotali; i++) {
+                labels.push(
+                    `${sp500[start + i].date.getMonth() + 1}/${sp500[start + i].date.getFullYear()}`
+                );
+
+                // Scenario A
+                if (i < mesiPAC) {
+                    quoteA += versamento / sp500[start + i].value;
+                }
+                dataA.push(quoteA * sp500[start + i].value);
+
+                // Scenario B (parte quando A smette)
+                if (i >= mesiPAC) {
+                    quoteB += versamentoB / sp500[start + i].value;
+                    dataB.push(quoteB * sp500[start + i].value);
+                } else {
+                    dataB.push(null);
+                }
+            }
+
+            if (chart) chart.destroy();
+
+            const lineaVerticale = {
+                id: 'lineaVerticale',
+                afterDraw(chart) {
+                    const x = chart.scales.x.getPixelForValue(mesiPAC - 1);
+                    const ctx = chart.ctx;
+
+                    ctx.save();
+                    ctx.strokeStyle = 'red';
+                    ctx.beginPath();
+                    ctx.moveTo(x, chart.chartArea.top);
+                    ctx.lineTo(x, chart.chartArea.bottom);
+                    ctx.stroke();
+
+                    ctx.fillStyle = 'red';
+                    ctx.font = "bold 14px Arial";
+                    ctx.fillText("Oggi", x + 4, chart.chartArea.top + 15);
+                    ctx.restore();
+                }
+            };
+
+            chart = new Chart(document.getElementById("grafico"), {
+                type: 'line',
+                plugins: [lineaVerticale],
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Scenario A -- PAC storico',
+                            data: dataA,
+                            borderColor: '#1b5',
+                            tension: 0.15
+                        },
+                        {
+                            label: 'Scenario B -- Inizio oggi',
+                            data: dataB,
+                            borderColor: '#c33',
+                            tension: 0.15
+                        }
+                    ]
+                }
+            });
+        }
+
+        // ===================== MAIN =====================
+        function aggiorna() {
+            const start = parseInt(document.getElementById("dataInizio").value);
+            const versamento = parseFloat(document.getElementById("versamento").value);
+            const anniPAC = parseInt(document.getElementById("anniPAC").value);
+            const anniFuturi = parseInt(document.getElementById("anniFuturi").value);
+
+            const scenA = simulaScenarioCompleto(start, anniPAC, anniFuturi, versamento);
+
+            const versB = trovaVersamento(
+                scenA.capitaleFinale,
+                start + anniPAC * 12,
+                anniFuturi
+            );
+
+            const scenB = simulaPAC(start + anniPAC * 12, anniFuturi * 12, versB);
+
+            // RISULTATI
+            document.getElementById("versA").innerText = versamento.toFixed(0);
+            document.getElementById("capA").innerText = scenA.capitaleFinale.toFixed(0);
+            document.getElementById("versB").innerText = versB.toFixed(0);
+
+            // NUOVI DATI
+            document.getElementById("capVersA").innerText = scenA.capitaleVersato.toFixed(0);
+            document.getElementById("capVersB").innerText = scenB.capitaleVersato.toFixed(0);
+            document.getElementById("capB").innerText = scenA.capitaleFinale.toFixed(0);
+
+            disegnaGrafico(start, anniPAC, anniFuturi, versamento, versB);
+        }
+
+        caricaCSV();
+    </script>
+
+    <!-- Disclaimer -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
