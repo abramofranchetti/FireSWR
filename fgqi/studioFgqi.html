@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Rendimento FGQI vs ACWE</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <!--<script src="js/ytm.js" defer></script>   -->
+
+    <style>
+        /* Stile per il grafico */
+        #xyleChart {
+            max-height: 500px;
+            width: 100%;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 500px;
+            width: 100%;
+        }
+    </style>
+     <style>
+        .metric-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 10px;
+            min-height: 88px;
+        }
+
+        .metric-card strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+    </style>
+
+
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Studio Rendimento FGQI (Fidelity Global Quality Income UCITS ETF INC-USD | FGQI) vs Decumulo equivalente da ACWE</h1>
+        <h5 class="text-center">Studio comparativo di strategia quality factor FGQI.MI (FGQI) e il suo corrispettivo a capitalizzazione ACWE.
+            Ho
+            usato l'etf ACWE.MI (Spdr Msci All Country World Ucits Etf).            
+        </h5>
+        <p>Il grafico mostra come andrebbe una strategia che vende quote di ACWE per ottenere mensilmente lo stesso
+            dividendo lordo staccato dall'ETF a distribuzione.</p>
+        <form>
+            <div class="form-group mt-4">
+                <label for="montante">Capitale inizale $:</label>
+                <input type="number" class="form-control" id="montante" value="100000" step="1000">
+            </div>
+            <div class="form-group mt-4">
+                <label for="modalita">Modalità calcolo compravendita quote ETF:</label>
+                <select class="form-control" id="modalita">
+                    <option value="0">Discreta (solo quote intere, come nella reatà)</option>
+                    <option value="1">Continua (anche quote frazionarie, per simulazione)</option>
+                </select>
+            </div>
+            <div class="form-row mt-2">
+                <div class="form-group col-md-3">
+                    <label for="riskFree">Risk-free (%) (per calcolo Sharpe)</label>
+                    <input type="number" class="form-control" id="riskFree" value="0.5" step="0.01">
+                    <small class="form-text text-muted">Tasso risk-free annuo (es. 0.5 = 0.5%)</small>
+                </div>
+            </div>
+        </form>
+        <!-- Grafico XYLE vs SP500 -->
+        <div class="chart-container">
+            <canvas id="xyleChart"></canvas>
+        </div>
+        <p class="small text-muted mt-2 mb-0">Legenda:
+        <ul style="list-style-type: none; padding-left: 0; line-height: 1;">
+            <li class="pl-2 small text-muted mt-2"><strong>Rige verdi</strong> = Date di stacco dividendi FGQI</li>
+            <li class="pl-2 small text-muted mt-2"><strong>ACWE Accumulo</strong> = ACWE (con aggiustamento dividendi), </li>
+            <li class="pl-2 small text-muted mt-2"><strong>FGQI Accumulo</strong> = FGQI con reinvestimento dividendi, </li>
+            <li class="pl-2 small text-muted mt-2"><strong>FGQI Distribuzione</strong> = FGQI senza reinvestimento dei dividendi.</li>
+            <li class="pl-2 small text-muted mt-2"><strong>ACWE con vendite</strong> = ACWE con vendite per coprire i dividendi di FGQI (va confrontato
+                con la riga arancione).</li>
+        </ul>
+        </p>
+        <!-- Grafico Dividendi -->
+        <div class="chart-container mt-3" style="height:320px;">
+            <canvas id="taxComparisonChart"></canvas>
+        </div>
+        <div class="mt-4" id="metricsContainer">
+            <h4 class="text-center mb-3">Metriche Serie</h4>
+            <div class="row g-2">
+                <div class="col-md-6 col-lg-3 pb-1">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
+                        <strong style="color: #3693eb; font-size: 0.95rem;">ACWE - Accumulo</strong>
+                        <div id="metrics-acwe" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...</div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 pb-1">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(40,167,69,0.1) 0%, rgba(40,167,69,0.05) 100%); border-left: 4px solid rgba(40,167,69,0.8);">
+                        <strong style="color: #28a745; font-size: 0.95rem;">FGQI - Total Return</strong>
+                        <div id="metrics-winc" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...</div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 pb-1">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(75,192,192,0.1) 0%, rgba(75,192,192,0.05) 100%); border-left: 4px solid rgba(75,192,192,0.8);">
+                        <strong style="color: #20b2aa; font-size: 0.95rem;">ACWE - Con Vendite</strong>
+                        <div id="metrics-acwe-sold" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...</div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(255,159,64,0.1) 0%, rgba(255,159,64,0.05) 100%); border-left: 4px solid rgba(255,159,64,0.8);">
+                        <strong style="color: #ff9f40; font-size: 0.95rem;">FGQI - Netto</strong>
+                        <div id="metrics-winc-netto" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mt-4">
+            <h3 class="text-center">Tabella Dividendi</h3>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Data di Stacco</th>                            
+                            <th>Dividendo Lordo FGQI (€)</th>                            
+                            <th>Dividendo Netto FGQI (€)</th>
+                            <th>Quote ACWE Vendute</th>
+                            <th>Dividendo Lordo ACWE (da vendita) (€)</th>                            
+                            <th>Dividendo Netto ACWE (da vendita) (€)</th>
+                            <th>Differenza tra i netti €</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dividendiTableBody">
+                    </tbody>
+                    <tfoot id="dividendiTableFoot">
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+<!-- Sezione statica per Tax Metrics e grafico confronto netti -->
+        <div id="taxCardsContainer" class="mt-4">
+            <h4 class="text-center mb-3">Impatto Fiscale</h4>
+            <div class="row g-3">
+                <div class="col-md-6 pb-1">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(40,167,69,0.1) 0%, rgba(40,167,69,0.05) 100%); border-left: 4px solid rgba(40,167,69,0.8);">
+                        <strong style="color: #28a745;">FGQI - Tax Metrics</strong>
+                        <div class="metric-value" style="font-size: 0.9rem; line-height: 1.6;">
+                            <div>Tax Drag: <span id="wincTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span>
+                            </div>
+                            <div>Tax Efficiency: <span id="wincTaxEff"
+                                    style="font-weight: bold; color: #28a745;">n/a</span></div>
+                            <hr style="margin: 6px 0;">
+                            <div>Lordo: <span id="wincLordoTot" style="font-weight: bold;">0.00</span> €</div>
+                            <div>Netto: <span id="wincNettoTot" style="font-weight: bold; color: #28a745;">0.00</span> €
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
+                        <strong style="color: #3693eb;">ACWE (con vendite) - Tax Metrics</strong>
+                        <div class="metric-value" style="font-size: 0.9rem;">
+                            <div>Tax Drag: <span id="acweTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span>
+                            </div>
+                            <div>Tax Efficiency: <span id="acweTaxEff"
+                                    style="font-weight: bold; color: #28a745;">n/a</span></div>
+                            <hr style="margin: 6px 0;">
+                            <div>Lordo: <span id="acweLordoTot" style="font-weight: bold;">0.00</span> €</div>
+                            <div>Netto: <span id="acweNettoTot" style="font-weight: bold; color: #3693eb;">0.00</span> €
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('../html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+    <script>
+        async function loadAndPlot() {
+            const initialCapital = parseFloat(document.getElementById('montante').value);
+            const modalita = parseFloat(modalitaSelect.value);
+            const riskFreePercent = parseFloat(document.getElementById('riskFree').value);
+            const riskFreeAnnual = !isNaN(riskFreePercent) ? (riskFreePercent / 100) : 0.005; // default 0.5% se non valido
+            
+            try {
+                const [xyleResp, csspxResp, distribuzioniResp] = await Promise.all([
+                    fetch('FGQI.MI.json'),
+                    fetch('ACWE.MI.json'),
+                    fetch('Distribuzioni_FGQI.txt'),                    
+                ]);
+
+                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');
+
+                const [xyleRaw, csspxRaw, distribuzioniRaw] = await Promise.all([
+                    xyleResp.json(),
+                    csspxResp.json(),
+                    distribuzioniResp.text()
+                ]);
+
+                let distribuzioni = [];
+                // Parsing distribuzioni
+                distribuzioni = distribuzioniRaw.split('\n').slice(1).map(line => {
+                    const parts = line.split('\t');
+                    if (parts.length < 2) return null; // Salta righe malformate
+
+                    const data = parts[0]?.trim();
+                    const importo = parts[1]?.replace('€', '').trim();
+
+                    if (!data || isNaN(parseFloat(importo))) return null; // Salta righe con dati mancanti
+
+                    // Converti data da giorno-mese-anno a anno-mese-giorno
+                    const [day, month, year] = data.split('-');
+                    const formattedDate = `${year}-${month}-${day}`;
+
+                    return {
+                        date: formattedDate,
+                        amount: parseFloat(importo)
+                    };
+                }).filter(Boolean); // Rimuove eventuali null
+
+                // mappa data->valori
+                const mapXYLE = new Map();
+                xyleRaw.forEach(item => {
+                    if (!item.Date) return;
+                    mapXYLE.set(item.Date, { adj: item.AdjClose ?? null, close: item.Close ?? null });
+                });
+
+                const mapCSSPX = new Map();
+                csspxRaw.forEach(item => {
+                    if (!item.Date) return;
+                    mapCSSPX.set(item.Date, { adj: item.AdjClose ?? null });
+                });
+
+                // unione delle date
+                const dateSet = new Set([...mapXYLE.keys(), ...mapCSSPX.keys()]);
+                const labels = Array.from(dateSet).sort((a, b) => new Date(a) - new Date(b));
+
+                const csspxAdjSeries = [];
+                const xyleAdjSeries = [];
+                const xyleCloseSeries = [];
+
+                // Calcolo valore cumulativo
+                let csspxInitialPrice = mapCSSPX.size ? mapCSSPX.get([...mapCSSPX.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let xyleAdjInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let xyleCloseInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
+
+                const csspxCumulative = [];
+                const xyleAdjCumulative = [];
+                const xyleCloseCumulative = [];
+                const distribuzioniCSSPXVirtuali = []
+
+                // Nuova serie CSSPX con vendite
+                const csspxAdjustedCumulative = [];
+                let csspxShares = modalita > 0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Calcola il numero iniziale di quote di CSSPX
+                const xyleShares = modalita > 0 ? initialCapital / xyleCloseInitialPrice : Math.floor(initialCapital / xyleCloseInitialPrice); // Calcola il numero iniziale di quote di XYLE
+
+                labels.forEach(d => {
+                    const c = mapCSSPX.get(d);
+                    const x = mapXYLE.get(d);
+
+                    const csspxAdj = c ? Number(c.adj) : null;
+                    const xyleAdj = x ? Number(x.adj) : null;
+                    const xyleClose = x ? Number(x.close) : null;
+
+                    // Imposta i prezzi iniziali
+                    if (csspxAdj != null && csspxInitialPrice == null) csspxInitialPrice = csspxAdj;
+                    if (xyleAdj != null && xyleAdjInitialPrice == null) xyleAdjInitialPrice = xyleAdj;
+                    if (xyleClose != null && xyleCloseInitialPrice == null) xyleCloseInitialPrice = xyleClose;
+
+                    // Calcola valore cumulativo
+                    csspxCumulative.push(csspxInitialPrice != null && csspxAdj != null ? (initialCapital / csspxInitialPrice) * csspxAdj : null);
+                    xyleAdjCumulative.push(xyleAdjInitialPrice != null && xyleAdj != null ? (initialCapital / xyleAdjInitialPrice) * xyleAdj : null);
+                    xyleCloseCumulative.push(xyleCloseInitialPrice != null && xyleClose != null ? (initialCapital / xyleCloseInitialPrice) * xyleClose : null);
+                });
+
+                // Calcolo serie con vendite CSSPX
+                csspxShares = modalita > 0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Reset numero quote CSSPX
+                labels.forEach(d => {
+                    const c = mapCSSPX.get(d);
+                    const x = mapXYLE.get(d);
+
+                    const csspxAdj = c ? Number(c.adj) : null;
+                    const xyleAdj = x ? Number(x.adj) : null;
+                    const xyleClose = x ? Number(x.close) : null;
+
+                    // Calcola dividendo totale di XYLE in questa data
+                    const distribuzione = distribuzioni.find(dist => dist.date === d);
+                    if (distribuzione && csspxAdj != null) {
+                        const totalDividend = distribuzione.amount * xyleShares; // Dividendo totale
+                        const sharesToSell = modalita > 0 ? (totalDividend / csspxAdj) : Math.ceil(totalDividend / csspxAdj);
+                        csspxShares -= sharesToSell; // Aggiorna il numero di quote di CSSPX
+                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: sharesToSell * csspxAdj, xyle_value: xyleClose }); // Valore vendite
+                    }
+
+                    csspxAdjustedCumulative.push(csspxAdj != null ? csspxShares * csspxAdj : null);
+                });
+
+                const annotations = distribuzioni.map(dist => ({
+                    type: 'line',
+                    scaleID: 'x',
+                    value: dist.date,
+                    borderColor: 'rgba(0, 255, 0, 0.7)',
+                    borderWidth: 1,
+                    label: {
+                        content: 'Dividendo',
+                        enabled: false,
+                        position: 'top'
+                    }
+                }));
+
+                annotations.push({
+                    type: 'line',
+                    scaleID: 'y',
+                    value: initialCapital,
+                    borderColor: 'rgba(255, 0, 0, 0.7)',
+                    borderWidth: 1,
+                    label: {
+                        content: 'Capitale Iniziale',
+                        enabled: false,
+                        position: 'top'
+                    }
+                });
+
+
+                populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali);
+
+
+
+                const ctx = document.getElementById('xyleChart').getContext('2d');
+                // distrugge eventuale chart precedente
+                if (window._xyleChart) {
+                    window._xyleChart.destroy();
+                }
+
+                window._xyleChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: '(ACWE) - Accumulo',
+                                data: csspxCumulative,
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                                spanGaps: true,
+                                tension: 0.2,
+                                borderWidth: 2,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'FGQI - Accumulo (reinvestimento dividendi lordi)',
+                                data: xyleAdjCumulative,
+                                borderColor: 'rgba(40, 167, 69, 1)',
+                                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                                spanGaps: true,
+                                tension: 0.2,
+                                borderWidth: 2,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'FGQI - Distribuzione (senza reinvestimento dividendi)',
+                                data: xyleCloseCumulative,
+                                borderColor: 'rgba(255, 159, 64, 1)',
+                                backgroundColor: 'rgba(255, 159, 64, 0.08)',
+                                spanGaps: true,
+                                tension: 0.2,
+                                borderWidth: 2,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'ACWE (con vendite equivalenti ai dividendi FGQI)',
+                                data: csspxAdjustedCumulative,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                                spanGaps: true,
+                                tension: 0.2,
+                                borderWidth: 2,
+                                pointRadius: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'FGQI.MI vs ACWE'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        const v = context.raw;
+                                        return context.dataset.label + ': ' + (v == null ? 'n/a' : v.toFixed(2) + ' €');
+                                    }
+                                }
+                            },
+                            annotation: {
+                                annotations: annotations
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Date' },
+                                ticks: {
+                                    maxRotation: 90,
+                                    autoSkip: true,
+                                    maxTicksLimit: 12
+                                },
+                                grid: {
+                                    display: false // Disabilita le linee verticali di sfondo
+                                }
+                            },
+                            y: {
+                                title: { display: true, text: 'Valore (€)' },
+                                beginAtZero: false
+                            }
+                        }
+                    }
+                });
+
+                // Calcola metriche (deviazione standard, Sharpe e Sortino, tutti annualizzati)
+                // rfAnnual = risk-free annualizzato in decimale (es. 0.01 = 1%)
+                function computeMetrics(series, labels, rfAnnual = 0) {
+                    const returns = [];
+                    const days = [];
+                    let lastVal = null;
+                    let lastDate = null;
+
+                    for (let i = 0; i < labels.length; i++) {
+                        const v = series[i];
+                        const d = labels[i];
+                        if (v == null || lastVal == null) {
+                            lastVal = v;
+                            lastDate = d;
+                            continue;
+                        }
+                        if (lastVal === 0) {
+                            lastVal = v;
+                            lastDate = d;
+                            continue;
+                        }
+                        const r = v / lastVal - 1;
+                        returns.push(r);
+
+                        const dayDiff = (new Date(d) - new Date(lastDate)) / (1000 * 3600 * 24);
+                        days.push(dayDiff);
+
+                        lastVal = v;
+                        lastDate = d;
+                    }
+
+                    if (returns.length === 0)
+                        return {
+                            stdAnn: NaN,
+                            sharpe: NaN,
+                            sortino: NaN,
+                            periodsPerYear: NaN
+                        };
+
+                    const n = returns.length;
+
+                    // --- MEAN ---
+                    const mean = returns.reduce((a, b) => a + b, 0) / n;
+
+                    // --- STANDARD DEVIATION ---
+                    let variance = 0;
+                    if (n > 1) {
+                        variance = returns
+                            .map(r => (r - mean) ** 2)
+                            .reduce((a, b) => a + b, 0) / (n - 1);
+                    }
+                    const std = Math.sqrt(variance);
+
+                    // --- DOWNSIDE DEVIATION (Sortino) ---
+                    const MAR = 0; // Minimum Acceptable Return = 0%
+                    const downsideValues = returns.map(r => Math.min(0, r - MAR));
+                    const downsideVariance =
+                        downsideValues
+                            .map(x => x * x)
+                            .reduce((a, b) => a + b, 0) / n; // qui non si usa n-1
+                    const downsideDev = Math.sqrt(downsideVariance);
+
+                    // --- PERIODICITY ---
+                    const avgDays = days.length
+                        ? days.reduce((a, b) => a + b, 0) / days.length
+                        : 365;
+
+                    const periodsPerYear = avgDays > 0 ? 365 / avgDays : 1;
+
+                    // --- ANNUALIZZAZIONE ---
+                    const meanAnn = mean * periodsPerYear;
+                    const stdAnn = std * Math.sqrt(periodsPerYear);
+                    const downsideDevAnn = downsideDev * Math.sqrt(periodsPerYear);
+
+                    // --- RISK-FREE ---
+                    const rfAnn = rfAnnual;
+                    const rfPeriod = rfAnn / periodsPerYear;
+
+                    // --- SHARPE ---
+                    const sharpe = stdAnn > 0 ? (meanAnn - rfAnn) / stdAnn : NaN;
+                    const periodSharpe = std > 0 ? (mean - rfPeriod) / std : NaN;
+
+                    // --- SORTINO ---
+                    const sortino = downsideDevAnn > 0 ? (meanAnn - rfAnn) / downsideDevAnn : NaN;
+                    const periodSortino = downsideDev > 0 ? (mean - rfPeriod) / downsideDev : NaN;
+
+                    return {
+                        stdAnn,
+                        sharpe,
+                        sortino,
+                        periodsPerYear,
+                        periodSharpe,
+                        periodSortino,
+                        downsideDevAnn,
+                        downsideDev
+                    };
+                }
+
+                function fmt(x) {
+                    if (isNaN(x) || x === null) return 'n/a';
+                    return (x * 100).toFixed(2) + '%';
+                }
+
+                const mAcwe = computeMetrics(csspxCumulative, labels, riskFreeAnnual);
+                const mAcweSold = computeMetrics(csspxAdjustedCumulative, labels, riskFreeAnnual);
+                const mWinc = computeMetrics(xyleAdjCumulative, labels, riskFreeAnnual);
+                const mWincNetto = computeMetrics(xyleCloseCumulative, labels, riskFreeAnnual);
+
+                document.getElementById('metrics-acwe').innerText =
+                    `Dev.std (ann): ${fmt(mAcwe.stdAnn)}
+Sharpe (ann): ${isNaN(mAcwe.sharpe) ? 'n/a' : mAcwe.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mAcwe.periodSharpe) ? 'n/a' : mAcwe.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mAcwe.sortino) ? 'n/a' : mAcwe.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mAcwe.periodSortino) ? 'n/a' : mAcwe.periodSortino.toFixed(3)}`;
+
+                document.getElementById('metrics-acwe-sold').innerText =
+                    `Dev.std (ann): ${fmt(mAcweSold.stdAnn)}
+Sharpe (ann): ${isNaN(mAcweSold.sharpe) ? 'n/a' : mAcweSold.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mAcweSold.periodSharpe) ? 'n/a' : mAcweSold.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mAcweSold.sortino) ? 'n/a' : mAcweSold.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mAcweSold.periodSortino) ? 'n/a' : mAcweSold.periodSortino.toFixed(3)}`;
+
+                document.getElementById('metrics-winc').innerText =
+                    `Dev.std (ann): ${fmt(mWinc.stdAnn)}
+Sharpe (ann): ${isNaN(mWinc.sharpe) ? 'n/a' : mWinc.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mWinc.periodSharpe) ? 'n/a' : mWinc.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mWinc.sortino) ? 'n/a' : mWinc.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mWinc.periodSortino) ? 'n/a' : mWinc.periodSortino.toFixed(3)}`;
+
+                document.getElementById('metrics-winc-netto').innerText =
+                    `Dev.std (ann): ${fmt(mWincNetto.stdAnn)}
+Sharpe (ann): ${isNaN(mWincNetto.sharpe) ? 'n/a' : mWincNetto.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mWincNetto.periodSharpe) ? 'n/a' : mWincNetto.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mWincNetto.sortino) ? 'n/a' : mWincNetto.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.periodSortino.toFixed(3)}`;
+
+            } catch (err) {
+                console.error(err);
+                const container = document.getElementById('disclaimer-container');
+                const msg = document.createElement('div');
+                msg.className = 'alert alert-warning mt-3';
+                msg.innerHTML = '<strong>Attenzione:</strong> impossibile caricare i file JSON localmente.';
+                container.appendChild(msg);
+            }
+        }
+
+        function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali, mapCambio) {
+            const tableBody = document.getElementById('dividendiTableBody');
+            tableBody.innerHTML = '';
+
+            let sommaNettiXyle = 0;
+            let sommaNettiSp500 = 0;
+            let sommaLordiSp500 = 0;
+            let sommaDifferenza = 0;
+            let sommaLordoXyle = 0;
+
+            // raccolte per il grafico di confronto
+            const chartLabels = [];
+            const nettoWincSeries = [];
+            const nettoAcweSeries = [];
+
+            distribuzioni.forEach(dist => {
+                const { date, amount } = dist;                
+                const distribuzioneCSSPX = distribuzioniCSSPXVirtuali.find(d => d.date === date);
+                // Calcolo dividendi XYLE
+                const lordoXYLE = amount * xyleShares;
+                const lordoXYLE_EUR = lordoXYLE;
+                const nettoXYLE = lordoXYLE * 0.74; // Tassazione 26%
+                const nettoXYLE_EUR = nettoXYLE;
+                const percentualeDist = ((nettoXYLE_EUR / xyleShares / (distribuzioneCSSPX.xyle_value)) * 100);
+                const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
+                const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
+                const lordoVendutoEur = lordoVenduto;
+                const plusvalenza = distribuzioneCSSPX.csspxValueAtDate > csspxInitialPrice ? distribuzioneCSSPX.csspxValueAtDate - csspxInitialPrice : 0;
+                const tassePagate = plusvalenza * distribuzioneCSSPX.num_stock_selled * 0.26;
+                const nettoSp500 = lordoVenduto - tassePagate;
+                const nettoSp500Eur = nettoSp500;
+                const percentualeTasse = lordoVenduto > 0 ? (tassePagate / lordoVenduto) * 100 : 0;
+                
+                chartLabels.push(date);
+                nettoWincSeries.push(Number(nettoXYLE_EUR.toFixed(2)));
+                nettoAcweSeries.push(Number(nettoSp500Eur.toFixed(2)));
+                // Crea riga tabella
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                        <td>${date}</td>                        
+                        <td>${lordoXYLE_EUR.toFixed(2)}</td>                        
+                        <td>${nettoXYLE_EUR.toFixed(2)} Tasse: 26% (=${percentualeDist.toFixed(2)}%)</td>
+                        <td>${quoteSp500Vendute}</td>
+                        <td>${lordoVendutoEur.toFixed(2)}</td>                        
+                        <td>${nettoSp500Eur.toFixed(2)}</td>
+                        <td>${(nettoSp500Eur - nettoXYLE_EUR).toFixed(2)}  (${(((nettoSp500 - nettoXYLE) / nettoXYLE) * 100).toFixed(2)}%)</td>
+                    `;
+                tableBody.appendChild(row);
+                sommaDifferenza += nettoSp500Eur - nettoXYLE_EUR;
+                sommaNettiSp500 += nettoSp500Eur;
+                sommaLordiSp500 += lordoVendutoEur;
+                sommaNettiXyle += nettoXYLE_EUR;
+                sommaLordoXyle += lordoXYLE_EUR;
+            });
+
+            const tableFoot = document.getElementById('dividendiTableFoot');
+            tableFoot.innerHTML = '';
+            const row = document.createElement('tr');
+
+            // Calcola Tax Drag e Tax Efficiency per le due strategie
+            const taxDragWinc = sommaLordoXyle > 0 ? (sommaLordoXyle - sommaNettiXyle) / sommaLordoXyle : NaN;
+            const taxEffWinc = sommaLordoXyle > 0 ? sommaNettiXyle / sommaLordoXyle : NaN;
+
+            const taxDragAcwe = sommaLordiSp500 > 0 ? (sommaLordiSp500 - sommaNettiSp500) / sommaLordiSp500 : NaN;
+            const taxEffAcwe = sommaLordiSp500 > 0 ? sommaNettiSp500 / sommaLordiSp500 : NaN;
+
+            // Aggiorna i campi delle card statiche (non ricrearle dinamicamente)
+            const setText = (id, text) => { const el = document.getElementById(id); if (el) el.innerText = text; };
+            setText('wincTaxDrag', isNaN(taxDragWinc) ? 'n/a' : (taxDragWinc * 100).toFixed(2) + '%');
+            setText('wincTaxEff', isNaN(taxEffWinc) ? 'n/a' : (taxEffWinc * 100).toFixed(2) + '%');
+            setText('wincLordoTot', sommaLordoXyle.toFixed(2));
+            setText('wincNettoTot', sommaNettiXyle.toFixed(2));
+
+            setText('acweTaxDrag', isNaN(taxDragAcwe) ? 'n/a' : (taxDragAcwe * 100).toFixed(2) + '%');
+            setText('acweTaxEff', isNaN(taxEffAcwe) ? 'n/a' : (taxEffAcwe * 100).toFixed(2) + '%');
+            setText('acweLordoTot', sommaLordiSp500.toFixed(2));
+            setText('acweNettoTot', sommaNettiSp500.toFixed(2));            
+            row.innerHTML = `
+                        <td>Tot:</td>                        
+                        <td></td>                    
+                        <td>${sommaNettiXyle.toFixed(2)} Tasse: 26%</td>                        
+                        <td></td>
+                        <td></td>                        
+                        <td>${sommaNettiSp500.toFixed(2)} Tasse: ${((sommaLordiSp500 - sommaNettiSp500) / sommaLordiSp500 * 100).toFixed(2)}%</td>
+                        <td>${sommaDifferenza.toFixed(2)} (${(((sommaNettiSp500 - sommaNettiXyle) / sommaNettiXyle) * 100).toFixed(2)}%)</td>
+                    `;
+            tableFoot.appendChild(row);
+
+            // Aggiorna o crea il grafico usando il canvas statico
+            const ctxEl = document.getElementById('taxComparisonChart');
+            if (ctxEl) {
+                const ctx2 = ctxEl.getContext('2d');
+                if (window._taxComparisonChart) {
+                    window._taxComparisonChart.data.labels = chartLabels;
+                    window._taxComparisonChart.data.datasets[0].data = nettoWincSeries;
+                    window._taxComparisonChart.data.datasets[1].data = nettoAcweSeries;
+                    window._taxComparisonChart.update();
+                } else {
+                    window._taxComparisonChart = new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [
+                                { label: 'Dividendi netti FGQI (€)', data: nettoWincSeries, backgroundColor: 'rgba(40,167,69,0.8)' },
+                                { label: 'Vendite ACWE - netto (€)', data: nettoAcweSeries, backgroundColor: 'rgba(54,162,235,0.8)' }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: { mode: 'index', intersect: false },
+                            scales: {
+                                x: { title: { display: true, text: 'Date' }, ticks: { maxRotation: 90, autoSkip: true, maxTicksLimit: 12 } },
+                                y: { beginAtZero: true, title: { display: true, text: '€' } }
+                            },
+                            plugins: { legend: { position: 'top' } }
+                        }
+                    });
+                }
+            }
+        }
+
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', loadAndPlot);
+        });
+        document.addEventListener('DOMContentLoaded', loadAndPlot);
+        const modalitaSelect = document.getElementById('modalita');
+        modalitaSelect.addEventListener('change', loadAndPlot);                
+    </script>
+</body>
+
+</html>
