@@ -14,7 +14,26 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
-    <script src="js/log.js" defer></script>    
+    <script src="js/log.js" defer></script>
+    <style>
+        #heatmap {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+            max-width: 650px;
+            margin: auto;
+        }
+
+        .cell {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 13px;
+            color: #222;
+        }
+    </style>
 </head>
 
 <body class="bg-light">
@@ -26,12 +45,14 @@
         <h1 class="text-center">Confronto tra Rendimento di Prezzo, Percentuale e Logaritmico</h1>
         <h4 class="text-center">Dati reali storici SP500</h4>
         <h5 class="text-center">
-            Questa pagina confronta i rendimenti cumulati di prezzo, percentuale e logaritmico di un indice azionario. 
-            Ad esempio, un guadagno del 10% seguito da una perdita del 10% non porta a un rendimento netto nullo, ma a una perdita complessiva (vedi <a href="rlc.html">questa pagina</a>). 
-            In scala logarimica un guadagno del 10% seguito da una perdita del 10% è identico in valore (±10.54).       
+            Questa pagina confronta i rendimenti cumulati di prezzo, percentuale e logaritmico di un indice azionario.
+            Ad esempio, un guadagno del 10% seguito da una perdita del 10% non porta a un rendimento netto nullo, ma a
+            una perdita complessiva (vedi <a href="rlc.html">questa pagina</a>).
+            In scala logarimica un guadagno del 10% seguito da una perdita del 10% è identico in valore (±10.54).
             Il rendimento logaritmico offre una visione più accurata di questo comportamento.
-            Una opzione consente di visualizzare il rendimento normalizzato tra 0 e 1000 o non normalizzato per confrontare agevolmente le curve
-        </h5>        
+            Una opzione consente di visualizzare il rendimento normalizzato tra 0 e 1000 o non normalizzato per
+            confrontare agevolmente le curve
+        </h5>
 
         <!-- Date controls -->
         <div class="row mb-4">
@@ -61,7 +82,10 @@
         <!-- Chart container -->
         <div class="chart-container">
             <canvas id="chartCanvas"></canvas>
-        </div>        
+        </div>
+        <br>
+        <h1>Log-rendimenti annuali S&P 500 (Total Return) dal 1871 (dati da Shiller)</h1>
+        <div id="heatmap"></div>
     </div>
     <!-- Disclaimer -->
     <div id="disclaimer-container"></div>

@@ -45,18 +45,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 const max = Math.max(...arr);
                 return arr.map(value => ((value - min) / (max - min)) * 1000);
             };
-            return { 
-                priceReturns: normalizeData(shiftToZero(priceReturns)), 
-                percentReturns: normalizeData(shiftToZero(percentReturns)), 
-                logReturns: normalizeData(shiftToZero(logReturns)), 
-                dates: filteredData.slice(1).map(item => item.Date) 
+            return {
+                priceReturns: normalizeData(shiftToZero(priceReturns)),
+                percentReturns: normalizeData(shiftToZero(percentReturns)),
+                logReturns: normalizeData(shiftToZero(logReturns)),
+                dates: filteredData.slice(1).map(item => item.Date)
             };
         } else {
-            return { 
-                priceReturns: shiftToZero(priceReturns), 
-                percentReturns: shiftToZero(percentReturns), 
-                logReturns: shiftToZero(logReturns), 
-                dates: filteredData.slice(1).map(item => item.Date) 
+            return {
+                priceReturns: shiftToZero(priceReturns),
+                percentReturns: shiftToZero(percentReturns),
+                logReturns: shiftToZero(logReturns),
+                dates: filteredData.slice(1).map(item => item.Date)
             };
         }
     }
@@ -77,29 +77,29 @@ document.addEventListener('DOMContentLoaded', function () {
             data: {
                 labels: dates,
                 datasets: [
-                    { 
-                        label: normalize ? 'Rendimento Cumulato di Prezzo (Normalizzato)' : 'Rendimento Cumulato di Prezzo', 
-                        data: priceReturns, 
-                        borderColor: 'blue', 
-                        fill: false, 
-                        borderWidth: 1, 
-                        pointRadius: 0 
+                    {
+                        label: normalize ? 'Rendimento Cumulato di Prezzo (Normalizzato)' : 'Rendimento Cumulato di Prezzo',
+                        data: priceReturns,
+                        borderColor: 'blue',
+                        fill: false,
+                        borderWidth: 1,
+                        pointRadius: 0
                     },
-                    { 
-                        label: normalize ? 'Rendimento Cumulato Percentuale (Normalizzato)' : 'Rendimento Cumulato Percentuale', 
-                        data: percentReturns, 
-                        borderColor: 'green', 
-                        fill: false, 
-                        borderWidth: 1, 
-                        pointRadius: 0 
+                    {
+                        label: normalize ? 'Rendimento Cumulato Percentuale (Normalizzato)' : 'Rendimento Cumulato Percentuale',
+                        data: percentReturns,
+                        borderColor: 'green',
+                        fill: false,
+                        borderWidth: 1,
+                        pointRadius: 0
                     },
-                    { 
-                        label: normalize ? 'Rendimento Cumulato Logaritmico (Normalizzato)' : 'Rendimento Cumulato Logaritmico', 
-                        data: logReturns, 
-                        borderColor: 'red', 
-                        fill: false, 
-                        borderWidth: 1, 
-                        pointRadius: 0 
+                    {
+                        label: normalize ? 'Rendimento Cumulato Logaritmico (Normalizzato)' : 'Rendimento Cumulato Logaritmico',
+                        data: logReturns,
+                        borderColor: 'red',
+                        fill: false,
+                        borderWidth: 1,
+                        pointRadius: 0
                     }
                 ]
             },
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 responsive: true,
                 scales: {
                     x: { title: { display: true, text: 'Data' } },
-                    y: { 
+                    y: {
                         title: { display: true, text: normalize ? 'Rendimento Normalizzato' : 'Rendimento' },
                         min: normalize ? 0 : undefined,
                         max: normalize ? 1000 : undefined
@@ -157,4 +157,74 @@ document.addEventListener('DOMContentLoaded', function () {
             loadingMessage.textContent = 'Errore nel caricamento dei dati.';
             console.error('Errore:', error);
         });
+
+    async function loadCSV() {
+        const res = await fetch('./csv/sp500tr_shiller_1871.csv');
+        const text = await res.text();
+
+        return text.trim().split('\n').map(r => {
+            const [date, value] = r.trim().split(/\s+/);
+            const [d, m, y] = date.split('/');
+            return {
+                date: new Date(y, m - 1, d),
+                value: parseFloat(value)
+            };
+        });
+    }
+
+    function calcAnnualLogReturns(data) {
+        const yearEnd = {};
+
+        data.forEach(p => {
+            if (p.date.getMonth() === 0) { // GENNAIO = fine anno precedente
+                yearEnd[p.date.getFullYear() - 1] = p.value;
+            }
+        });
+
+        const years = Object.keys(yearEnd).map(Number).sort((a,b)=>a-b);
+        const returns = [];
+
+        for (let i = 1; i < years.length; i++) {
+            const y = years[i];
+            const prev = years[i-1];
+
+            const r = Math.log(yearEnd[y] / yearEnd[prev]) * 100;
+            returns.push({ year: y, value: r });
+        }
+
+        return returns;
+    }
+
+
+    function colorScale(v) {
+        if (v < -40) return '#b10026';
+        if (v < -20) return '#e31a1c';
+        if (v < -10) return '#fd8d3c';
+        if (v < 0) return '#fed976';
+        if (v < 10) return '#d9f0a3';
+        if (v < 20) return '#78c679';
+        return '#238443';
+    }
+
+    function drawHeatmap(data) {
+        const hm = document.getElementById('heatmap');
+
+        data.forEach(d => {
+            const div = document.createElement('div');
+            div.className = 'cell';
+            div.style.background = colorScale(d.value);
+            div.innerHTML = `
+            <b>${d.year}</b><br>
+            ${d.value.toFixed(2)} %
+        `;
+            hm.appendChild(div);
+        });
+    }
+
+    (async function () {
+        const data = await loadCSV();
+        const annual = calcAnnualLogReturns(data);
+        drawHeatmap(annual);
+    })();
+
 });
