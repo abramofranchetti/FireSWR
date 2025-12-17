@@ -1,38 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <previsioni>
-<data_emissione date="16/12/2025 alle 13:00" />
-<data_aggiornamento date="17/12 alle 09.00" />
+<data_emissione date="17/12/2025 alle 13:00" />
+<data_aggiornamento date="17/12 alle 16.00" />
 <meteogrammi>
 <meteogramma zoneid="1" name="Dolomiti Nord-Est">
-				<scadenza data="mar 16 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e2.png" />
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-          <previsione title="Temperatura 2000m" type="text" value="max 1 C" />
-          <previsione title="Temperatura 3000m" type="text" value="max -3 C" />
-          <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1700-1900 m" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png" />
          <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-          <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
-          <previsione title="Temperatura 3000m" type="text" value="min -6 C" />
-					<previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1500-1800 m" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png"/>
-          <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
           <previsione title="Temperatura 2000m" type="text" value="max 0 C" />
           <previsione title="Temperatura 3000m" type="text" value="max -5 C" />
-					<previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+          <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="Oltre i 1500-1800 m" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
@@ -45,24 +25,44 @@
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura 2000m" type="text" value="max 0 C" />
-          <previsione title="Temperatura 3000m" type="text" value="max -2 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png"/>
+          <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
+          <previsione title="Temperatura 2000m" type="text" value="max 1 C" />
+          <previsione title="Temperatura 3000m" type="text" value="max -3 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="Oltre i 1700-2000 m" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
+          <previsione title="Temperatura 2000m" type="text" value="min -3 C" />
+          <previsione title="Temperatura 3000m" type="text" value="min -5 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura 2000m" type="text" value="max 4 C" />
+          <previsione title="Temperatura 3000m" type="text" value="max -3 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 				<scadenza data="sab 20 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
+         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="dom 21 dicembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
@@ -73,35 +73,15 @@
 </meteogramma>
 
 <meteogramma zoneid="2" name="Dolomiti Sud-Ovest">
-				<scadenza data="mar 16 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e2.png" />
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-          <previsione title="Temperatura 2000m" type="text" value="max 1 C" />
-          <previsione title="Temperatura 3000m" type="text" value="max -3 C" />
-          <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1700-1900 m" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png" />
          <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-          <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
-          <previsione title="Temperatura 3000m" type="text" value="min -6 C" />
-					<previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1500-1800 m" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png"/>
-          <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
           <previsione title="Temperatura 2000m" type="text" value="max 0 C" />
           <previsione title="Temperatura 3000m" type="text" value="max -5 C" />
-					<previsione title="Precipitazioni" type="text" value="Modeste sparse" />
+          <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="Oltre i 1500-1800 m" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
@@ -114,24 +94,44 @@
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura 2000m" type="text" value="max 0 C" />
-          <previsione title="Temperatura 3000m" type="text" value="max -2 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png"/>
+          <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
+          <previsione title="Temperatura 2000m" type="text" value="max 1 C" />
+          <previsione title="Temperatura 3000m" type="text" value="max -3 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="Oltre i 1700-2000 m" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
+          <previsione title="Temperatura 2000m" type="text" value="min -3 C" />
+          <previsione title="Temperatura 3000m" type="text" value="min -5 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura 2000m" type="text" value="max 4 C" />
+          <previsione title="Temperatura 3000m" type="text" value="max -3 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 				<scadenza data="sab 20 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
+         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="dom 21 dicembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
@@ -142,49 +142,29 @@
 </meteogramma>
 
 <meteogramma zoneid="3" name="Belluno e Prealpi orientali">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png" />
          <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
           <previsione title="Temperatura 1500m" type="text" value="max 3 C" />
           <previsione title="Temperatura 2000m" type="text" value="max 0 C" />
           <previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="Oltre i 1700-1900 m" />
 					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png" />
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-          <previsione title="Temperatura 1500m" type="text" value="min 2 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
-					<previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1600-1900 m" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png"/>
-          <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-          <previsione title="Temperatura 1500m" type="text" value="max 3 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 0 C" />
-					<previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1700-1900 m" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
          <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
           <previsione title="Temperatura 1500m" type="text" value="min 1 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min -2 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="Oltre i 1700-2000 m" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
-         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png"/>
+          <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
           <previsione title="Temperatura 1500m" type="text" value="max 3 C" />
           <previsione title="Temperatura 2000m" type="text" value="max 1 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
@@ -192,15 +172,35 @@
 					<previsione title="Quota neve" type="text" value="Oltre i 1700-2000 m" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+				<scadenza data="ven 19 dicembre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f3.png" />
+         <previsione title="Cielo" type="text" value="Parzialmente nuvoloso con foschie/nebbie nelle ore pi&#249; fredde nelle valli" />
+          <previsione title="Temperatura 1500m" type="text" value="min 0 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min -2 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura 1500m" type="text" value="max 5 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 2 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 				<scadenza data="sab 20 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
+         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="dom 21 dicembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
@@ -211,7 +211,7 @@
 </meteogramma>
 
 <meteogramma zoneid="4" name="Prealpi centrali">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png" />
          <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
           <previsione title="Temperatura 1500m" type="text" value="max 3 C" />
@@ -221,39 +221,19 @@
 					<previsione title="Quota neve" type="text" value="Oltre i 1700-1900 m" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png" />
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-          <previsione title="Temperatura 1500m" type="text" value="min 2 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
-					<previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1600-1900 m" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png"/>
-          <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-          <previsione title="Temperatura 1500m" type="text" value="max 3 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 0 C" />
-					<previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1700-1900 m" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
          <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
           <previsione title="Temperatura 1500m" type="text" value="min 1 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min -2 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="Oltre i 1700-2000 m" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
-         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png"/>
+          <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
           <previsione title="Temperatura 1500m" type="text" value="max 3 C" />
           <previsione title="Temperatura 2000m" type="text" value="max 1 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
@@ -261,15 +241,35 @@
 					<previsione title="Quota neve" type="text" value="Oltre i 1700-2000 m" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura 1500m" type="text" value="min 0 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min -2 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura 1500m" type="text" value="max 5 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 2 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 				<scadenza data="sab 20 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
+         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="dom 21 dicembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
@@ -280,7 +280,7 @@
 </meteogramma>
 
 <meteogramma zoneid="5" name="Pedemontana orientale">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
           <previsione title="Temperatura" type="text" value="max 11/13 C" />
@@ -289,53 +289,53 @@
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 11/13 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
          <previsione title="Cielo" type="text" value="Nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 3/5 C" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 11/13 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png"/>
+          <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 12/14 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
          <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 12/14 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -344,7 +344,7 @@
 </meteogramma>
 
 <meteogramma zoneid="6" name="Treviso e pianura orientale">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
           <previsione title="Temperatura" type="text" value="max 11/13 C" />
@@ -353,53 +353,53 @@
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 11/13 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="min 3/5 C" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 11/13 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png"/>
+          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="max 12/14 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+				<scadenza data="ven 19 dicembre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 12/14 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -408,40 +408,20 @@
 </meteogramma>
 
 <meteogramma zoneid="7" name="Veneziano orientale">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
           <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -449,8 +429,8 @@
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png"/>
+          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
           <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
@@ -458,17 +438,37 @@
           <previsione title="Vento" type="text" value="Variabili" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+				<scadenza data="ven 19 dicembre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="sab 20 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -477,7 +477,7 @@
 </meteogramma>
 
 <meteogramma zoneid="8" name="Prealpi occidentali">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png" />
          <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
           <previsione title="Temperatura 1500m" type="text" value="max 3 C" />
@@ -487,39 +487,19 @@
 					<previsione title="Quota neve" type="text" value="Oltre i 1700-1900 m" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png" />
-         <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-          <previsione title="Temperatura 1500m" type="text" value="min 2 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
-					<previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1600-1900 m" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/e3.png"/>
-          <previsione title="Cielo" type="text" value="Molto nuvoloso o coperto" />
-          <previsione title="Temperatura 1500m" type="text" value="max 3 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 0 C" />
-					<previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
-					<previsione title="Quota neve" type="text" value="Oltre i 1700-1900 m" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
          <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
           <previsione title="Temperatura 1500m" type="text" value="min 1 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min -2 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min -1 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="Oltre i 1700-2000 m" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
-         <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png"/>
+          <previsione title="Cielo" type="text" value="Irregolarmente nuvoloso con schiarite" />
           <previsione title="Temperatura 1500m" type="text" value="max 3 C" />
           <previsione title="Temperatura 2000m" type="text" value="max 1 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
@@ -527,15 +507,35 @@
 					<previsione title="Quota neve" type="text" value="Oltre i 1700-2000 m" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura 1500m" type="text" value="min 0 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min -2 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+          <previsione title="Temperatura 1500m" type="text" value="max 5 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 2 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 				<scadenza data="sab 20 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
+         <previsione title="Cielo" type="text" value="In prevalenza sereno" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="dom 21 dicembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png"/>
          <previsione title="Cielo" type="text" value="In prevalenza sereno" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
@@ -546,62 +546,62 @@
 </meteogramma>
 
 <meteogramma zoneid="9" name="Vicenza e pedemontana">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
+          <previsione title="Temperatura" type="text" value="max 12/14 C" />
           <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 11/13 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="min 3/5 C" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 11/13 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png"/>
+          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="max 12/14 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
          <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 12/14 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -610,62 +610,62 @@
 </meteogramma>
 
 <meteogramma zoneid="10" name="Padova e pianura centrale">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
+          <previsione title="Temperatura" type="text" value="max 12/14 C" />
           <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+          <previsione title="Temperatura" type="text" value="min 6/8 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png"/>
+          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+         <previsione title="Cielo" type="text" value="Nebbie in dissolvimento" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -674,40 +674,20 @@
 </meteogramma>
 
 <meteogramma zoneid="11" name="Venezia e laguna">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
           <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+          <previsione title="Temperatura" type="text" value="min 6/8 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -715,26 +695,46 @@
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png"/>
+          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+         <previsione title="Cielo" type="text" value="Nebbie in dissolvimento" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="sab 20 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -743,40 +743,20 @@
 </meteogramma>
 
 <meteogramma zoneid="12" name="Delta del Po">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 12/14 C" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
           <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da est" />
+          <previsione title="Vento" type="text" value="Variabili" />
 					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 12/14 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -784,8 +764,8 @@
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png"/>
+          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
           <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
@@ -793,17 +773,37 @@
           <previsione title="Vento" type="text" value="Variabili" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+         <previsione title="Cielo" type="text" value="Nebbie in dissolvimento" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="sab 20 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -812,62 +812,62 @@
 </meteogramma>
 
 <meteogramma zoneid="13" name="Rovigo e pianura meridionale">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
           <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="min 3/5 C" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png"/>
+          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+         <previsione title="Cielo" type="text" value="Nebbie in dissolvimento" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -876,62 +876,62 @@
 </meteogramma>
 
 <meteogramma zoneid="14" name="Verona e pedemontana">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
           <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="min 3/5 C" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png"/>
+          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
+         <previsione title="Cielo" type="text" value="Nebbie in dissolvimento" />
+          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
          <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -940,40 +940,20 @@
 </meteogramma>
 
 <meteogramma zoneid="15" name="Area del Garda">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 8/10 C" />
+          <previsione title="Temperatura" type="text" value="max 10/12 C" />
           <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
+          <previsione title="Vento" type="text" value="Variabili" />
 					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 9/11 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
          <previsione title="Cielo" type="text" value="Nuvoloso" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+          <previsione title="Temperatura" type="text" value="min 6/8 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -981,26 +961,46 @@
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png"/>
+          <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
          <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="sab 20 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -1009,40 +1009,20 @@
 </meteogramma>
 
 <meteogramma zoneid="16" name="Litorale nord">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
           <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 10/12 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -1050,8 +1030,8 @@
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png"/>
+          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
           <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
@@ -1059,17 +1039,37 @@
           <previsione title="Vento" type="text" value="Variabili" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+				<scadenza data="ven 19 dicembre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="sab 20 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -1078,40 +1078,20 @@
 </meteogramma>
 
 <meteogramma zoneid="17" name="Litorale centrale">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
           <previsione title="Temperatura" type="text" value="max 11/13 C" />
           <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 11/13 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+          <previsione title="Temperatura" type="text" value="min 6/8 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -1119,8 +1099,8 @@
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png"/>
+          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
           <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
@@ -1128,17 +1108,37 @@
           <previsione title="Vento" type="text" value="Variabili" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+         <previsione title="Cielo" type="text" value="Nebbie in dissolvimento" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="sab 20 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -1147,40 +1147,20 @@
 </meteogramma>
 
 <meteogramma zoneid="18" name="Litorale sud">
-				<scadenza data="mar 16 dicembre pomeriggio">
+				<scadenza data="mer 17 dicembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 12/14 C" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
           <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da est" />
+          <previsione title="Vento" type="text" value="Variabili" />
 					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="min 5/7 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
-				</scadenza>
-				<scadenza data="mer 17 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png"/>
-          <previsione title="Cielo" type="text" value="Coperto" />
-          <previsione title="Temperatura" type="text" value="max 12/14 C" />
-					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
-          <previsione title="Temperatura" type="text" value="min 4/6 C" />
+          <previsione title="Temperatura" type="text" value="min 6/8 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -1188,8 +1168,8 @@
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="gio 18 dicembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png"/>
+          <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
           <previsione title="Temperatura" type="text" value="max 11/13 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
@@ -1197,17 +1177,37 @@
           <previsione title="Vento" type="text" value="Variabili" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="ven 19 dicembre">
+				<scadenza data="ven 19 dicembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f4.png" />
-         <previsione title="Cielo" type="text" value="Nebbie specie nelle ore pi&#249; fredde" />
+         <previsione title="Cielo" type="text" value="Nebbie in dissolvimento" />
+          <previsione title="Temperatura" type="text" value="min 5/7 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="ven 19 dicembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
+         <previsione title="Cielo" type="text" value="Nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 11/13 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="sab 20 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="sab 20 dicembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/f3.png"/>
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite con foschie/nebbie nelle ore pi&#249; fredde" />
+				<scadenza data="dom 21 dicembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -1218,182 +1218,182 @@
 </meteogrammi>
 <bollettini>
 
-<bollettino bollettinoid="MV" name="Meteo Veneto" title="Bollettino del 16 dicembre">
-<evoluzionegenerale><![CDATA[Mercoled&igrave; circolazione ciclonica, modeste precipitazioni hanno interrotto un periodo asciutto che perdurava in generale da due settimane e sul Bellunese anche da tre settimane. Da gioved&igrave; pressione in aumento, almeno fino a sabato sui monti temperature sopra la media anche di molto mentre sulla pianura aria stagnante e quindi condizioni favorevoli al persistere di nebbie e nubi basse.]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="16 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_0.png.jpg" caption="16 dicembre pomeriggio" />
+<bollettino bollettinoid="MV" name="Meteo Veneto" title="Bollettino del 17 dicembre">
+<evoluzionegenerale><![CDATA[Mercoled&igrave; fase finale della circolazione ciclonica iniziata marted&igrave;; in esaurimento le modeste precipitazioni che hanno interrotto un periodo asciutto che perdurava da due settimane e sul Bellunese addirittura da tre settimane. Da gioved&igrave; circolazione anticiclonica; in quota temperature sopra la media anche di molto, nei bassi strati fino a venerd&igrave; condizioni favorevoli alla presenza di nebbie e nubi basse mentre da sabato aumento della ventosit&agrave;, leggero ma comunque sufficiente a interrompere il ristagno dell'aria.]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="17 dicembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_0.png.jpg" caption="17 dicembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Previsione: </b>Cielo coperto. Modeste precipitazioni discontinue entro fine giornata avranno interessato tutte le zone, quota neve attorno ai 1500-1700 m sulle Dolomiti e 1700-1900 m sulle Prealpi. Temperature: in aumento, eccetto diminuzioni sui monti di pomeriggio, con differenze anche sensibili rispetto a luned&igrave;; sotto la media sui monti di pomeriggio e per il resto sopra la media, anche di molto. ]]>
-					</text>
-				</giorno>
-				<giorno data="17 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_1.png.jpg" caption="17 dicembre mattina" />
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_2.png.jpg" caption="17 dicembre pomeriggio" />
-					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Cielo coperto. Sulla pianura di sera nebbie sparse.<br /><b>Precipitazioni: </b>Fino al pomeriggio probabilit&agrave; medio-alta (50-75%); interesseranno tutte le zone in modo discontinuo, con accumuli modesti, con quota neve attorno ai 1700-1900 m sulle Prealpi e 1500-1700 m sulle Dolomiti<br /><b>Temperature: </b>Di giorno con andamento irregolare, di sera in calo con minime a fine giornata. Differenze anche sensibili rispetto a marted&igrave;. Valori sotto la media di giorno sui monti e per il resto sopra la media, anche di molto.<br /><b>Venti: </b>Deboli/moderati, in alta montagna da sud-ovest e altrove con direzione variabile.<br /><b>Mare: </b>Da poco mosso a calmo col passar delle ore.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+                        <![CDATA[<b>Previsione: </b>Cielo coperto. Fino al pomeriggio modeste precipitazioni discontinue interesseranno tutte le zone, con quota neve attorno a 1700-1900 m sulle Prealpi e 1600-1800 m sulle Dolomiti. Di sera precipitazioni in esaurimento e sulla pianura nebbie sparse. Temperature: di pomeriggio con andamento irregolare, di sera in calo con minime a fine giornata; differenze anche sensibili rispetto a marted&igrave;, valori sopra la media anche di molto.]]>
 					</text>
 				</giorno>
 				<giorno data="18 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_3.png.jpg" caption="18 dicembre mattina" />
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_4.png.jpg" caption="18 dicembre pomeriggio" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_1.png.jpg" caption="18 dicembre mattina" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_2.png.jpg" caption="18 dicembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Sulla pianura: cielo coperto; nelle ore notturne nebbie diffuse, nelle ore diurne nebbie generalmente in dissolvimento ma localmente persistenti pi&ugrave; probabilmente a sud dell'asse Verona-Venezia. Sui monti poco o parzialmente nuvoloso.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>In calo fino al primo mattino e poi con andamento irregolare, con differenze anche sensibili rispetto a mercoled&igrave;.<br /><b>Venti: </b>In alta montagna moderati/tesi da sud-ovest, altrove deboli/moderati con direzione variabile.<br /><b>Mare: </b>Calmo.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Sulla pianura: cielo coperto; nelle ore notturne nebbie diffuse, nelle ore diurne nebbie generalmente in dissolvimento ma localmente persistenti pi&ugrave; probabilmente a sud dell'asse Verona-Venezia. Sui monti inizialmente coperto, col passar delle ore leggera/moderata diminuzione della nuvolosit&agrave;.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>In calo fino al primo mattino, poi con andamento irregolare sulla pianura e in aumento sui monti. Differenze anche sensibili rispetto a mercoled&igrave;. Valori sopra la media, anche di molto.<br /><b>Venti: </b>In alta montagna moderati/tesi da sud-ovest, altrove deboli/moderati con direzione variabile.<br /><b>Mare: </b>Calmo.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data="19 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_5.png.jpg" caption="19 dicembre" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_3.png.jpg" caption="19 dicembre mattina" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_4.png.jpg" caption="19 dicembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tendenza per venerd&igrave; 19: </b>Non si verificheranno precipitazioni. Sulla pianura giornata grigia per nebbie e nubi basse, sui monti sereno o poco nuvoloso. Temperature sulla pianura senza variazioni di rilievo, sui monti in calo di notte e in aumento di giorno.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Sulla pianura: cielo nuvoloso; di notte nebbie diffuse, in dissolvimento di mattina e localmente in nuova formazione di sera. Sui monti: poco o parzialmente nuvoloso; di notte alcune nebbie nelle valli, in dissolvimento di mattina.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>Sulla pianura con andamento irregolare, sui monti in calo di notte e in aumento di giorno. Differenze leggere/moderate rispetto a gioved&igrave;.<br /><b>Venti: </b>Deboli/moderati, di notte con direzione variabile e dal mattino da nord-est.<br /><b>Mare: </b>Da calmo a poco mosso col passar delle ore.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data="20 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_6.png.jpg" caption="20 dicembre" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_5.png.jpg" caption="20 dicembre" />
 					<text>
-                        <![CDATA[<b>Tendenza per sabato 20: </b>Non si verificheranno precipitazioni. Sulla pianura di notte nebbie e nubi basse, in dissolvimento almeno parziale di giorno e in nuova formazione di sera. Sui monti sereno o poco nuvoloso. Temperature di notte in calo, di giorno con andamento irregolare sulla pianura e in aumento sui monti.
+                        <![CDATA[<b>Tendenza per sabato 20: </b>Non si verificheranno precipitazioni. Sulla pianura: cielo poco o parzialmente nuvoloso; di notte nebbie locali, in dissolvimento di mattina e in nuova formazione di sera. Sui monti sereno o poco nuvoloso. Temperature in calo, eccetto aumenti diurni sui monti.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+					</text>
+				</giorno>
+				<giorno data="21 dicembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_6.png.jpg" caption="21 dicembre" />
+					<text>
+                        <![CDATA[<b>Tendenza per domenica 21: </b>Non si verificheranno precipitazioni. Cielo sereno o poco nuvoloso. Sulla pianura di notte nebbie locali, in dissolvimento di mattina. Temperature sulla pianura in aumento di notte e con andamento irregolare di giorno, sui monti in calo.
 Previsore: Stefano Veronese<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 </bollettino>
 
-<bollettino bollettinoid="DM" name="Dolomiti Meteo" title="Bollettino del 16 dicembre">
-<evoluzionegenerale><![CDATA[Per mercoled&igrave; il tempo sulle Alpi rester&agrave; influenzato dall'azione di una debole saccatura atlantica che nel corso della giornata manterr&agrave; il cielo molto nuvoloso o coperto con dei modesti fenomeni sparsi e deboli nevicate a quote medio-alte. Dopo la temporanea e lieve ripresa della pressione di gioved&igrave;, da venerd&igrave; tender&agrave; di nuovo a diminuire per l'approssimarsi sull'arco alpino una nuova saccatura atlantica; ma prima che tale saccatura arrivi sul Mediterraneo giunger&agrave; sulle Alpi dell'aria pi&ugrave; secca legata ad una circolazione anticiclonica che, seppur blanda, manterr&agrave; per alcuni giorni condizioni di tempo stabile e soleggiato specie durante la fine della settimana. Le temperature massime e le minime in quota, dopo la diminuzione di marted&igrave;, da venerd&igrave; aumenteranno di nuovo, assieme ad una lieve ripresa del fenomeno dell'inversione termica, e si porteranno ancora su valori superiori alle medie del periodo mentre le minime nelle valli oscilleranno in relazione alla copertura nuvolosa.]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="16 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_0.png.jpg" caption="16 dicembre pomeriggio" />
+<bollettino bollettinoid="DM" name="Dolomiti Meteo" title="Bollettino del 17 dicembre">
+<evoluzionegenerale><![CDATA[Per mercoled&igrave; il tempo sulle Alpi rester&agrave; lievemente perturbato dall'azione di una debole saccatura atlantica che nel corso della giornata manterr&agrave; il cielo molto nuvoloso o coperto con dei modesti fenomeni sparsi e deboli nevicate a quote medio-alte. Dopo la temporanea e lieve ripresa della pressione di gioved&igrave;, da venerd&igrave; tender&agrave; di nuovo a diminuire per l'approssimarsi sull'arco alpino una nuova saccatura atlantica; ma prima che tale saccatura arrivi sul Mediterraneo giunger&agrave; sulle Alpi dell'aria pi&ugrave; secca legata ad una circolazione anticiclonica che, seppur blanda, manterr&agrave; per alcuni giorni condizioni di tempo stabile e soleggiato specie durante la fine della settimana. Le temperature massime e le minime in quota, dopo la diminuzione di marted&igrave; da venerd&igrave; aumenteranno di nuovo, assieme ad una lieve ripresa del fenomeno dell'inversione termica, e si porteranno ancora su valori superiori alle medie del periodo mentre le minime tenderanno a diminuire per attestarsi su valori normali.]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="17 dicembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_0.png.jpg" caption="17 dicembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Previsione: </b>Cielo molto nuvoloso o coperto con deboli precipitazioni sparse di entit&agrave; molto modesta, inizialmente sulle zone prealpine con quota neve in genere di 1700-1900 m, in estensione anche alle Dolomiti (40-50%) dove la quota neve sar&agrave; all'incirca di 1500-1700 m. Entro la fine della giornata sono previsti apporti di qualche millimetro (1-5 mm) sulle zone prealpine anche nulli sulle Dolomiti (0-2 mm). Temperature massime in generale diminuzione specie in alta montagna con attenuazione del fenomeno dell'inversione termica; sono previste delle punte massime tra i 5&deg; e i 7&deg;C nelle conche prealpine, tra i 3&deg; e i 6&deg;C nelle valli tra gli 800 e i 1200 m e intorno a 0&deg;C a circa 2000 m. Venti in quota in genere moderati o tesi, provenienti da sud, sud ovest.]]>
-					</text>
-				</giorno>
-				<giorno data="17 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_1.png.jpg" caption="17 dicembre mattina" />
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_2.png.jpg" caption="17 dicembre pomeriggio" />
-					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Tempo variabile a tratti instabile con presenza di molta nuvolosit&agrave;, associata a modesti fenomeni.<br /><b>Precipitazioni: </b>Probabili precipitazioni (50-60%) a carattere intermittente da sparse a diffuse e in prevalenza di debole intensit&agrave;; la quota delle modeste nevicate sar&agrave; oltre i 1700-1900 m sulle Prealpi e i 1600-1800 m sulle Dolomiti, leggermente inferiori a tali quote tra la notte e le prime ore del mattino e alla sera. Sono previsti nelle 24 ore apporti di circa 3-10 mm localmente di 15 mm con altrettanti cm di neve fresca oltre i 2000 m. <br /><b>Temperature: </b>Minime in lieve o contenuto aumento specie nelle valli salvo qualche lieve calo in quota, massime senza notevoli variazioni o in lieve diminuzione soprattutto nelle valli; debole escursione termica giornaliera; sono previste delle punte massime tra i 5&deg; e i 7&deg;C nelle conche prealpine e tra i 3&deg; e i 5&deg;C nelle valli tra gli 800 e i 1200 m. Su Prealpi a 1500 m min 2&deg;C max 3&deg;C, a 2000 m min -1&deg;C max 0&deg;C. Su Dolomiti a 2000 m min -1&deg;C max 0&deg;C, a 3000 m min -6&deg;C max -5&deg;C.<br /><b>Venti: </b>Nelle valli generalmente deboli, in quota deboli o moderati dai quadranti meridionali al mattino, in rotazione da quelli occidentali dal pomeriggio, a 5-15 km/h a 2000 m e a 5-20 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Previsione: </b>Cielo molto nuvoloso o coperto con probabili precipitazioni (50-60%) a carattere intermittente da sparse a diffuse e in prevalenza di debole intensit&agrave;; la quota delle modeste nevicate sar&agrave; oltre i 1700-1900 m sulle Prealpi e i 1600-1800 m sulle Dolomiti. Sono previsti nelle 24 ore apporti di circa 3-10 mm localmente di 15 mm con altrettanti cm di neve fresca oltre i 2000 m. Temperature massime senza notevoli variazioni o in lieve diminuzione soprattutto nelle valli; debole escursione termica giornaliera; sono previste delle punte massime tra i 5&deg; e i 7&deg;C nelle conche prealpine, tra i 3&deg; e i 6&deg;C nelle valli tra gli 800 e i 1200 m e circa 0&deg;C a 2000 m. Venti in quota deboli o moderati dai quadranti occidentali.]]>
 					</text>
 				</giorno>
 				<giorno data="18 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_3.png.jpg" caption="18 dicembre mattina" />
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_4.png.jpg" caption="18 dicembre pomeriggio" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_1.png.jpg" caption="18 dicembre mattina" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_2.png.jpg" caption="18 dicembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Dopo una residua nuvolosit&agrave; tra la notte e l'alba, associata a qualche modesto fenomeno, tempo in prevalenza stabile e relativamente soleggiato con maggiori schiarite in alta montagna mentre in molte valli e altipiani il sole sar&agrave; in parte disturbato dalla presenza di nubi medio-basse soprattutto nella mattinata e dopo il tramonto con possibile parziale soleggiamento  tra la tarda mattinata e il pomeriggio. <br /><b>Precipitazioni: </b>Salvo delle residue e deboli precipitazioni tra la notte e l'alba (10-30%), eventualmente nevose oltre i 1600-1900 m, le precipitazioni saranno in seguito generalmente assenti (0%), salvo qualche sporadica pioviggine o un po' di nevischio oltre i 1700-2000 m.<br /><b>Temperature: </b>In contenuto calo le minime, in contenuto aumento le massime. Su Prealpi a 1500 m min 1&deg;C max 3&deg;C, a 2000 m min -2&deg;C max 1&deg;C. Su Dolomiti a 2000 m min -2&deg;C max 0&deg;C, a 3000 m min -7&deg;C max -2&deg;C.<br /><b>Venti: </b>Nelle valli generalmente deboli, in alta montagna da moderati a tesi da ovest, sud ovest, a 15-30 km/h a 2000 m e a 20-35 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Dopo una residua e lieve instabilit&agrave; tra la notte e l'alba, associata a qualche modesto fenomeno, tempo in prevalenza stabile e relativamente soleggiato con maggiori schiarite in alta montagna mentre in molte valli e altipiani il sole sar&agrave; in parte disturbato dalla presenza di nubi medio-basse soprattutto nella mattinata e dopo il tramonto con possibile parziale soleggiamento  tra la tarda mattinata e il pomeriggio. <br /><b>Precipitazioni: </b>Salvo delle residue e deboli precipitazioni tra la notte e l'alba (10-30%), eventualmente nevose oltre i 1600-1900 m, le precipitazioni saranno in seguito generalmente assenti salvo qualche sporadica pioviggine o un po' di nevischio oltre i 1700-2000 m (0-10%) nel corso della giornata.<br /><b>Temperature: </b>In lieve o contenuto calo le minime, in lieve o contenuto aumento le massime. Su Prealpi a 1500 m min 1&deg;C max 3&deg;C, a 2000 m min -1&deg;C max 1&deg;C. Su Dolomiti a 2000 m min -2&deg;C max 1&deg;C, a 3000 m min -7&deg;C max -3&deg;C.<br /><b>Venti: </b>Nelle valli generalmente deboli, in alta montagna da moderati a tesi da ovest, sud ovest, a 15-25 km/h a 2000 m e a 20-35 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
 					</text>
 				</giorno>
 				<giorno data="19 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_5.png.jpg" caption="19 dicembre" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_3.png.jpg" caption="19 dicembre mattina" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_4.png.jpg" caption="19 dicembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tendenza per venerd&igrave; 19: </b>Tempo stabile e soleggiato, salvo formazioni di nubi basse e di banchi di nebbie tra la notte e l'alba in alcune valli, in lento dissolvimento dopo l'alba. Temperature minime nelle valli in ulteriore calo, stazionarie o in lieve aumento in alta montagna; massime in ulteriore aumento specie in alta montagna con lieve ripresa del fenomeno dell'inversione termica dalla sera. Venti in alta montagna nella notte moderati occidentali, tendenti in mattinata a divenire deboli orientali.<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Tempo stabile e soleggiato, salvo formazioni di nubi basse e di banchi di nebbie tra la notte e l'alba in alcune valli, in lento dissolvimento dopo l'alba. <br /><b>Precipitazioni: </b>Assenti (0%).<br /><b>Temperature: </b>Minime in calo specie nelle valli, salvo qualche lieve aumento in quota oltre i 2600-2800 m; massime in ulteriore aumento a tutte le quote con lieve ripresa del fenomeno dell'inversione termica dalla sera. Su Prealpi a 1500 m min 0&deg;C max 5&deg;C, a 2000 m min -2&deg;C max 2&deg;C. Su Dolomiti a 2000 m min -3&deg;C max 4&deg;C, a 3000 m min -5&deg;C max -3&deg;C.<br /><b>Venti: </b>Nelle valli generalmente deboli, in alta montagna tra la notte e le prime ore del mattino moderati occidentali, tendenti dalla mattinata a divenire deboli e a provenire dai quadranti orientali, a 10-30 km/h a 2000 m e a 15-35 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
 					</text>
 				</giorno>
 				<giorno data="20 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_6.png.jpg" caption="20 dicembre" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_5.png.jpg" caption="20 dicembre" />
 					<text>
-                        <![CDATA[<b>Tendenza per sabato 20: </b>Tempo stabile e ben soleggiato con aria asciutta ed ottima visibilit&agrave;, salvo locali foschie nelle ore fredde in qualche valle specie in prossimit&agrave; dei corsi d'acqua. Temperature minime in contenuta diminuzione, massime stazionarie o in lieve aumento con una modesta/moderata inversione termica nelle ore fredde. Venti in quota in prevalenza deboli orientali.
+                        <![CDATA[<b>Tendenza per sabato 20: </b>Tempo stabile e ben soleggiato con aria asciutta ed ottima visibilit&agrave;, salvo locali foschie nelle ore fredde in qualche valle specie in prossimit&agrave; dei corsi d'acqua. Temperature minime in contenuta diminuzione, massime stazionarie o in lieve aumento con una modesta/moderata inversione termica nelle ore fredde e un clima diurno tipicamente autunnale. Venti in quota deboli o moderati da est, nord est.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+					</text>
+				</giorno>
+				<giorno data="21 dicembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_6.png.jpg" caption="21 dicembre" />
+					<text>
+                        <![CDATA[<b>Tendenza per domenica 21: </b>Giornata simile a quella di sabato con un tempo che rimane stabile e ben soleggiato a tutte le quote con aria tersa ed ottima visibilit&agrave; salvo qualche locale foschia in alcune valli prealpine. Temperature in lieve diminuzione ma ancora leggermente o moderatamente superiori alla norma specie le massime con attenuazione dell'inversione termica in un clima diurno ancora tipicamente autunnale. Venti in alta montagna deboli orientali al mattino, tendenti a divenire meridionali dalle ore centrali.
 Previsore: M.Padoan <br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
 					</text>
 				</giorno>
 <quota_zero_termico>
-<previsione data="16 dicembre">2000</previsione>
-<previsione data="17 dicembre">1900</previsione>
+<previsione data="17 dicembre">2000</previsione>
 <previsione data="18 dicembre">2000</previsione>
 <previsione data="19 dicembre">2600</previsione>
-<previsione data="20 dicembre">2200</previsione>
+<previsione data="20 dicembre">2300</previsione>
+<previsione data="21 dicembre">2000</previsione>
 </quota_zero_termico>
-<previsioni_localita data="17 dicembre">
+<previsioni_localita data="18 dicembre">
 <localita nome="Bosco C.N.">
-<tmin value="3" /><tmax value="5" />
-<scadenza data="mer 17 dicembre Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Pomeriggio"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><pioggia value="5-10" /><neve value="0" />
+<tmin value="5" /><tmax value="7" />
+<scadenza data="gio 18 dicembre Notte"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0-1" /><neve value="0" />
 </localita>
 <localita nome="Asiago">
-<tmin value="2" /><tmax value="5" />
-<scadenza data="mer 17 dicembre Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Pomeriggio"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><pioggia value="5-10" /><neve value="0" />
+<tmin value="2" /><tmax value="8" />
+<scadenza data="gio 18 dicembre Notte"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0-1" /><neve value="0" />
 </localita>
 <localita nome="Belluno">
-<tmin value="5" /><tmax value="6" />
-<scadenza data="mer 17 dicembre Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Pomeriggio"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><pioggia value="5-10" /><neve value="0" />
+<tmin value="3" /><tmax value="9" />
+<scadenza data="gio 18 dicembre Notte"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="20%" />
+</scadenza><scadenza data="gio 18 dicembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0-1" /><neve value="0" />
 </localita>
 <localita nome="Agordo">
-<tmin value="4" /><tmax value="6" />
-<scadenza data="mer 17 dicembre Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Pomeriggio"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><pioggia value="3-8" /><neve value="0" />
+<tmin value="2" /><tmax value="8" />
+<scadenza data="gio 18 dicembre Notte"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="20%" />
+</scadenza><scadenza data="gio 18 dicembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0-1" /><neve value="0" />
 </localita>
 <localita nome="Arabba">
-<tmin value="-1" /><tmax value="2" />
-<scadenza data="mer 17 dicembre Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Pomeriggio"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><pioggia value="2-4" /><neve value="0-2" />
+<tmin value="-1" /><tmax value="3" />
+<scadenza data="gio 18 dicembre Notte"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="20%" />
+</scadenza><scadenza data="gio 18 dicembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0-1" /><neve value="0" />
 </localita>
 <localita nome="Cortina d'Ampezzo">
-<tmin value="1" /><tmax value="4" />
-<scadenza data="mer 17 dicembre Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Pomeriggio"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><pioggia value="3-8" /><neve value="0" />
+<tmin value="1" /><tmax value="6" />
+<scadenza data="gio 18 dicembre Notte"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="20%" />
+</scadenza><scadenza data="gio 18 dicembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0-1" /><neve value="0" />
 </localita>
 <localita nome="Pieve di Cadore">
-<tmin value="3" /><tmax value="5" />
-<scadenza data="mer 17 dicembre Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Pomeriggio"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><pioggia value="3-8" /><neve value="0" />
+<tmin value="2" /><tmax value="7" />
+<scadenza data="gio 18 dicembre Notte"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="20%" />
+</scadenza><scadenza data="gio 18 dicembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0-1" /><neve value="0" />
 </localita>
 <localita nome="Auronzo di Cadore">
-<tmin value="2" /><tmax value="4" />
-<scadenza data="mer 17 dicembre Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Pomeriggio"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
-</scadenza><scadenza data="mer 17 dicembre Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><pioggia value="3-8" /><neve value="0" />
+<tmin value="1" /><tmax value="5" />
+<scadenza data="gio 18 dicembre Notte"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="20%" />
+</scadenza><scadenza data="gio 18 dicembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
+</scadenza><scadenza data="gio 18 dicembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0-1" /><neve value="0" />
 </localita>
 </previsioni_localita>
 </bollettino>
 
-<bollettino bollettinoid="MP" name="Meteo Pianura Veneta" title="Bollettino del 16 dicembre">
-<evoluzionegenerale><![CDATA[Mercoled&igrave; circolazione ciclonica, modeste piogge hanno interrotto un periodo asciutto che perdurava da due settimane. Da gioved&igrave; pressione in aumento, almeno fino a sabato aria stagnante e quindi condizioni favorevoli al persistere di nebbie e nubi basse.]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="16 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_0.png.jpg" caption="16 dicembre pomeriggio" />
+<bollettino bollettinoid="MP" name="Meteo Pianura Veneta" title="Bollettino del 17 dicembre">
+<evoluzionegenerale><![CDATA[Mercoled&igrave; fase finale della circolazione ciclonica iniziata marted&igrave;; in esaurimento le modeste piogge che hanno interrotto un periodo asciutto che perdurava da due settimane. Da gioved&igrave; circolazione anticiclonica; fino a venerd&igrave; condizioni favorevoli alla presenza di nebbie e nubi basse, da sabato aumento della ventosit&agrave; leggero ma comunque sufficiente a interrompere il ristagno dell'aria.]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="17 dicembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_0.png.jpg" caption="17 dicembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Previsione: </b>Cielo coperto con modeste piogge discontinue che entro fine giornata avranno interessato tutte le zone. Temperature pi&ugrave; alte anche di molto rispetto a luned&igrave; e alla media. Venti moderati da nord-est.]]>
-					</text>
-				</giorno>
-				<giorno data="17 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_1.png.jpg" caption="17 dicembre mattina" />
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_2.png.jpg" caption="17 dicembre pomeriggio" />
-					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Cielo coperto. Di sera nebbie sparse.<br /><b>Precipitazioni: </b>Fino al pomeriggio probabilit&agrave; medio-alta (50-75%) per modeste piogge discontinue che interesseranno tutte le zone. Di sera in esaurimento.<br /><b>Temperature: </b>Di giorno con andamento irregolare, di sera in calo con minime a fine giornata. Differenze anche sensibili rispetto a marted&igrave;. Valori sopra la media, anche di molto.<br /><b>Venti: </b>Deboli/moderati con direzione variabile.<br /><b>Mare: </b>Da poco mosso a calmo col passar delle ore.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+                        <![CDATA[<b>Previsione: </b>Cielo coperto. Fino al pomeriggio modeste piogge discontinue interesseranno tutte le zone. Di sera piogge in esaurimento e nebbie sparse. Temperature: di pomeriggio con andamento irregolare, di sera in calo con minime a fine giornata; differenze anche sensibili rispetto a marted&igrave;, valori sopra la media anche di molto. Venti deboli/moderati con direzione variabile.]]>
 					</text>
 				</giorno>
 				<giorno data="18 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_3.png.jpg" caption="18 dicembre mattina" />
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_4.png.jpg" caption="18 dicembre pomeriggio" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_1.png.jpg" caption="18 dicembre mattina" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_2.png.jpg" caption="18 dicembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Cielo coperto. Nelle ore notturne nebbie diffuse, nelle ore diurne nebbie generalmente in dissolvimento ma localmente persistenti pi&ugrave; probabilmente a sud dell'asse Verona-Venezia.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>In calo fino al primo mattino e poi con andamento irregolare, con differenze anche sensibili rispetto a mercoled&igrave;.<br /><b>Venti: </b>Deboli/moderati con direzione variabile.<br /><b>Mare: </b>Calmo.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Cielo coperto. Nelle ore notturne nebbie diffuse, nelle ore diurne nebbie generalmente in dissolvimento ma localmente persistenti pi&ugrave; probabilmente a sud dell'asse Verona-Venezia.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>In calo fino al primo mattino e poi con andamento irregolare, con differenze anche sensibili rispetto a mercoled&igrave;. Valori sopra la media, anche di molto.<br /><b>Venti: </b>Deboli/moderati con direzione variabile.<br /><b>Mare: </b>Calmo.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data="19 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_5.png.jpg" caption="19 dicembre" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_3.png.jpg" caption="19 dicembre mattina" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_4.png.jpg" caption="19 dicembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tendenza per venerd&igrave; 19: </b>Giornata grigia per nebbie e nubi basse, senza precipitazioni. Temperature senza variazioni di rilievo.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Cielo nuvoloso. Di notte nebbie diffuse, in dissolvimento di mattina e localmente in nuova formazione di sera.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>Con andamento irregolare e differenze leggere/moderate rispetto a gioved&igrave;.<br /><b>Venti: </b>Deboli/moderati, di notte con direzione variabile e dal mattino da nord-est.<br /><b>Mare: </b>Da calmo a poco mosso col passar delle ore.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data="20 dicembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_6.png.jpg" caption="20 dicembre" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_5.png.jpg" caption="20 dicembre" />
 					<text>
-                        <![CDATA[<b>Tendenza per sabato 20: </b>Di notte nebbie e nubi basse, in dissolvimento almeno parziale di giorno e in nuova formazione di sera. Non si verificheranno precipitazioni. Temperature in calo di notte e con andamento irregolare di giorno.
+                        <![CDATA[<b>Tendenza per sabato 20: </b>Non si verificheranno precipitazioni. Cielo poco o parzialmente nuvoloso. Di notte nebbie locali, in dissolvimento di mattina e in nuova formazione di sera. Temperature in calo.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+					</text>
+				</giorno>
+				<giorno data="21 dicembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_6.png.jpg" caption="21 dicembre" />
+					<text>
+                        <![CDATA[<b>Tendenza per domenica 21: </b>Non si verificheranno precipitazioni. Cielo poco nuvoloso. Di notte nebbie locali, in dissolvimento di mattina. Temperature in aumento di notte e con andamento irregolare di giorno.
 Previsore: Stefano Veronese<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
