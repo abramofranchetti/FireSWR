@@ -647,7 +647,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                         <td>${nettoXYLE_EUR.toFixed(2)} Tasse: 26% (=${percentualeDist.toFixed(2)}%)</td>
                         <td>${quoteSp500Vendute}</td>
                         <td>${lordoVendutoEur.toFixed(2)}</td>                        
-                        <td>${nettoSp500Eur.toFixed(2)}</td>
+                        <td>${nettoSp500Eur.toFixed(2)} Tasse: ${percentualeTasse.toFixed(2)}%</td>
                         <td>${(nettoSp500Eur - nettoXYLE_EUR).toFixed(2)}  (${(((nettoSp500 - nettoXYLE) / nettoXYLE) * 100).toFixed(2)}%)</td>
                     `;
                 tableBody.appendChild(row);
