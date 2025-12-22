@@ -35,11 +35,12 @@
             margin: 6px 0;
         }
 
-        .result-box {
-            background: #e8f0ff;
-            padding: 10px;
-            border-left: 4px solid #4A6CF7;
-            margin-top: 15px;
+        .result {
+            background: #eef4ff;
+            padding: 16px;
+            margin-top: 20px;
+            border-left: 4px solid #4a6cf7;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -79,17 +80,26 @@
 
         <canvas id="grafico" height="120"></canvas>
 
-        <div class="result-box">
-            <h3>Risultato simulazione</h3>
+        <div class="result">
             <p>
-                Se avessi iniziato <b id="r_anni_fa">20</b> anni fa e poi smettessi oggi,<br>
-                con un versamento di <b id="r_versamento">200</b> €/mese,<br>
-                avresti tra <b id="r_anni_futuri">20</b> anni:
-                <b style="color:#1b5;">€ <span id="r_capitale_A"></span></b>
+                Versamento mensile scenario A:
+                <b>$ <span id="versA">--</span></b>
+                <br>
+                Capitale versato scenario A:
+                <b>$ <span id="capVersA">--</span></b>
+                <br>
+                Capitale finale scenario A:
+                <b>$ <span id="capA">--</span></b>
             </p>
             <p>
-                Per ottenere lo stesso capitale iniziando da oggi dovresti investire:
-                <b style="color:#b51;">€ <span id="r_versamento_B"></span> / mese</b>
+                Versamento mensile iniziando alla fine del PAC A (scenario B):
+                <b>$ <span id="versB">--</span></b>
+                <br>
+                Capitale versato scenario B:
+                <b>$ <span id="capVersB">--</span></b>
+                <br>
+                Capitale finale scenario B:
+                <b>$ <span id="capB">--</span></b>
             </p>
         </div>
 
@@ -180,12 +190,37 @@
             }
             let versamentoB = trovaVersamentoMensile();
 
-            // Aggiornamento testo
-            document.getElementById("r_capitale_A").innerText = capitaleAFuturo.toFixed(0);
-            document.getElementById("r_versamento_B").innerText = versamentoB.toFixed(2);
-            document.getElementById("r_anni_fa").innerText = anniFa;
-            document.getElementById("r_versamento").innerText = versamento;
-            document.getElementById("r_anni_futuri").innerText = anniFuturi;
+            // Aggiornamento testo (se gli elementi esistono)
+            let el;
+            el = document.getElementById("r_capitale_A"); if (el) el.innerText = capitaleAFuturo.toFixed(0);
+            el = document.getElementById("r_versamento_B"); if (el) el.innerText = versamentoB.toFixed(2);
+            el = document.getElementById("r_anni_fa"); if (el) el.innerText = anniFa;
+            el = document.getElementById("r_versamento"); if (el) el.innerText = versamento;
+            el = document.getElementById("r_anni_futuri"); if (el) el.innerText = anniFuturi;
+
+            // Calcolo degli scenari per i risultati
+            let scenA = {
+                versamentoMensile: versamento,
+                anniVersati: anniFa,
+                capitaleVersato: versamento * anniFa * 12,
+                capitaleFinale: calcolaMontante(versamento, anniFa, rendimento)
+            };
+
+            let scenB = {
+                versamentoMensile: versamentoB,
+                anniVersati: anniFuturi,
+                capitaleVersato: versamentoB * anniFuturi * 12,
+                capitaleFinale: calcolaMontante(versamentoB, anniFuturi, rendimento)
+            };
+
+            // RISULTATI (aggiorniamo gli elementi esistenti)
+            document.getElementById("versA").innerText = scenA.versamentoMensile.toFixed(0);
+            document.getElementById("capVersA").innerText = scenA.capitaleVersato.toFixed(0);
+            document.getElementById("capA").innerText = scenB.capitaleFinale.toFixed(0);
+
+            document.getElementById("versB").innerText = scenB.versamentoMensile.toFixed(0);
+            document.getElementById("capVersB").innerText = scenB.capitaleVersato.toFixed(0);
+            document.getElementById("capB").innerText = scenB.capitaleFinale.toFixed(0);
 
             let labels = [];
             let datiA = [];
