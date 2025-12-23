@@ -90,6 +90,9 @@
                 <br>
                 Capitale finale scenario A:
                 <b>$ <span id="capA">--</span></b>
+                <br>
+                Guadagno scenario A:
+                <b>$ <span id="guadagnoA">--</span></b>
             </p>
             <p>
                 Versamento mensile iniziando alla fine del PAC A (scenario B):
@@ -100,6 +103,10 @@
                 <br>
                 Capitale finale scenario B:
                 <b>$ <span id="capB">--</span></b>
+                <br>
+                Guadagno scenario B:
+                <b>$ <span id="guadagnoB">--</span></b>
+                
             </p>
         </div>
 
@@ -133,8 +140,7 @@
                 // Etichetta "Oggi"
                 ctx.fillStyle = 'red';
                 ctx.font = "bold 14px Arial";
-                ctx.textAlign = "left";
-                ctx.textBaseline = "center";
+                ctx.textAlign = "left";                
                 ctx.fillText("Oggi", x, chart.chartArea.top+15);
 
                 ctx.restore();
@@ -217,10 +223,12 @@
             document.getElementById("versA").innerText = scenA.versamentoMensile.toFixed(0);
             document.getElementById("capVersA").innerText = scenA.capitaleVersato.toFixed(0);
             document.getElementById("capA").innerText = scenB.capitaleFinale.toFixed(0);
+            document.getElementById("guadagnoA").innerText = (scenB.capitaleFinale - scenA.capitaleVersato).toFixed(0) + " ovvero " + ((scenB.capitaleFinale - scenA.capitaleVersato) / scenA.capitaleVersato * 100).toFixed(2) + "%";
 
             document.getElementById("versB").innerText = scenB.versamentoMensile.toFixed(0);
             document.getElementById("capVersB").innerText = scenB.capitaleVersato.toFixed(0);
             document.getElementById("capB").innerText = scenB.capitaleFinale.toFixed(0);
+            document.getElementById("guadagnoB").innerText = (scenB.capitaleFinale - scenB.capitaleVersato).toFixed(0) + " ovvero " + ((scenB.capitaleFinale - scenB.capitaleVersato) / scenB.capitaleVersato * 100).toFixed(2) + "%";
 
             let labels = [];
             let datiA = [];

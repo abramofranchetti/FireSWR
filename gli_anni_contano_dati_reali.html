@@ -72,7 +72,8 @@
         <h2 class="text-center">Per capire perché iniziare prima vale più che investire di più</h2>
         <h6 class="text-center">Questa simulazione mostra in modo intuitivo quanto il tempo influenzi il risultato di un
             investimento. Ti permette di confrontare due scenari: da un lato, cosa sarebbe successo se avessi iniziato
-            un piano di accumulo anni fa e smettessi di versare a un certo punto rimanendo investito; dall'altro, quanto dovresti
+            un piano di accumulo anni fa e smettessi di versare a un certo punto rimanendo investito; dall'altro, quanto
+            dovresti
             versare ogni mese iniziando da zero per ottenere la stessa cifra in futuro. Regolando gli slider puoi vedere
             come anche piccoli importi investiti molto presto crescono più velocemente di importi maggiori iniziati
             tardi. È uno strumento pensato per visualizzare, in modo pratico e immediato, la potenza dell'interesse
@@ -92,7 +93,7 @@
     <input type=" number" id="anniPAC" value="10" oninput="aggiorna()">
 
         <label>Anni dopo lo stop (resti investito)</label>
-        <input type="number" id="anniFuturi" value="10" oninput="aggiorna()">        
+        <input type="number" id="anniFuturi" value="10" oninput="aggiorna()">
 
         <canvas id="grafico" height="120"></canvas>
 
@@ -106,6 +107,9 @@
                 <br>
                 Capitale finale scenario A:
                 <b>$ <span id="capA">--</span></b>
+                <br>
+                Guadagno scenario A:
+                <b>$ <span id="guadagnoA">--</span></b>
             </p>
             <p>
                 Versamento mensile iniziando alla fine del PAC A (scenario B):
@@ -116,6 +120,9 @@
                 <br>
                 Capitale finale scenario B:
                 <b>$ <span id="capB">--</span></b>
+                <br>
+                Guadagno scenario B:
+                <b>$ <span id="guadagnoB">--</span></b>
             </p>
         </div>
     </div>
@@ -315,11 +322,13 @@
             document.getElementById("versA").innerText = versamento.toFixed(0);
             document.getElementById("capA").innerText = scenA.capitaleFinale.toFixed(0);
             document.getElementById("versB").innerText = versB.toFixed(0);
+            document.getElementById("guadagnoA").innerText = (scenA.capitaleFinale - scenA.capitaleVersato).toFixed(0) + " ovvero " + ((scenA.capitaleFinale - scenA.capitaleVersato) / scenA.capitaleVersato * 100).toFixed(2) + "%";
 
             // NUOVI DATI
             document.getElementById("capVersA").innerText = scenA.capitaleVersato.toFixed(0);
             document.getElementById("capVersB").innerText = scenB.capitaleVersato.toFixed(0);
             document.getElementById("capB").innerText = scenA.capitaleFinale.toFixed(0);
+            document.getElementById("guadagnoB").innerText = (scenB.capitaleFinale - scenB.capitaleVersato).toFixed(0) + " ovvero " + ((scenB.capitaleFinale - scenB.capitaleVersato) / scenB.capitaleVersato * 100).toFixed(2) + "%";
 
             disegnaGrafico(start, anniPAC, anniFuturi, versamento, versB);
         }
