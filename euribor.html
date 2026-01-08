@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Andamento Euribor 3M e 6M, €STR, EUR IRS 10Y</title>
+    <title>Andamento Euribor 3M e 6M, €STR, EUR IRS 10Y con simulazione mutuo</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -148,7 +148,7 @@
             <a href="/FireSWR" class="home-button">🏠 Home</a>
         </div>
         <br>
-        <h1 class="text-center">Andamento Euribor 3M e 6M, €STR, EUR IRS 10Y</h1>
+        <h1 class="text-center">Andamento Euribor 3M e 6M, €STR, EUR IRS 10Y con simulazione mutuo</h1>
         <div class="text-center mb-3">
             <small>Fonte dati: <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html" target="_blank" rel="noopener noreferrer">European Central Bank (ECB)</a></small>
         </div>
@@ -372,18 +372,6 @@
                                         const y = ctx.parsed && isFinite(ctx.parsed.y) ? ctx.parsed.y : null;
                                         return `${ctx.dataset.label}: ${y !== null ? y.toFixed(3) + '%' : 'N/A'}`;
                                     }
-                                }
-                            },
-                            zoom: {
-                                pan: {
-                                    enabled: true,
-                                    mode: 'x',
-                                    modifierKey: 'ctrl'
-                                },
-                                zoom: {
-                                    wheel: { enabled: true },
-                                    pinch: { enabled: true },
-                                    mode: 'x'
                                 }
                             }
                         }
