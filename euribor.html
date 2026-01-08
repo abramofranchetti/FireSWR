@@ -149,7 +149,9 @@
         </div>
         <br>
         <h1 class="text-center">Andamento Euribor 3M e 6M, €STR, EUR IRS 10Y</h1>
-
+        <div class="text-center mb-3">
+            <small>Fonte dati: <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html" target="_blank" rel="noopener noreferrer">European Central Bank (ECB)</a></small>
+        </div>
         <div class="filters">
             <label>Da: <input type="date" id="startDate"></label>
             <label>A: <input type="date" id="endDate"></label>
@@ -159,8 +161,8 @@
 
         <div style="width:100%;max-width:100vw;">
             <canvas id="euriborChart"></canvas>
-        </div>
-
+        </div>     
+        <div id="differenzatassi"></div>   
         <script>
             const urls = {
                 euribor3m: 'https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA?format=jsondata&detail=dataonly',
@@ -387,6 +389,101 @@
                         }
                     }
                 });
+
+                // Calcola differenza tassi e simulazione mutui (migliorata con input per importo e styling)
+                (function() {
+                    const lastIndex = (function() {
+                        for (let i = labels.length - 1; i >= 0; i--) {
+                            const a = data3m[i];
+                            const b = dataeurirs10a[i];
+                            if (a != null && b != null && isFinite(a) && isFinite(b)) return i;
+                        }
+                        return -1;
+                    })();
+
+                    const container = document.getElementById('differenzatassi');
+                    if (lastIndex === -1) {
+                        container.innerHTML = '<p><strong>Impossibile calcolare la differenza:</strong> non ci sono date con entrambe le serie disponibili.</p>';
+                        return;
+                    }
+
+                    const lastDate = labels[lastIndex];
+                    const eur3m = Number(data3m[lastIndex]);
+                    const eurirs10 = Number(dataeurirs10a[lastIndex]);
+                    const diff = eurirs10 - eur3m;
+
+                    const defaultP = 100000; // importo di default
+
+                    // Costruisci UI più gradevole con input e risultati separati
+                    container.innerHTML = `
+                        <div class="differenza-card" style="background:#ffffff;border-radius:12px;padding:14px;box-shadow:0 6px 20px rgba(15,23,42,0.06);border:1px solid rgba(0,0,0,0.04);">
+                            <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center">
+                                <div style="min-width:220px;">
+                                    <div style="font-weight:700;color:#222">Ultima rilevazione comune: ${lastDate}</div>
+                                    <div style="margin-top:6px;color:#444"> <strong>EURIRS 10Y</strong>: ${eurirs10.toFixed(3)}% &nbsp;&nbsp; <strong>Euribor 3M</strong>: ${eur3m.toFixed(3)}% &nbsp;&nbsp; <strong>Diff</strong>: ${diff.toFixed(3)} p.p.</div>
+                                </div>
+                                <div style="display:flex;gap:8px;align-items:center;">
+                                    <label for="mutuoCapitale" style="font-weight:600;color:#333">Capitale (€):</label>
+                                    <input id="mutuoCapitale" type="number" value="${defaultP}" min="0" step="1000" style="width:140px;padding:8px;border-radius:8px;border:1px solid #d1d5db;box-shadow:none;">
+                                    <button id="mutuoCalcBtn" style="background:#1976d2;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer">Ricalcola</button>
+                                </div>
+                            </div>
+
+                            <div id="mutuoResults" style="margin-top:12px"></div>
+
+                            <p style="margin-top:10px;color:#555;font-size:0.95rem"> <strong>Nota:</strong> confronto semplificato usando <em>EURIRS 10Y</em> per il tasso fisso e <em>Euribor 3M</em> per il variabile; si assume che i tassi restino costanti per tutta la durata. Non è una previsione.</p>
+                        </div>
+                    `;
+
+                    function monthlyPayment(P, annualPercent, years) {
+                        const r = annualPercent / 100 / 12;
+                        const n = years * 12;
+                        if (Math.abs(r) < 1e-12) return { payment: P / n, total: P };
+                        const payment = P * r / (1 - Math.pow(1 + r, -n));
+                        return { payment: payment, total: payment * n };
+                    }
+
+                    function renderResults(P) {
+                        const terms = [20, 30];
+                        let html = '';
+                        terms.forEach(years => {
+                            const fixed = monthlyPayment(P, eurirs10, years);
+                            const variable = monthlyPayment(P, eur3m, years);
+                            const percDiffTotal = ((fixed.total - variable.total) / variable.total) * 100;
+                            const percDiffMonthly = ((fixed.payment - variable.payment) / variable.payment) * 100;
+
+                            html += `<div style="border-top:1px solid rgba(0,0,0,0.04);padding-top:10px;margin-top:10px">`;
+                            html += `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">`;
+                            html += `<h4 style="margin:0;font-size:1rem;color:#1f2937">${years}-anni — Capitale €${P.toLocaleString('it-IT')}</h4>`;
+                            html += `</div>`;
+
+                            html += `<table style="width:100%;margin-top:8px;border-collapse:collapse;font-size:0.96rem">
+                                <tr><td style="padding:6px 8px;color:#374151">Rata fissa (EURIRS 10Y)</td><td style="padding:6px 8px;text-align:right;font-weight:700">€${fixed.payment.toFixed(2)}</td></tr>
+                                <tr><td style="padding:6px 8px;color:#374151">Rata variabile (Euribor 3M)</td><td style="padding:6px 8px;text-align:right;font-weight:700">€${variable.payment.toFixed(2)}</td></tr>
+                                <tr><td style="padding:6px 8px;color:#374151">Differenza mensile</td><td style="padding:6px 8px;text-align:right;font-weight:700">€${(fixed.payment - variable.payment).toFixed(2)} — ${percDiffMonthly.toFixed(2)}%</td></tr>
+                                <tr><td style="padding:6px 8px;color:#374151">Totale pagato (fisso vs variabile)</td><td style="padding:6px 8px;text-align:right;font-weight:700">€${fixed.total.toLocaleString('it-IT', {minimumFractionDigits:2, maximumFractionDigits:2})} — €${variable.total.toLocaleString('it-IT', {minimumFractionDigits:2, maximumFractionDigits:2})}</td></tr>
+                                <tr><td style="padding:6px 8px;color:#374151">Differenza totale</td><td style="padding:6px 8px;text-align:right;font-weight:700">€${(fixed.total - variable.total).toLocaleString('it-IT', {minimumFractionDigits:2, maximumFractionDigits:2})} — ${percDiffTotal.toFixed(2)}%</td></tr>
+                            </table>`;
+
+                            html += `</div>`;
+                        });
+
+                        document.getElementById('mutuoResults').innerHTML = html;
+                    }
+
+                    // Eventi per input e bottone
+                    document.getElementById('mutuoCalcBtn').addEventListener('click', () => {
+                        const val = Number(document.getElementById('mutuoCapitale').value) || defaultP;
+                        renderResults(val);
+                    });
+                    document.getElementById('mutuoCapitale').addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') document.getElementById('mutuoCalcBtn').click();
+                    });
+
+                    // render iniziale
+                    renderResults(defaultP);
+                })();
+
             }
 
             document.getElementById('updateBtn').addEventListener('click', loadChart);
