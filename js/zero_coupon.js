@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			const redditoDiverso = Math.max(0, prezzoVendita - prezzoTeoricoVendita);
 
 			// Calcolo credito di imposta compensabile
-			let creditoCompensabile = redditoDiverso * (1/aliquota);
+			let creditoCompensabile = redditoDiverso;
 			html += `<hr><b>Calcolo vendita anticipata</b><br>`;
 			html += `Prezzo di vendita: €${prezzoVendita.toFixed(2)}<br>`;
 			html += `Data di vendita: ${dataVendita.toLocaleDateString()}<br>`;
