@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIC VS PAC Simulazione PAC con metodo montecarlo e analisi dei profili di rendimento nei diversi casi</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <!-- <script src="js/ytm.js" defer></script> -->
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">PS VS PAC. Simulazione PAC con metodo montecarlo e analisi dei profili di rendimento nei diversi casi</h1>
+        <h5 class="text-center">Ammettiamo di conoscere in anticipo il rendimento di un titolo o di un portafoglio da qui a 30 anni (ipotesi già impossibile, perché nessuno può prevedere il futuro). Avendo questo dato, è possibile prevedere il valore finale del PAC?</h5>
+
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label>Volatilità annua (σ) %</label>
+                <input type="range" id="volSlider" min="0" max="80" value="13" class="custom-range">
+                <div class="d-flex justify-content-between">
+                    <small id="volVal">13%</small>
+                    <small></small>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label>Anni</label>
+                <input type="number" id="years" class="form-control" value="30" min="1" max="100">
+            </div>
+            <div class="col-md-2">
+                <label>Rendimento annuo atteso %</label>
+                <input type="number" id="annualReturn" class="form-control" value="8" step="0.1">
+            </div>
+            <div class="col-md-2">
+                <label>Contributo mensile (€)</label>
+                <input type="number" id="monthly" class="form-control" value="278" step="1">
+            </div>
+            <div class="col-md-3">
+                <label>Scenari</label>
+                <input type="number" id="nScen" class="form-control" value="200" min="1" max="2000">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label>Capitale iniziale (PIC) € <small class="text-muted">(calcolato per eguagliare il contribuito PAC:mensile x 12 x anni)</small></label>                
+                <input type="number" id="initial" class="form-control" value="100000" step="100" readonly>
+                
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button id="runBtn" class="btn btn-primary btn-block">Simula</button>                
+            </div>
+            <div class="col-md-6 d-flex align-items-end justify-content-end">
+                <div id="summary" class="text-right"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6" style="height:420px;">
+                <h6 class="text-center">PIC: simulazioni di traiettorie con stesso rendimento finale</h6>
+                <canvas id="chartPIC" style="height:360px;"></canvas>
+            </div>
+            <div class="col-md-6" style="height:420px;">
+                <h6 class="text-center">PAC: contribuzioni mensili su ciascuna traiettoria</h6>
+                <canvas id="chartPAC" style="height:360px;"></canvas>
+            </div>
+        </div>
+        <br>
+        <p class="mt-3 text-muted">Linee blu sottili per mettere in evidenza la dispersione; la linea rossa rappresenta la media.</p>
+        <p class="text-muted">Morale: il risultato di un PAC è altamente sensibile alle variazioni del rendimento atteso e della volatilità. A parità di rendimento finale del mercato in un certo periodo di tempo, la traiettoria con cui si raggiunge questo rendimento influenza molto il risultato finale. Una alta volatilità del sottostante influenza in modo imprevedibile il risultato finale del PAC, distanziandolo molto dal rendimento teorico medio.</p>
+        <p class="text-muted">Da una idea di: Dr. Andrea Palladino</p>
+    </div>
+
+    <script>
+        // Helper: Box-Muller normal RNG
+        function randn_bm() {
+            let u = 0, v = 0;
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+
+        function simulatePaths(nScen, years, sigma, annualReturn, initialCapital) {
+            const stepsPerYear = 12;
+            const nSteps = years * stepsPerYear;
+            const dt = 1 / stepsPerYear;
+            // Use continuous-time drift so that exp(mu * years) = (1+annualReturn)^years
+            const mu = Math.log(1 + annualReturn);
+            const targetFactor = Math.pow(1 + annualReturn, years);
+            const targetLog = Math.log(targetFactor);
+            const paths = [];
+
+            for (let s = 0; s < nScen; s++) {
+                // simulate log-price path (GBM increments)
+                const logArr = new Array(nSteps + 1);
+                let logS = 0; // start at log(1)
+                logArr[0] = logS;
+                for (let t = 1; t <= nSteps; t++) {
+                    const Z = randn_bm();
+                    const incr = (mu - 0.5 * sigma * sigma) * dt + sigma * Math.sqrt(dt) * Z;
+                    logS += incr;
+                    logArr[t] = logS;
+                }
+                // Adjust linearly in time so final log equals targetLog (Brownian-bridge like conditioning)
+                const delta = targetLog - logArr[nSteps];
+                const S = new Array(nSteps + 1);
+                for (let t = 0; t <= nSteps; t++) {
+                    const adjLog = logArr[t] + delta * (t / nSteps);
+                    S[t] = Math.exp(adjLog); // price per unit, S[0]=1, S[nSteps]=targetFactor
+                }
+                paths.push(S);
+            }
+            return { paths: paths, nSteps: nSteps, stepsPerYear: stepsPerYear };
+        }
+
+        function computePACvalues(path, monthly) {
+            const n = path.length;
+            let units = 0;
+            const values = new Array(n);
+            for (let t = 0; t < n; t++) {
+                // Invest at beginning of period t
+                units += monthly / path[t];
+                values[t] = units * path[t];
+            }
+            return values;
+        }
+
+        function meanArray(arrays, idx) {
+            let s = 0;
+            for (let i = 0; i < arrays.length; i++) s += arrays[i][idx];
+            return s / arrays.length;
+        }
+
+        function percentile(arr, p) {
+            const a = arr.slice().sort((x, y) => x - y);
+            const pos = (a.length - 1) * p;
+            const base = Math.floor(pos);
+            const rest = pos - base;
+            if ((a[base + 1] !== undefined)) {
+                return a[base] + rest * (a[base + 1] - a[base]);
+            } else {
+                return a[base];
+            }
+        }
+
+        function buildLabels(nSteps, stepsPerYear) {
+            const labels = [];
+            for (let t = 0; t <= nSteps; t++) {
+                labels.push((t / stepsPerYear).toFixed(1));
+            }
+            return labels;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const volSlider = document.getElementById('volSlider');
+            const volVal = document.getElementById('volVal');
+            const runBtn = document.getElementById('runBtn');
+            const monthlyInput = document.getElementById('monthly');
+            const yearsInput = document.getElementById('years');
+            const initialInput = document.getElementById('initial');
+
+            volSlider.addEventListener('input', () => volVal.textContent = volSlider.value + '%');
+
+            function updateInitialField() {
+                const monthly = parseFloat(monthlyInput.value) || 0;
+                const years = parseInt(yearsInput.value, 10) || 0;
+                const total = Math.round(monthly * 12 * years);
+                initialInput.value = total;
+            }
+            monthlyInput.addEventListener('input', updateInitialField);
+            yearsInput.addEventListener('input', updateInitialField);
+
+            let chartPIC = null;
+            let chartPAC = null;
+
+            function renderCharts(result, monthly, years, initialCapital) {
+                const { paths, nSteps, stepsPerYear } = result;
+                const labels = buildLabels(nSteps, stepsPerYear);
+
+                // PIC datasets
+                const datasetsPIC = [];
+                const datasetsPAC = [];
+                const picFinals = [];
+                const pacFinals = [];
+
+                for (let i = 0; i < paths.length; i++) {
+                    const S = paths[i]; // S = price per unit, starts at 1, ends at targetFactor
+                    // PIC plotted as capital = initialCapital * price per unit
+                    datasetsPIC.push({
+                        label: '',
+                        data: S.map(x => x * initialCapital),
+                        borderColor: 'rgba(30,144,255,0.5)',
+                        borderWidth: 0.7,
+                        pointRadius: 0,
+                        pointHoverRadius: 0,
+                        hitRadius: 0,
+                        showLine: true,
+                        spanGaps: true,
+                        fill: false,
+                        tension: 0,
+                        order: 1
+                    });
+                    const pacVals = computePACvalues(S, monthly); // pacVals are in euro (€)
+                    datasetsPAC.push({
+                        label: '',
+                        data: pacVals,
+                        borderColor: 'rgba(30,144,255,0.5)',
+                        borderWidth: 0.7,
+                        pointRadius: 0,
+                        pointHoverRadius: 0,
+                        hitRadius: 0,
+                        showLine: true,
+                        spanGaps: true,
+                        fill: false,
+                        tension: 0,
+                        order: 1
+                    });
+                    picFinals.push(S[S.length - 1] * initialCapital);
+                    pacFinals.push(pacVals[pacVals.length - 1]);
+                }
+
+                // Mean lines
+                const meanPIC = new Array(nSteps + 1);
+                const meanPAC = new Array(nSteps + 1);
+                for (let t = 0; t <= nSteps; t++) {
+                    meanPIC[t] = meanArray(paths, t) * initialCapital;
+                }
+                // For PAC mean, need to compute mean across pac arrays at each t
+                for (let t = 0; t <= nSteps; t++) {
+                    let s = 0;
+                    for (let i = 0; i < paths.length; i++) s += computePACvalues(paths[i], monthly)[t];
+                    meanPAC[t] = s / paths.length;
+                }
+
+                datasetsPIC.push({
+                    label: 'Media',
+                    data: meanPIC,
+                    borderColor: 'rgba(220,20,60,1)',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0
+                });
+                datasetsPAC.push({
+                    label: 'Media',
+                    data: meanPAC,
+                    borderColor: 'rgba(220,20,60,1)',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0
+                });
+
+                // Destroy previous charts
+                if (chartPIC) chartPIC.destroy();
+                if (chartPAC) chartPAC.destroy();
+
+                const ctx1 = document.getElementById('chartPIC').getContext('2d');
+                chartPIC = new Chart(ctx1, {
+                    type: 'line',
+                    data: { labels: labels, datasets: datasetsPIC },
+                    options: {
+                        animation: false,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        elements: {
+                            point: { radius: 0, hoverRadius: 0 },
+                            line: { tension: 0, borderWidth: 0.5 }
+                        },
+                        scales: {
+                            x: { display: true, title: { display: true, text: 'Anni di investimento' } },
+                            y: { display: true, title: { display: true, text: 'Valore (€)' }, ticks: { callback: function (v) { return v >= 1000 ? (v/1000).toFixed(0)+'k' : Math.round(v); } } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                const ctx2 = document.getElementById('chartPAC').getContext('2d');
+                chartPAC = new Chart(ctx2, {
+                    type: 'line',
+                    data: { labels: labels, datasets: datasetsPAC },
+                    options: {
+                        animation: false,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        elements: {
+                            point: { radius: 0, hoverRadius: 0 },
+                            line: { tension: 0, borderWidth: 0.5 }
+                        },
+                        scales: {
+                            x: { display: true, title: { display: true, text: 'Anni di investimento' } },
+                            y: { display: true, title: { display: true, text: 'Valore (€)' }, ticks: { callback: function (v) { return v >= 1000 ? (v/1000).toFixed(0)+'k' : Math.round(v); } } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                // Summary statistics for PAC finals
+                const meanPacFinal = pacFinals.reduce((a, b) => a + b, 0) / pacFinals.length;
+                const pLow = percentile(pacFinals, 0.025);
+                const pHigh = percentile(pacFinals, 0.975);
+                const med = percentile(pacFinals, 0.5);
+                document.getElementById('summary').innerHTML = `<small><strong>PAC (finale):</strong> media €${Math.round(meanPacFinal).toLocaleString()} &nbsp; | &nbsp; mediana €${Math.round(med).toLocaleString()} &nbsp; | &nbsp; 95% interval €${Math.round(pLow).toLocaleString()} - €${Math.round(pHigh).toLocaleString()}</small>`;
+            }
+
+            function runSimulation() {
+                const sigma = parseFloat(volSlider.value) / 100;
+                const years = parseInt(document.getElementById('years').value, 10);
+                const annualReturn = parseFloat(document.getElementById('annualReturn').value) / 100;
+                const monthly = parseFloat(document.getElementById('monthly').value) || 0;
+                const nScen = parseInt(document.getElementById('nScen').value, 10);
+                // Compute initial PIC so total invested equals PAC contributions
+                const initial = Math.round(monthly * 12 * years);
+                // Sync visible readonly field (in case it wasn't updated)
+                initialInput.value = initial;
+                const res = simulatePaths(nScen, years, sigma, annualReturn, initial);
+                renderCharts(res, monthly, years, initial);
+            }
+
+            runBtn.addEventListener('click', () => {
+                runSimulation();
+            });
+
+            // Run default on load
+            runSimulation();
+
+            // Update default text for slider
+            volVal.textContent = volSlider.value + '%';
+        });
+    </script>
+
+    <script>
+        // Load disclaimer
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+</body>
+
+</html>
