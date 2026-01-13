@@ -543,7 +543,7 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
             datasets: [
                 {
                     label: 'Nettissimo (€)',
-                    data: netValuesEur.map((value, index) => ((value / firstNonZeroEur) - 1) * 100),
+                    data: netValuesEur.map((value, index) => ((value / firstNonZeroEur) - 1)),
                     borderColor: 'rgba(255, 99, 132, 0.6)',
                     backgroundColor: 'rgba(255, 99, 132, 0.1)',
                     fill: false,
@@ -552,7 +552,7 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
                 },
                 {
                     label: 'Nettissimo Infl. Adjusted (€)',
-                    data: realNettissimoValuesEur.map((value, index) => ((value / firstNonZeroRealEur) - 1) * 100),
+                    data: realNettissimoValuesEur.map((value, index) => ((value / firstNonZeroRealEur) - 1)),
                     borderColor: 'rgba(107, 248, 107, 0.6)',
                     backgroundColor: 'rgba(107, 248, 107, 0.1)',
                     fill: false,
@@ -561,7 +561,7 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
                 },
                 {
                     label: 'Nettissimo ($)',
-                    data: netValuesDollar.map((value, index) => ((value / firstNonZeroDollar) - 1) * 100),
+                    data: netValuesDollar.map((value, index) => ((value / firstNonZeroDollar) - 1)),
                     borderColor: 'rgba(54, 162, 235, 0.6)',
                     backgroundColor: 'rgba(54, 162, 235, 0.1)',
                     fill: false,
