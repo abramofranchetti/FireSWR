@@ -68,12 +68,28 @@
         </div>
 
         <div class="row">
+            <div class="col-12 mb-3">
+                <div class="card border-info" style="background:#f8fbff;">
+                    <div class="card-body py-2">
+                        <h5 class="card-title mb-1"><strong>Cosa mostrano i grafici e perché leggerli con attenzione</strong></h5>
+                        <p class="card-text mb-1">I grafici riportano molte traiettorie ipotetiche del mercato per lo stesso orizzonte temporale: l'obiettivo è confrontare due strategie di investimento e comprendere le loro vulnerabilità.</p>
+                        <ul class="mb-0 pl-3">
+                            <li><strong>PIC</strong>: valore di un investimento iniziale unico nel tempo su ogni traiettoria (linee blu); la <strong>linea rossa</strong> rappresenta la media.</li>
+                            <li><strong>PAC</strong>: valore ottenuto versando un contributo mensile costante su ogni traiettoria (linee blu); la <strong>linea rossa</strong> rappresenta la media.</li>
+                        </ul>
+                        <p class="mb-0 small text-muted">Implicazioni: anche con lo stesso rendimento medio atteso, la volatilità e la sequenza dei rendimenti producono ampia dispersione nei risultati. Il PAC riduce il rischio di timing, ma non annulla l'incertezza legata a mercati molto volatili.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-6" style="height:420px;">
                 <h6 class="text-center">PIC: simulazioni di traiettorie con stesso rendimento finale</h6>
                 <canvas id="chartPIC" style="height:360px;"></canvas>
             </div>
+            <span class="col-md-1" style="height:20px;"></span>
             <div class="col-md-6" style="height:420px;">
-                <h6 class="text-center">PAC: contribuzioni mensili su ciascuna traiettoria</h6>
+                <h6 class="text-center">PAC: contribuzioni mensili su ciascuna traiettoria</h6>                
                 <canvas id="chartPAC" style="height:360px;"></canvas>
             </div>
         </div>
