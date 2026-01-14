@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locazioni Brevi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-number {
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .formula-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 2px solid #667eea;
+        }
+
+        .formula-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .formula {
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+
+        .result {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .result-value {
+            font-size: 32px;
+            margin-top: 10px;
+        }
+
+        .result-secondary {
+            background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-box strong {
+            color: #1976d2;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #ff9800;
+        }
+
+        .warning-box strong {
+            color: #f57c00;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #4caf50;
+        }
+
+        .success-box strong {
+            color: #388e3c;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .comparison-card {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .comparison-card.valuation {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+        }
+
+        .comparison-card.market {
+            background: #fff3e0;
+            border: 2px solid #ff9800;
+        }
+
+        .comparison-card h4 {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .comparison-card .value {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .calculation-steps {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .step {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .btn-calculate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: transform 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .noi-dual {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .input-row, .comparison, .grid-2, .noi-dual {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Calcolatore NOI - Locazioni Brevi</h1>
+            <p>Analisi finanziaria per affitti brevi e turistici</p>
+        </div>
+
+        <div class="content">
+            <!-- SEZIONE 1: ENTRATE -->
+            <div class="section">
+                <h2><span class="section-number">1</span>Entrate Annuali</h2>
+                
+                <div class="info-box">
+                    <strong>Locazioni brevi:</strong> Gli oneri di pulizia ribaltati sui guests sono considerati come parte delle entrate imponibili ai fini della cedolare secca e vengono inclusi nel calcolo del NOI.
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-row">
+                        <div>
+                            <label for="canone">Canone di Locazione Annuo (€)</label>
+                            <input type="number" id="canone" value="21352" step="0.01">
+                        </div>
+                        <div>
+                            <label for="oneri">Oneri di Pulizia Ribaltati (€)</label>
+                            <input type="number" id="oneri" value="4591" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formula-box">
+                    <h3>Calcolo Entrate Lorde Totali</h3>
+                    <div class="formula" id="formulaEntrate"></div>
+                    <div class="result">
+                        Entrate Lorde Totali
+                        <div class="result-value" id="entrateTotali"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEZIONE 2: USCITE -->
+            <div class="section">
+                <h2><span class="section-number">2</span>Uscite e Costi Annuali</h2>
+                
+                <div class="input-group">
+                    <div class="grid-2">
+                        <div>
+                            <label for="commissioni">Commissioni Portali (%)</label>
+                            <input type="number" id="commissioni" value="15" step="0.1">
+                        </div>
+                        <div>
+                            <label for="cedolare">Cedolare Secca (%)</label>
+                            <input type="number" id="cedolare" value="21" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div>
+                            <label for="energia">Spese Energia (€/anno)</label>
+                            <input type="number" id="energia" value="1200" step="0.01">
+                        </div>
+                        <div>
+                            <label for="wifi">Wi-Fi (€/anno)</label>
+                            <input type="number" id="wifi" value="360" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div>
+                            <label for="assicurazioni">Assicurazioni (€/anno)</label>
+                            <input type="number" id="assicurazioni" value="500" step="0.01">
+                        </div>
+                        <div>
+                            <label for="sicurezza">Sistemi di Sicurezza (€/anno)</label>
+                            <input type="number" id="sicurezza" value="300" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div>
+                            <label for="imu">IMU (€/anno)</label>
+                            <input type="number" id="imu" value="800" step="0.01">
+                        </div>
+                        <div>
+                            <label for="tari">TARI (€/anno)</label>
+                            <input type="number" id="tari" value="250" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div>
+                            <label for="condominio">Condominio - Ordinarie + Straordinarie (€/anno)</label>
+                            <input type="number" id="condominio" value="1000" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formula-box">
+                    <h3>Dettaglio Calcolo Uscite</h3>
+                    <div class="calculation-steps" id="dettaglioUscite"></div>
+                    <div class="result">
+                        Uscite Totali Annue (esclusa Cedolare Secca)
+                        <div class="result-value" id="usciteTotali"></div>
+                    </div>
+                    <div class="result-secondary">
+                        Cedolare Secca
+                        <div class="result-value" id="cedolareValue"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEZIONE 3: NOI -->
+            <div class="section">
+                <h2><span class="section-number">3</span>Net Operating Income (NOI)</h2>
+                
+                <div class="info-box">
+                    <strong>Due versioni del NOI:</strong><br>
+                    <strong>NOI 1 (Lordo Cedolare):</strong> Utilizzato per la valutazione dell'immobile. Include IMU/TARI ma esclude la cedolare secca.<br><br>
+                    <strong>NOI 2 (Netto Cedolare):</strong> Reddito effettivo netto per il proprietario, dopo tutte le imposte.
+                </div>
+
+                <div class="formula-box">
+                    <div class="noi-dual">
+                        <div>
+                            <h3>NOI 1 - Lordo Cedolare Secca</h3>
+                            <div class="formula">NOI 1 = Entrate - (Uscite - Cedolare)</div>
+                            <div class="formula" id="formulaNOI1"></div>
+                            <div class="result">
+                                NOI 1 (per valutazione)
+                                <div class="result-value" id="noi1Value"></div>
+                            </div>
+                            <div class="info-box" style="margin-top: 10px; font-size: 14px;">
+                                Questo NOI viene utilizzato per il calcolo del valore intrinseco dell'immobile
+                            </div>
+                        </div>
+                        <div>
+                            <h3>NOI 2 - Netto Cedolare Secca</h3>
+                            <div class="formula">NOI 2 = Entrate - Uscite Totali</div>
+                            <div class="formula" id="formulaNOI2"></div>
+                            <div class="result-secondary">
+                                NOI 2 (cash flow effettivo)
+                                <div class="result-value" id="noi2Value"></div>
+                            </div>
+                            <div class="info-box" style="margin-top: 10px; font-size: 14px;">
+                                Questo è il reddito netto effettivo che rimane al proprietario
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEZIONE 4: CAP RATE -->
+            <div class="section">
+                <h2><span class="section-number">4</span>Capitalization Rate (Cap Rate)</h2>
+                
+                <div class="info-box">
+                    <strong>Cap Rate per Locazioni Brevi:</strong><br>
+                    Si utilizza il BTP nominale a 10 anni come tasso risk-free, poiché le locazioni brevi non hanno indicizzazione automatica all'inflazione.<br><br>
+                    <strong>Cap Rate = BTP 10Y Nominale + Premio per il Rischio</strong>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-row">
+                        <div>
+                            <label for="riskFree">Tasso Risk-Free - BTP 10Y Nominale (%)</label>
+                            <input type="number" id="riskFree" value="3.4" step="0.1">
+                        </div>
+                        <div>
+                            <label for="riskPremium">Premio per il Rischio (%)</label>
+                            <input type="number" id="riskPremium" value="2.6" step="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formula-box">
+                    <h3>Calcolo Cap Rate</h3>
+                    <div class="formula" id="formulaCapRate"></div>
+                    <div class="result">
+                        Cap Rate Totale
+                        <div class="result-value" id="capRateValue"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEZIONE 5: VALUTAZIONE -->
+            <div class="section">
+                <h2><span class="section-number">5</span>Valutazione Intrinseca dell'Immobile</h2>
+                
+                <div class="info-box">
+                    <strong>Formula di Valutazione</strong><br>
+                    Il valore intrinseco si calcola dividendo il <strong>NOI 1 (Lordo Cedolare)</strong> per il Cap Rate. La cedolare secca è un'imposta personale del proprietario e non influenza il valore intrinseco dell'immobile.
+                </div>
+
+                <div class="formula-box">
+                    <h3>Formula di Valutazione</h3>
+                    <div class="formula">Valore Intrinseco = NOI 1 (Lordo Cedolare) / Cap Rate</div>
+                    <div class="formula" id="formulaValutazione"></div>
+                    <div class="result">
+                        Valore Intrinseco dell'Immobile
+                        <div class="result-value" id="valoreIntrinseco"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEZIONE 6: CONFRONTO CON MERCATO -->
+            <div class="section">
+                <h2><span class="section-number">6</span>Confronto con il Valore di Mercato</h2>
+                
+                <div class="input-group">
+                    <label for="valoreMercato">Valore di Mercato dell'Immobile (€)</label>
+                    <input type="number" id="valoreMercato" value="180000" step="100">
+                </div>
+
+                <div class="comparison">
+                    <div class="comparison-card valuation">
+                        <h4>📊 Valore Intrinseco</h4>
+                        <div class="value" id="valoreIntrinsecoComp"></div>
+                        <p>Basato su NOI 1 / Cap Rate</p>
+                    </div>
+                    <div class="comparison-card market">
+                        <h4>🏪 Valore di Mercato</h4>
+                        <div class="value" id="valoreMercatoComp"></div>
+                        <p>Prezzo di vendita stimato</p>
+                    </div>
+                </div>
+
+                <div id="conclusione"></div>
+            </div>
+
+            <button class="btn-calculate" onclick="calcolaTutto()">🔄 Ricalcola Tutto</button>
+        </div>
+    </div>
+
+    <script>
+        function formatEuro(value) {
+            return new Intl.NumberFormat('it-IT', {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 2
+            }).format(value);
+        }
+
+        function formatPercent(value) {
+            return value.toFixed(2) + '%';
+        }
+
+        function calcolaTutto() {
+            // STEP 1: Entrate
+            const canone = parseFloat(document.getElementById('canone').value);
+            const oneri = parseFloat(document.getElementById('oneri').value);
+            const entrateLorde = canone + oneri;
+
+            document.getElementById('formulaEntrate').textContent = 
+                `${formatEuro(canone)} + ${formatEuro(oneri)} = ${formatEuro(entrateLorde)}`;
+            document.getElementById('entrateTotali').textContent = formatEuro(entrateLorde);
+
+            // STEP 2: Uscite
+            const percCommissioni = parseFloat(document.getElementById('commissioni').value);
+            const percCedolare = parseFloat(document.getElementById('cedolare').value);
+            const energia = parseFloat(document.getElementById('energia').value);
+            const wifi = parseFloat(document.getElementById('wifi').value);
+            const assicurazioni = parseFloat(document.getElementById('assicurazioni').value);
+            const sicurezza = parseFloat(document.getElementById('sicurezza').value);
+            const imu = parseFloat(document.getElementById('imu').value);
+            const tari = parseFloat(document.getElementById('tari').value);
+            const condominio = parseFloat(document.getElementById('condominio').value);
+
+            const commissioni = canone * (percCommissioni / 100);
+            const cedolare = (canone + oneri) * (percCedolare / 100);
+            
+            // Uscite senza cedolare secca
+            const usciteSenzaCedolare = commissioni + energia + wifi + 
+                                assicurazioni + sicurezza + imu + tari + condominio;
+            
+            // Uscite totali (inclusa cedolare)
+            const usciteTotali = usciteSenzaCedolare + cedolare;
+
+            let dettaglioHTML = `
+                <div class="step">
+                    <div class="step-title">Commissioni Portali</div>
+                    ${formatEuro(canone)} × ${percCommissioni}% = ${formatEuro(commissioni)}
+                </div>
+                <div class="step">
+                    <div class="step-title">Spese Fisse</div>
+                    Energia: ${formatEuro(energia)}<br>
+                    Wi-Fi: ${formatEuro(wifi)}<br>
+                    Assicurazioni: ${formatEuro(assicurazioni)}<br>
+                    Sicurezza: ${formatEuro(sicurezza)}<br>
+                    IMU: ${formatEuro(imu)}<br>
+                    TARI: ${formatEuro(tari)}<br>
+                    Condominio (Ord. + Straord.): ${formatEuro(condominio)}
+                </div>
+            `;
+
+            document.getElementById('dettaglioUscite').innerHTML = dettaglioHTML;
+            document.getElementById('usciteTotali').textContent = formatEuro(usciteSenzaCedolare);
+            document.getElementById('cedolareValue').textContent = formatEuro(cedolare);
+
+            // STEP 3: NOI (due versioni)
+            const noi1 = entrateLorde - usciteSenzaCedolare; // Lordo cedolare
+            const noi2 = entrateLorde - usciteTotali; // Netto cedolare
+
+            document.getElementById('formulaNOI1').textContent = 
+                `${formatEuro(entrateLorde)} - ${formatEuro(usciteSenzaCedolare)} = ${formatEuro(noi1)}`;
+            document.getElementById('noi1Value').textContent = formatEuro(noi1);
+
+            document.getElementById('formulaNOI2').textContent = 
+                `${formatEuro(entrateLorde)} - ${formatEuro(usciteTotali)} = ${formatEuro(noi2)}`;
+            document.getElementById('noi2Value').textContent = formatEuro(noi2);
+
+            // STEP 4: Cap Rate
+            const riskFree = parseFloat(document.getElementById('riskFree').value);
+            const riskPremium = parseFloat(document.getElementById('riskPremium').value);
+            const capRate = riskFree + riskPremium;
+
+            document.getElementById('formulaCapRate').textContent = 
+                `${formatPercent(riskFree)} + ${formatPercent(riskPremium)} = ${formatPercent(capRate)}`;
+            document.getElementById('capRateValue').textContent = formatPercent(capRate);
+
+            // STEP 5: Valutazione (basata su NOI 1 - Lordo Cedolare)
+            const valoreIntrinseco = noi1 / (capRate / 100);
+            document.getElementById('formulaValutazione').textContent = 
+                `${formatEuro(noi1)} / ${formatPercent(capRate)} = ${formatEuro(valoreIntrinseco)}`;
+            document.getElementById('valoreIntrinseco').textContent = formatEuro(valoreIntrinseco);
+
+            // STEP 6: Confronto
+            const valoreMercato = parseFloat(document.getElementById('valoreMercato').value);
+            document.getElementById('valoreIntrinsecoComp').textContent = formatEuro(valoreIntrinseco);
+            document.getElementById('valoreMercatoComp').textContent = formatEuro(valoreMercato);
+
+            const differenza = valoreMercato - valoreIntrinseco;
+            const percDifferenza = (differenza / valoreIntrinseco) * 100;
+
+            let conclusioneHTML = '';
+            if (differenza > 0) {
+                conclusioneHTML = `
+                    <div class="warning-box">
+                        <strong>⚠️ Valutazione: Possibile Sopravvalutazione</strong><br><br>
+                        Il valore di mercato (${formatEuro(valoreMercato)}) supera il valore intrinseco 
+                        di ${formatEuro(differenza)} (+${formatPercent(percDifferenza)}).<br><br>
+                        <strong>Considerazione finanziaria:</strong> Dal punto di vista strettamente finanziario, 
+                        potrebbe essere opportuno valutare la vendita dell'immobile per capitalizzare 
+                        sulla differenza di valore, che può essere dovuta a dinamiche di mercato 
+                        emotive o "irrazionali".
+                    </div>
+                `;
+            } else if (differenza < 0) {
+                conclusioneHTML = `
+                    <div class="success-box">
+                        <strong>✅ Valutazione: Opportunità di Acquisto</strong><br><br>
+                        Il valore di mercato (${formatEuro(valoreMercato)}) è inferiore al valore intrinseco 
+                        di ${formatEuro(Math.abs(differenza))} (${formatPercent(Math.abs(percDifferenza))}).<br><br>
+                        <strong>Considerazione finanziaria:</strong> L'immobile potrebbe rappresentare una 
+                        buona opportunità di investimento, in quanto il mercato lo sta prezzando al di sotto 
+                        del suo valore basato sui flussi di cassa generati.
+                    </div>
+                `;
+            } else {
+                conclusioneHTML = `
+                    <div class="info-box">
+                        <strong>📊 Valutazione: Allineamento con il Mercato</strong><br><br>
+                        Il valore di mercato è sostanzialmente allineato con il valore intrinseco.<br><br>
+                        <strong>Considerazione finanziaria:</strong> L'immobile è prezzato in modo corretto 
+                        rispetto ai flussi di cassa che genera.
+                    </div>
+                `;
+            }
+
+            document.getElementById('conclusione').innerHTML = conclusioneHTML;
+        }
+
+        // Calcola automaticamente all'avvio
+        window.onload = calcolaTutto;
+
+        // Ricalcola quando cambiano i valori
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calcolaTutto);
+        });
+    </script>
+</body>
+</html>
