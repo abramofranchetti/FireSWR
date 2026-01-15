@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ETF – Correlazione e Co-Exceedance</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.min.js"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+    <div class="max-w-6xl mx-auto p-6">
+
+        <h1 class="text-3xl font-bold mb-4">
+            ETF – Correlazione e Co-Exceedance (dati reali)
+        </h1>
+
+        <div class="bg-white p-4 rounded shadow mb-6 text-sm">
+            Questa analisi utilizza <b>solo i giorni di mercato realmente comuni</b>
+            tra gli ETF selezionati. Tutte le metriche sono calcolate su date allineate.
+            Il concetto di correlazione significa che due asset tendono a muoversi insieme in modo proporzionale,
+            quello di co-exceedance si concentra sui <b>crolli simultanei</b>. Mostra quanto due ETF tendono a perdere contemporaneamente.
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div>
+                <label class="font-semibold text-sm">ETF (multi-selezione)</label>
+                <textarea id="selectedText" class="w-full p-2 mt-2 rounded border text-xs" rows="2" readonly></textarea>
+                <input id="etfSearch" type="text" placeholder="Cerca ETF..." class="w-full p-2 mb-2 rounded border text-sm">
+                <select id="etfs" multiple size="6" class="w-full p-2 rounded border"></select>
+                <p class="text-xs text-gray-500 mt-1">Ctrl / Cmd per selezioni multiple</p>
+            </div>
+
+            <div>
+                <label class="font-semibold text-sm">Quantile (%)</label>
+                <input id="quantile" type="number" value="5" class="w-full p-2 rounded border">
+            </div>
+
+            <div>
+                <label class="font-semibold text-sm">Drop assoluto (%)</label>
+                <input id="drop" type="number" value="5" class="w-full p-2 rounded border">
+            </div>
+        </div>
+
+        <button onclick="runAnalysis()" class="bg-blue-600 text-white px-4 py-2 rounded">
+            Calcola
+        </button>
+
+        <pre id="output" class="mt-6 bg-black text-green-400 p-4 rounded text-sm"></pre>
+
+        <!-- SPIEGAZIONI -->
+        <div class="mt-10 bg-white p-6 rounded shadow text-sm leading-relaxed">
+            <h2 class="text-xl font-bold mb-2">Come interpretare le metriche</h2>
+            <b>Correlazione (Pearson)</b><br>
+            Misura la dipendenza lineare media tra i rendimenti.
+            Valori alti indicano movimenti simili, ma <b>non dicono nulla sui crolli estremi</b>.
+            <br><br>
+
+            <b>Quantile-based co-exceedance</b><br>
+            Percentuale di giorni in cui entrambi gli ETF sono contemporaneamente
+            nel peggior <b>u%</b> dei loro rendimenti.
+            <br>
+            <b>Esempio:</b> 2% significa che su 1000 giorni,
+            in circa 20 giorni entrambi erano nella loro coda peggiore.
+            <br><br>
+
+            <b>Quantile-based conditional co-exceedance</b><br>
+            Probabilità che l’ETF B sia in coda <b>dato che</b> l’ETF A è già in coda.
+            È una misura di <b>contagio nei momenti di stress</b>.
+            <br><br>
+
+            <b>Absolute-drop co-exceedance</b><br>
+            Percentuale di giorni in cui entrambi perdono almeno X% nello stesso giorno.
+            È una misura più “intuitiva” perché non dipende dalla distribuzione storica.
+            <br><br>
+
+            <b>Absolute-drop conditional co-exceedance</b><br>
+            Probabilità che B perda almeno X% <b>dato che</b> A ha perso almeno X%.
+            Se è alta, la diversificazione fallisce proprio quando serve.
+            <br><br>
+
+            <b>Nota matematica (breve)</b><br>
+            La correlazione è una media globale.
+            La co-exceedance approssima la <b>dipendenza di coda</b>:
+            due asset possono avere correlazione bassa
+            ma co-exceedance alta durante i crash.
+        </div>
+
+    </div>
+
+    <script>
+        const BASE_RAW = "https://raw.githubusercontent.com/paolocole/Stock-Indexes-Historical-Data/main/ETF/dati/";
+
+        const cache = {};
+        const select = document.getElementById("etfs");
+        const output = document.getElementById("output");
+
+        // Lista statica ETF, aggiorna tu a mano quando vuoi
+        const ETF_LIST = ["100EUA.MI","1PAS.MI","2BTC.DE","2CAR.MI","2LZM.MI","2OIG.MI","2PAL.MI","2STR.MI","2SZM.MI","2TRV.MI","3AAP.MI","3AMZ.MI","3BAB.MI","3BAL.MI","3BAS.MI","3BID.MI","3BRL.MI","3BRS.MI","3BTL.MI","3BTS.MI","3BUL.MI","3BUS.MI","3CFL.MI","3CON.MI","3DEL.MI","3DES.MI","3EML.MI","3EMS.MI","3EUL.MI","3EUS.MI","3FBL.MI","3FNG.MI","3FTG.MI","3GFM.MI","3GOL.MI","3GOO.MI","3GOS.MI","3HCL.MI","3HCS.MI","3ITL.MI","3ITS.MI","3LAA.MI","3LAL.MI","3LAM.MI","3LAP.MI","3LCO.MI","3LCR.MI","3LEN.MI","3LFB.MI","3LMI.MI","3LMO.MI","3LMS.MI","3LNF.MI","3LNI.MI","3LNL.MI","3LNV.MI","3LPA.MI","3LPO.MI","3LPP.MI","3LSP.MI","3LSQ.MI","3LTS.MI","3LUB.MI","3LZN.MI","3MIB.MI","3MRN.MI","3MSF.MI","3NGL.MI","3NGS.MI","3NIO.MI","3NVD.MI","3OIL.MI","3OIS.MI","3PLT.MI","3PYP.MI","3RAC.MI","3SAA.MI","3SAL.MI","3SAM.MI","3SAP.MI","3SCR.MI","3SEN.MI","3SFB.MI","3SFG.MI","3SFT.MI","3SGF.MI","3SIL.MI","3SIS.MI","3SIT.MI","3SMI.MI","3SMO.MI","3SMS.MI","3SNF.MI","3SNI.MI","3SNL.MI","3SNV.MI","3SPA.MI","3SPO.MI","3SPP.MI","3SRA.MI","3SSP.MI","3SSQ.MI","3STS.MI","3SUB.MI","3SUL.MI","3SUR.MI","3SZN.MI","3TSL.MI","3TYL.MI","3TYS.MI","3UBS.MI","3USL.MI","3USS.MI","3WHL.MI","500H.MI","500X.MI","5BTS.MI","5BUS.MI","5ESE.MI","5ESGE.MI","5ESGU.MI","5HEE.MI","5HGE.MI","5MIB.MI","5OGE.MI","5SIT.MI","5TYS.MI","600X.MI","A500.MI","AAA13.MI","AAA35.MI","AASI.MI","ABIEE.MI","ABIU.MI","ACLEE.MI","ACLU.MI","ACPAR.MI","ACWE.MI","ACWIA.MI","ACWIE.MI","AEEM.MI","AEGE.MI","AEJ.MI","AFRN.MI","AGEB.MI","AGED.MI","AGGH.MI","AGOLD.MI","AHYE.MI","AIGA.MI","AIGC.MI","AIGE.MI","AIGI.MI","AIGL.MI","AIGO.MI","AIGP.MI","AIGS.MI","AIPE.MI","AJEUAS.MI","ALAT.MI","ALMN.MI","AM3A.MI","AMALI.MI","ANAUE.MI","ANX.MI","AQWA.MI","ASRD.MI","ASREUA.MI","AT1D.MI","ATIP.MI","AUCO.MI","AUEU.MI","AUHEUA.MI","AUSAUW.MI","AUST.MI","AUTP.MI","AWESG.MI","AWPA.MI","AWSRIA.MI","AWSRIE.MI","B500.MI","BATT.MI","BBEG.MI","BBIL.MI","BBSC.MI","BBTR.MI","BBUS.MI","BERMIB.MI","BIODV.MI","BKCH.MI","BLOK.MI","BLTH.MI","BNKE.MI","BOTZ.MI","BRA.MI","BRE1L.MI","BRE2L.MI","BRE2S.MI","BRE3L.MI","BRE3S.MI","BRES.MI","BRES1.MI","BRIC.MI","BRND.MI","BRNT.MI","BRTIPS.MI","BRZ.MI","BSRIC.MI","BSRID.MI","BSX.MI","BTBENE.MI","BTCE.DE","BTCN.MI","BTP10.MI","BTP13.MI","BTP2S.MI","BTPL5.MI","BTPS1.MI","BTPS5.MI","BUG.MI","BULL.MI","BUND1S.MI","BUND2S.MI","BUNDL5.MI","BUNDS5.MI","BUYB.MI","BXX.MI","C10.MI","C13.MI","C2U.MI","C300.MI","C33.MI","C3M.MI","C40.MI","C50.MI","C500.MI","C53.MI","C5S.MI","C73.MI","CAHEUA.MI","CANA.MI","CANEUA.MI","CAPE.MI","CAPU.MI","CARB.MI","CASH.MI","CATHEM.MI","CATHP.MI","CAUT.MI","CAVE.MI","CB3.MI","CB5.MI","CBEF.MI","CBEU5.MI","CBIO.MI","CBND.MI","CBSEU.MI","CBSUS.MI","CBSUSA.MI","CBSUSE.MI","CBUS.MI","CBUS5.MI","CBUS5E.MI","CBUSE.MI","CC1.MI","CC4.MI","CCBO.MI","CCEUAS.MI","CCLD.MI","CCLN.MI","CCUSAS.MI","CEBE.MI","CEU.MI","CEU2.MI","CEUDIM.MI","CG1.MI","CGB.MI","CH5.MI","CHE3.MI","CHEU.MI","CHINA.MI","CHINE.MI","CHIPL.MI","CHM.MI","CHNT.MI","CI2.MI","CI3.MI","CIB.MI","CIBR.MI","CINA.MI","CINESG.MI","CIT.MI","CITEE.MI","CITYY.MI","CJ1.MI","CL2.MI","CLEMC.MI","CLEUR.MI","CLIM.MI","CLIMA.MI","CLMA.MI","CLMD.MI","CLOU.MI","CLUSA.MI","CLWD.MI","CM9.MI","CMOCT.MI","CMOD.MI","CMOE.MI","CMU.MI","CMUSRI.MI","CMXUS.MI","CN1.MI","CNAA.MI","CNEW.MI","CNYB.MI","CNYE.MI","CO2.MI","CO2L1.MI","COBO.MI","COCO.MI","COFF.MI","COMF.MI","COMH.MI","COMO.MI","CONV.MI","COOLT.MI","COPA.MI","COPX.MI","CORN.MI","CORP.MI","COTN.MI","CP9.MI","CROP.MI","CRPE.MI","CRUD.MI","CS1.MI","CSBGE3.MI","CSBGE7.MI","CSBGU3.MI","CSBGU7.MI","CSCA.MI","CSEMAS.MI","CSEMU.MI","CSEMUS.MI","CSJP.MI","CSKR.MI","CSMIB.MI","CSMXCP.MI","CSNDX.MI","CSNKY.MI","CSPXJ.MI","CSSPX.MI","CSSX5E.MI","CSUK.MI","CSUS.MI","CSUSS.MI","CSYU.MI","CTEKH.MI","CU1.MI","CU2.MI","CU9.MI","CURGE.MI","CW8.MI","CWE.MI","CYBO.MI","CYBR.MI","DAPP.MI","DAX3L.MI","DAX3S.MI","DAXESG.MI","DAXLEV.MI","DAXX.MI","DEL2.MI","DEMR.MI","DES2.MI","DFE.MI","DFEA.MI","DFNS.MI","DGRA.MI","DGRE.MI","DGTL.MI","DHS.MI","DHSA.MI","DHSF.MI","DIGIT.MI","DJCOMEX.MI","DJDVPEX.MI","DJE.MI","DJFOO.MI","DJLEV.MI","DJMC.MI","DJSC.MI","DJST.MI","DMAT.MI","DPAY.MI","DRGN.MI","DRVE.MI","DSUS.MI","DXJ.MI","DXJF.MI","DXJZ.MI","E127.MI","E15S.MI","E500.MI","E50ESG.MI","E50EUA.MI","EACW.MI","EALU.MI","EBBB.MI","EBIZ.MI","EBMMEX.MI","EBRT.MI","EBUL.MI","EBUY.MI","ECAR.MI","ECARS.MI","ECBIOT.MI","ECCO.MI","ECECOM.MI","ECECOP.MI","ECECRD.MI","ECEG.MI","ECH3.MI","ECMA.MI","ECMD.MI","ECMF.MI","ECMS.MI","ECOEUA.MI","ECOF.MI","ECPA.MI","ECR1.MI","ECRN.MI","ECRP3.MI","ECRPI.MI","ECTN.MI","EDME.MI","EDOCI1.MI","EDSRI.MI","EEA.MI","EEIA.MI","EEMK.MI","EEMU.MI","EENG.MI","EESM.MI","EEUE.MI","EEUR.MI","EFCM.MI","EFPX.MI","EGB3.MI","EGB5.MI","EGDGR.MI","EGE.MI","EGEHE.MI","EGEMT.MI","EGO.MI","EGOVI.MI","EGRA.MI","EGRI.MI","EGRO.MI","EGTD.MI","EHBA.MI","EHYA.MI","EHYB.MI","EIB3.MI","EIB5.MI","EIB7.MI","EIBB.MI","EIBX.MI","EIMI.MI","EIMT.MI","EISR.MI","EJAH.MI","EJEGSS.MI","EJP3.MI","EJPY.MI","EKUS.MI","ELCEZ.MI","ELCR.MI","ELECT.MI","ELOVD.MI","ELOW.MI","EM1015.MI","EM13.MI","EM15.MI","EM35.MI","EM57.MI","EM710.MI","EMAAA.MI","EMAE.MI","EMBE.MI","EMBH.MI","EMCR.MI","EMD5.MI","EMDE.MI","EMDV.MI","EMEG.MI","EMESG.MI","EMGEAS.MI","EMGH.MI","EMH5.MI","EMHD.MI","EMIG.MI","EMIGE.MI","EMKT.MI","EMKTB.MI","EMLAA.MI","EMLC.MI","EMLD.MI","EMLI.MI","EMLOC.MI","EMMEUA.MI","EMMUSC.MI","EMOM.MI","EMPAB.MI","EMQQ.MI","EMRG.MI","EMRJ.MI","EMSA.MI","EMSRI.MI","EMUAA.MI","EMUESG.MI","EMUEUA.MI","EMUL.MI","EMUPA.MI","EMUSA.MI","EMUSRI.MI","EMVEUA.MI","EMWE.MI","EMXC.MI","ENAM.MI","ENCO.MI","ENERW.MI","ENGS.MI","ENMU.MI","ENRG.MI","ENWD.MI","ENY.MI","EPEJ.MI","EPRA.MI","EPRE.MI","EPVLD.MI","EQAC.MI","EQEU.MI","EQLTD.MI","EQQJ.MI","EQQQ.MI","EQUA.MI","ERIX.MI","ERNE.MI","EROX.MI","ERTH.MI","ESEE.MI","ESEG.MI","ESEH.MI","ESGE.MI","ESGH.MI","ESGO.MI","ESGU.MI","ESGW.MI","ESGWO.MI","ESOY.MI","ESPO.MI","ESPYY.MI","ESREUA.MI","ESUG.MI","ESVR.MI","ETFCOR.MI","ETFCRP.MI","ETFEU.MI","ETFEZ.MI","ETFGG.MI","ETFGLO.MI","ETFGOV.MI","ETFJAP.MI","ETFMIB.MI","ETFUSA.MI","ETFUSC.MI","ETFUST.MI","ETHA.DE","EU35.MI","EUAG.MI","EUAU.MI","EUCH.MI","EUCO.MI","EUDV.MI","EUE.MI","EUES.MI","EUESRI.MI","EUEUA.MI","EUFM.MI","EUGB.MI","EUHD.MI","EUJP.MI","EUMV.MI","EUN.MI","EUNO.MI","EUPA.MI","EURESG.MI","EUREUA.MI","EURO.MI","EURPA.MI","EURSRI.MI","EUS3.MI","EUS5.MI","EUSE.MI","EUSRI.MI","EUUS.MI","EVAE.MI","EVOE.MI","EVOU.MI","EWAT.MI","EXS3.MI","EZNC.MI","F4DE.MI","FAEU.MI","FAMAMWA.MI","FAMEUSA.MI","FAMLSSA.MI","FAMMAIA.MI","FAMMWFA.MI","FAMMWSA.MI","FAMSF3A.MI","FAMSFFA.MI","FAMTELA.MI","FAMUSSA.MI","FAMWCSA.MI","FBTA.MI","FCLD.MI","FCRU.MI","FDHT.MI","FDNI.MI","FDRV.MI","FEDF.MI","FEME.MI","FEMI.MI","FEMR.MI","FEQD.MI","FEUI.MI","FEUR.MI","FEUZ.MI","FFGC.MI","FFGE.MI","FGEU.MI","FGGB.MI","FGHY.MI","FGLR.MI","FGQI.MI","FINS.MI","FINX.MI","FJPR.MI","FLEQ.MI","FLESA.MI","FLESAA.MI","FLQA.MI","FLRG.MI","FLUC.MI","FLXB.MI","FLXC.MI","FLXD.MI","FLXE.MI","FLXG.MI","FLXIG.MI","FLXK.MI","FLXT.MI","FLXU.MI","FLXX.MI","FMET.MI","FMI.MI","FOFD.MI","FOHW.MI","FOOD.MI","FPXR.MI","FRCP.MI","FREP.MI","FRNW.MI","FSEM.MI","FSKY.MI","FSME.MI","FSMF.MI","FTNG.MI","FTS100.MI","FUSA.MI","FUSDQ.MI","FUSR.MI","FUSU.MI","FWEA.MI","FWRA.MI","FXC.MI","GAGG.MI","GAGH.MI","GAS1S.MI","GAS2S.MI","GAS3L.MI","GAS3S.MI","GASL3.MI","GASRI.MI","GBE3.MI","GBE5.MI","GBEU.MI","GBHE.MI","GBHYC.MI","GBS.MI","GBSE.MI","GCLE.MI","GCVE.MI","GDAXIEX.MI","GDIG.MI","GDX.MI","GDXJ.MI","GEBE.MI","GEMU.MI","GENDED.MI","GENDEE.MI","GEU3C.MI","GEU3D.MI","GFA.MI","GFAM.MI","GFOF.MI","GGB.MI","GGE.MI","GGOVI.MI","GGRA.MI","GGRE.MI","GHYE.MI","GHYEH.MI","GISE.MI","GIST.MI","GLAE.MI","GLAG.MI","GLDV.MI","GLDVD.MI","GLDVDE.MI","GLRE.MI","GLUX.MI","GNOM.MI","GOAI.MI","GOAT.MI","GOL1L.MI","GOL1S.MI","GOL3L.MI","GOL3S.MI","GOVA.MI","GOVG.MI","GOVH.MI","GOVS.MI","GOVY.MI","GREAL.MI","GREIT.MI","GRFANG.MI","GRIDG.MI","GRNS.MI","GRON.MI","GSCE.MI","GSEM.MI","GSLC.MI","H1DRO.MI","H2O.MI","H50A.MI","H50E.MI","HAGGH.MI","HBDV.MI","HCAA.MI","HCHA.MI","HDLV.MI","HDRO.MI","HEAL.MI","HEDF.MI","HEDJ.MI","HEMA.MI","HEMV.MI","HERUI1.MI","HFRN.MI","HGVU.MI","HIDD.MI","HK.MI","HKOR.MI","HMAF.MI","HMCA.MI","HMCH.MI","HMEA.MI","HMEM.MI","HMEU.MI","HMJD.MI","HMWA.MI","HMWD.MI","HMXJ.MI","HNSC.MI","HOGS.MI","HPAE.MI","HPAJ.MI","HPAU.MI","HPAW.MI","HPEM.MI","HPJP.MI","HPRD.MI","HSEM.MI","HSEU.MI","HSGE.MI","HSJD.MI","HSPA.MI","HSPD.MI","HSRID.MI","HSTE.MI","HSUD.MI","HSWD.MI","HSXD.MI","HTWN.MI","HTWO.MI","HWDE.MI","HWVL.MI","HY.MI","HYBB.MI","HYC.MI","HYDE.MI","HYEM.MI","HYFA.MI","HYGN.MI","HYLD.MI","HYS.MI","HYSRI.MI","IAPD.MI","IASP.MI","IAT1.MI","IB25.MI","IB26.MI","IB27.MI","IB28.MI","IBCI.MI","IBCX.MI","IBGL.MI","IBGM.MI","IBGS.MI","IBGX.MI","IBGY.MI","IBGZ.MI","IBTM.MI","IBTS.MI","IBZL.MI","ICFP.MI","ICOV.MI","IDVY.MI","IE3E.MI","IEAC.MI","IEAG.MI","IEBB.MI","IEEM.MI","IEGE.MI","IEMB.MI","IEMO.MI","IEQU.MI","IESE.MI","IESZ.MI","IEUX.MI","IEVL.MI","IEWQ.MI","IEXF.MI","IFFF.MI","IFSE.MI","IFSU.MI","IFSW.MI","IGLT.MI","IH2O.MI","IHYE.MI","IHYG.MI","IHYU.MI","IITA.MI","IITB.MI","IJPE.MI","IJPN.MI","IKOR.MI","IMEU.MI","IMIB.MI","IMIE.MI","INAA.MI","INBCHN.MI","INDG.MI","INDGW.MI","INDI.MI","INDO.MI","INFHL.MI","INFL.MI","INFL1.MI","INFL10.MI","INFLA.MI","INFR.MI","INFU.MI","INRG.MI","INXGI.MI","IPAB.MI","IPIR.MI","IPRP.MI","IQCT.MI","IQEC.MI","IQEE.MI","IQEG.MI","IQJP.MI","IQMU.MI","IQSA.MI","IQSD.MI","IQSE.MI","IRCP.MI","ISAG.MI","ISEMV.MI","ISF.MI","ISFLOE.MI","ISFLTR.MI","ISJP.MI","ISMVUS.MI","ISPY.MI","ISSUSW.MI","ISWING.MI","ITAMID.MI","ITAPIR.MI","ITBL.MI","ITEK.MI","ITKY.MI","ITPD.MI","ITPS.MI","ITWN.MI","IU0E.MI","IUCB.MI","IUES.MI","IUKD.MI","IUKP.MI","IUSA.MI","IUSP.MI","IVOA.MI","IWDE.MI","IWDP.MI","IWMO.MI","IWQE.MI","IWQU.MI","IWRD.MI","IWSZ.MI","IWVL.MI","JAPB.MI","JAPNE.MI","JBEM.MI","JCCT.MI","JCHA.MI","JCHE.MI","JCSA.MI","JE13.MI","JEDII.MI","JEGN.MI","JEST.MI","JETS.MI","JGHY.MI","JGRN.MI","JGSE.MI","JJEH.MI","JMBA.MI","JMBE.MI","JNKE.MI","JPA.MI","JPCE.MI","JPCT.MI","JPE3.MI","JPEH.MI","JPESG.MI","JPEU.MI","JPEUB.MI","JPGL.MI","JPHE.MI","JPMB.MI","JPN.MI","JPNA.MI","JPNEUA.MI","JPNH.MI","JPNK.MI","JPSA.MI","JPSR.MI","JPSRE.MI","JPST.MI","JR15.MI","JREA.MI","JREB.MI","JREC.MI","JREE.MI","JREG.MI","JREJ.MI","JREM.MI","JREU.MI","JREZ.MI","JRGE.MI","JRUB.MI","JRUE.MI","JSEG.MI","JSEU.MI","JSHE.MI","JT13.MI","JT13E.MI","JU13.MI","JUHE.MI","JYEH.MI","KA50A.MI","KARS.MI","KESGA.MI","KOIN.MI","KOR.MI","KSTRA.MI","KUREA.MI","KWBEA.MI","LABL.MI","LAFRI.MI","LAGR.MI","LALU.MI","LAPEX.MI","LAZRR.MI","LBRT.MI","LBUL.MI","LCAS.MI","LCCN.MI","LCEU.MI","LCFE.MI","LCJP.MI","LCOC.MI","LCOP.MI","LCOR.MI","LCUS.MI","LCWD.MI","LCWLD.MI","LDAP.MI","LDAX2S.MI","LDCE.MI","LDCU.MI","LDEU.MI","LDISW.MI","LEAD.MI","LEMA.MI","LEMU.MI","LEONIA.MI","LERN.MI","LEVMIB.MI","LFINSW.MI","LGAIAI.MI","LGAP.MI","LGDOCT.MI","LGEU.MI","LGGL.MI","LGGLUG.MI","LGJP.MI","LGOV.MI","LGRE.MI","LGUS.MI","LHLTW.MI","LINXB.MI","LINXC.MI","LITU.MI","LMATW.MI","LNGA.MI","LNIK.MI","LOCK.MI","LOIL.MI","LOWV.MI","LPET.MI","LPLA.MI","LQDE.MI","LQQA.MI","LSIL.MI","LSTAW.MI","LSUG.MI","LTAM.MI","LTNOW.MI","LTUR.MI","LUSA.MI","LUSC.MI","LUTIW.MI","LUTR.MI","LVLC.MI","LVLE.MI","LVO.MI","LWCE.MI","LWCR.MI","LWEA.MI","LXEMU.MI","LYACWI.MI","LYEE.MI","LYSMART.MI","LYXBNK.MI","LYXHEA.MI","LYXPER.MI","LYXSP.MI","LYXTNO.MI","LYXUTI.MI","LYYQ.MI","MCEU.MI","MCHIN.MI","MCHT.MI","MCPA.MI","MDA.MI","MDBA.MI","MDBE.MI","META.MI","METAV.MI","METE.MI","METR.MI","MEU.MI","MEUD.MI","MFDD.MI","MGIN.MI","MGT.MI","MIB3L.MI","MIB3S.MI","MIBA.MI","MIBESG.MI","MILLE.MI","MINT.MI","MLPD.MI","MLPS.MI","MMLP.MI","MOAT.MI","MSE.MI","MSGW.MI","MSRUSA.MI","MSRUSB.MI","MSSM.MI","MTAV.MI","MTI.MI","MTIG.MI","MTVS.MI","MTX.MI","MUNI.MI","MUSRI.MI","MVEU.MI","MVOL.MI","MWRD.MI","MWSHI.MI","MXFS.MI","MXUD.MI","MXUS.MI","N400.MI","NATO.MI","NDQ3L.MI","NDQ3S.MI","NDXH.MI","NESG.MI","NGA1L.MI","NGA2L.MI","NGA3L.MI","NGA3S.MI","NGAS.MI","NICK.MI","NOEU.MI","NRAM.MI","NRJC.MI","NUCL.MI","NXTG.MI","OATL5.MI","OATS5.MI","OCEAN.MI","OG35.MI","OIH.MI","OUFE.MI","PABEU.MI","PABEZ.MI","PABUS.MI","PABWD.MI","PACEUA.MI","PADV.MI","PAEM.MI","PAEU.MI","PAJP.MI","PAUS.MI","PAVE.MI","PAWD.MI","PCOM.MI","PEMD.MI","PETZ.MI","PEX.MI","PEXE.MI","PHAG.MI","PHAU.MI","PHPD.MI","PHPM.MI","PHPT.MI","PJS1.MI","PLANT.MI","PMNT.MI","PPEU.MI","PQVM.MI","PRFD.MI","PRFE.MI","PSDE.MI","PSEUHI.MI","PSFE.MI","PSRE.MI","PSREUA.MI","PSRF.MI","PSRW.MI","PUIG.MI","QCEU.MI","QQQ3.MI","QQQS.MI","QYLD.MI","R1JKEX.MI","R2US.MI","RAM3L.MI","RAM3S.MI","RAYZ.MI","RBOT.MI","REEU.MI","REMX.MI","RENW.MI","REUS.MI","REUSE.MI","REWLD.MI","RIEU.MI","RIUS.MI","RMAU.MI","RNRG.MI","ROBO.MI","RQFI.MI","RS2K.MI","RTA.MI","RTWO.MI","S500.MI","S500H.MI","S6EW.MI","SALL.MI","SAUA.MI","SAUS.MI","SAWD.MI","SBEM.MI","SBEME.MI","SBIO.MI","SBRT.MI","SBUL.MI","SCITY.MI","SCOP.MI","SD3PEX.MI","SDG9.MI","SDHY.MI","SDIV.MI","SDJ600.MI","SDJE50.MI","SDJE5D.MI","SE15.MI","SECA.MI","SEEU.MI","SEGA.MI","SEL.MI","SEMA.MI","SEME.MI","SEML.MI","SESR.MI","SETM.MI","SEUC.MI","SF1EUA.MI","SF5EUA.MI","SFNG.MI","SFTG.MI","SGBS.MI","SGFM.MI","SGLD.MI","SGLE.MI","SHEMB.MI","SHEME.MI","SIL1S.MI","SIL3L.MI","SIL3S.MI","SILV.MI","SIMT.MI","SIVE.MI","SJNE.MI","SJNK.MI","SJPA.MI","SKYY.MI","SLVR.MI","SMAFY.MI","SMARTU.MI","SMCX.MI","SMEA.MI","SMH.MI","SMRTA.MI","SMSEUR.MI","SMSJPN.MI","SMSWLD.MI","SNGA.MI","SNIK.MI","SNSR.MI","SOIL.MI","SOLR.MI","SOYB.MI","SOYO.MI","SP5EUY.MI","SPDA.MI","SPDE.MI","SPEEU.MI","SPEL.MI","SPELE.MI","SPEMHE.MI","SPEQ.MI","SPESGU.MI","SPHC.MI","SPLW.MI","SPMVV.MI","SPQB.MI","SPQH.MI","SPWNRG.MI","SPX2S.MI","SPX3L.MI","SPX3S.MI","SPXD.MI","SPXE.MI","SPXH.MI","SPXJ.MI","SPXS.MI","SPY4.MI","SPY5.MI","SR2000.MI","SRIC.MI","SRIC3.MI","SRIC5.MI","SRIE.MI","SRIJ.MI","SRSA.MI","SS1EUA.MI","SSIL.MI","STHE.MI","STHY.MI","STKX.MI","STNX.MI","STOXXEEX.MI","STOXXIEX.MI","STPU.MI","STPX.MI","STQX.MI","STRX.MI","STSX.MI","STTX.MI","STUX.MI","STWX.MI","STZX.MI","SUA0.MI","SUAS.MI","SUGA.MI","SUJP.MI","SUOE.MI","SUOU.MI","SUSC.MI","SUSE.MI","SUSM.MI","SW2CHB.MI","SWDA.MI","SWRD.MI","SWRE.MI","SWTEC.MI","SX5E3L.MI","SX5E3S.MI","SXLB.MI","SXLC.MI","SXLE.MI","SXLF.MI","SXLI.MI","SXLK.MI","SXLP.MI","SXLU.MI","SXLV.MI","SXLY.MI","TAEH.MI","TANN.MI","TAT.MI","TCBT.MI","TDIV.MI","TEET.MI","TELE.MI","TELEW.MI","TEMP.MI","TFRN.MI","TGBT.MI","THEP.MI","THMZZ.MI","TIGA.MI","TIGR.MI","TINE.MI","TINM.MI","TIP10D.MI","TIP10E.MI","TIP1D.MI","TIP1E.MI","TIPE.MI","TIPU.MI","TPXH.MI","TRE3.MI","TRE7.MI","TREI.MI","TREL.MI","TRES.MI","TRET.MI","TREX.MI","TRS3.MI","TRS5.MI","TRSX.MI","TRSY.MI","TRUD.MI","TRVL.MI","TRXE.MI","TRYP.MI","TSLQ.MI","TSWE.MI","U10H.MI","U13H.MI","U15E.MI","U15S.MI","U3O8.MI","UBBB.MI","UCPA.MI","UCRP.MI","UEDV.MI","UESG.MI","UGAS.MI","UHYE.MI","UINE.MI","UKE.MI","UKGBPB.MI","UL3S.MI","ULOVD.MI","ULOVE.MI","UNCA.MI","UNIC.MI","UPVLD.MI","UQLTD.MI","UQLTE.MI","URAM.MI","URNU.MI","US1.MI","US10.MI","US10C.MI","US13.MI","US37.MI","US7.MI","USAEUA.MI","USAEUY.MI","USAPA.MI","USAUSW.MI","USCE.MI","USCO.MI","USDC.MI","USDE.MI","USDV.MI","USE3.MI","USE5.MI","USESG.MI","USESGA.MI","USEU.MI","USEUWH.MI","USFMD.MI","USFRN.MI","USHY.MI","USHYC.MI","USIC.MI","USIG.MI","USIH.MI","USMUFE.MI","USPA.MI","USRI.MI","USRIH.MI","USSMC.MI","USSRF.MI","USSRI.MI","USSRIE.MI","UST10F.MI","UST1F.MI","UST5L.MI","UST5S.MI","USTE.MI","USTH.MI","USVEUY.MI","USYH.MI","UT1EUA.MI","UT7EUA.MI","V3AA.MI","V3AL.MI","V3EA.MI","V3EL.MI","V3GE.MI","V3GF.MI","V3MAA.MI","V3MLA.MI","V3NA.MI","V3NL.MI","V3PAA.MI","V3PLA.MI","V3REV.MI","V3RFV.MI","V3SDV.MI","V3SE.MI","V3SUV.MI","VAGF.MI","VAPX.MI","VCEU.MI","VDCA.MI","VDCE.MI","VDEA.MI","VDST.MI","VDTA.MI","VDTE.MI","VDTM.MI","VECA.MI","VECP.MI","VEGII.MI","VEMT.MI","VERE.MI","VETY.MI","VEUR.MI","VEVE.MI","VFEA.MI","VFEM.MI","VGEA.MI","VHVE.MI","VHYL.MI","VITA.MI","VIX1L.MI","VIX1S.MI","VIXL.MI","VJPA.MI","VJPE.MI","VJPN.MI","VMIG.MI","VNGA20.MI","VNGA40.MI","VNGA60.MI","VNGA80.MI","VNGD20.MI","VNGD40.MI","VNGD60.MI","VNGD80.MI","VNRA.MI","VNTM.MI","VOLT.MI","VPN.MI","VRPS.MI","VTOF.MI","VUAA.MI","VUCE.MI","VUCP.MI","VUKE.MI","VUSA.MI","VUSC.MI","VUTY.MI","VWCE.MI","VWCG.MI","VWRL.MI","WATC.MI","WATT.MI","WBLK.MI","WCAR.MI","WCBR.MI","WCCA.MI","WCLD.MI","WCOA.MI","WCOE.MI","WCPA.MI","WDEE.MI","WDESG.MI","WDESGE.MI","WDFE.MI","WDHE.MI","WDMVO.MI","WDNA.MI","WDTE.MI","WEAT.MI","WELL.MI","WEMT2.MI","WENE.MI","WENT.MI","WESGH.MI","WESGL.MI","WFIN.MI","WGLDA.MI","WHCS.MI","WHEA.MI","WITS.MI","WLD.MI","WLDC.MI","WLDH.MI","WLDX.MI","WMIB.MI","WMTS.MI","WNDE.MI","WNDY.MI","WNER.MI","WOPA.MI","WRCY.MI","WRDEUA.MI","WRNW.MI","WS5X.MI","WSC.MI","WSCE.MI","WSPX.MI","WSREUA.MI","WSRI.MI","WSRIA.MI","WSRIE.MI","WSRUS.MI","WTAI.MI","WTDEM.MI","WTDGSE.MI","WTEEI.MI","WTI1L.MI","WTI2L.MI","WTI2S.MI","WTI3L.MI","WTI3S.MI","WTID.MI","WTIS1.MI","WTRE.MI","X13E.MI","X13G.MI","X15E.MI","X1G.MI","X25E.MI","X35E.MI","X57E.MI","X710.MI","X7PS.MI","XAD1.MI","XAD2.MI","XAD3.MI","XAD5.MI","XAD6.MI","XAIX.MI","XAT1.MI","XAUS.MI","XAXJ.MI","XB4F.MI","XBAE.MI","XBAG.MI","XBLC.MI","XBOT.MI","XBRMIB.MI","XCAN.MI","XCHA.MI","XCNA.MI","XCO2E.MI","XCS2.MI","XCS6.MI","XCS7.MI","XCTE.MI","XD3E.MI","XD5E.MI","XD9EU.MI","XD9U.MI","XDAX.MI","XDBC.MI","XDEB.MI","XDEE.MI","XDEM.MI","XDEP.MI","XDEQ.MI","XDER.MI","XDEV.MI","XDEW.MI","XDEX.MI","XDG3.MI","XDG6.MI","XDG7.MI","XDGE.MI","XDGI.MI","XDGU.MI","XDJP.MI","XDNE.MI","XDNY.MI","XDPE.MI","XDPU.MI","XDW0.MI","XDWC.MI","XDWD.MI","XDWF.MI","XDWH.MI","XDWI.MI","XDWM.MI","XDWS.MI","XDWT.MI","XDWU.MI","XDWY.MI","XEIN.MI","XEMB.MI","XEML.MI","XEMN.MI","XEON.MI","XEPA.MI","XESC.MI","XESX.MI","XEUM.MI","XEWE.MI","XEZBX.MI","XFFE.MI","XFNT.MI","XFVT.MI","XG11.MI","XG12.MI","XG7S.MI","XGBE.MI","XGBU.MI","XGDE.MI","XGDU.MI","XGEN.MI","XGEXX.MI","XGII.MI","XGIN.MI","XGIU.MI","XGLE.MI","XGSD.MI","XGSH.MI","XGVD.MI","XHY1.MI","XHYG.MI","XIGB.MI","XJSE.MI","XLBS.MI","XLCS.MI","XLES.MI","XLFS.MI","XLIS.MI","XLKS.MI","XLPE.MI","XLPS.MI","XLUS.MI","XLVS.MI","XLYS.MI","XMAE.MI","XMAS.MI","XMAW.MI","XMBR.MI","XMEA.MI","XMEM.MI","XMEU.MI","XMEX.MI","XMIB.MI","XMIN.MI","XMJP.MI","XMK9.MI","XMKO.MI","XMME.MI","XMOV.MI","XMUS.MI","XMVE.MI","XMWO.MI","XNAS.MI","XNGI.MI","XNIF.MI","XNJPN.MI","XNNV.MI","XNUS.MI","XNZE.MI","XNZW.MI","XPPE.MI","XPXJ.MI","XQUA.MI","XQUE.MI","XQUI.MI","XRES.MI","XRME.MI","XRS2.MI","XRSM.MI","XS2L.MI","XS5E.MI","XS7W.MI","XSDX.MI","XSFR.MI","XSGI.MI","XSLE.MI","XSLR.MI","XSMI.MI","XSOE.MI","XSPS.MI","XSPX.MI","XSSX.MI","XSTR.MI","XSX6.MI","XSXD.MI","XT01U.MI","XT21.MI","XTC5.MI","XTIPX.MI","XUEM.MI","XUHY.MI","XUTCI.MI","XUTD.MI","XUTE.MI","XWEH.MI","XWTS.MI","XX25.MI","XXSC.MI","XY4P.MI","XYLD.MI","XYLE.MI","XYP1.MI","XZBUC.MI","XZE5.MI","XZEB.MI","XZEG.MI","XZEME.MI","XZEU.MI","XZEW.MI","XZEZ.MI","XZHE.MI","XZHY.MI","XZME.MI","XZMJ.MI","XZMU.MI","XZSP.MI","XZW0.MI","XZWEM.MI","XZWG.MI","YODA.MI","ZERO.MI","ZETH.DE","ZINC.MI"]
+
+        const DEFAULT_ETF = ["SWDA.MI", "SGLD.MI"];
+
+        // Popola select
+        ETF_LIST.forEach(e => {
+            const opt = new Option(e, e);
+            if (DEFAULT_ETF.includes(e)) opt.selected = true;
+            select.add(opt);
+        });
+        updateSelectedText();
+
+        // Carica dati di un ETF e calcola rendimenti
+        async function loadETF(ticker) {
+            if (cache[ticker]) return cache[ticker];
+
+            const txt = await (await fetch(BASE_RAW + ticker + ".csv")).text();
+            const p = Papa.parse(txt, { header: true, delimiter: ";", dynamicTyping: true });
+
+            const rows = p.data
+                .filter(r => r.Date && r.TRDPRC_1)
+                .map(r => ({ date: r.Date, price: r.TRDPRC_1 }));
+
+            let out = [];
+            for (let i = 1; i < rows.length; i++) {
+                out.push({
+                    date: rows[i].date,
+                    ret: rows[i].price / rows[i - 1].price - 1
+                });
+            }
+
+            cache[ticker] = out;
+            return out;
+        }
+
+        function runAnalysis() {
+            const selected = [...select.selectedOptions].map(o => o.value);
+            if (selected.length < 2) { alert("Seleziona almeno due ETF"); return; }
+
+            const u = document.getElementById("quantile").value / 100;
+            const X = document.getElementById("drop").value / 100;
+            output.textContent = "";
+
+            Promise.all(selected.map(loadETF)).then(series => {
+                const dateSets = series.map(s => new Set(s.map(d => d.date)));
+                const commonDates = [...dateSets[0]].filter(d => dateSets.every(s => s.has(d))).sort();
+                const T = commonDates.length;
+                const startDate = commonDates[0];
+                const endDate = commonDates[T - 1];
+
+                output.textContent +=
+                    `ETF selezionati: ${selected.join(", ")}
+Periodo comune: ${T} giorni di mercato
+Dal ${startDate} al ${endDate}
+
+Quantile u: ${u * 100}%
+Drop assoluto X: ${X * 100}%
+
+`;
+
+                const maps = series.map(s => {
+                    const m = {};
+                    s.forEach(r => m[r.date] = r.ret);
+                    return m;
+                });
+
+                for (let i = 0; i < selected.length; i++) {
+                    for (let j = i + 1; j < selected.length; j++) {
+                        const A = selected[i], B = selected[j];
+                        const x = [], y = [];
+
+                        commonDates.forEach(d => {
+                            x.push(maps[i][d]);
+                            y.push(maps[j][d]);
+                        });
+
+                        const corr = math.corr(x, y);
+
+                        const qx = math.quantileSeq(x, u);
+                        const qy = math.quantileSeq(y, u);
+
+                        let bothQ = 0, xQ = 0, bothA = 0, xA = 0;
+
+                        for (let k = 0; k < T; k++) {
+                            if (x[k] <= qx) xQ++;
+                            if (x[k] <= qx && y[k] <= qy) bothQ++;
+
+                            if (x[k] <= -X) xA++;
+                            if (x[k] <= -X && y[k] <= -X) bothA++;
+                        }
+
+                        output.textContent +=
+                            `---------------------------------------
+Coppia: ${A} – ${B}
+
+Correlazione (Pearson): ${corr.toFixed(4)}
+- Pearson linear correlation of daily returns (range -1..1: 1 means perfect positive linear relation).
+
+Quantile-based co-exceedance: ${(bothQ / T * 100).toFixed(2)} %
+- fraction (in %) of days both assets are in their lower u quantile simultaneously.
+
+Quantile-based conditional co-exceedance: ${(bothQ / xQ * 100).toFixed(2)} %
+- P(asset B in lower u quantile | asset A is in lower u quantile) (in %).
+
+Absolute-drop co-exceedance: ${(bothA / T).toFixed(4)}
+- fraction of days both assets drop by at least X (e.g. X=0.05 means -5%).
+
+Absolute-drop conditional co-exceedance: ${(bothA / xA).toFixed(4)}
+- P(asset B drops >= X | asset A drops >= X).
+
+Eventi quantile ${A}: ${xQ}
+Eventi quantile congiunti: ${bothQ}
+Eventi drop ${A}: ${xA}
+Eventi drop congiunti: ${bothA}
+
+`;
+                    }
+                }
+            });
+        }
+
+        runAnalysis();
+
+        document.getElementById("etfSearch").addEventListener("input", e => {
+            const q = e.target.value.toLowerCase();
+            [...select.options].forEach(o => {
+                o.hidden = !o.value.toLowerCase().includes(q);
+            });
+        });
+
+        function updateSelectedText() {
+            const selected = [...select.selectedOptions].map(o => o.value);
+            document.getElementById("selectedText").value = selected.join(",");
+        }
+        select.addEventListener("change", updateSelectedText);
+    </script>
+</body>
+
+</html>
