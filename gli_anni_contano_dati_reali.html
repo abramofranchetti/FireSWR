@@ -97,10 +97,7 @@
 
         <label>Scenario A: continua il PAC dopo lo stop</label>
         <div class="custom-control custom-switch">
-            <input type="checkbox"
-                class="custom-control-input"
-                id="continuaPAC"
-                onchange="aggiorna()">
+            <input type="checkbox" class="custom-control-input" id="continuaPAC" onchange="aggiorna()">
             <label class="custom-control-label" for="continuaPAC">
                 Continua a versare anche dopo lo stop (del PAC A)
             </label>
@@ -136,6 +133,15 @@
                 <b>$ <span id="guadagnoB">--</span></b>
             </p>
         </div>
+        <hr>
+
+        <h3 class="text-center mt-4">Analisi rolling windows (robustezza statistica)</h3>
+
+        <p>
+            Questa analisi ripete la simulazione su <b>tutte le finestre temporali possibili</b>
+            nei dati storici disponibili (1970–2025), eliminando l’effetto del periodo scelto.
+        </p>
+        <div class="result mt-3" id="outputRolling" style="display:none;"></div>
     </div>
     <div id="disclaimer-container"></div>
 
@@ -160,6 +166,51 @@
             popolaDate();
             aggiorna();
         }
+
+        function simulaScenarioARolling(start, versamento, mesiPAC, mesiTotali) {
+            let quote = 0;
+            let versato = 0;
+
+            for (let i = 0; i < mesiTotali; i++) {
+                if (i < mesiPAC) {
+                    quote += versamento / sp500[start + i].value;
+                    versato += versamento;
+                }
+            }
+
+            return {
+                capitaleFinale: quote * sp500[start + mesiTotali - 1].value,
+                capitaleVersato: versato
+            };
+        }
+
+        function simulaPACRolling(start, versamento, mesiPAC) {
+            let quote = 0;
+            let versato = 0;
+            for (let i = 0; i < mesiPAC; i++) {
+                quote += versamento / sp500[start + i].value;
+                versato += versamento;
+            }
+
+
+            return {
+                capitaleFinale: quote * sp500[start + mesiPAC - 1].value,
+                capitaleVersato: versato
+            };
+        }
+
+        function trovaVersamentoRolling(target, start, mesiPAC) {
+            let min = 0, max = 5000;
+
+            for (let i = 0; i < 40; i++) {
+                const mid = (min + max) / 2;
+                const cap = simulaPACRolling(start, mid, mesiPAC).capitaleFinale;
+                cap > target ? max = mid : min = mid;
+            }
+
+            return (min + max) / 2;
+        }
+
 
         // ===================== DATE =====================
         function popolaDate() {
@@ -271,20 +322,20 @@
                 id: 'lineaVerticale',
                 afterDraw(chart) {
                     if (!continuaPAC) {
-                    const x = chart.scales.x.getPixelForValue(mesiPAC - 1);
-                    const ctx = chart.ctx;
+                        const x = chart.scales.x.getPixelForValue(mesiPAC - 1);
+                        const ctx = chart.ctx;
 
-                    ctx.save();
-                    ctx.strokeStyle = 'red';
-                    ctx.beginPath();
-                    ctx.moveTo(x, chart.chartArea.top);
-                    ctx.lineTo(x, chart.chartArea.bottom);
-                    ctx.stroke();
+                        ctx.save();
+                        ctx.strokeStyle = 'red';
+                        ctx.beginPath();
+                        ctx.moveTo(x, chart.chartArea.top);
+                        ctx.lineTo(x, chart.chartArea.bottom);
+                        ctx.stroke();
 
-                    ctx.fillStyle = 'red';
-                    ctx.font = "bold 14px Arial";
-                    ctx.fillText("Stop Versamenti", x + 4, chart.chartArea.top + 15);
-                    ctx.restore();
+                        ctx.fillStyle = 'red';
+                        ctx.font = "bold 14px Arial";
+                        ctx.fillText("Stop Versamenti", x + 4, chart.chartArea.top + 15);
+                        ctx.restore();
                     }
                 }
             };
@@ -345,7 +396,98 @@
             document.getElementById("guadagnoB").innerText = (scenB.capitaleFinale - scenB.capitaleVersato).toFixed(0) + " ovvero " + ((scenB.capitaleFinale - scenB.capitaleVersato) / scenB.capitaleVersato * 100).toFixed(2) + "%";
 
             disegnaGrafico(start, anniPAC, anniFuturi, versamento, versB, continuaPAC);
+            eseguiRolling();
         }
+
+        function eseguiRolling() {
+            let risultati = {
+                capFinaleA: [],
+                capVersA: [],
+                guadA: [],
+                versB: [],
+                capVersB: [],
+                guadB: []
+            };
+
+            const versamentoA = parseFloat(document.getElementById("versamento").value);
+            const anniPAC = parseInt(document.getElementById("anniPAC").value);
+            const anniFuturi = parseInt(document.getElementById("anniFuturi").value);
+
+            const mesiPAC = anniPAC * 12;
+            const mesiTotali = (anniPAC + anniFuturi) * 12;
+
+            const maxStart = sp500.length - mesiTotali;
+
+            for (let start = 0; start <= maxStart; start++) {
+
+                const scenA = simulaScenarioARolling(
+                    start,
+                    versamentoA,
+                    mesiPAC,
+                    mesiTotali
+                );
+
+                const startB = start + mesiPAC;
+
+                const versB = trovaVersamentoRolling(
+                    scenA.capitaleFinale,
+                    startB,
+                    mesiPAC
+                );
+
+                const scenB = simulaPACRolling(
+                    startB,
+                    versB,
+                    mesiPAC
+                );
+
+                risultati.finestreUsate = maxStart + 1;
+
+                risultati.capFinaleA.push(scenA.capitaleFinale);
+                risultati.capVersA.push(scenA.capitaleVersato);
+                risultati.guadA.push(scenA.capitaleFinale - scenA.capitaleVersato);
+
+                risultati.versB.push(versB);
+                risultati.capVersB.push(scenB.capitaleVersato);
+                risultati.guadB.push(scenB.capitaleFinale - scenB.capitaleVersato);
+            }
+
+            mostraRolling(risultati, versamentoA);
+        }
+
+        function media(arr) {
+            return arr.reduce((a, b) => a + b, 0) / arr.length;
+        }
+
+        function mostraRolling(r, versamentoA) {
+            const capFinaleA = media(r.capFinaleA);
+            const capVersA = media(r.capVersA);
+            const guadA = media(r.guadA);
+
+            const versB = media(r.versB);
+            const capVersB = media(r.capVersB);
+            const guadB = media(r.guadB);
+
+            const out = document.getElementById("outputRolling");
+            out.style.display = "block";
+
+            out.innerHTML = `
+        <h4>Risultati medi su ${r.finestreUsate} finestre temporali</h4>
+        <b>Versamento medio mensile scenario A:</b> $ ${versamentoA.toFixed(0)}<br>
+        <b>Capitale medio versato scenario A:</b> $ ${capVersA.toFixed(0)}<br>
+        <b>Capitale medio finale scenario A:</b> $ ${capFinaleA.toFixed(0)}<br>
+        <b>Guadagno medio scenario A:</b> $ ${guadA.toFixed(0)}
+        ovvero ${(guadA / capVersA * 100).toFixed(2)}%<br><br>
+
+        <b>Versamento medio mensile iniziando alla fine del PAC A (scenario B):</b> $ ${versB.toFixed(0)}<br>
+        <b>Capitale medio versato scenario B:</b> $ ${capVersB.toFixed(0)}<br>
+        <b>Capitale medio finale scenario B:</b> $ ${capFinaleA.toFixed(0)}<br>
+        <b>Guadagno medio scenario B:</b> $ ${guadB.toFixed(0)}
+        ovvero ${(guadB / capVersB * 100).toFixed(2)}%
+    `;
+        }
+
+
 
         caricaCSV();
     </script>
