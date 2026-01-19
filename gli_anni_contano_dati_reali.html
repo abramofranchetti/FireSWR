@@ -459,6 +459,25 @@
             return arr.reduce((a, b) => a + b, 0) / arr.length;
         }
 
+        function deviazioneStandard(arr) {
+            const m = media(arr);
+            const varianza = media(arr.map(x => Math.pow(x - m, 2)));
+            return Math.sqrt(varianza);
+        }
+
+        function quantile(arr, q) {
+            const sorted = [...arr].sort((a, b) => a - b);
+            const pos = (sorted.length - 1) * q;
+            const base = Math.floor(pos);
+            const rest = pos - base;
+
+            if (sorted[base + 1] !== undefined) {
+                return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+            }
+            return sorted[base];
+        }
+
+
         function mostraRolling(r, versamentoA) {
             const capFinaleA = media(r.capFinaleA);
             const capVersA = media(r.capVersA);
@@ -470,6 +489,24 @@
 
             const out = document.getElementById("outputRolling");
             out.style.display = "block";
+
+            // ===================== STATISTICHE AVANZATE =====================
+            const q10A = quantile(r.capFinaleA, 0.10);
+            const q25A = quantile(r.capFinaleA, 0.25);
+            const q50A = quantile(r.capFinaleA, 0.50);
+            const q75A = quantile(r.capFinaleA, 0.75);
+            const q90A = quantile(r.capFinaleA, 0.90);
+
+            const stdA = deviazioneStandard(r.capFinaleA);
+            const stdVersB = deviazioneStandard(r.versB);
+
+            // Probabilità: A versa meno capitale di B
+            let countBetterA = 0;
+            for (let i = 0; i < r.capVersA.length; i++) {
+                if (r.capVersA[i] < r.capVersB[i]) countBetterA++;
+            }
+            const probBetterA = countBetterA / r.capVersA.length * 100;
+
 
             out.innerHTML = `
         <h4>Risultati medi su ${r.finestreUsate} finestre temporali</h4>
@@ -485,6 +522,26 @@
         <b>Guadagno medio scenario B:</b> $ ${guadB.toFixed(0)}
         ovvero ${(guadB / capVersB * 100).toFixed(2)}%
     `;
+
+            out.innerHTML += `
+    <hr>
+    <b>Distribuzione capitale finale scenario A:</b><br>
+    10° percentile: $ ${q10A.toFixed(0)}<br>
+    25° percentile: $ ${q25A.toFixed(0)}<br>
+    Mediana (50°): $ ${q50A.toFixed(0)}<br>
+    75° percentile: $ ${q75A.toFixed(0)}<br>
+    90° percentile: $ ${q90A.toFixed(0)}<br><br>
+
+    <b>Rischio (deviazione standard):</b><br>
+    Scenario A: $ ${stdA.toFixed(0)}<br>()
+    Versamento richiesto scenario B: $ ${stdVersB.toFixed(0)}<br><br>
+    
+
+    <b>Confronto probabilistico:</b><br>
+    Nel <b>${probBetterA.toFixed(1)}%</b> delle finestre storiche
+    lo scenario A ha richiesto <b>meno capitale versato</b> rispetto allo scenario B.
+`;
+
         }
 
 
