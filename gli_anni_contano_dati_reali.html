@@ -95,6 +95,17 @@
         <label>Anni dopo lo stop (resti investito)</label>
         <input type="number" id="anniFuturi" value="10" oninput="aggiorna()">
 
+        <label>Scenario A: continua il PAC dopo lo stop</label>
+        <div class="custom-control custom-switch">
+            <input type="checkbox"
+                class="custom-control-input"
+                id="continuaPAC"
+                onchange="aggiorna()">
+            <label class="custom-control-label" for="continuaPAC">
+                Continua a versare anche dopo lo stop (del PAC A)
+            </label>
+        </div>
+
         <canvas id="grafico" height="120"></canvas>
 
         <div class="result">
@@ -172,7 +183,7 @@
         }
 
         // ===================== SIMULAZIONI =====================
-        function simulaScenarioCompleto(start, anniPAC, anniFuturi, versamento) {
+        function simulaScenarioCompleto(start, anniPAC, anniFuturi, versamento, continuaPAC) {
             const mesiPAC = anniPAC * 12;
             const mesiFuturi = anniFuturi * 12;
             const mesiTotali = mesiPAC + mesiFuturi;
@@ -182,7 +193,7 @@
             let versato = 0;
 
             for (let i = 0; i < mesiTotali; i++) {
-                if (i < mesiPAC) {
+                if (i < mesiPAC || continuaPAC) {
                     quote += versamento / sp500[start + i].value;
                     versato += versamento;
                 }
@@ -223,7 +234,7 @@
         }
 
         // ===================== GRAFICO =====================
-        function disegnaGrafico(start, anniPAC, anniFuturi, versamento, versamentoB) {
+        function disegnaGrafico(start, anniPAC, anniFuturi, versamento, versamentoB, continuaPAC) {
             const mesiPAC = anniPAC * 12;
             const mesiTotali = (anniPAC + anniFuturi) * 12;
 
@@ -240,7 +251,7 @@
                 );
 
                 // Scenario A
-                if (i < mesiPAC) {
+                if (i < mesiPAC || continuaPAC) {
                     quoteA += versamento / sp500[start + i].value;
                 }
                 dataA.push(quoteA * sp500[start + i].value);
@@ -259,6 +270,7 @@
             const lineaVerticale = {
                 id: 'lineaVerticale',
                 afterDraw(chart) {
+                    if (!continuaPAC) {
                     const x = chart.scales.x.getPixelForValue(mesiPAC - 1);
                     const ctx = chart.ctx;
 
@@ -273,6 +285,7 @@
                     ctx.font = "bold 14px Arial";
                     ctx.fillText("Stop Versamenti", x + 4, chart.chartArea.top + 15);
                     ctx.restore();
+                    }
                 }
             };
 
@@ -307,8 +320,9 @@
             const versamento = parseFloat(document.getElementById("versamento").value);
             const anniPAC = parseInt(document.getElementById("anniPAC").value);
             const anniFuturi = parseInt(document.getElementById("anniFuturi").value);
+            const continuaPAC = document.getElementById("continuaPAC").checked;
 
-            const scenA = simulaScenarioCompleto(start, anniPAC, anniFuturi, versamento);
+            const scenA = simulaScenarioCompleto(start, anniPAC, anniFuturi, versamento, continuaPAC);
 
             const versB = trovaVersamento(
                 scenA.capitaleFinale,
@@ -330,7 +344,7 @@
             document.getElementById("capB").innerText = scenA.capitaleFinale.toFixed(0);
             document.getElementById("guadagnoB").innerText = (scenB.capitaleFinale - scenB.capitaleVersato).toFixed(0) + " ovvero " + ((scenB.capitaleFinale - scenB.capitaleVersato) / scenB.capitaleVersato * 100).toFixed(2) + "%";
 
-            disegnaGrafico(start, anniPAC, anniFuturi, versamento, versB);
+            disegnaGrafico(start, anniPAC, anniFuturi, versamento, versB, continuaPAC);
         }
 
         caricaCSV();
