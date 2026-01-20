@@ -400,7 +400,7 @@
         // CARICAMENTO CSV
         // =====================
         async function caricaCSV() {
-            const response = await fetch('/../csv/sp500_montly_historical.csv');
+            const response = await fetch('./../csv/sp500_montly_historical.csv');
             const text = await response.text();
 
             const rows = text.trim().split('\n');
