@@ -199,17 +199,17 @@
             <section class="section">
                 <h2>I cicli economici secondo Benner</h2>
                 <ul>
-                    <li><strong>Anni A – Panic Years:</strong> fasi di panico finanziario, crisi e forti ribassi.</li>
-                    <li><strong>Anni B – Good Times:</strong> periodi di prezzi elevati, considerati buoni per vendere.
+                    <li><strong>Anni A - Panic Years:</strong> fasi di panico finanziario, crisi e forti ribassi.</li>
+                    <li><strong>Anni B - Good Times:</strong> periodi di prezzi elevati, considerati buoni per vendere.
                     </li>
-                    <li><strong>Anni C – Hard Times:</strong> prezzi depressi, considerati buoni per comprare o
+                    <li><strong>Anni C - Hard Times:</strong> prezzi depressi, considerati buoni per comprare o
                         accumulare.</li>
                 </ul>
 
                 <div class="image-container">
-                    <img src="period_when_to_make_money.jpg" alt="Ciclo di Benner 1925–2059">
+                    <img src="period_when_to_make_money.jpg" alt="Ciclo di Benner 1925-2059">
                     <div class="image-caption">
-                        Grafico dei cicli di Benner (1925–2059)
+                        Grafico dei cicli di Benner (1925-2059)
                     </div>
                 </div>
             </section>
@@ -255,12 +255,12 @@
                     <a href="benners-prophecies-of-future-ups-and-downs-in-prices-by-samuel-benner.pdf" class="pdf-link"
                         target="_blank">
                         <i class="fas fa-file-pdf"></i>
-                        Benner – Prophecies of Future Ups and Downs in Prices
+                        Benner - Prophecies of Future Ups and Downs in Prices
                     </a>
 
                     <a href="bennersprophecies_book.pdf" class="pdf-link" target="_blank">
                         <i class="fas fa-file-pdf"></i>
-                        Benner’s Prophecies – Edizione 1885
+                        Benner's Prophecies - Edizione 1885
                     </a>
 
                     <a href="nenner_cycles.pdf" class="pdf-link" target="_blank">
@@ -308,7 +308,7 @@
                 <div class="image-container">
                     <img src="benner_previsione_reale.jpg" alt="Previsione reale dow jones delle profezie di Benner">
                     <div class="image-caption">
-                        Applicazione della profezia al Dow Jones (1925–2020)
+                        Applicazione della profezia al Dow Jones (1925-2020)
                     </div>
                 </div>
             </section>
@@ -329,16 +329,17 @@
                     <li>💤 <strong>Fuori dal mercato</strong> negli altri periodi</li>
                     <li>💰 Nessun leverage, nessun market timing intra-annuale</li>
                 </ul>
-            
+                <p id="bennerBuyYears"></p>
+
                 <h2>Applicazione pratica dei cicli di Benner sullo S&P 500</h2>
                 <canvas id="chart" width="1200" height="500"></canvas>
                 <h2>Confronto normalizzato</h2>
                 <canvas id="chartNormalized" width="1200" height="500"></canvas>
-            
+
                 <h2>Interpretazione dei risultati</h2>
 
                 <p>
-                    Il confronto tra l’andamento dello S&amp;P 500 e la curva di equity della strategia
+                    Il confronto tra l'andamento dello S&amp;P 500 e la curva di equity della strategia
                     mostra un risultato interessante: <strong>la crescita del capitale avviene in poche
                         finestre temporali ben definite</strong>, spesso in seguito a crisi profonde.
                     Di fatto però, la strategia trascura lunghi periodi di crescita del mercato,
@@ -367,16 +368,33 @@
         });
     </script>
     <script>
+        function makePairs(yearsSet) {
+            const years = Array.from(yearsSet).sort((a, b) => a - b);
+            const pairs = [];
+            for (let i = 0; i < years.length; i += 2) {
+                if (i + 1 < years.length) {
+                    pairs.push(`${years[i]}->${years[i + 1]}`);
+                } else {
+                    pairs.push(`${years[i]}`); // se dispari, ultimo anno da solo
+                }
+            }
+            return pairs.join(', ');
+        }
         // =====================
         // CICLI BENNER (BUY)
         // =====================
         const bennerBuyYears = new Set([
-            1974, 1975,
-            1982, 1983,
-            2002, 2003,
-            2009, 2010,
-            2020
+            1970, 1972,
+            1978, 1980,
+            1985, 1989,
+            1996, 1999,
+            2005, 2007,
+            2012, 2016,
+            2023, 2025
         ]);
+
+        document.getElementById('bennerBuyYears').innerText =
+            `Anni in cui la strategia di Benner suggerisce di essere investiti: ${makePairs(bennerBuyYears)}.`;
 
         // =====================
         // CARICAMENTO CSV
@@ -533,7 +551,7 @@
 
                 }
             });
-        } 
+        }
 
         // AVVIO
         caricaCSV();
