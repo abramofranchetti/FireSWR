@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profezie di Benner – Quando Fare Denaro</title>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
@@ -17,146 +17,146 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <style>
-    body {
-        font-family: "Segoe UI", Arial, sans-serif;
-        background: linear-gradient(180deg, #f5f6f8 0%, #eef1f4 100%);
-        line-height: 1.7;
-        color: #222;
-    }
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(180deg, #f5f6f8 0%, #eef1f4 100%);
+            line-height: 1.7;
+            color: #222;
+        }
 
-    .container {
-        max-width: 960px;
-    }
+        .container {
+            max-width: 960px;
+        }
 
-    h1 {
-        color: #1f6f43;
-        font-weight: 700;
-        letter-spacing: -0.5px;
-    }
-
-    h2 {
-        color: #1f6f43;
-        font-size: 1.6rem;
-        font-weight: 600;
-        border-left: 5px solid #1f6f43;
-        padding-left: 12px;
-        margin-bottom: 1.5rem;
-    }
-
-    .container-box {
-        background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
-        padding: 3rem;
-    }
-
-    header p {
-        font-size: 1.05rem;
-    }
-
-    .section {
-        margin-bottom: 4rem;
-    }
-
-    .section:not(:last-child)::after {
-        content: "";
-        display: block;
-        height: 1px;
-        background: linear-gradient(to right, transparent, #ccc, transparent);
-        margin-top: 3rem;
-    }
-
-    ul {
-        padding-left: 1.2rem;
-    }
-
-    ul li {
-        margin-bottom: 0.6rem;
-    }
-
-    .image-container {
-        text-align: center;
-        margin: 2rem 0;
-    }
-
-    .image-container img {
-        max-width: 100%;
-        border-radius: 10px;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-    }
-
-    .image-caption {
-        font-size: 0.9rem;
-        color: #666;
-        margin-top: 0.6rem;
-        font-style: italic;
-    }
-
-    table {
-        margin-top: 1.5rem;
-    }
-
-    table th {
-        background-color: #f0f4f2;
-        font-weight: 600;
-    }
-
-    table td,
-    table th {
-        vertical-align: middle;
-    }
-
-    .pdf-link {
-        display: flex;
-        align-items: center;
-        padding: 0.6rem 0;
-        font-weight: 500;
-        color: #1f6f43;
-    }
-
-    .pdf-link i {
-        margin-right: 10px;
-        color: #c0392b;
-        font-size: 1.1rem;
-    }
-
-    .pdf-link:hover {
-        text-decoration: none;
-        color: #145a32;
-    }
-
-    .home-button {
-        display: inline-block;
-        padding: 0.45rem 1rem;
-        background: #e9ecef;
-        border-radius: 8px;
-        text-decoration: none;
-        color: #333;
-        font-weight: 500;
-        transition: all 0.2s ease;
-    }
-
-    .home-button:hover {
-        background: #dee2e6;
-        transform: translateY(-1px);
-        text-decoration: none;
-    }
-
-    footer.container-box {
-        font-size: 0.9rem;
-        color: #555;
-    }
-
-    @media (max-width: 576px) {
-        .container-box {
-            padding: 2rem 1.5rem;
+        h1 {
+            color: #1f6f43;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         h2 {
-            font-size: 1.4rem;
+            color: #1f6f43;
+            font-size: 1.6rem;
+            font-weight: 600;
+            border-left: 5px solid #1f6f43;
+            padding-left: 12px;
+            margin-bottom: 1.5rem;
         }
-    }
-</style>
+
+        .container-box {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+            padding: 3rem;
+        }
+
+        header p {
+            font-size: 1.05rem;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section:not(:last-child)::after {
+            content: "";
+            display: block;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #ccc, transparent);
+            margin-top: 3rem;
+        }
+
+        ul {
+            padding-left: 1.2rem;
+        }
+
+        ul li {
+            margin-bottom: 0.6rem;
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-caption {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.6rem;
+            font-style: italic;
+        }
+
+        table {
+            margin-top: 1.5rem;
+        }
+
+        table th {
+            background-color: #f0f4f2;
+            font-weight: 600;
+        }
+
+        table td,
+        table th {
+            vertical-align: middle;
+        }
+
+        .pdf-link {
+            display: flex;
+            align-items: center;
+            padding: 0.6rem 0;
+            font-weight: 500;
+            color: #1f6f43;
+        }
+
+        .pdf-link i {
+            margin-right: 10px;
+            color: #c0392b;
+            font-size: 1.1rem;
+        }
+
+        .pdf-link:hover {
+            text-decoration: none;
+            color: #145a32;
+        }
+
+        .home-button {
+            display: inline-block;
+            padding: 0.45rem 1rem;
+            background: #e9ecef;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .home-button:hover {
+            background: #dee2e6;
+            transform: translateY(-1px);
+            text-decoration: none;
+        }
+
+        footer.container-box {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        @media (max-width: 576px) {
+            .container-box {
+                padding: 2rem 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
 
 </head>
 
@@ -303,14 +303,53 @@
                     </tr>
                 </table>
             </section>
-
-            <div class="image-container">
-                <img src="benner_previsione_reale.jpg" alt="Previsione reale dow jones delle profezie di Benner">
-                <div class="image-caption">
-                    Applicazione della profezia al Dow Jones (1925–2020)
+            <section>
+                <h2>Applicazione pratica dei cicli di Benner sul Dow Jones</h2>
+                <div class="image-container">
+                    <img src="benner_previsione_reale.jpg" alt="Previsione reale dow jones delle profezie di Benner">
+                    <div class="image-caption">
+                        Applicazione della profezia al Dow Jones (1925–2020)
+                    </div>
                 </div>
-            </div>
+            </section>
+            <section class="section">
+                <h2>Strategia di investimento basata sui cicli di Benner</h2>
+                <p>
+                    La strategia mostrata nel grafico applica in modo estremamente semplice le indicazioni
+                    contenute nelle <strong>profezie cicliche di Samuel Benner</strong> al mercato azionario
+                    statunitense, utilizzando lo <strong>S&amp;P 500</strong> come proxy del mercato.
+                </p>
+                <p>
+                    In questa simulazione viene adottata una regola volutamente minimale:
+                </p>
+
+                <ul>
+                    <li>📈 <strong>Investiti nello S&amp;P 500</strong> solo negli anni classificati da Benner
+                        come <em>Hard Times</em> o immediatamente successivi ai <em>Panic Years</em></li>
+                    <li>💤 <strong>Fuori dal mercato</strong> negli altri periodi</li>
+                    <li>💰 Nessun leverage, nessun market timing intra-annuale</li>
+                </ul>
+            
+                <h2>Applicazione pratica dei cicli di Benner sullo S&P 500</h2>
+                <canvas id="chart" width="1200" height="500"></canvas>
+                <h2>Confronto normalizzato</h2>
+                <canvas id="chartNormalized" width="1200" height="500"></canvas>
+            
+                <h2>Interpretazione dei risultati</h2>
+
+                <p>
+                    Il confronto tra l’andamento dello S&amp;P 500 e la curva di equity della strategia
+                    mostra un risultato interessante: <strong>la crescita del capitale avviene in poche
+                        finestre temporali ben definite</strong>, spesso in seguito a crisi profonde.
+                    Di fatto però, la strategia trascura lunghi periodi di crescita del mercato,
+                    rimanendo fuori nei momenti migliori. Questo evidenzia come una strategia basata sui
+                    cicli di Benner possa essere efficace nel catturare i momenti di rialzo più
+                    significativi, ma al costo di perdere parte della crescita complessiva del mercato.
+                </p>
+            </section>
+
         </div>
+
         <!-- Footer / Disclaimer -->
         <footer class="container mt-5 mb-5 container-box">
             <div id="disclaimer-container"></div>
@@ -327,6 +366,179 @@
                 });
         });
     </script>
+    <script>
+        // =====================
+        // CICLI BENNER (BUY)
+        // =====================
+        const bennerBuyYears = new Set([
+            1974, 1975,
+            1982, 1983,
+            2002, 2003,
+            2009, 2010,
+            2020
+        ]);
+
+        // =====================
+        // CARICAMENTO CSV
+        // =====================
+        async function caricaCSV() {
+            const response = await fetch('/../csv/sp500_montly_historical.csv');
+            const text = await response.text();
+
+            const rows = text.trim().split('\n');
+
+            const data = rows.map(r => {
+                const [dateStr, valueStr] = r.trim().split(' ');
+                const [d, m, y] = dateStr.split('/');
+
+                return {
+                    date: new Date(y, m - 1, d),
+                    price: parseFloat(valueStr)
+                };
+            });
+
+            calcolaStrategia(data);
+        }
+
+        // =====================
+        // STRATEGIA BENNER
+        // =====================
+        function calcolaStrategia(data) {
+
+            const labels = [];
+            const prezzi = [];
+            const prezziNormalized = [];
+            const equity = [];
+
+            let invested = false;
+            let equityValue = 1;
+            let lastPrice = null;
+            let firstPrice = null;
+
+
+            data.forEach(row => {
+                if (firstPrice === null) {
+                    firstPrice = row.price;
+                }
+                const year = row.date.getFullYear();
+
+                labels.push(row.date.toISOString().slice(0, 10));
+                const normalizedPrice = row.price / firstPrice;
+                prezziNormalized.push(normalizedPrice);
+                prezzi.push(row.price);
+
+                const shouldInvest = bennerBuyYears.has(year);
+
+                if (lastPrice !== null && invested) {
+                    equityValue *= row.price / lastPrice;
+                }
+
+                invested = shouldInvest;
+                equity.push(equityValue);
+                lastPrice = row.price;
+            });
+
+            drawChart(labels, prezzi, equity);
+            drawNormalizedChart(labels, prezziNormalized, equity);
+        }
+
+        function drawChart(labels, prezzi, equity) {
+
+            new Chart(document.getElementById("chart"), {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "S&P 500",
+                            data: prezzi,
+                            borderColor: "#333",
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            yAxisID: "y"
+                        },
+                        {
+                            label: "Equity Strategia Benner",
+                            data: equity,
+                            borderColor: "#1f6f43",
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            yAxisID: "y1"
+                        }
+                    ]
+                },
+                options: {
+                    interaction: { mode: "index", intersect: false },
+                    scales: {
+                        y: {
+                            type: "linear",
+                            position: "left",
+                            title: {
+                                display: true,
+                                text: "S&P 500"
+                            }
+                        },
+                        y1: {
+                            type: "linear",
+                            position: "right",
+                            grid: { drawOnChartArea: false },
+                            title: {
+                                display: true,
+                                text: "Equity Strategia Benner"
+                            }
+                        }
+                    }
+
+                }
+            });
+        }
+
+        function drawNormalizedChart(labels, prezziNormalized, equity) {
+
+            new Chart(document.getElementById("chartNormalized"), {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "S&P 500 Normalizzato",
+                            data: prezziNormalized,
+                            borderColor: "#333",
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            yAxisID: "y"
+                        },
+                        {
+                            label: "Equity Strategia Benner",
+                            data: equity,
+                            borderColor: "#1f6f43",
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            yAxisID: "y"
+                        }
+                    ]
+                },
+                options: {
+                    interaction: { mode: "index", intersect: false },
+                    scales: {
+                        y: {
+                            type: "linear",
+                            position: "left",
+                            title: {
+                                display: true,
+                                text: "S&P 500 Normalizzato"
+                            }
+                        }
+                    }
+
+                }
+            });
+        } 
+
+        // AVVIO
+        caricaCSV();
+    </script>
+
 </body>
 
 </html>
