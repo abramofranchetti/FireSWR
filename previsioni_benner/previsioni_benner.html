@@ -25,7 +25,7 @@
         }
 
         .container {
-            max-width: 960px;
+            max-width: 1200px;
         }
 
         h1 {
@@ -335,7 +335,6 @@
                 <canvas id="chart" width="1200" height="500"></canvas>
                 <h2>Confronto normalizzato</h2>
                 <canvas id="chartNormalized" width="1200" height="500"></canvas>
-
                 <h2>Interpretazione dei risultati</h2>
 
                 <p>
@@ -347,6 +346,25 @@
                     cicli di Benner possa essere efficace nel catturare i momenti di rialzo più
                     significativi, ma al costo di perdere parte della crescita complessiva del mercato.
                 </p>
+
+                <hr>
+
+                <h2>Simulazione di strategia a due fattori, quando Benner mi dice di uscire dall'azionario, detengo oro.</h2>                
+                <canvas id="chartBennerGold" width="1200" height="500"></canvas>
+                <h2>Strategia Benner + Oro (sempre investiti) - Normalizzato</h2>
+                <canvas id="chartBennerGoldNormalized" width="1200" height="500"></canvas>
+                <h2>Interpretazione dei risultati</h2>
+
+                <p>
+                    Aggiungendo l'oro come asset alternativo durante i periodi in cui la strategia di Benner
+                    suggerisce di uscire dall'azionario, si osserva un miglioramento significativo nella performance
+                    complessiva. L'oro, storicamente considerato un bene rifugio, tende a performare bene durante
+                    le fasi di crisi economica e incertezza di mercato. In questa simulazione, l'inclusione dell'oro permette di
+                    mantenere una crescita del capitale più stabile e ridurre la volatilità complessiva del portafoglio.
+                    La strategia Benner + Oro dimostra come una diversificazione intelligente, basata su segnali ciclici,
+                    possa portare a risultati più robusti rispetto a una strategia che si affida esclusivamente all'azionario.
+                </p>
+                
             </section>
 
         </div>
@@ -368,6 +386,21 @@
         });
     </script>
     <script>
+        async function caricaGoldCSV() {
+            const response = await fetch('./../csv/gold_monthly-storico_benner.csv');
+            const text = await response.text();
+
+            const rows = text.trim().split('\n');
+
+            const goldMap = new Map();
+
+            rows.forEach(r => {
+                const [ym, valueStr] = r.split(',');
+                goldMap.set(ym, parseFloat(valueStr));
+            });
+
+            return goldMap;
+        }
         function makePairs(yearsSet) {
             const years = Array.from(yearsSet).sort((a, b) => a - b);
             const pairs = [];
@@ -384,7 +417,7 @@
         // CICLI BENNER (BUY)
         // =====================
         const bennerBuyYears = new Set([
-            1970, 1971,1972,
+            1970, 1971, 1972,
             1978, 1979, 1980,
             1985, 1986, 1987, 1988, 1989,
             1996, 1997, 1998, 1999,
@@ -411,18 +444,25 @@
         // CARICAMENTO CSV
         // =====================
         async function caricaCSV() {
-            const response = await fetch('./../csv/sp500_montly_historical.csv');
-            const text = await response.text();
+            const [spResponse, goldMap] = await Promise.all([
+                fetch('./../csv/sp500_montly_historical_benner.csv'),
+                caricaGoldCSV()
+            ]);
 
+            const text = await spResponse.text();
             const rows = text.trim().split('\n');
 
             const data = rows.map(r => {
                 const [dateStr, valueStr] = r.trim().split(' ');
                 const [d, m, y] = dateStr.split('/');
 
+                const ym = `${y}-${m.padStart(2, '0')}`;
+
                 return {
                     date: new Date(y, m - 1, d),
-                    price: parseFloat(valueStr)
+                    ym: ym,
+                    sp: parseFloat(valueStr),
+                    gold: goldMap.get(ym) ?? null
                 };
             });
 
@@ -438,38 +478,69 @@
             const prezzi = [];
             const prezziNormalized = [];
             const equity = [];
+            const equityBennerGold = [];
+            const equityBennerGoldNormalized = [];
+
 
             let invested = false;
             let equityValue = 1;
-            let lastPrice = null;
+            let equityGoldValue = 1;
+
+            let lastSP = null;
+            let lastGold = null;
             let firstPrice = null;
 
-
             data.forEach(row => {
+
                 if (firstPrice === null) {
-                    firstPrice = row.price;
+                    firstPrice = row.sp;
                 }
+
                 const year = row.date.getFullYear();
 
+                const shouldInvestSP = bennerBuyYears.has(year);
+                const shouldInvestGold = !shouldInvestSP && year >= 1970 && row.gold !== null;
+
                 labels.push(row.date.toISOString().slice(0, 10));
-                const normalizedPrice = row.price / firstPrice;
-                prezziNormalized.push(normalizedPrice);
-                prezzi.push(row.price);
 
-                const shouldInvest = bennerBuyYears.has(year);
+                prezzi.push(row.sp);
+                prezziNormalized.push(row.sp / firstPrice);
 
-                if (lastPrice !== null && invested) {
-                    equityValue *= row.price / lastPrice;
+                /* ===== STRATEGIA BENNER CLASSICA ===== */
+                if (lastSP !== null && invested) {
+                    equityValue *= row.sp / lastSP;
                 }
 
-                invested = shouldInvest;
+                invested = shouldInvestSP;
                 equity.push(equityValue);
-                lastPrice = row.price;
+
+                /* ===== STRATEGIA BENNER + ORO ===== */
+                if (lastSP !== null) {
+                    if (shouldInvestSP) {
+                        equityGoldValue *= row.sp / lastSP;
+                    } else if (shouldInvestGold && lastGold !== null) {
+                        equityGoldValue *= row.gold / lastGold;
+                    }
+                }
+                equityBennerGold.push(equityGoldValue);
+
+                lastSP = row.sp;
+                lastGold = row.gold;
             });
+
+            const baseGold = equityBennerGold[0];
+            for (let i = 0; i < equityBennerGold.length; i++) {
+                equityBennerGoldNormalized.push(equityBennerGold[i] / baseGold);
+            }
 
             drawChart(labels, prezzi, equity);
             drawNormalizedChart(labels, prezziNormalized, equity);
+            drawBennerGoldChart(labels, prezzi, equityBennerGold);
+            drawBennerGoldChartNormalized(labels, prezziNormalized, equityBennerGoldNormalized);
+
         }
+
+
 
         function drawChart(labels, prezzi, equity) {
 
@@ -563,6 +634,98 @@
                 }
             });
         }
+
+        function drawBennerGoldChartNormalized(labels, prezzi, equity) {
+
+            new Chart(document.getElementById("chartBennerGoldNormalized"), {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "S&P 500",
+                            data: prezzi,
+                            borderColor: "#333",
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            yAxisID: "y"
+                        },
+                        {
+                            label: "Equity Benner + Oro",
+                            data: equity,
+                            borderColor: "#c9a227",
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            yAxisID: "y"
+                        }
+                    ]
+                },
+                options: {
+                    interaction: { mode: "index", intersect: false },
+                    scales: {
+                        y: {                            
+                            type: "linear",
+                            position: "left",
+                            title: {
+                                display: true,
+                                text: "Valore"
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        function drawBennerGoldChart(labels, prezziSP, equityGold) {
+
+            new Chart(document.getElementById("chartBennerGold"), {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "S&P 500",
+                            data: prezziSP,
+                            borderColor: "#333",
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            yAxisID: "y"
+                        },
+                        {
+                            label: "Equity Benner + Oro",
+                            data: equityGold,
+                            borderColor: "#c9a227",
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            yAxisID: "y1"
+                        }
+                    ]
+                },
+                options: {
+                    interaction: { mode: "index", intersect: false },
+                    scales: {
+                        y: {
+                            type: "linear",
+                            position: "left",
+                            title: {
+                                display: true,
+                                text: "S&P 500"
+                            }
+                        },
+                        y1: {
+                            type: "linear",
+                            position: "right",
+                            grid: { drawOnChartArea: false },
+                            title: {
+                                display: true,
+                                text: "Equity Benner + Oro"
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
 
         // AVVIO
         caricaCSV();
