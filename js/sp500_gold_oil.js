@@ -9,7 +9,7 @@ async function createChart() {
     const goldData = await loadCSVData('csv/xau_usd_montly.csv');
     const oilData = await loadCSVData('csv/WTI_montly.csv');
     const sp500TRData = await loadCSVData('csv/sp500tr_shiller_1971.csv');
-    const sp500Data = await loadCSVData('csv/sp500_montly_historical.csv');
+    const sp500Data = await loadCSVData('csv/sp500_montly_historical_confronto.csv');
     const btcUSDPrices = await fetch('json/btc-usd.json').then(response => response.json());
 
     // Parsing dei dati
@@ -996,7 +996,7 @@ async function createChart() {
 
     // Inizializzazione date
     document.getElementById('startDate').value = '1971-08';
-    document.getElementById('endDate').value = '2025-03';
+    document.getElementById('endDate').value = '2026-02';
 
     // Event listeners
     document.getElementById('scaleType').addEventListener('change', createOrUpdateCharts);

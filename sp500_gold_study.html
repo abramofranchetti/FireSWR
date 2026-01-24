@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SP500 TR vs Oro</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5 p-4 bg-white rounded shadow-sm">
+
+    <div class="text-center mb-4">
+        <a href="/FireSWR" class="home-button">🏠 Home</a>
+    </div>
+
+    <h1 class="text-center">S&P 500 Total Return vs Oro</h1>
+    <h5 class="text-center text-muted">Valore mensile in USD e in once d’oro</h5>
+
+    <h3 class="mt-4">S&P 500 – Total Return</h3>
+    <canvas id="chartTR"></canvas>
+
+    <h3 class="mt-5">S&P 500 Total Return espresso in oro</h3>
+    <canvas id="chartGold"></canvas>
+
+</div>
+
+<div id="disclaimer-container"></div>
+
+<script>
+/* =======================
+   PARSE S&P 500 CSV
+   ======================= */
+function parseSP500CSV(text){
+    return text.replace('\uFEFF','').trim().split('\n').map(line=>{
+        const parts = line.trim().split(/\s+/);
+        if(parts.length<3) return null;
+        const [ym,priceRaw,divRaw] = parts;
+        if(!ym.includes(',')) return null;
+        const [year, month] = ym.split(',').map(Number);
+        const price = Number(priceRaw.replace(',','.'));
+        const dividend = Number(divRaw.replace(',','.'));
+        if(isNaN(price)||isNaN(dividend)) return null;
+        return { date: new Date(Date.UTC(year,month-1,1)), price, dividend };
+    }).filter(Boolean);
+}
+
+/* =======================
+   BUILD TOTAL RETURN INDEX
+   ======================= */
+function buildTotalReturnIndex(data){
+    if(!data.length) return [];
+    const result = [{ date: data[0].date, price: data[0].price, tr: 100 }];
+    for(let i=1;i<data.length;i++){
+        const prev = result[i-1];
+        const curr = data[i];
+        const monthlyDividend = curr.dividend / 12; // dividendi mensili
+        const tr = prev.tr * ((curr.price + monthlyDividend) / prev.price);
+        result.push({ date: curr.date, price: curr.price, tr });
+    }
+    return result;
+}
+
+/* =======================
+   PARSE GOLD CSV → MEDIA MENSILE
+   ======================= */
+function parseGoldCSVMonthly(text) {
+    return text
+        .replace('\uFEFF','') // rimuove BOM se presente
+        .trim()
+        .split('\n')
+        .map(line => {
+            const [dateRaw, priceRaw] = line.split(';');
+            if (!dateRaw || !priceRaw) return null;
+
+            // split mese/giorno/anno
+            const [month, day, year] = dateRaw.replace(/"/g,'').split('/').map(Number);
+            const price = Number(priceRaw.replace(',', '.'));
+            if (isNaN(price) || isNaN(day) || isNaN(month) || isNaN(year)) return null;
+
+            return {
+                date: new Date(Date.UTC(year, month-1, day)), // mese corretto zero-based
+                price
+            };
+        })
+        .filter(Boolean)
+        .sort((a,b) => a.date - b.date);
+}
+
+/* =======================
+   CONVERSIONE TR IN ORO
+   ======================= */
+function convertToGold(series, goldMonthly){
+    return series.map(d=>{
+        const goldEntry = goldMonthly.find(g=>g.date.getUTCFullYear()===d.date.getUTCFullYear() && g.date.getUTCMonth()===d.date.getUTCMonth());
+        if(!goldEntry) return null;
+        return { date:d.date, trGold: d.tr / goldEntry.price };
+    }).filter(Boolean);
+}
+
+/* =======================
+   MAIN
+   ======================= */
+async function main(){
+    const spText = await fetch('/csv/sp500_shiller_price_dividends.csv').then(r=>r.text());
+    const goldText = await fetch('/csv/xau_usd_history.csv').then(r=>r.text());
+
+    const spParsed = parseSP500CSV(spText);
+    const spTR = buildTotalReturnIndex(spParsed);
+    const goldMonthly = parseGoldCSVMonthly(goldText);
+    const spGold = convertToGold(spTR, goldMonthly);
+
+    // --- GRAFICO S&P 500 TR ---
+    new Chart(document.getElementById('chartTR'),{
+        type:'line',
+        data:{ datasets:[
+            { label:'S&P 500 Total Return (USD)', data: spTR.map(d=>({x:d.date,y:d.tr})), borderWidth:2, pointRadius:0, borderColor:'green' }
+        ]},
+        options:{ scales:{ x:{ type:'time' }, y:{ title:{ display:true, text:'USD' } } } }
+    });
+
+    // --- GRAFICO TR IN ORO ---
+    new Chart(document.getElementById('chartGold'),{
+        type:'line',
+        data:{ datasets:[
+            { label:'S&P 500 Total Return in oro', data: spGold.map(d=>({x:d.date,y:d.trGold})), borderWidth:2, pointRadius:0, borderColor:'gold' }
+        ]},
+        options:{ scales:{ x:{ type:'time' }, y:{ title:{ display:true, text:'Once d\'oro' } } } }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', main);
+
+/* DISCLAIMER */
+fetch('html/disclaimer.html').then(r=>r.text()).then(html=>document.getElementById('disclaimer-container').innerHTML=html);
+
+</script>
+
+</body>
+</html>
