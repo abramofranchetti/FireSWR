@@ -141,7 +141,7 @@ async function main(){
     new Chart(document.getElementById('chartGoldQuotation'),{
         type:'line',
         data:{ datasets:[
-            { label:'S&P 500 Total Return in oro', data: goldMonthly.map(d=>({x:d.date,y:d.price})), borderWidth:2, pointRadius:0, borderColor:'orange' }
+            { label:'Oro in dollari l\'oncia', data: goldMonthly.map(d=>({x:d.date,y:d.price})), borderWidth:2, pointRadius:0, borderColor:'orange' }
         ]},
         options:{layout:{padding:{right:20}}, scales:{ x:{ type:'time', offset: false }, y:{ title:{ display:true, text:'USD' } } } }
     });
