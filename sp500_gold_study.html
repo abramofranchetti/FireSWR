@@ -108,8 +108,8 @@ function convertToGold(series, goldMonthly){
    MAIN
    ======================= */
 async function main(){
-    const spText = await fetch('/csv/sp500_shiller_price_dividends.csv').then(r=>r.text());
-    const goldText = await fetch('/csv/xau_usd_history.csv').then(r=>r.text());
+    const spText = await fetch('csv/sp500_shiller_price_dividends.csv').then(r=>r.text());
+    const goldText = await fetch('csv/xau_usd_history.csv').then(r=>r.text());
 
     const spParsed = parseSP500CSV(spText);
     const spTR = buildTotalReturnIndex(spParsed);
