@@ -1,262 +1,277 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
-<meta charset="UTF-8">
-<title>Accumulo vs Distribuzione – Illusione del Dividendo</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link href="css/style.css" rel="stylesheet">
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f8;
-    margin: 20px;
-}
+    <meta charset="UTF-8">
+    <title>Accumulo vs Distribuzione – Illusione del Dividendo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 20px;
+        }
 
 
-.inputs {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 15px;
-    margin-bottom: 20px;
-}
+        .inputs {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);            
+            margin-bottom: 20px;            
+        }
 
-label {
-    font-weight: bold;
-}
+        label {
+            font-weight: bold;
+        }
 
-input, select {
-    width: 100%;
-    padding: 6px;
-}
+        input,
+        select {
+            width: 100%;
+            padding: 6px;
+        }
 
-button {
-    padding: 10px 25px;
-    font-size: 16px;
-    cursor: pointer;
-    display: block;
-    margin: auto;
-}
+        button {
+            padding: 10px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin: auto;
+        }
 
-canvas {
-    margin-top: 30px;
-}
+        canvas {
+            margin-top: 30px;
+        }
 
-.summary {
-    margin-top: 25px;
-    padding: 15px;
-    background: #f0f8ff;
-    border-radius: 6px;
-}
+        .summary {
+            margin-top: 25px;
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 6px;
+        }
 
-.highlight {
-    font-weight: bold;
-    color: #b00020;
-}
+        .highlight {
+            font-weight: bold;
+            color: #b00020;
+        }
 
-/* Smartphone */
-@media (max-width: 600px) {
-    .inputs {
-        grid-template-columns: 1fr;
-    }
+        /* Smartphone */
+        @media (max-width: 600px) {
+            .inputs {
+                grid-template-columns: 1fr;
+            }
 
-    h1 {
-        font-size: 22px;
-    }
+            h1 {
+                font-size: 22px;
+            }
 
-    h3 {
-        font-size: 16px;
-    }
+            h3 {
+                font-size: 16px;
+            }
 
-    button {
-        width: 100%;
-        font-size: 18px;
-    }
+            button {
+                width: 100%;
+                font-size: 18px;
+            }
 
-    input, select {
-        font-size: 16px;
-        padding: 10px;
-    }
+            input,
+            select {
+                font-size: 16px;
+                padding: 10px;
+            }
 
-    label {
-        font-size: 14px;
-    }
-}
-</style>
+            label {
+                font-size: 14px;
+            }
+
+            .explain {
+                background: #eef4ff;
+                padding: 15px;
+                border-radius: 6px;
+                margin-bottom: 25px;
+            }
+
+            .summary {
+                margin-top: 25px;
+                padding: 15px;
+                background: #f0f8ff;
+                border-radius: 6px;
+            }
+
+            .highlight {
+                font-weight: bold;
+                color: #b00020;
+            }
+        }
+    </style>
 </head>
 
 <body class="bg-light">
-<div class="container mt-5 p-4 bg-white rounded shadow-sm">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
         <div class="text-center mb-4">
             <a href="/FireSWR" class="home-button">🏠 Home</a>
         </div>
         <br>
-    
-<h1>Accumulo vs Distribuzione</h1>
-<h3>Effetto fiscale e illusione del dividendo</h3>
 
-<div class="inputs">
-    <div>
-        <label>Cap.iniziale(€)</label>
-        <input type="number" id="capital" value="10000">
+        <h1>Accumulo vs Distribuzione</h1>
+        <h3>Effetto fiscale e illusione del dividendo</h3>
+        <div class="explain">
+            <p>
+                Questa simulazione confronta due modalità di investimento sullo <b>medesimo asset</b>
+                con lo <b>stesso rendimento totale annuo</b>.
+            </p>
+            <ul>
+                <li>Nel caso <b>Accumulo</b> l’intero rendimento resta investito e viene tassato solo alla fine.</li>
+                <li>Nel caso <b>Distribuzione</b> una parte del rendimento viene staccata come dividendo.</li>
+            </ul>
+            <p>
+                Quando il dividendo viene staccato, il <b>prezzo dell’asset scende di pari importo</b>.
+                La differenza finale nasce esclusivamente dalla <b>tassazione anticipata</b>,
+                che riduce l’effetto dell’interesse composto.
+            </p>
+        </div>
+
+        <div class="inputs">
+            <div>
+                <label>Cap.iniziale(€)</label>
+                <input type="number" id="capital" value="10000">
+            </div>
+            <div>
+                <label>Rend.tot.annuo(%)</label>
+                <input type="number" id="rate" value="7" step="0.1">
+            </div>
+            <div>
+                <label>Div.staccato(%)</label>
+                <input type="number" id="dividend" value="2" step="0.1">
+            </div>
+            <div>
+                <label>Aliquota</label>
+                <select id="tax">
+                    <option value="0.26">26% (ETF / Azioni)</option>
+                    <option value="0.125">12,5% (Titoli di Stato)</option>
+                </select>
+            </div>
+            <div>
+                <label>Anni</label>
+                <input type="number" id="years" value="20">
+            </div>
+        </div>
+
+        <button onclick="simulate()">Simula</button>
+
+        <canvas id="chart" height="120"></canvas>
+
+        <div class="summary" id="summary"></div>
+
     </div>
-    <div>
-        <label>Rend.annuo(%)</label>
-        <input type="number" id="rate" value="7" step="0.1">
-    </div>
-    <div>
-        <label>Anni</label>
-        <input type="number" id="years" value="20">
-    </div>
-    <div>
-        <label>Aliquota</label>
-        <select id="tax">
-            <option value="0.26">26% (ETF / Azioni)</option>
-            <option value="0.125">12,5% (Titoli di Stato)</option>
-        </select>
-    </div>
-    <div>
-        <label>Dividendo(%)</label>
-        <input type="number" id="dividend" value="7" step="0.1">
-    </div>
-</div>
 
-<button onclick="simulate()">Simula</button>
+    <script>
+        let chart;
 
-<canvas id="chart" height="120"></canvas>
+        function simulate() {
 
-<div class="summary" id="summary"></div>
+            const capital = parseFloat(document.getElementById("capital").value);
+            const totalReturn = parseFloat(document.getElementById("rate").value) / 100;
+            const dividendYield = parseFloat(document.getElementById("dividend").value) / 100;
+            const years = parseInt(document.getElementById("years").value);
+            const tax = parseFloat(document.getElementById("tax").value);
 
-</div>
+            const priceGrowth = totalReturn - dividendYield;
 
-<script>
-let chart;
+            let acc = capital;
+            let dist = capital;
 
-function simulate() {
+            let accHistory = [];
+            let distHistory = [];
+            let labels = [];
 
-    const capital = parseFloat(document.getElementById("capital").value);
-    const rate = parseFloat(document.getElementById("rate").value) / 100;
-    const years = parseInt(document.getElementById("years").value);
-    const tax = parseFloat(document.getElementById("tax").value);
-    const dividendRate = parseFloat(document.getElementById("dividend").value) / 100;
+            let totalTaxes = 0;
 
-    let acc = capital;
-    let dist = capital;
+            for (let year = 1; year <= years; year++) {
 
-    let totalTaxesDist = 0;
-    let accHistory = [];
-    let distHistory = [];
-    let labels = [];
+                // ACCUMULO
+                acc *= (1 + totalReturn);
 
-    for (let year = 1; year <= years; year++) {
+                // DISTRIBUZIONE
+                dist *= (1 + priceGrowth);
 
-        // ACCUMULO
-        acc *= (1 + rate);
+                const grossDividend = dist * dividendYield;
+                const taxPaid = grossDividend * tax;
+                const netDividend = grossDividend - taxPaid;
 
-        // DISTRIBUZIONE (illusione dividendo)
-        const grossDividend = dist * dividendRate;
-        const taxPaid = grossDividend * tax;
-        const netDividend = grossDividend - taxPaid;
+                dist += netDividend;
+                totalTaxes += taxPaid;
 
-        dist += netDividend;
-        totalTaxesDist += taxPaid;
-
-        accHistory.push(acc);
-        distHistory.push(dist);
-        labels.push("Anno " + year);
-    }
-
-    // Tassazione finale
-    const accNet = acc - (acc - capital) * tax;
-    const distNet = dist - (dist - capital) * tax;
-
-    // Metriche
-    const diff = accNet - distNet;
-
-    const accCAGR = Math.pow(accNet / capital, 1 / years) - 1;
-    const distCAGR = Math.pow(distNet / capital, 1 / years) - 1;
-    const taxDrag = accCAGR - distCAGR;
-
-    const noTaxCapital = capital * Math.pow(1 + rate, years);
-
-    // GRAFICO
-    if (chart) chart.destroy();
-
-    chart = new Chart(document.getElementById("chart"), {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Accumulo',
-                    data: accHistory,
-                    borderWidth: 2
-                },
-                {
-                    label: 'Distribuzione',
-                    data: distHistory,
-                    borderWidth: 2
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'top' }
+                accHistory.push(acc);
+                distHistory.push(dist);
+                labels.push("Anno " + year);
             }
-        }
-    });
 
-    document.getElementById("summary").innerHTML = `
-        <h3>📊 Report finale</h3>
+            // Tassazione finale
+            const accNet = acc - (acc - capital) * tax;
+            const distNet = dist - (dist - capital) * tax;
 
-        <p><b>Capitale teorico senza tasse:</b> ${noTaxCapital.toFixed(2)} €</p>
+            const diff = accNet - distNet;
 
-        <hr>
+            const accCAGR = Math.pow(accNet / capital, 1 / years) - 1;
+            const distCAGR = Math.pow(distNet / capital, 1 / years) - 1;
 
-        <p><b>Accumulo – Capitale netto finale:</b> ${accNet.toFixed(2)} €</p>
-        <p><b>Distribuzione – Capitale netto finale:</b> ${distNet.toFixed(2)} €</p>
+            if (chart) chart.destroy();
+
+            chart = new Chart(document.getElementById("chart"), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'Accumulo', data: accHistory, borderWidth: 2 },
+                        { label: 'Distribuzione (netto)', data: distHistory, borderWidth: 2 }
+                    ]
+                }
+            });
+
+            document.getElementById("summary").innerHTML = `
+        <h3>📊 Risultati finali</h3>
+
+        <p><b>Accumulo – Capitale netto:</b> ${accNet.toFixed(2)} €</p>
+        <p><b>Distribuzione – Capitale netto:</b> ${distNet.toFixed(2)} €</p>
 
         <p class="highlight">
-            Capitale perso per "illusione del dividendo":
-            ${diff.toFixed(2)} € (${(diff / distNet * 100).toFixed(2)}%)
+            Perdita dovuta alla tassazione anticipata:
+            ${diff.toFixed(2)} € (${(diff / accNet * 100).toFixed(2)}%)
         </p>
 
         <hr>
 
         <p><b>Rendimento annuo netto effettivo:</b></p>
         <ul>
-            <li>Accumulo: ${(accCAGR * 100).toFixed(2)} %</li>
-            <li>Distribuzione: ${(distCAGR * 100).toFixed(2)} %</li>
+            <li>Accumulo: ${(accCAGR * 100).toFixed(2)}%</li>
+            <li>Distribuzione: ${(distCAGR * 100).toFixed(2)}%</li>
         </ul>
 
         <p class="highlight">
-            Tax Drag annuo causato dalla tassazione anticipata:
-            ${(taxDrag * 100).toFixed(2)} %
+            Tasse totali pagate sui dividendi: ${totalTaxes.toFixed(2)} €
         </p>
-
-        <hr>
-
-        <p><b>Tasse totali pagate sulla distribuzione:</b> ${totalTaxesDist.toFixed(2)} €</p>
 
         <p>
-            Il dividendo non crea valore aggiuntivo: è capitale restituito,
-            tassato prima che possa beneficiare dell'interesse composto.
+            Il dividendo non aumenta il rendimento totale:
+            anticipa la tassazione e riduce l’interesse composto.
         </p>
     `;
-}
-simulate();
-</script>
- <!-- Disclaimer -->
-     <div id="disclaimer-container"></div>
+        }
 
-     <script>
-         document.addEventListener('DOMContentLoaded', function () {
-             fetch('html/disclaimer.html')
-                 .then(response => response.text())
-                 .then(data => {
-                     document.getElementById('disclaimer-container').innerHTML = data;
-                 });
-         });
-     </script>
+        simulate();
+    </script>
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
 </body>
+
 </html>
