@@ -80,7 +80,8 @@
             <label>Peso Asset B (%)<input id="wB" type="number" value="40"></label>
             <label>Aliquota Asset B (%)<input id="taxB" type="number" value="12.5"></label>
 
-
+            <label>Correlazione Asset A e B<input id="corrAB" type="number" value="-0.05" step="0.01" min="-1"
+                    max="1"></label>
             <label>Anni simulazione<input id="years" type="number" value="20"></label>
             <label>Ribilanciamento
                 <select id="rebalance">
@@ -94,23 +95,67 @@
                 Applica tassazione alla vendita
             </label>
             <label>
-
                 <label>Simulazioni Monte Carlo<input id="sims" type="number" value="300"></label>
         </div>
 
         <button onclick="run()">Avvia simulazione</button>
-
+        <h2 class="mb-3">Singola simulazione</h2>
         <canvas id="chart" height="120"></canvas>
-
+        <h2 class="mb-3">📊 Simulazione Monte Carlo</h2>
+        <canvas id="chartMonteCarlo" height="120"></canvas>
         <div class="results" id="stats"></div>
-
         <script>
+            /* =======================
+               GENERA DUE ASSET CORRELATI
+            ======================= */
+            function generateCorrelatedPaths(years, retA, volA, retB, volB, corr) {
+                let pathA = [1];
+                let pathB = [1];
+
+                // Matrice di covarianza
+                const cov = [
+                    [volA * volA, corr * volA * volB],
+                    [corr * volA * volB, volB * volB]
+                ];
+
+                // Cholesky decomposition (2x2)
+                const L = [
+                    [Math.sqrt(cov[0][0]), 0],
+                    [cov[1][0] / Math.sqrt(cov[0][0]), Math.sqrt(cov[1][1] - (cov[1][0] ** 2) / cov[0][0])]
+                ];
+
+                for (let i = 1; i <= years; i++) {
+                    // Genera due normali indipendenti
+                    const z1 = randn();
+                    const z2 = randn();
+
+                    // Combina usando Cholesky per correlazione
+                    const rA = retA + (L[0][0] * z1 + L[0][1] * z2);
+                    const rB = retB + (L[1][0] * z1 + L[1][1] * z2);
+
+                    pathA.push(pathA[i - 1] * (1 + rA));
+                    pathB.push(pathB[i - 1] * (1 + rB));
+                }
+
+                return { pathA, pathB };
+            }
+
+            /* =======================
+               Wrapper per compatibilità
+            ======================= */
+            function generatePaths(years, retA, volA, retB, volB) {
+                const corr = +document.getElementById("corrAB").value;
+                return generateCorrelatedPaths(years, retA, volA, retB, volB, corr);
+            }
+
+
             /* =======================
                COSTANTI
             ======================= */
             const START_CAPITAL = 100000;
             const TAX = 0.26;
             let chart = null;
+            let chartMC = null;
 
             function returnsFromEquity(equity) {
                 let r = [];
@@ -156,10 +201,8 @@
                GENERA PATH COMUNI
             ======================= */
             function generatePaths(years, retA, volA, retB, volB) {
-                return {
-                    pathA: simulateAsset(retA, volA, years),
-                    pathB: simulateAsset(retB, volB, years)
-                };
+                const corr = +document.getElementById("corrAB").value;
+                return generateCorrelatedPaths(years, retA, volA, retB, volB, corr);
             }
 
             /* =======================
@@ -169,82 +212,120 @@
                 let unitsA = (START_CAPITAL * wA) / pathA[0];
                 let unitsB = (START_CAPITAL * wB) / pathB[0];
 
-                let equity = [START_CAPITAL];
+                let costBasisA = START_CAPITAL * wA;
+                let costBasisB = START_CAPITAL * wB;
+
+                const taxEnabled = document.getElementById("enableTax").checked;
+                const taxA = +document.getElementById("taxA").value / 100;
+                const taxB = +document.getElementById("taxB").value / 100;
+
+                let equityGross = [START_CAPITAL];
+                let equityNet = [START_CAPITAL]; // netto fiscale
 
                 for (let i = 1; i < pathA.length; i++) {
-                    equity.push(unitsA * pathA[i] + unitsB * pathB[i]);
+                    const valueA = unitsA * pathA[i];
+                    const valueB = unitsB * pathB[i];
+                    const totalGross = valueA + valueB;
+
+                    let netA = valueA;
+                    let netB = valueB;
+
+                    if (taxEnabled) {
+                        // tasse da vendite ipotetiche (per netto, si considera tutto liquidato)
+                        netA = valueA - (valueA - costBasisA) * taxA;
+                        netB = valueB - (valueB - costBasisB) * taxB;
+                    }
+
+                    equityGross.push(totalGross);
+                    equityNet.push(netA + netB);
                 }
-                return equity;
+
+                return { equityGross, equityNet };
             }
 
+
             /* =======================
-               CON RIBILANCIAMENTO
+            PORTAFOGLIO CON RIBILANCIAMENTO
             ======================= */
             function portfolioWithRebalance(pathA, pathB, wA, wB, freq, cost) {
                 let unitsA = (START_CAPITAL * wA) / pathA[0];
                 let unitsB = (START_CAPITAL * wB) / pathB[0];
 
-                let costBasisA = START_CAPITAL * wA;
-                let costBasisB = START_CAPITAL * wB;
+                // manteniamo il costo fiscale originale per ogni asset
+                const costBasisA_orig = START_CAPITAL * wA;
+                const costBasisB_orig = START_CAPITAL * wB;
+
+                let costBasisA = costBasisA_orig;
+                let costBasisB = costBasisB_orig;
 
                 const taxEnabled = document.getElementById("enableTax").checked;
-
                 const taxA = +document.getElementById("taxA").value / 100;
                 const taxB = +document.getElementById("taxB").value / 100;
 
-                let equity = [START_CAPITAL];
+                let equityGross = [START_CAPITAL];
+                let equityNet = [START_CAPITAL];
+
+                // contatori tasse già pagate
+                let taxPaidA = 0;
+                let taxPaidB = 0;
 
                 for (let i = 1; i < pathA.length; i++) {
                     let valueA = unitsA * pathA[i];
                     let valueB = unitsB * pathB[i];
                     let total = valueA + valueB;
 
+                    // ribilanciamento
                     if (freq > 0 && i % freq === 0) {
-                        let targetA = total * wA;
-                        let targetB = total * wB;
+                        const targetA = total * wA;
+                        const targetB = total * wB;
 
                         // ===== Asset A =====
                         if (valueA > targetA) {
-                            let sell = valueA - targetA;
-                            let basisSold = costBasisA * (sell / valueA);
-                            let gain = Math.max(0, sell - basisSold);
-
+                            const sell = valueA - targetA;
+                            const gain = Math.max(0, sell * (costBasisA / valueA < 1 ? 1 - costBasisA / valueA : 0));
                             if (taxEnabled) {
-                                total -= gain * taxA;
+                                const tax = gain * taxA;
+                                total -= tax;
+                                taxPaidA += tax;
                             }
-
-                            costBasisA -= basisSold;
                         }
 
                         // ===== Asset B =====
                         if (valueB > targetB) {
-                            let sell = valueB - targetB;
-                            let basisSold = costBasisB * (sell / valueB);
-                            let gain = Math.max(0, sell - basisSold);
-
+                            const sell = valueB - targetB;
+                            const gain = Math.max(0, sell * (costBasisB / valueB < 1 ? 1 - costBasisB / valueB : 0));
                             if (taxEnabled) {
-                                total -= gain * taxB;
+                                const tax = gain * taxB;
+                                total -= tax;
+                                taxPaidB += tax;
                             }
-
-                            costBasisB -= basisSold;
                         }
 
-
+                        // costo ribilanciamento
                         total -= cost;
 
-
-                        // ===== Ribilanciamento =====
+                        // aggiorniamo le unità
                         unitsA = (total * wA) / pathA[i];
                         unitsB = (total * wB) / pathB[i];
 
-                        costBasisA = total * wA;
-                        costBasisB = total * wB;
+                        // aggiorniamo cost basis in proporzione
+                        costBasisA = unitsA * pathA[i];
+                        costBasisB = unitsB * pathB[i];
                     }
 
-                    equity.push(unitsA * pathA[i] + unitsB * pathB[i]);
+                    equityGross.push(unitsA * pathA[i] + unitsB * pathB[i]);
+
+                    // calcolo netto cumulando tasse pagate e plusvalenze finali
+                    let net = unitsA * pathA[i] + unitsB * pathB[i];
+                    if (taxEnabled) {
+                        const unrealizedA = Math.max(0, unitsA * pathA[i] - costBasisA_orig);
+                        const unrealizedB = Math.max(0, unitsB * pathB[i] - costBasisB_orig);
+                        net -= taxPaidA + taxPaidB + unrealizedA * taxA + unrealizedB * taxB;
+                    }
+                    equityNet.push(net);
                 }
 
-                return equity;
+                return { equityGross, equityNet };
             }
 
 
@@ -293,12 +374,12 @@
                             },
                             {
                                 label: "Buy & Hold",
-                                data: eqNo,
+                                data: eqNo.equityGross,
                                 borderWidth: 2
                             },
                             {
                                 label: "Buy & Hold + Ribilanciamento annuale",
-                                data: eqRe,
+                                data: eqRe.equityGross,
                                 borderWidth: 2
                             }
                         ]
@@ -309,7 +390,7 @@
             }
 
             /* =======================
-               MONTE CARLO
+               MONTE CARLO CON LORDO E NETTO
             ======================= */
             function monteCarlo() {
                 const sims = +document.getElementById("sims").value;
@@ -323,10 +404,16 @@
                 const wB = +document.getElementById("wB").value / 100;
                 const cost = +document.getElementById("cost").value;
 
-                let finalNo = [];
-                let finalRe = [];
-                let volNo = [];
-                let volRe = [];
+                // Array per accumulare i valori per anno
+                let eqNoGrossSum = Array(years + 1).fill(0);
+                let eqNoNetSum = Array(years + 1).fill(0);
+                let eqReGrossSum = Array(years + 1).fill(0);
+                let eqReNetSum = Array(years + 1).fill(0);
+                let assetASum = Array(years + 1).fill(0);
+                let assetBSum = Array(years + 1).fill(0);
+                let finalNoGross = [], finalNoNet = [];
+                let finalReGross = [], finalReNet = [];
+                let volNo = [], volRe = [];
 
                 for (let i = 0; i < sims; i++) {
                     const { pathA, pathB } = generatePaths(years, retA, volA, retB, volB);
@@ -334,62 +421,110 @@
                     const eqNo = portfolioNoRebalance(pathA, pathB, wA, wB);
                     const eqRe = portfolioWithRebalance(pathA, pathB, wA, wB, 1, cost);
 
-                    finalNo.push(eqNo.at(-1));
-                    finalRe.push(eqRe.at(-1));
+                    finalNoGross.push(eqNo.equityGross.at(-1));
+                    finalNoNet.push(eqNo.equityNet.at(-1));
 
-                    volNo.push(stdDev(returnsFromEquity(eqNo)));
-                    volRe.push(stdDev(returnsFromEquity(eqRe)));
+                    finalReGross.push(eqRe.equityGross.at(-1));
+                    finalReNet.push(eqRe.equityNet.at(-1));
+                    volNo.push(stdDev(returnsFromEquity(eqNo.equityGross)));
+                    volRe.push(stdDev(returnsFromEquity(eqRe.equityGross)));
+
+                    // somma valori per media
+                    for (let t = 0; t <= years; t++) {
+                        eqNoGrossSum[t] += eqNo.equityGross[t];
+                        eqNoNetSum[t] += eqNo.equityNet[t];
+                        eqReGrossSum[t] += eqRe.equityGross[t];
+                        eqReNetSum[t] += eqRe.equityNet[t];
+                        assetASum[t] += pathA[t] * START_CAPITAL;
+                        assetBSum[t] += pathB[t] * START_CAPITAL;
+                    }
                 }
 
+                // calcola medie
+                const eqNoGrossAvg = eqNoGrossSum.map(v => v / sims);
+                const eqNoNetAvg = eqNoNetSum.map(v => v / sims);
+                const eqReGrossAvg = eqReGrossSum.map(v => v / sims);
+                const eqReNetAvg = eqReNetSum.map(v => v / sims);
+                const assetAAvg = assetASum.map(v => v / sims);
+                const assetBAvg = assetBSum.map(v => v / sims);
+
+                const avgNoGross = mean(finalNoGross);
+                const avgNoNet = mean(finalNoNet);
+                const avgReGross = mean(finalReGross);
+                const avgReNet = mean(finalReNet);
+
+                // etichette anni
+                const labels = Array.from({ length: years + 1 }, (_, i) => i);
+
+                // distruggi vecchio grafico
+                if (chartMC instanceof Chart) chartMC.destroy();
+
+                // crea grafico lineare Monte Carlo medio
+                chartMC = new Chart(document.getElementById("chartMonteCarlo"), {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [
+                            { label: "Asset A (medio)", data: assetAAvg, borderColor: 'rgba(75,192,192,1)', borderWidth: 1, borderDash: [5, 5], fill: false },
+                            { label: "Asset B (medio)", data: assetBAvg, borderColor: 'rgba(255,159,64,1)', borderWidth: 1, borderDash: [5, 5], fill: false },
+                            { label: "Buy & Hold lordo (medio)", data: eqNoGrossAvg, borderColor: 'rgba(75,192,192,0.8)', borderWidth: 2, fill: false },
+                            //{ label: "Buy & Hold netto (medio)", data: eqNoNetAvg, borderColor: 'rgba(75,192,192,0.4)', borderWidth: 2, fill: false },
+                            { label: "Ribilanciato lordo (medio)", data: eqReGrossAvg, borderColor: 'rgba(255,159,64,0.8)', borderWidth: 2, fill: false },
+                            //{ label: "Ribilanciato netto (medio)", data: eqReNetAvg, borderColor: 'rgba(255,159,64,0.4)', borderWidth: 2, fill: false },
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'top' },
+                            title: { display: true, text: '📊 Andamento medio Monte Carlo' }
+                        },
+                        scales: {
+                            y: { beginAtZero: false }
+                        }
+                    }
+                });
+
+                // Aggiorna anche la tabella dei risultati
                 document.getElementById("stats").innerHTML = `
-    <div class="mt-4">
-        <h2 class="mb-3">📊 Simulazione Monte Carlo</h2>
-        <p>
-            <b>${sims.toLocaleString()}</b> simulazioni<br>
-            Capitale iniziale: <b>100.000 €</b>
-        </p>
-
-        <div style="display:flex; gap:20px; flex-wrap:wrap;">
-
-            <!-- BUY & HOLD -->
-            <div style="flex:1; min-width:260px; padding:15px; border:1px solid #ddd; border-radius:8px;">
-                <h4>📈 Buy & Hold</h4>
-                <hr>
-                <div>
-                    <b>Valore finale medio</b><br>
-                    <span style="font-size:1.3em;">
-                        ${mean(finalNo).toLocaleString(undefined, { maximumFractionDigits: 0 })} €
-                    </span>
+        <div class="mt-4">            
+            <p>
+                <b>${sims.toLocaleString()}</b> simulazioni<br>
+                Capitale iniziale: <b>100.000 €</b>
+            </p>
+            <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                <!-- BUY & HOLD -->
+                <div style="flex:1; min-width:260px; padding:15px; border:1px solid #ddd; border-radius:8px;">
+                    <h4>📈 Buy & Hold</h4>
+                    <hr>
+                    <div><b>Valore finale lordo medio:</b><br>${mean(finalNoGross).toLocaleString()} €</div>
+                    <div><b>Valore finale netto medio:</b><br>${mean(finalNoNet).toLocaleString()} €</div>
+                    <div><b>Volatilità annua media:</b><br>${(mean(volNo) * 100).toFixed(2)} %</div>
                 </div>
-                <br>
-                <div>
-                    <b>Volatilità annua media</b><br>
-                    ${(mean(volNo) * 100).toFixed(2)} %
-                </div>
-            </div>
 
-            <!-- RIBILANCIAMENTO -->
-            <div style="flex:1; min-width:260px; padding:15px; border:1px solid #ddd; border-radius:8px;">
-                <h4>⚖️ Ribilanciamento annuale</h4>
-                <hr>
-                <div>
-                    <b>Valore finale medio</b><br>
-                    <span style="font-size:1.3em;">
-                        ${mean(finalRe).toLocaleString(undefined, { maximumFractionDigits: 0 })} €
-                    </span>
-                </div>
-                <br>
-                <div>
-                    <b>Volatilità annua media</b><br>
-                    ${(mean(volRe) * 100).toFixed(2)} %
+                <!-- RIBILANCIAMENTO -->
+                <div style="flex:1; min-width:260px; padding:15px; border:1px solid #ddd; border-radius:8px;">
+                    <h4>⚖️ Ribilanciamento annuale</h4>
+                    <hr>
+                    <div><b>Valore finale lordo medio:</b><br>${mean(finalReGross).toLocaleString()} €</div>
+                    <div><b>Valore finale netto medio:</b><br>${mean(finalReNet).toLocaleString()} €</div>
+                    <div><b>Volatilità annua media:</b><br>${(mean(volRe) * 100).toFixed(2)} %</div>
                 </div>
             </div>
-
+            <br>
+            <div>
+                <div style="flex:1; min-width:260px; padding:15px; border:1px solid #ddd; border-radius:8px;">
+                    <h4>🧮 Differenze (Ribilanciato - Hold)</h4>
+                    <hr>
+                    <div><b>Differenza lordi:</b><br>${(mean(finalReGross) - mean(finalNoGross)).toLocaleString()} €</div>
+                    <div><b>Differenza netti:</b><br>${(mean(finalReNet) - mean(finalNoNet)).toLocaleString()} €</div>
+                    <div><b>Differenza volatilità:</b><br>${(mean(volRe) * 100 - mean(volNo) * 100).toFixed(2)} %</div>
+                </div>
+            </div>
         </div>
-    </div>
-`;
-
+    `;
             }
+
 
             run();
         </script>
