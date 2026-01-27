@@ -26,7 +26,7 @@
 
         .controls {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 10px;
             max-width: 900px;
         }
@@ -80,6 +80,7 @@
             <label>Peso Asset B (%)<input id="wB" type="number" value="40"></label>
             <label>Aliquota Asset B (%)<input id="taxB" type="number" value="12.5"></label>
 
+
             <label>Correlazione Asset A e B<input id="corrAB" type="number" value="-0.05" step="0.01" min="-1"
                     max="1"></label>
             <label>Anni simulazione<input id="years" type="number" value="20"></label>
@@ -90,17 +91,16 @@
                 </select>
             </label>
             <label>Costo ribilanciamento (€)<input id="cost" type="number" value="20"></label>
-            <label>
-                <input type="checkbox" id="enableTax" checked>
-                Applica tassazione alla vendita
-            </label>
-            <label>
-                <label>Simulazioni Monte Carlo<input id="sims" type="number" value="300"></label>
+
+            <label><input type="checkbox" id="enableTax" checked>Applica tassazione alla vendita</label>
+            <label>Simulazioni Monte Carlo<input id="sims" type="number" value="300"></label>
+
         </div>
 
         <button onclick="run()">Avvia simulazione</button>
         <h2 class="mb-3">Singola simulazione</h2>
         <canvas id="chart" height="120"></canvas>
+        <div class="results" id="statsSingle"></div>
         <h2 class="mb-3">📊 Simulazione Monte Carlo</h2>
         <canvas id="chartMonteCarlo" height="120"></canvas>
         <div class="results" id="stats"></div>
@@ -245,18 +245,14 @@
 
 
             /* =======================
-            PORTAFOGLIO CON RIBILANCIAMENTO
-            ======================= */
+   PORTAFOGLIO CON RIBILANCIAMENTO CORRETTO
+======================= */
             function portfolioWithRebalance(pathA, pathB, wA, wB, freq, cost) {
                 let unitsA = (START_CAPITAL * wA) / pathA[0];
                 let unitsB = (START_CAPITAL * wB) / pathB[0];
 
-                // manteniamo il costo fiscale originale per ogni asset
-                const costBasisA_orig = START_CAPITAL * wA;
-                const costBasisB_orig = START_CAPITAL * wB;
-
-                let costBasisA = costBasisA_orig;
-                let costBasisB = costBasisB_orig;
+                let costBasisA = START_CAPITAL * wA;
+                let costBasisB = START_CAPITAL * wB;
 
                 const taxEnabled = document.getElementById("enableTax").checked;
                 const taxA = +document.getElementById("taxA").value / 100;
@@ -265,7 +261,6 @@
                 let equityGross = [START_CAPITAL];
                 let equityNet = [START_CAPITAL];
 
-                // contatori tasse già pagate
                 let taxPaidA = 0;
                 let taxPaidB = 0;
 
@@ -274,7 +269,7 @@
                     let valueB = unitsB * pathB[i];
                     let total = valueA + valueB;
 
-                    // ribilanciamento
+                    // Ribilanciamento
                     if (freq > 0 && i % freq === 0) {
                         const targetA = total * wA;
                         const targetB = total * wB;
@@ -282,45 +277,54 @@
                         // ===== Asset A =====
                         if (valueA > targetA) {
                             const sell = valueA - targetA;
-                            const gain = Math.max(0, sell * (costBasisA / valueA < 1 ? 1 - costBasisA / valueA : 0));
+                            const basisSold = costBasisA * (sell / valueA);   // parte proporzionale del cost basis
+                            const gain = sell - basisSold;
+
                             if (taxEnabled) {
                                 const tax = gain * taxA;
-                                total -= tax;
+                                total -= tax;       // paghi la tassa
                                 taxPaidA += tax;
                             }
+
+                            costBasisA -= basisSold; // aggiorna il cost basis rimanente
                         }
 
                         // ===== Asset B =====
                         if (valueB > targetB) {
                             const sell = valueB - targetB;
-                            const gain = Math.max(0, sell * (costBasisB / valueB < 1 ? 1 - costBasisB / valueB : 0));
+                            const basisSold = costBasisB * (sell / valueB);
+                            const gain = sell - basisSold;
+
                             if (taxEnabled) {
                                 const tax = gain * taxB;
                                 total -= tax;
                                 taxPaidB += tax;
                             }
+
+                            costBasisB -= basisSold;
                         }
 
-                        // costo ribilanciamento
+                        // ===== Costi ribilanciamento =====
                         total -= cost;
 
-                        // aggiorniamo le unità
+                        // ===== Ricalcolo unità =====
                         unitsA = (total * wA) / pathA[i];
                         unitsB = (total * wB) / pathB[i];
 
-                        // aggiorniamo cost basis in proporzione
+                        // aggiorno cost basis in proporzione alle nuove unità
                         costBasisA = unitsA * pathA[i];
                         costBasisB = unitsB * pathB[i];
                     }
 
+                    // Equity lordo
                     equityGross.push(unitsA * pathA[i] + unitsB * pathB[i]);
 
-                    // calcolo netto cumulando tasse pagate e plusvalenze finali
+                    // Equity netto
                     let net = unitsA * pathA[i] + unitsB * pathB[i];
                     if (taxEnabled) {
-                        const unrealizedA = Math.max(0, unitsA * pathA[i] - costBasisA_orig);
-                        const unrealizedB = Math.max(0, unitsB * pathB[i] - costBasisB_orig);
-                        net -= taxPaidA + taxPaidB + unrealizedA * taxA + unrealizedB * taxB;
+                        const unrealizedGainA = Math.max(0, unitsA * pathA[i] - costBasisA);
+                        const unrealizedGainB = Math.max(0, unitsB * pathB[i] - costBasisB);
+                        net -= taxPaidA + taxPaidB + unrealizedGainA * taxA + unrealizedGainB * taxB;
                     }
                     equityNet.push(net);
                 }
@@ -360,34 +364,59 @@
                     data: {
                         labels,
                         datasets: [
-                            {
-                                label: "Asset A",
-                                data: assetA,
-                                borderWidth: 1,
-                                borderDash: [6, 6]
-                            },
-                            {
-                                label: "Asset B",
-                                data: assetB,
-                                borderWidth: 1,
-                                borderDash: [6, 6]
-                            },
-                            {
-                                label: "Buy & Hold",
-                                data: eqNo.equityGross,
-                                borderWidth: 2
-                            },
-                            {
-                                label: "Buy & Hold + Ribilanciamento annuale",
-                                data: eqRe.equityGross,
-                                borderWidth: 2
-                            }
+                            { label: "Asset A", data: assetA, borderWidth: 1, borderDash: [6, 6] },
+                            { label: "Asset B", data: assetB, borderWidth: 1, borderDash: [6, 6] },
+                            { label: "Buy & Hold", data: eqNo.equityGross, borderWidth: 2 },
+                            { label: "Ribilanciamento annuale", data: eqRe.equityGross, borderWidth: 2 }
                         ]
                     }
                 });
 
+                // ===== Mostra riepilogo simulazione singola =====
+                const volNoSingle = stdDev(returnsFromEquity(eqNo.equityGross));
+                const volReSingle = stdDev(returnsFromEquity(eqRe.equityGross));
+
+                document.getElementById("statsSingle").innerHTML = `
+        <div class="mt-4">
+            <h2 class="mb-3">📊 Risultati simulazione singola</h2>
+            <p>Capitale iniziale: <b>100.000 €</b></p>
+            <div style="display:flex; gap:20px; flex-wrap:wrap;">
+
+                <!-- BUY & HOLD -->
+                <div style="flex:1; min-width:260px; padding:15px; border:1px solid #ddd; border-radius:8px;">
+                    <h4>📈 Buy & Hold</h4>
+                    <hr>
+                    <div><b>Valore finale lordo:</b><br>${eqNo.equityGross.at(-1).toLocaleString()} €</div>
+                    <div><b>Valore finale netto:</b><br>${eqNo.equityNet.at(-1).toLocaleString()} €</div>
+                    <div><b>Volatilità annua:</b><br>${(volNoSingle * 100).toFixed(2)} %</div>
+                </div>
+
+                <!-- RIBILANCIAMENTO -->
+                <div style="flex:1; min-width:260px; padding:15px; border:1px solid #ddd; border-radius:8px;">
+                    <h4>⚖️ Ribilanciamento annuale</h4>
+                    <hr>
+                    <div><b>Valore finale lordo:</b><br>${eqRe.equityGross.at(-1).toLocaleString()} €</div>
+                    <div><b>Valore finale netto:</b><br>${eqRe.equityNet.at(-1).toLocaleString()} €</div>
+                    <div><b>Volatilità annua:</b><br>${(volReSingle * 100).toFixed(2)} %</div>
+                </div>               
+            </div>
+             <br>
+                <div>
+                    <div style="flex:1; min-width:260px; padding:15px; border:1px solid #ddd; border-radius:8px;">
+                        <h4>🧮 Differenze (Ribilanciato - Hold)</h4>
+                        <hr>
+                        <div><b>Differenza lordi:</b><br>${(eqRe.equityGross.at(-1) - eqNo.equityGross.at(-1)).toLocaleString()} €</div>
+                        <div><b>Differenza netti:</b><br>${(eqRe.equityNet.at(-1) - eqNo.equityNet.at(-1)).toLocaleString()} €</div>
+                        <div><b>Differenza volatilità:</b><br>${(volReSingle * 100 - volNoSingle * 100).toFixed(2)} %</div>
+                    </div>
+                </div>
+        </div>
+    `;
+
+                // Esegui Monte Carlo
                 monteCarlo();
             }
+
 
             /* =======================
                MONTE CARLO CON LORDO E NETTO
