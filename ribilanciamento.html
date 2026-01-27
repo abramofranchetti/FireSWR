@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ribilanciamento Asset con simulazione montecarlo</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h2 {
+            margin-top: 30px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 900px;
+        }
+
+        label {
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            width: 100%;
+        }
+
+        button {
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        canvas {
+            margin-top: 30px;
+        }
+
+        .results {
+            margin-top: 30px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Ribilanciamento Asset con simulazione montecarlo</h1>
+        <h5 class="text-center">Mostra l'effetto del ribilanciamento su un portafoglio ipotetico composto da 2 asset con
+            diversi rendimenti e volatilità. A fondo pagina una simulazione Monte Carlo che mostra i risultati medi.
+        </h5>
+
+
+        <div class="controls">
+            <label>Rendimento Asset A (%)<input id="retA" type="number" value="7"></label>
+            <label>Volatilità Asset A (%)<input id="volA" type="number" value="15"></label>
+            <label>Peso Asset A (%)<input id="wA" type="number" value="60"></label>
+            <label>Aliquota Asset A (%)<input id="taxA" type="number" value="26"></label>
+
+            <label>Rendimento Asset B (%)<input id="retB" type="number" value="3"></label>
+            <label>Volatilità Asset B (%)<input id="volB" type="number" value="5"></label>
+            <label>Peso Asset B (%)<input id="wB" type="number" value="40"></label>
+            <label>Aliquota Asset B (%)<input id="taxB" type="number" value="12.5"></label>
+
+
+            <label>Anni simulazione<input id="years" type="number" value="20"></label>
+            <label>Ribilanciamento
+                <select id="rebalance">
+                    <option value="1">Annuale</option>
+                    <option value="2">Biennale</option>
+                </select>
+            </label>
+            <label>Costo ribilanciamento (€)<input id="cost" type="number" value="20"></label>
+            <label>
+                <input type="checkbox" id="enableTax" checked>
+                Applica tassazione alla vendita
+            </label>
+            <label>
+
+                <label>Simulazioni Monte Carlo<input id="sims" type="number" value="300"></label>
+        </div>
+
+        <button onclick="run()">Avvia simulazione</button>
+
+        <canvas id="chart" height="120"></canvas>
+
+        <div class="results" id="stats"></div>
+
+        <script>
+            /* =======================
+               COSTANTI
+            ======================= */
+            const START_CAPITAL = 100000;
+            const TAX = 0.26;
+            let chart = null;
+
+            function returnsFromEquity(equity) {
+                let r = [];
+                for (let i = 1; i < equity.length; i++) {
+                    r.push(equity[i] / equity[i - 1] - 1);
+                }
+                return r;
+            }
+
+            function mean(arr) {
+                return arr.reduce((s, x) => s + x, 0) / arr.length;
+            }
+
+            function stdDev(arr) {
+                let m = mean(arr);
+                return Math.sqrt(arr.reduce((s, x) => s + (x - m) ** 2, 0) / arr.length);
+            }
+
+
+            /* =======================
+               RANDOM NORMALE
+            ======================= */
+            function randn() {
+                let u = 0, v = 0;
+                while (u === 0) u = Math.random();
+                while (v === 0) v = Math.random();
+                return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+            }
+
+            /* =======================
+               SIMULAZIONE ASSET
+            ======================= */
+            function simulateAsset(ret, vol, years) {
+                let path = [1];
+                for (let i = 1; i <= years; i++) {
+                    let r = ret + vol * randn();
+                    path.push(path[i - 1] * (1 + r));
+                }
+                return path;
+            }
+
+            /* =======================
+               GENERA PATH COMUNI
+            ======================= */
+            function generatePaths(years, retA, volA, retB, volB) {
+                return {
+                    pathA: simulateAsset(retA, volA, years),
+                    pathB: simulateAsset(retB, volB, years)
+                };
+            }
+
+            /* =======================
+               BUY & HOLD
+            ======================= */
+            function portfolioNoRebalance(pathA, pathB, wA, wB) {
+                let unitsA = (START_CAPITAL * wA) / pathA[0];
+                let unitsB = (START_CAPITAL * wB) / pathB[0];
+
+                let equity = [START_CAPITAL];
+
+                for (let i = 1; i < pathA.length; i++) {
+                    equity.push(unitsA * pathA[i] + unitsB * pathB[i]);
+                }
+                return equity;
+            }
+
+            /* =======================
+               CON RIBILANCIAMENTO
+            ======================= */
+            function portfolioWithRebalance(pathA, pathB, wA, wB, freq, cost) {
+                let unitsA = (START_CAPITAL * wA) / pathA[0];
+                let unitsB = (START_CAPITAL * wB) / pathB[0];
+
+                let costBasisA = START_CAPITAL * wA;
+                let costBasisB = START_CAPITAL * wB;
+
+                const taxEnabled = document.getElementById("enableTax").checked;
+
+                const taxA = +document.getElementById("taxA").value / 100;
+                const taxB = +document.getElementById("taxB").value / 100;
+
+                let equity = [START_CAPITAL];
+
+                for (let i = 1; i < pathA.length; i++) {
+                    let valueA = unitsA * pathA[i];
+                    let valueB = unitsB * pathB[i];
+                    let total = valueA + valueB;
+
+                    if (freq > 0 && i % freq === 0) {
+                        let targetA = total * wA;
+                        let targetB = total * wB;
+
+                        // ===== Asset A =====
+                        if (valueA > targetA) {
+                            let sell = valueA - targetA;
+                            let basisSold = costBasisA * (sell / valueA);
+                            let gain = Math.max(0, sell - basisSold);
+
+                            if (taxEnabled) {
+                                total -= gain * taxA;
+                            }
+
+                            costBasisA -= basisSold;
+                        }
+
+                        // ===== Asset B =====
+                        if (valueB > targetB) {
+                            let sell = valueB - targetB;
+                            let basisSold = costBasisB * (sell / valueB);
+                            let gain = Math.max(0, sell - basisSold);
+
+                            if (taxEnabled) {
+                                total -= gain * taxB;
+                            }
+
+                            costBasisB -= basisSold;
+                        }
+
+
+                        total -= cost;
+
+
+                        // ===== Ribilanciamento =====
+                        unitsA = (total * wA) / pathA[i];
+                        unitsB = (total * wB) / pathB[i];
+
+                        costBasisA = total * wA;
+                        costBasisB = total * wB;
+                    }
+
+                    equity.push(unitsA * pathA[i] + unitsB * pathB[i]);
+                }
+
+                return equity;
+            }
+
+
+            /* =======================
+               RUN
+            ======================= */
+            function run() {
+                const years = +document.getElementById("years").value;
+                const retA = +document.getElementById("retA").value / 100;
+                const volA = +document.getElementById("volA").value / 100;
+                const retB = +document.getElementById("retB").value / 100;
+                const volB = +document.getElementById("volB").value / 100;
+                const wA = +document.getElementById("wA").value / 100;
+                const wB = +document.getElementById("wB").value / 100;
+                const cost = +document.getElementById("cost").value;
+
+                const { pathA, pathB } = generatePaths(years, retA, volA, retB, volB);
+
+                const eqNo = portfolioNoRebalance(pathA, pathB, wA, wB);
+                const eqRe = portfolioWithRebalance(pathA, pathB, wA, wB, 1, cost);
+
+                // Asset valorizzati a 100k per confronto visivo
+                const assetA = pathA.map(v => v * START_CAPITAL);
+                const assetB = pathB.map(v => v * START_CAPITAL);
+
+                const labels = pathA.map((_, i) => i);
+
+                if (chart instanceof Chart) chart.destroy();
+
+                chart = new Chart(document.getElementById("chart"), {
+                    type: "line",
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: "Asset A",
+                                data: assetA,
+                                borderWidth: 1,
+                                borderDash: [6, 6]
+                            },
+                            {
+                                label: "Asset B",
+                                data: assetB,
+                                borderWidth: 1,
+                                borderDash: [6, 6]
+                            },
+                            {
+                                label: "Buy & Hold",
+                                data: eqNo,
+                                borderWidth: 2
+                            },
+                            {
+                                label: "Buy & Hold + Ribilanciamento annuale",
+                                data: eqRe,
+                                borderWidth: 2
+                            }
+                        ]
+                    }
+                });
+
+                monteCarlo();
+            }
+
+            /* =======================
+               MONTE CARLO
+            ======================= */
+            function monteCarlo() {
+                const sims = +document.getElementById("sims").value;
+
+                const years = +document.getElementById("years").value;
+                const retA = +document.getElementById("retA").value / 100;
+                const volA = +document.getElementById("volA").value / 100;
+                const retB = +document.getElementById("retB").value / 100;
+                const volB = +document.getElementById("volB").value / 100;
+                const wA = +document.getElementById("wA").value / 100;
+                const wB = +document.getElementById("wB").value / 100;
+                const cost = +document.getElementById("cost").value;
+
+                let finalNo = [];
+                let finalRe = [];
+                let volNo = [];
+                let volRe = [];
+
+                for (let i = 0; i < sims; i++) {
+                    const { pathA, pathB } = generatePaths(years, retA, volA, retB, volB);
+
+                    const eqNo = portfolioNoRebalance(pathA, pathB, wA, wB);
+                    const eqRe = portfolioWithRebalance(pathA, pathB, wA, wB, 1, cost);
+
+                    finalNo.push(eqNo.at(-1));
+                    finalRe.push(eqRe.at(-1));
+
+                    volNo.push(stdDev(returnsFromEquity(eqNo)));
+                    volRe.push(stdDev(returnsFromEquity(eqRe)));
+                }
+
+                document.getElementById("stats").innerHTML = `
+    <div class="mt-4">
+        <h2 class="mb-3">📊 Simulazione Monte Carlo</h2>
+        <p>
+            <b>${sims.toLocaleString()}</b> simulazioni<br>
+            Capitale iniziale: <b>100.000 €</b>
+        </p>
+
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+
+            <!-- BUY & HOLD -->
+            <div style="flex:1; min-width:260px; padding:15px; border:1px solid #ddd; border-radius:8px;">
+                <h4>📈 Buy & Hold</h4>
+                <hr>
+                <div>
+                    <b>Valore finale medio</b><br>
+                    <span style="font-size:1.3em;">
+                        ${mean(finalNo).toLocaleString(undefined, { maximumFractionDigits: 0 })} €
+                    </span>
+                </div>
+                <br>
+                <div>
+                    <b>Volatilità annua media</b><br>
+                    ${(mean(volNo) * 100).toFixed(2)} %
+                </div>
+            </div>
+
+            <!-- RIBILANCIAMENTO -->
+            <div style="flex:1; min-width:260px; padding:15px; border:1px solid #ddd; border-radius:8px;">
+                <h4>⚖️ Ribilanciamento annuale</h4>
+                <hr>
+                <div>
+                    <b>Valore finale medio</b><br>
+                    <span style="font-size:1.3em;">
+                        ${mean(finalRe).toLocaleString(undefined, { maximumFractionDigits: 0 })} €
+                    </span>
+                </div>
+                <br>
+                <div>
+                    <b>Volatilità annua media</b><br>
+                    ${(mean(volRe) * 100).toFixed(2)} %
+                </div>
+            </div>
+
+        </div>
+    </div>
+`;
+
+            }
+
+            run();
+        </script>
+
+
+
+
+    </div>
+
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
