@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const minusAmount = document.getElementById('minusAmount');
     const taxRate = document.getElementById('taxRate');
     const taxCredit = document.getElementById('taxCredit');
+    const taxCreditTot = document.getElementById('taxCreditTot');
     const recovery26 = document.getElementById('recovery26');
     const recovery12 = document.getElementById('recovery12');
 
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const loss = parseFloat(minusAmount.value);
         const rate = parseFloat(taxRate.value);
         
+        const creditTot = (loss * rate/0.26 / 100);
         // Calcolo dello zainetto fiscale
         const credit = (loss * rate / 100);
         
@@ -17,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const recovery12Amount = credit / 0.125; // diviso per 12.5%
 
         // Formattazione dei risultati
+        taxCreditTot.textContent = creditTot.toFixed(2) + '€';
         taxCredit.textContent = credit.toFixed(2) + '€';
         recovery26.textContent = recovery26Amount.toFixed(2) + '€';
         recovery12.textContent = recovery12Amount.toFixed(2) + '€';
