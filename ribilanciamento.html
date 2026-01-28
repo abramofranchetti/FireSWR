@@ -93,7 +93,6 @@
             <label>Costo ribilanciamento (€)<input id="cost" type="number" value="20"></label>
 
             <label><input type="checkbox" id="enableTax" checked>Applica tassazione alla vendita</label>
-            <label><input type="checkbox" id="enableMinusComp" checked>Compensa minusvalenze</label>
             <label>Simulazioni Monte Carlo<input id="sims" type="number" value="300"></label>
 
         </div>
@@ -289,33 +288,16 @@
                 let unitsA = (START_CAPITAL * wA) / pathA[0];
                 let unitsB = (START_CAPITAL * wB) / pathB[0];
 
-                let costBasisA = START_CAPITAL * wA; // quanto hai speso realmente
+                let costBasisA = START_CAPITAL * wA;
                 let costBasisB = START_CAPITAL * wB;
 
                 const taxEnabled = document.getElementById("enableTax").checked;
-                const minusEnabled = document.getElementById("enableMinusComp")?.checked ?? true;
                 const taxRateA = +document.getElementById("taxA").value / 100;
                 const taxRateB = +document.getElementById("taxB").value / 100;
 
-                let minusCarry = 0;   // minusvalenze accumulate
                 let taxesPaid = 0;
-
                 let equityGross = [START_CAPITAL];
                 let equityNet = [START_CAPITAL];
-
-                // ================= UTIL =================
-                function compensateGain(gain, taxRate) {
-                    if (!taxEnabled || gain <= 0) {
-                        if (gain < 0 && minusEnabled) minusCarry += Math.abs(gain);
-                        return Math.max(0, gain);
-                    }
-                    if (!minusEnabled) return gain;
-
-                    const gainEq26 = gain * (taxRate / 0.26);
-                    const usedMinus = Math.min(gainEq26, minusCarry);
-                    minusCarry -= usedMinus;
-                    return gain - usedMinus * (0.26 / taxRate);
-                }
 
                 for (let i = 1; i < pathA.length; i++) {
                     let valueA = unitsA * pathA[i];
@@ -326,19 +308,15 @@
                     if (freq > 0 && i % freq === 0) {
                         const targetA = total * wA;
                         const targetB = total * wB;
-
-                        // ===== VENDITE E TASSE =====
                         let cashFromSales = 0;
 
                         // Asset A sopra target
                         if (valueA > targetA) {
                             const sellA = valueA - targetA;
                             const basisSoldA = costBasisA * (sellA / valueA);
-                            let gainA = sellA - basisSoldA;
+                            const gainA = sellA - basisSoldA;
 
-                            gainA = compensateGain(gainA, taxRateA);
-                            const taxA = gainA * taxRateA;
-
+                            const taxA = taxEnabled ? gainA * taxRateA : 0;
                             taxesPaid += taxA;
                             cashFromSales += sellA - taxA;
 
@@ -350,11 +328,9 @@
                         if (valueB > targetB) {
                             const sellB = valueB - targetB;
                             const basisSoldB = costBasisB * (sellB / valueB);
-                            let gainB = sellB - basisSoldB;
+                            const gainB = sellB - basisSoldB;
 
-                            gainB = compensateGain(gainB, taxRateB);
-                            const taxB = gainB * taxRateB;
-
+                            const taxB = taxEnabled ? gainB * taxRateB : 0;
                             taxesPaid += taxB;
                             cashFromSales += sellB - taxB;
 
@@ -368,7 +344,6 @@
                         // ===== COMPRA ASSET SOTTO TARGET =====
                         const deficitA = targetA - unitsA * pathA[i];
                         const deficitB = targetB - unitsB * pathB[i];
-
                         const totalDeficit = deficitA + deficitB;
 
                         if (totalDeficit > 0 && cashFromSales > 0) {
@@ -392,12 +367,9 @@
                     // ================= NETTO =================
                     let net = gross;
                     if (taxEnabled) {
-                        // calcolo capital gain finale
-                        let finalGainA = Math.max(0, unitsA * pathA[i] - costBasisA);
-                        let finalGainB = Math.max(0, unitsB * pathB[i] - costBasisB);
-
-                        finalGainA = compensateGain(finalGainA, taxRateA);
-                        finalGainB = compensateGain(finalGainB, taxRateB);
+                        // tasse capital gain finale solo sulla porzione venduta
+                        const finalGainA = Math.max(0, unitsA * pathA[i] - costBasisA);
+                        const finalGainB = Math.max(0, unitsB * pathB[i] - costBasisB);
 
                         net -= finalGainA * taxRateA;
                         net -= finalGainB * taxRateB;
@@ -405,22 +377,19 @@
                     equityNet.push(net);
                 }
 
-                // Capital gain finale (tasse se liquidassi oggi)
+                // Capital gain finale totale (se liquidassi oggi)
                 const finalCapitalGainTax = taxEnabled
-                    ? (Math.max(0, unitsA * pathA.at(-1) - costBasisA) * taxRateA
-                        + Math.max(0, unitsB * pathB.at(-1) - costBasisB) * taxRateB)
+                    ? Math.max(0, unitsA * pathA.at(-1) - costBasisA) * taxRateA
+                    + Math.max(0, unitsB * pathB.at(-1) - costBasisB) * taxRateB
                     : 0;
-
 
                 return {
                     equityGross,
                     equityNet,
                     taxesPaid,
-                    minusCarry,
                     finalCapitalGainTax
                 };
             }
-
 
             /* =======================
                CALCOLO STATISTICHE MONTE CARLO
