@@ -108,7 +108,6 @@
         <div class="card mt-4">
             <div class="card-body">
                 <h5 class="card-title">Riepilogo statistico Monte Carlo</h5>
-
                 <ul>
                     <li>
                         % simulazioni dove <strong>Ribilanciamento</strong> batte <strong>Buy & Hold</strong> (lordo):
@@ -122,25 +121,21 @@
                         % simulazioni dove <strong>Ribilanciamento</strong> ha <strong>volatilità inferiore</strong>:
                         <strong id="statVol"></strong>
                     </li>
-
+                    <li>
+                        Quando il <strong>Netto ribilanciato</strong> batte il <strong>Buy & Hold</strong>,
+                        lo fa in media del: <strong id="statExtraNetto"></strong> del guadagno
+                    </li>
                 </ul>
             </div>
         </div>
         <script>
             function mostraRiepilogoStatistiche(simulazioni) {
                 const stats = calcolaStatisticheMonteCarlo(simulazioni);
-
-                document.getElementById("statLordo").innerText =
-                    stats.lordoRebVincePerc + "%";
-
-                document.getElementById("statNetto").innerText =
-                    stats.nettoRebVincePerc + "%";
-
-                document.getElementById("statVol").innerText =
-                    stats.volRebMinorePerc + "%";
+                document.getElementById("statLordo").innerText = stats.lordoRebVincePerc + "%";
+                document.getElementById("statNetto").innerText = stats.nettoRebVincePerc + "%";
+                document.getElementById("statVol").innerText = stats.volRebMinorePerc + "%";
+                document.getElementById("statExtraNetto").innerText = stats.extraNettoMedioPerc + "%";    
             }
-
-
             /* =======================
                GENERA DUE ASSET CORRELATI
             ======================= */
@@ -175,7 +170,6 @@
 
                 return { pathA, pathB };
             }
-
             /* =======================
                Wrapper per compatibilità
             ======================= */
@@ -209,8 +203,6 @@
                 let m = mean(arr);
                 return Math.sqrt(arr.reduce((s, x) => s + (x - m) ** 2, 0) / arr.length);
             }
-
-
             /* =======================
                RANDOM NORMALE
             ======================= */
@@ -279,10 +271,9 @@
                 return { equityGross, equityNet };
             }
 
-
             /* =======================
-   PORTAFOGLIO CON RIBILANCIAMENTO CORRETTO
-======================= */
+            PORTAFOGLIO CON RIBILANCIAMENTO CORRETTO
+            ======================= */
             function portfolioWithRebalance(pathA, pathB, wA, wB, freq, cost) {
 
                 let unitsA = (START_CAPITAL * wA) / pathA[0];
@@ -411,7 +402,9 @@
             function calcolaStatisticheMonteCarlo(simulazioni) {
                 let countLordoRebVince = 0;
                 let countNettoRebVince = 0;
-                let countVolRebMinore = 0;
+                let countVolRebMinore = 0;            
+                let extraNettoPercSum = 0;
+                let extraNettoPercCount = 0;
 
                 simulazioni.forEach(sim => {
 
@@ -422,6 +415,15 @@
 
                     if (sim.nettoRebalance > sim.nettoNoRebalance) {
                         countNettoRebVince++;
+                        
+                        const gainNo = sim.nettoNoRebalance - START_CAPITAL;
+                        const extra = sim.nettoRebalance - sim.nettoNoRebalance;
+
+                        // calcola extra % solo se ha senso
+                        if (gainNo > 0) {
+                            extraNettoPercSum += extra / gainNo;
+                            extraNettoPercCount++;
+                        }
                     }
 
                     // Rebalance RIDUCE la volatilità
@@ -435,12 +437,10 @@
                 return {
                     lordoRebVincePerc: (countLordoRebVince / totale * 100).toFixed(1),
                     nettoRebVincePerc: (countNettoRebVince / totale * 100).toFixed(1),
-                    volRebMinorePerc: (countVolRebMinore / totale * 100).toFixed(1)
+                    volRebMinorePerc: (countVolRebMinore / totale * 100).toFixed(1),
+                    extraNettoMedioPerc: extraNettoPercCount > 0 ? (extraNettoPercSum / extraNettoPercCount * 100).toFixed(2) : "0.00"
                 };
             }
-
-
-
 
             /* =======================
                RUN
@@ -525,7 +525,6 @@
                 // Esegui Monte Carlo
                 monteCarlo();
             }
-
 
             /* =======================
                MONTE CARLO CON LORDO E NETTO
@@ -679,18 +678,11 @@
 
             }
 
-
             run();
         </script>
-
-
-
-
     </div>
-
     <!-- Disclaimer -->
     <div id="disclaimer-container"></div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             fetch('html/disclaimer.html')
@@ -701,5 +693,4 @@
         });
     </script>
 </body>
-
 </html>
