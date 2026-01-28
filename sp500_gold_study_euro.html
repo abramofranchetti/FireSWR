@@ -196,7 +196,7 @@
                 type: 'line',
                 data: {
                     datasets: [
-                        { label: 'S&P 500 Total Return in oro', data: spGold.map(d => ({ x: d.date, y: d.trGold })), borderWidth: 1.5, pointRadius: 0, borderColor: 'red' }
+                        { label: 'S&P 500 Total Return in oro (Euro per grammo)', data: spGold.map(d => ({ x: d.date, y: d.trGold })), borderWidth: 1.5, pointRadius: 0, borderColor: 'red' }
                     ]
                 },
                 options: { layout: { padding: { right: 20 } }, scales: { x: { type: 'time', offset: false }, y: { title: { display: true, text: 'Grammi d\'oro per quota S&P 500 TR' } } } }
