@@ -93,6 +93,7 @@
             <label>Costo ribilanciamento (€)<input id="cost" type="number" value="20"></label>
 
             <label><input type="checkbox" id="enableTax" checked>Applica tassazione alla vendita</label>
+            <label><input type="checkbox" id="enableMinusComp" checked>Compensa minusvalenze</label>
             <label>Simulazioni Monte Carlo<input id="sims" type="number" value="300"></label>
 
         </div>
@@ -104,7 +105,42 @@
         <h2 class="mb-3">📊 Simulazione Monte Carlo</h2>
         <canvas id="chartMonteCarlo" height="120"></canvas>
         <div class="results" id="stats"></div>
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Riepilogo statistico Monte Carlo</h5>
+
+                <ul>
+                    <li>
+                        % simulazioni dove <strong>Ribilanciamento</strong> batte <strong>Buy & Hold</strong> (lordo):
+                        <strong id="statLordo"></strong>
+                    </li>
+                    <li>
+                        % simulazioni dove <strong>Ribilanciamento</strong> batte <strong>Buy & Hold</strong> (netto):
+                        <strong id="statNetto"></strong>
+                    </li>
+                    <li>
+                        % simulazioni dove <strong>Ribilanciamento</strong> ha <strong>volatilità inferiore</strong>:
+                        <strong id="statVol"></strong>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
         <script>
+            function mostraRiepilogoStatistiche(simulazioni) {
+                const stats = calcolaStatisticheMonteCarlo(simulazioni);
+
+                document.getElementById("statLordo").innerText =
+                    stats.lordoRebVincePerc + "%";
+
+                document.getElementById("statNetto").innerText =
+                    stats.nettoRebVincePerc + "%";
+
+                document.getElementById("statVol").innerText =
+                    stats.volRebMinorePerc + "%";
+            }
+
+
             /* =======================
                GENERA DUE ASSET CORRELATI
             ======================= */
@@ -248,6 +284,7 @@
    PORTAFOGLIO CON RIBILANCIAMENTO CORRETTO
 ======================= */
             function portfolioWithRebalance(pathA, pathB, wA, wB, freq, cost) {
+
                 let unitsA = (START_CAPITAL * wA) / pathA[0];
                 let unitsB = (START_CAPITAL * wB) / pathB[0];
 
@@ -255,82 +292,154 @@
                 let costBasisB = START_CAPITAL * wB;
 
                 const taxEnabled = document.getElementById("enableTax").checked;
-                const taxA = +document.getElementById("taxA").value / 100;
-                const taxB = +document.getElementById("taxB").value / 100;
+                const minusEnabled = document.getElementById("enableMinusComp")?.checked ?? true;
+                const taxRateA = +document.getElementById("taxA").value / 100;
+                const taxRateB = +document.getElementById("taxB").value / 100;
+
+                let minusCarry = 0;   // minusvalenze in "equivalente 26%"
+                let taxesPaid = 0;
 
                 let equityGross = [START_CAPITAL];
                 let equityNet = [START_CAPITAL];
 
-                let taxPaidA = 0;
-                let taxPaidB = 0;
+                // ================= UTIL =================
+                function compensateGain(gain, taxRate) {
+
+                    if (!taxEnabled || gain <= 0) {
+                        if (gain < 0 && minusEnabled) {
+                            minusCarry += Math.abs(gain);
+                        }
+                        return Math.max(0, gain);
+                    }
+
+                    // se disabilitata la compensazione minus
+                    if (!minusEnabled) {
+                        return gain;
+                    }
+
+                    // conversione plus in equivalente 26%
+                    const gainEq26 = gain * (taxRate / 0.26);
+                    const usedMinus = Math.min(gainEq26, minusCarry);
+
+                    minusCarry -= usedMinus;
+
+                    // ritorna plus residua reale
+                    return gain - usedMinus * (0.26 / taxRate);
+                }
+
 
                 for (let i = 1; i < pathA.length; i++) {
+
                     let valueA = unitsA * pathA[i];
                     let valueB = unitsB * pathB[i];
                     let total = valueA + valueB;
 
-                    // Ribilanciamento
+                    // ================= RIBILANCIAMENTO =================
                     if (freq > 0 && i % freq === 0) {
+
                         const targetA = total * wA;
                         const targetB = total * wB;
 
                         // ===== Asset A =====
                         if (valueA > targetA) {
                             const sell = valueA - targetA;
-                            const basisSold = costBasisA * (sell / valueA);   // parte proporzionale del cost basis
-                            const gain = sell - basisSold;
+                            const basisSold = costBasisA * (sell / valueA);
+                            let gain = sell - basisSold;
 
-                            if (taxEnabled) {
-                                const tax = gain * taxA;
-                                total -= tax;       // paghi la tassa
-                                taxPaidA += tax;
-                            }
+                            gain = compensateGain(gain, taxRateA);
+                            const tax = gain * taxRateA;
 
-                            costBasisA -= basisSold; // aggiorna il cost basis rimanente
+                            total -= tax;
+                            taxesPaid += tax;
+                            costBasisA -= basisSold;
                         }
 
                         // ===== Asset B =====
                         if (valueB > targetB) {
                             const sell = valueB - targetB;
                             const basisSold = costBasisB * (sell / valueB);
-                            const gain = sell - basisSold;
+                            let gain = sell - basisSold;
 
-                            if (taxEnabled) {
-                                const tax = gain * taxB;
-                                total -= tax;
-                                taxPaidB += tax;
-                            }
+                            gain = compensateGain(gain, taxRateB);
+                            const tax = gain * taxRateB;
 
+                            total -= tax;
+                            taxesPaid += tax;
                             costBasisB -= basisSold;
                         }
 
-                        // ===== Costi ribilanciamento =====
+                        // ===== Costi =====
                         total -= cost;
 
                         // ===== Ricalcolo unità =====
                         unitsA = (total * wA) / pathA[i];
                         unitsB = (total * wB) / pathB[i];
 
-                        // aggiorno cost basis in proporzione alle nuove unità
+                        // ===== Nuovo prezzo di carico =====
                         costBasisA = unitsA * pathA[i];
                         costBasisB = unitsB * pathB[i];
                     }
 
-                    // Equity lordo
-                    equityGross.push(unitsA * pathA[i] + unitsB * pathB[i]);
+                    // ================= EQUITY =================
+                    const gross = unitsA * pathA[i] + unitsB * pathB[i];
+                    equityGross.push(gross);
 
-                    // Equity netto
-                    let net = unitsA * pathA[i] + unitsB * pathB[i];
+                    // ================= NET SE LIQUIDO OGGI =================
+                    let net = gross;
+
                     if (taxEnabled) {
-                        const unrealizedGainA = Math.max(0, unitsA * pathA[i] - costBasisA);
-                        const unrealizedGainB = Math.max(0, unitsB * pathB[i] - costBasisB);
-                        net -= taxPaidA + taxPaidB + unrealizedGainA * taxA + unrealizedGainB * taxB;
+                        let gainA = Math.max(0, unitsA * pathA[i] - costBasisA);
+                        let gainB = Math.max(0, unitsB * pathB[i] - costBasisB);
+
+                        gainA = compensateGain(gainA, taxRateA);
+                        gainB = compensateGain(gainB, taxRateB);
+
+                        net -= gainA * taxRateA;
+                        net -= gainB * taxRateB;
                     }
+
                     equityNet.push(net);
                 }
 
-                return { equityGross, equityNet };
+                return {
+                    equityGross,
+                    equityNet,
+                    taxesPaid,
+                    minusCarry
+                };
             }
+            function calcolaStatisticheMonteCarlo(simulazioni) {
+                let countLordoRebVince = 0;
+                let countNettoRebVince = 0;
+                let countVolRebMinore = 0;
+
+                simulazioni.forEach(sim => {
+
+                    // Rebalance batte Buy&Hold
+                    if (sim.lordoRebalance > sim.lordoNoRebalance) {
+                        countLordoRebVince++;
+                    }
+
+                    if (sim.nettoRebalance > sim.nettoNoRebalance) {
+                        countNettoRebVince++;
+                    }
+
+                    // Rebalance RIDUCE la volatilità
+                    if (sim.volRebalance < sim.volNoRebalance) {
+                        countVolRebMinore++;
+                    }
+                });
+
+                const totale = simulazioni.length;
+
+                return {
+                    lordoRebVincePerc: (countLordoRebVince / totale * 100).toFixed(1),
+                    nettoRebVincePerc: (countNettoRebVince / totale * 100).toFixed(1),
+                    volRebMinorePerc: (countVolRebMinore / totale * 100).toFixed(1)
+                };
+            }
+
+
 
 
             /* =======================
@@ -443,6 +552,8 @@
                 let finalNoGross = [], finalNoNet = [];
                 let finalReGross = [], finalReNet = [];
                 let volNo = [], volRe = [];
+                let simulazioni = [];
+
 
                 for (let i = 0; i < sims; i++) {
                     const { pathA, pathB } = generatePaths(years, retA, volA, retB, volB);
@@ -457,6 +568,16 @@
                     finalReNet.push(eqRe.equityNet.at(-1));
                     volNo.push(stdDev(returnsFromEquity(eqNo.equityGross)));
                     volRe.push(stdDev(returnsFromEquity(eqRe.equityGross)));
+
+                    simulazioni.push({
+                        lordoNoRebalance: eqNo.equityGross.at(-1),
+                        lordoRebalance: eqRe.equityGross.at(-1),
+                        nettoNoRebalance: eqNo.equityNet.at(-1),
+                        nettoRebalance: eqRe.equityNet.at(-1),
+                        volNoRebalance: stdDev(returnsFromEquity(eqNo.equityGross)),
+                        volRebalance: stdDev(returnsFromEquity(eqRe.equityGross))
+                    });
+
 
                     // somma valori per media
                     for (let t = 0; t <= years; t++) {
@@ -553,6 +674,9 @@
             </div>
         </div>
     `;
+
+                mostraRiepilogoStatistiche(simulazioni);
+
             }
 
 
