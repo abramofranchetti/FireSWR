@@ -31,6 +31,39 @@
         <h3 class="mt-4">S&P 500 – Total Return</h3>
         <canvas id="chartTR"></canvas>
 
+        <div class="mt-4 p-3 bg-light border rounded">
+            <p>
+                Nel grafico sotto è riportato il rendimento annualizzato, tipicamente chiamato CAGR in finanza (Compound
+                Annual Growth Rate).
+                Il rendimento è nominale, lordo ed include i dividendi.
+                Per un investitore italiano, bisogna togliere la tassazione sui dividendi, la tassazione sulla
+                plusvalenza ed inserire il cambio lira/dollaro prima ed EUR/dollaro poi.
+            </p>
+            <p>
+                Come potete vedere, il rendimento lordo annualizzato medio è del 9.5%, ma nel 95% delle simulazioni tale
+                rendimento oscilla fra il 5.9% e il 13.2%.
+                Non sembrerebbe una grossa oscillazione, poiché si parla di poco più di un fattore 2 tra il limite
+                inferiore e il limite superiore della banda.
+            </p>
+            <p>
+                Ma è proprio qui che sta l'inganno.
+                Il rendimento annualizzato, difatti, non è altro che la radice n-esima del rendimento totale e questa
+                operazione, su un investimento di 30 anni, schiaccia la variazione dei rendimenti.
+                Se ci spostiamo sul grafico ancora sotto, dove vengono rappresentati i rendimenti totali, vediamo come
+                in realtà la variazione fra il limite inferiore e il limite superiore è in realtà
+                di quasi un fattore 10.
+            </p>
+            <p>
+                📌 Se da un lato è corretto affermare che nel passato un qualunque investimento trentennale sull'indice
+                S&P 500 ha offerto un rendimento nominale decisamente positivo, dall'altro <strong> non possiamo affatto
+                affermare che il rendimento dell'azionario converge con l'allungarsi del periodo.</strong>
+            </p>
+            <p>
+                Entrare ed uscire nel momento giusto vs entrare ed uscire nel momento sbagliato, avrebbe prodotto una
+                differenza di un fattore 10 (+400% contro +4000%).
+            </p>            
+        </div>
+
         <h3 class="mt-5">Rendimento annualizzato per periodo di detenzione</h3>
         <canvas id="chartAnn"></canvas>
 
@@ -39,7 +72,8 @@
 
         <div class="mt-4 p-3 bg-light border rounded">
             <h4>Conclusioni</h4>
-            <p>I grafici mostrano come cambiano i rendimenti in base al periodo di detenzione: Le candele mostrano le fluttuazini e evidenziano il 90% percentile dei risultati e la mediana.</p>
+            <p>I grafici mostrano come cambiano i rendimenti in base al periodo di detenzione: Le candele mostrano le
+                fluttuazini e evidenziano il 90% percentile dei risultati e la mediana.</p>
             <ul>
                 <li><strong>Rendimenti annualizzati:</strong> tendono a crescere con l'aumentare degli anni, riducendo
                     il rischio di perdite importanti, ma la variabilità resta significativa.</li>
@@ -165,7 +199,7 @@
                         label: 'Mediana',
                         data: stats.map(s => ({ x: s.years, y: s[type].mean * 100 })),
                         pointBackgroundColor: 'red',
-                        pointRadius: 2
+                        pointRadius: 2,                                              
                     }]
                 },
                 plugins: [{
