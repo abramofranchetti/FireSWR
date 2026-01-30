@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio rendimenti medi S&P TR 500 storico</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.2.1/dist/chartjs-chart-financial.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Studio rendimenti medi S&P 500 storico</h1>
+        <h5 class="text-center">Sottotitolo</h5>
+
+        <h3 class="mt-4">S&P 500 – Total Return</h3>
+        <canvas id="chartTR"></canvas>
+
+        <h3 class="mt-5">Rendimento annualizzato per periodo di detenzione</h3>
+        <canvas id="chartAnn"></canvas>
+
+        <h3 class="mt-5">Rendimento totale per periodo di detenzione</h3>
+        <canvas id="chartTotal"></canvas>
+
+        <div class="mt-4 p-3 bg-light border rounded">
+            <h4>Conclusioni</h4>
+            <p>I grafici mostrano come cambiano i rendimenti in base al periodo di detenzione: Le candele mostrano le fluttuazini e evidenziano il 90% percentile dei risultati e la mediana.</p>
+            <ul>
+                <li><strong>Rendimenti annualizzati:</strong> tendono a crescere con l'aumentare degli anni, riducendo
+                    il rischio di perdite importanti, ma la variabilità resta significativa.</li>
+                <li><strong>Rendimenti totali:</strong> mostrano una variabilità ancora maggiore, sottolineando
+                    l'importanza del <strong>timing</strong> di ingresso e uscita dal mercato.</li>
+                <li><strong>Linea rossa (media):</strong> evidenzia che, nonostante le fluttuazioni, i rendimenti
+                    tendono a stabilizzarsi su valori positivi con l'allungarsi del periodo di detenzione.</li>
+                <li><strong>Volatilità:</strong> aumenta con la durata del portafoglio; anche a lungo termine, il
+                    rischio non scompare e il <strong>timing di ingresso e uscita</strong> rimane critico.</li>
+            </ul>
+            <p><em>In sintesi: investire a lungo termine può aumentare le probabilità di rendimento positivo, ma non
+                    elimina completamente il rischio.</em></p>
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+    <script>
+        /* =======================
+           PARSE S&P 500 CSV
+           ======================= */
+        function parseSP500CSV(text) {
+            return text.replace('\uFEFF', '').trim().split('\n').map(line => {
+                const parts = line.trim().split(/\s+/);
+                if (parts.length < 3) return null;
+                const [ym, priceRaw, divRaw] = parts;
+                if (!ym.includes(',')) return null;
+                const [year, month] = ym.split(',').map(Number);
+                const price = Number(priceRaw.replace(',', '.'));
+                const dividend = Number(divRaw.replace(',', '.'));
+                if (isNaN(price) || isNaN(dividend)) return null;
+                return { date: new Date(Date.UTC(year, month - 1, 1)), price, dividend };
+            }).filter(Boolean);
+        }
+
+        /* =======================
+           BUILD TOTAL RETURN INDEX
+           ======================= */
+        function buildTotalReturnIndex(data) {
+            if (!data.length) return [];
+            const result = [{ date: data[0].date, price: data[0].price, tr: 100 }];
+            for (let i = 1; i < data.length; i++) {
+                const prev = result[i - 1];
+                const curr = data[i];
+                const monthlyDividend = curr.dividend / 12; // dividendi mensili
+                const tr = prev.tr * ((curr.price + monthlyDividend) / prev.price);
+                result.push({ date: curr.date, price: curr.price, tr });
+            }
+            return result;
+        }
+
+        function mean(arr) {
+            return arr.reduce((a, b) => a + b, 0) / arr.length;
+        }
+
+        function percentile(arr, p) {
+            if (!arr.length) return null;
+            const sorted = [...arr].sort((a, b) => a - b);
+            const idx = (sorted.length - 1) * p;
+            const lo = Math.floor(idx);
+            const hi = Math.ceil(idx);
+            if (lo === hi) return sorted[lo];
+            return sorted[lo] * (hi - idx) + sorted[hi] * (idx - lo);
+        }
+
+        function computeHoldingStats(trSeries, maxYears = 30) {
+            const results = [];
+
+            for (let years = 1; years <= maxYears; years++) {
+                const months = years * 12;
+                const totalReturns = [];
+                const annualizedReturns = [];
+
+                for (let i = 0; i + months < trSeries.length; i++) {
+                    const start = trSeries[i].tr;
+                    const end = trSeries[i + months].tr;
+
+                    const total = end / start - 1;
+                    const annualized = Math.pow(end / start, 1 / years) - 1;
+
+                    totalReturns.push(total);
+                    annualizedReturns.push(annualized);
+                }
+
+                results.push({
+                    years,
+                    total: {
+                        min: Math.min(...totalReturns),
+                        max: Math.max(...totalReturns),
+                        p10: percentile(totalReturns, 0.10),
+                        p90: percentile(totalReturns, 0.90),
+                        mean: mean(totalReturns)
+                    },
+                    ann: {
+                        min: Math.min(...annualizedReturns),
+                        max: Math.max(...annualizedReturns),
+                        p10: percentile(annualizedReturns, 0.10),
+                        p90: percentile(annualizedReturns, 0.90),
+                        mean: mean(annualizedReturns)
+                    }
+                });
+            }
+            return results;
+        }
+
+        function buildHoldingBoxPlot(ctx, stats, type, label) {
+            return new Chart(ctx, {
+                type: 'candlestick',
+                data: {
+                    labels: stats.map(s => s.years),
+                    datasets: [{
+                        label,
+                        data: buildFakeCandles(stats, type),
+                        backgroundColor: 'rgba(173,216,230,0.6)',
+                        borderColor: '#000',
+                        borderWidth: 1,
+                        itemRadius: 0,
+                        pointStyle: 'circle',
+                        showLine: false
+                    },
+                    {
+                        type: 'scatter',
+                        label: 'Mediana',
+                        data: stats.map(s => ({ x: s.years, y: s[type].mean * 100 })),
+                        pointBackgroundColor: 'red',
+                        pointRadius: 2
+                    }]
+                },
+                plugins: [{
+                    id: 'drawMedian',
+                    afterDatasetsDraw(chart) {
+                        const ctx = chart.ctx;
+                        chart.data.datasets.forEach((dataset, i) => {
+                            dataset.data.forEach((d, j) => {
+                                const meta = chart.getDatasetMeta(i).data[j];
+                                const x = meta.x; // posizione orizzontale candela
+                                const y = chart.scales.y.getPixelForValue(d.median);
+                                const halfWidth = meta.width / 2; // metà larghezza candela
+                                ctx.strokeStyle = 'black';
+                                ctx.lineWidth = 0.5;
+                                ctx.beginPath();
+                                ctx.moveTo(x - halfWidth / 2, y);
+                                ctx.lineTo(x + halfWidth / 2, y);
+                                ctx.stroke();
+                            });
+                        });
+                    }
+                }],
+                options: {
+                    plugins: {
+                        legend: { display: true },
+                        annotation: zeroLineAnnotation()
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 0,
+                                minRotation: 0,
+                                callback: (value) => value
+                            },
+                            title: {
+                                display: true,
+                                text: 'Anni di detenzione'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: '%'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function buildFakeCandles(stats, type) {
+            return stats.map(s => ({
+                x: s.years,
+                o: s[type].p10 * 100,   // open
+                h: s[type].max * 100,   // high
+                l: s[type].min * 100,   // low
+                c: s[type].p90 * 100,    // close
+                median: s[type].mean * 100
+            }));
+        }
+
+
+
+
+        function zeroLineAnnotation() {
+            return {
+                annotations: {
+                    zeroLine: {
+                        type: 'line',
+                        yMin: 0,
+                        yMax: 0,
+                        borderColor: 'black',
+                        borderWidth: 1,
+                        borderDash: [6, 4], // tratteggiata stile Shiller                        
+                    }
+                }
+            };
+        }
+
+
+
+        /* =======================
+           MAIN
+           ======================= */
+        async function main() {
+            const spText = await fetch('./sp500_shiller_price_dividends.csv').then(r => r.text());
+            const spParsed = parseSP500CSV(spText);
+            const spTR = buildTotalReturnIndex(spParsed);
+            const holdingStats = computeHoldingStats(spTR, 30);
+            buildHoldingBoxPlot(document.getElementById('chartAnn'), holdingStats, 'ann', 'Rendimento annualizzato');
+            buildHoldingBoxPlot(document.getElementById('chartTotal'), holdingStats, 'total', 'Rendimento totale');
+
+
+
+            // --- GRAFICO S&P 500 TR ---
+            new Chart(document.getElementById('chartTR'), {
+                type: 'line',
+                data: {
+                    datasets: [
+                        { label: 'S&P 500 Total Return (USD)', data: spTR.map(d => ({ x: d.date, y: d.tr })), borderWidth: 1, pointRadius: 0, borderColor: 'green' }
+                    ]
+                },
+                options: { scales: { x: { type: 'time' }, y: { title: { display: true, text: 'USD' } } } }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', main);
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('../html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>

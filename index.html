@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,7 @@
     <style>
         :root {
             --color-primary: #ff6f61;
-            --color-primary-hover: #e65c50;            
+            --color-primary-hover: #e65c50;
             --color-secondary: #92a8d1;
             --color-secondary-hover: #7d94b0;
             --color-accent: #52b788;
@@ -18,25 +19,25 @@
             --border-radius: 12px;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5e3c8, #f7e9d4);
             padding: 20px;
             min-height: 100vh;
         }
-        
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
         }
-        
+
         header {
             text-align: center;
             margin-bottom: 50px;
@@ -45,17 +46,18 @@
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
         }
-        
+
         h1 {
             color: #333;
             font-size: clamp(1.8rem, 5vw, 2.5rem);
             margin-bottom: 10px;
         }
-        
+
         .subtitle {
             color: var(--text-light);
             font-size: 1.1rem;
         }
+
         .search-container {
             margin-top: 18px;
             display: flex;
@@ -67,8 +69,8 @@
             max-width: 760px;
             padding: 12px 16px;
             border-radius: 10px;
-            border: 1px solid rgba(0,0,0,0.08);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
             font-size: 1rem;
         }
 
@@ -77,11 +79,11 @@
             border-color: var(--color-primary);
             box-shadow: 0 4px 12px rgba(82, 48, 44, 0.06);
         }
-        
+
         .section {
             margin-bottom: 50px;
         }
-        
+
         .section-title {
             font-size: clamp(1.3rem, 3vw, 1.8rem);
             color: #333;
@@ -114,16 +116,16 @@
         }
 
         .copy-link:hover {
-            background: rgba(0,0,0,0.04);
+            background: rgba(0, 0, 0, 0.04);
             color: var(--color-primary);
         }
-        
+
         .button-grid {
             display: grid;
             gap: 20px;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         }
-        
+
         .button-card {
             display: flex;
             flex-direction: column;
@@ -136,13 +138,13 @@
             border: 2px solid transparent;
             cursor: pointer;
         }
-        
+
         .button-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             border-color: var(--color-primary);
         }
-        
+
         .button-icon {
             font-size: 2.5rem;
             margin-bottom: 15px;
@@ -151,19 +153,19 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .button-card.calculator .button-icon {
             color: var(--color-primary);
         }
-        
+
         .button-card.download .button-icon {
             color: var(--color-secondary);
         }
-        
+
         .button-card.utility .button-icon {
             color: var(--color-accent);
         }
-        
+
         .button-title {
             font-size: 1.1rem;
             font-weight: 600;
@@ -171,7 +173,7 @@
             margin-bottom: 10px;
             line-height: 1.4;
         }
-        
+
         .button-description {
             font-size: 0.85rem;
             color: var(--text-light);
@@ -179,7 +181,7 @@
             flex-grow: 1;
             margin-bottom: 15px;
         }
-        
+
         .button-label {
             display: inline-block;
             padding: 6px 12px;
@@ -189,45 +191,45 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
+
         .button-card.calculator .button-label {
             background-color: rgba(255, 111, 97, 0.1);
             color: var(--color-primary);
         }
-        
+
         .button-card.download .button-label {
             background-color: rgba(146, 168, 209, 0.1);
             color: var(--color-secondary);
         }
-        
+
         .button-card.utility .button-label {
             background-color: rgba(82, 183, 136, 0.1);
             color: var(--color-accent);
         }
-        
+
         .button-card.calculator:hover {
             background: linear-gradient(135deg, rgba(255, 111, 97, 0.05), rgba(255, 111, 97, 0.02));
         }
-        
+
         .button-card.download:hover {
             background: linear-gradient(135deg, rgba(146, 168, 209, 0.05), rgba(146, 168, 209, 0.02));
         }
-        
+
         .button-card.utility:hover {
             background: linear-gradient(135deg, rgba(82, 183, 136, 0.05), rgba(82, 183, 136, 0.02));
         }
-        
+
         footer {
             text-align: center;
             padding: 40px 20px;
             color: #666;
             font-size: 0.95rem;
         }
-        
+
         footer p {
             margin: 10px 0;
         }
-        
+
         .disclaimer-section {
             margin-top: 60px;
             padding: 30px 20px;
@@ -236,87 +238,87 @@
             box-shadow: var(--shadow);
             border-left: 4px solid var(--color-primary);
         }
-        
+
         .disclaimer-section h3 {
             color: var(--color-primary);
             font-size: 1.3rem;
             margin-bottom: 15px;
         }
-        
+
         .disclaimer-section p {
             color: var(--text-light);
             line-height: 1.6;
             margin-bottom: 12px;
             font-size: 0.95rem;
         }
-        
+
         .disclaimer-section ul {
             margin-left: 20px;
             margin-bottom: 12px;
         }
-        
+
         .disclaimer-section li {
             color: var(--text-light);
             line-height: 1.6;
             margin-bottom: 8px;
             font-size: 0.95rem;
         }
-        
+
         .disclaimer-section strong {
             color: #333;
         }
-        
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .button-grid {
                 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
                 gap: 15px;
             }
-            
+
             .button-card {
                 padding: 20px 15px;
             }
-            
+
             .button-icon {
                 font-size: 2rem;
                 height: 50px;
             }
-            
+
             .section-title {
                 font-size: 1.5rem;
             }
         }
-        
+
         @media (max-width: 480px) {
             body {
                 padding: 10px;
             }
-            
+
             header {
                 padding: 30px 15px;
             }
-            
+
             h1 {
                 font-size: 1.6rem;
             }
-            
+
             .button-grid {
                 grid-template-columns: 1fr;
                 gap: 12px;
             }
-            
+
             .button-card {
                 padding: 18px 15px;
             }
-            
+
             .button-title {
                 font-size: 1rem;
             }
-            
+
             .button-description {
                 font-size: 0.8rem;
             }
-            
+
             .section-title {
                 font-size: 1.3rem;
                 margin-bottom: 20px;
@@ -324,6 +326,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Header -->
@@ -331,42 +334,50 @@
             <h1>🎯 Calcolatori Finanziari</h1>
             <p class="subtitle">Strumenti per l'analisi di investimenti, FIRE e pianificazione finanziaria</p>
             <div class="search-container">
-                <input id="search-box" type="search" placeholder="Cerca calcolatore (es. SWR, PAC, TFR...)" aria-label="Cerca calcolatore">
+                <input id="search-box" type="search" placeholder="Cerca calcolatore (es. SWR, PAC, TFR...)"
+                    aria-label="Cerca calcolatore">
             </div>
         </header>
 
         <!-- Sezione: Pianificazione Pensionistica e FIRE -->
         <section id="pianificazione" class="section">
-            <h2 class="section-title"><a class="section-link" href="#pianificazione">📊 Pianificazione Pensionistica e FIRE</a><button class="copy-link" data-target="pianificazione" aria-label="Copia link sezione">🔗</button></h2>
+            <h2 class="section-title"><a class="section-link" href="#pianificazione">📊 Pianificazione Pensionistica e
+                    FIRE</a><button class="copy-link" data-target="pianificazione"
+                    aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/dwz.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-piggy-bank"></i></div>
                     <div class="button-title">FIRE - Die With Zero Calculator</div>
-                    <div class="button-description">Calcola il capitale necessario per una pensione indipendente e pianifica il prelievo annuale.</div>
+                    <div class="button-description">Calcola il capitale necessario per una pensione indipendente e
+                        pianifica il prelievo annuale.</div>
                     <span class="button-label">Pianificazione</span>
                 </a>
                 <a href="/FireSWR/swr.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">SWR - Safe Withdrawal Rate</div>
-                    <div class="button-description">Determina il tasso di prelievo sicuro dal tuo portafoglio in pensione.</div>
+                    <div class="button-description">Determina il tasso di prelievo sicuro dal tuo portafoglio in
+                        pensione.</div>
                     <span class="button-label">Pianificazione</span>
                 </a>
                 <a href="/FireSWR/rendita.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-calendar-days"></i></div>
                     <div class="button-title">Calcolo Rendita Mensile</div>
-                    <div class="button-description">Simula il prelievo mensile del tuo capitale e il suo andamento nel tempo.</div>
+                    <div class="button-description">Simula il prelievo mensile del tuo capitale e il suo andamento nel
+                        tempo.</div>
                     <span class="button-label">Pianificazione</span>
                 </a>
                 <a href="/FireSWR/pensione.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-calculator"></i></div>
                     <div class="button-title">Calcolo Accantonamento Pensione</div>
-                    <div class="button-description">Calcola quanto versare mensilmente per raggiungere la pensione desiderata.</div>
+                    <div class="button-description">Calcola quanto versare mensilmente per raggiungere la pensione
+                        desiderata.</div>
                     <span class="button-label">Pianificazione</span>
                 </a>
                 <a href="/FireSWR/tfr.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-calculator"></i></div>
                     <div class="button-title">Calcolatore rivalutazione TFR</div>
-                    <div class="button-description">Mostra la rivalutazione del TFR paragonata ad alcuni fondi pensione e oro.</div>
+                    <div class="button-description">Mostra la rivalutazione del TFR paragonata ad alcuni fondi pensione
+                        e oro.</div>
                     <span class="button-label">Pianificazione</span>
                 </a>
             </div>
@@ -374,72 +385,89 @@
 
         <!-- Sezione: Calcolatori di Investimenti -->
         <section id="investimenti" class="section">
-            <h2 class="section-title"><a class="section-link" href="#investimenti">💼 Calcolatori di Investimenti</a><button class="copy-link" data-target="investimenti" aria-label="Copia link sezione">🔗</button></h2>
+            <h2 class="section-title"><a class="section-link" href="#investimenti">💼 Calcolatori di
+                    Investimenti</a><button class="copy-link" data-target="investimenti"
+                    aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/pac.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
                     <div class="button-title">PAC Storico Simulator</div>
-                    <div class="button-description">Simula i risultati di un Piano di Accumulo del Capitale con dati storici reali dello SP500.</div>
+                    <div class="button-description">Simula i risultati di un Piano di Accumulo del Capitale con dati
+                        storici reali dello SP500.</div>
                     <span class="button-label">Investimenti</span>
                 </a>
                 <a href="/FireSWR/iwmyr.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
                     <div class="button-title">Non diventerai ricco investendo</div>
-                    <div class="button-description">Mostra le varie componenti del rendimento di un investimento come capitale inflazionato, tassazione reale e rendimento lordo.</div>
+                    <div class="button-description">Mostra le varie componenti del rendimento di un investimento come
+                        capitale inflazionato, tassazione reale e rendimento lordo.</div>
                     <span class="button-label">Investimenti</span>
                 </a>
                 <a href="/FireSWR/sica.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-percent"></i></div>
                     <div class="button-title">Impatto Commissioni</div>
-                    <div class="button-description">Analizza come le commissioni di acquisto influenzano i rendimenti nel tempo su dati storici.</div>
+                    <div class="button-description">Analizza come le commissioni di acquisto influenzano i rendimenti
+                        nel tempo su dati storici.</div>
                     <span class="button-label">Investimenti</span>
                 </a>
                 <a href="/FireSWR/rmd.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">Investment Fee Impact (TWR)</div>
-                    <div class="button-description">Calcola l'impatto percentuale delle commissioni usando il metodo Time-Weighted Return.</div>
+                    <div class="button-description">Calcola l'impatto percentuale delle commissioni usando il metodo
+                        Time-Weighted Return.</div>
                     <span class="button-label">Investimenti</span>
                 </a>
                 <a href="/FireSWR/gin.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-star"></i></div>
                     <div class="button-title">Tipologia Investimento</div>
-                    <div class="button-description">Classifica il tipo di investimento in base all'interesse netto annuo desiderato.</div>
+                    <div class="button-description">Classifica il tipo di investimento in base all'interesse netto annuo
+                        desiderato.</div>
                     <span class="button-label">Investimenti</span>
                 </a>
                 <a href="/FireSWR/book.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-book"></i></div>
                     <div class="button-title">Stock Book Simulator</div>
-                    <div class="button-description">Simula un portafoglio di investimenti con il metodo del book contabile.</div>
+                    <div class="button-description">Simula un portafoglio di investimenti con il metodo del book
+                        contabile.</div>
                     <span class="button-label">Investimenti</span>
                 </a>
                 <a href="/FireSWR/mutuo_vs_cash.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-area"></i></div>
                     <div class="button-title">Calcolatore convenienza Mutuo o Cash</div>
-                    <div class="button-description">Mostra se conviene fare il mutuo o pagare cash a seconda del rendimento dell'investimento.</div>
+                    <div class="button-description">Mostra se conviene fare il mutuo o pagare cash a seconda del
+                        rendimento dell'investimento.</div>
                     <span class="button-label">Investimenti</span>
                 </a>
                 <a href="/FireSWR/gli_anni_contano.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-area"></i></div>
                     <div class="button-title">Per capire perché iniziare prima vale più che investire di più</div>
-                    <div class="button-description">Simulazione che mostra l'importanza del tempo negli investimenti e come iniziare prima può fare la differenza.</div>
+                    <div class="button-description">Simulazione che mostra l'importanza del tempo negli investimenti e
+                        come iniziare prima può fare la differenza.</div>
                     <span class="button-label">Investimenti</span>
                 </a>
                 <a href="/FireSWR/gli_anni_contano_dati_reali.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-area"></i></div>
-                    <div class="button-title">Per capire perché iniziare prima vale più che investire di più - Simulazione con dati S&P500 Storici</div>
-                    <div class="button-description">Simulazione che mostra l'importanza del tempo negli investimenti e come iniziare prima può fare la differenza. Simile alla simulazione precedente ma utilizza dati storici reali dell'S&P500.</div>
+                    <div class="button-title">Per capire perché iniziare prima vale più che investire di più -
+                        Simulazione con dati S&P500 Storici</div>
+                    <div class="button-description">Simulazione che mostra l'importanza del tempo negli investimenti e
+                        come iniziare prima può fare la differenza. Simile alla simulazione precedente ma utilizza dati
+                        storici reali dell'S&P500.</div>
                     <span class="button-label">Investimenti</span>
                 </a>
                 <a href="/FireSWR/coexceedance.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-area"></i></div>
                     <div class="button-title">Correlazione tra asset e co-exceedance</div>
-                    <div class="button-description">Mostra oltre alla classica metrica di correlazione lineare di Pearson tra vari etf, anche una metrica più di nicchia che è la co-exceedance che si concentra più <s>sui crolli simultanei</s> più incentrata sul rischio di rovina che sul rischio di perdita.</div>
+                    <div class="button-description">Mostra oltre alla classica metrica di correlazione lineare di
+                        Pearson tra vari etf, anche una metrica più di nicchia che è la co-exceedance che si concentra
+                        più <s>sui crolli simultanei</s> più incentrata sul rischio di rovina che sul rischio di
+                        perdita.</div>
                     <span class="button-label">Investimenti</span>
                 </a>
                 <a href="/FireSWR/compounding_tasse.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-area"></i></div>
                     <div class="button-title">Effetto fiscale e illusione del dividendo</div>
-                    <div class="button-description">Mostra l'effetto della tassazione sul rendimento composto e come l'illusione del dividendo possa ridurre il valore finale dell'investimento.</div>
+                    <div class="button-description">Mostra l'effetto della tassazione sul rendimento composto e come
+                        l'illusione del dividendo possa ridurre il valore finale dell'investimento.</div>
                     <span class="button-label">Investimenti</span>
                 </a>
             </div>
@@ -447,30 +475,36 @@
 
         <!-- Sezione: Obbligazioni e Reddito Fisso -->
         <section id="obbligazioni" class="section">
-            <h2 class="section-title"><a class="section-link" href="#obbligazioni">💰 Obbligazioni e Reddito Fisso</a><button class="copy-link" data-target="obbligazioni" aria-label="Copia link sezione">🔗</button></h2>
+            <h2 class="section-title"><a class="section-link" href="#obbligazioni">💰 Obbligazioni e Reddito
+                    Fisso</a><button class="copy-link" data-target="obbligazioni"
+                    aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/ytm.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
                     <div class="button-title">Yield to Maturity</div>
-                    <div class="button-description">Calcola il rendimento effettivo di un'obbligazione fino alla scadenza.</div>
+                    <div class="button-description">Calcola il rendimento effettivo di un'obbligazione fino alla
+                        scadenza.</div>
                     <span class="button-label">Obbligazioni</span>
                 </a>
                 <a href="/FireSWR/fpc.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-balance-scale"></i></div>
                     <div class="button-title">Bond Fair Price</div>
-                    <div class="button-description">Calcola il prezzo equo di un'obbligazione in base al rendimento richiesto.</div>
+                    <div class="button-description">Calcola il prezzo equo di un'obbligazione in base al rendimento
+                        richiesto.</div>
                     <span class="button-label">Obbligazioni</span>
                 </a>
                 <a href="/FireSWR/cce.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-money-bill-wave"></i></div>
                     <div class="button-title">Cedola Effettiva</div>
-                    <div class="button-description">Calcola il rendimento effettivo della cedola considerando il prezzo di acquisto.</div>
+                    <div class="button-description">Calcola il rendimento effettivo della cedola considerando il prezzo
+                        di acquisto.</div>
                     <span class="button-label">Obbligazioni</span>
                 </a>
                 <a href="/FireSWR/convexity.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-calculator"></i></div>
                     <div class="button-title">Convessità Obbligazione</div>
-                    <div class="button-description">Calcola la convessità di un'obbligazione per misurare il rischio di tasso.</div>
+                    <div class="button-description">Calcola la convessità di un'obbligazione per misurare il rischio di
+                        tasso.</div>
                     <span class="button-label">Obbligazioni</span>
                 </a>
                 <a href="/FireSWR/ecbyieldcurve.html" class="button-card calculator">
@@ -482,19 +516,23 @@
                 <a href="/FireSWR/zero_coupon.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-minus"></i></div>
                     <div class="button-title">Zero Coupon Minusvalenze</div>
-                    <div class="button-description">Calcola la capacità di recupero delle minusvalenze nelle obbligazioni zero coupon.</div>
+                    <div class="button-description">Calcola la capacità di recupero delle minusvalenze nelle
+                        obbligazioni zero coupon.</div>
                     <span class="button-label">Obbligazioni</span>
                 </a>
                 <a href="/FireSWR/btp_evoluzione.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">BTP Evoluzione Storica</div>
-                    <div class="button-description">Analizza l'evoluzione storica dei prezzi e rendimenti BTP con simulazioni Monte Carlo.</div>
+                    <div class="button-description">Analizza l'evoluzione storica dei prezzi e rendimenti BTP con
+                        simulazioni Monte Carlo.</div>
                     <span class="button-label">Obbligazioni</span>
                 </a>
                 <a href="/FireSWR/euribor.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-percent"></i></div>
                     <div class="button-title">Euribor 3M e 6M, €STR, EUR IRS 10Y</div>
-                    <div class="button-description">Consulta i dati storici e attuali dei tassi Euribor a 3 e 6 mesi comparati a quelli di €STR (tasso base BCE Euro Short Term Rate) e quello dei mutui a tasso fisso IRS a 10 anni.</div>
+                    <div class="button-description">Consulta i dati storici e attuali dei tassi Euribor a 3 e 6 mesi
+                        comparati a quelli di €STR (tasso base BCE Euro Short Term Rate) e quello dei mutui a tasso
+                        fisso IRS a 10 anni.</div>
                     <span class="button-label">Obbligazioni</span>
                 </a>
             </div>
@@ -502,12 +540,14 @@
 
         <!-- Sezione: Analisi Mercati Azionari -->
         <section id="mercati" class="section">
-            <h2 class="section-title"><a class="section-link" href="#mercati">📈 Analisi Mercati Azionari</a><button class="copy-link" data-target="mercati" aria-label="Copia link sezione">🔗</button></h2>
+            <h2 class="section-title"><a class="section-link" href="#mercati">📈 Analisi Mercati Azionari</a><button
+                    class="copy-link" data-target="mercati" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/sp500_gold_oil.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
                     <div class="button-title">SP500, Oro e Petrolio</div>
-                    <div class="button-description">Confronta l'andamento storico di SP500, oro e petrolio dal 1975.</div>
+                    <div class="button-description">Confronta l'andamento storico di SP500, oro e petrolio dal 1975.
+                    </div>
                     <span class="button-label">Mercati</span>
                 </a>
                 <a href="/FireSWR/stagionalita_sp500.html" class="button-card calculator">
@@ -519,25 +559,42 @@
                 <a href="/FireSWR/log.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">Confronto Rendimenti</div>
-                    <div class="button-description">Confronta rendimenti di prezzo, percentuale e logaritmico per migliore analisi.</div>
+                    <div class="button-description">Confronta rendimenti di prezzo, percentuale e logaritmico per
+                        migliore analisi.</div>
                     <span class="button-label">Mercati</span>
                 </a>
                 <a href="/FireSWR/simulazione_pac_monte_carlo.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">PAC vs PIC. Simulazione PAC con metodo montecarlo</div>
-                    <div class="button-description">Mostra come il risultato di un PAC è altamente sensibile alle variazioni del rendimento atteso e della volatilità. Il percorso di investimento influenza il risultato finale.</div>
+                    <div class="button-description">Mostra come il risultato di un PAC è altamente sensibile alle
+                        variazioni del rendimento atteso e della volatilità. Il percorso di investimento influenza il
+                        risultato finale.</div>
                     <span class="button-label">Mercati</span>
                 </a>
                 <a href="/FireSWR/previsioni_benner/previsioni_benner.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">Profezie di Samuel Benner</div>
-                    <div class="button-description">Analizza i cicli economici secondo Samuel Benner e le strategie per "fare denaro". Raccolgo qui quanto ho trovato sulle mitiche previsioni.</div>
+                    <div class="button-description">Analizza i cicli economici secondo Samuel Benner e le strategie per
+                        "fare denaro". Raccolgo qui quanto ho trovato sulle mitiche previsioni.</div>
                     <span class="button-label">Mercati</span>
                 </a>
                 <a href="/FireSWR/ribilanciamento.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">Ribilanciamento Asset con simulazione montecarlo</div>
-                    <div class="button-description">Mostra l'effetto del ribilanciamento su un portafoglio ipotetico composto da 2 asset con diversi rendimenti e volatilità. A fondo pagina una simulazione Monte Carlo che mostra i risultati medi.</div>
+                    <div class="button-description">Mostra l'effetto del ribilanciamento su un portafoglio ipotetico
+                        composto da 2 asset con diversi rendimenti e volatilità. A fondo pagina una simulazione Monte
+                        Carlo che mostra i risultati medi.</div>
+                    <span class="button-label">Mercati</span>
+                </a>
+                <a href="/FireSWR/studio_rendimenti_sp500/studio_rendimenti_medi_sp500_storico.html"
+                    class="button-card calculator">
+                    <div class="button-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="button-title">Studio rendimenti medi S&P 500 storico</div>
+                    <div class="button-description">Analizza i rendimenti medi dello S&P 500 TR storico con dati di
+                        Shiller. Mostra come con analisi rolling che anche se i rendimenti medi sono positivi, la
+                        volatilità è alta e i rendimenti non sono costanti.
+                        Anzi più passano gli anni più la volatilità dei rendimenti aumenta e questo dipende dal timing
+                        di ingresso e uscita dal mercato.</div>
                     <span class="button-label">Mercati</span>
                 </a>
             </div>
@@ -545,7 +602,8 @@
 
         <!-- Sezione: Materie Prime e Valute -->
         <section id="materie-prime" class="section">
-            <h2 class="section-title"><a class="section-link" href="#materie-prime">💎 Materie Prime e Valute</a><button class="copy-link" data-target="materie-prime" aria-label="Copia link sezione">🔗</button></h2>
+            <h2 class="section-title"><a class="section-link" href="#materie-prime">💎 Materie Prime e Valute</a><button
+                    class="copy-link" data-target="materie-prime" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/gold.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-ring"></i></div>
@@ -564,17 +622,19 @@
                     <div class="button-title">Euro/Dollaro</div>
                     <div class="button-description">Analizza l'andamento del cambio EUR/USD dal 1975 al 2024.</div>
                     <span class="button-label">Valute</span>
-                </a>                
+                </a>
                 <a href="/FireSWR/sp500_gold_study.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">Raffronto Oro con SP500TR</div>
-                    <div class="button-description">Raffronto tra l'andamento storico dell'oro e SP500 total return sui dati di Shiller.</div>
+                    <div class="button-description">Raffronto tra l'andamento storico dell'oro e SP500 total return sui
+                        dati di Shiller.</div>
                     <span class="button-label">Mercati</span>
                 </a>
                 <a href="/FireSWR/sp500_gold_study_euro.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">Raffronto Oro con SP500TR ma in euro</div>
-                    <div class="button-description">Raffronto tra l'andamento storico dell'oro e SP500 total return sui dati di Shiller. L'intero raffronto però è convertito in euro invece che in dollari.</div>
+                    <div class="button-description">Raffronto tra l'andamento storico dell'oro e SP500 total return sui
+                        dati di Shiller. L'intero raffronto però è convertito in euro invece che in dollari.</div>
                     <span class="button-label">Mercati</span>
                 </a>
             </div>
@@ -582,24 +642,29 @@
 
         <!-- Sezione: Inflazione e Potere d'Acquisto -->
         <section id="inflazione" class="section">
-            <h2 class="section-title"><a class="section-link" href="#inflazione">💸 Inflazione e Potere d'Acquisto</a><button class="copy-link" data-target="inflazione" aria-label="Copia link sezione">🔗</button></h2>
+            <h2 class="section-title"><a class="section-link" href="#inflazione">💸 Inflazione e Potere
+                    d'Acquisto</a><button class="copy-link" data-target="inflazione"
+                    aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/infl.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">Inflazione Italia</div>
-                    <div class="button-description">Visualizza i dati storici dell'inflazione media italiana nel tempo.</div>
+                    <div class="button-description">Visualizza i dati storici dell'inflazione media italiana nel tempo.
+                    </div>
                     <span class="button-label">Inflazione</span>
                 </a>
                 <a href="/FireSWR/cppa.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-percent"></i></div>
                     <div class="button-title">Perdita Potere d'Acquisto</div>
-                    <div class="button-description">Calcola quanto il tuo denaro perde di valore a causa dell'inflazione.</div>
+                    <div class="button-description">Calcola quanto il tuo denaro perde di valore a causa
+                        dell'inflazione.</div>
                     <span class="button-label">Inflazione</span>
                 </a>
                 <a href="/FireSWR/stipendio_inflazionato.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-briefcase"></i></div>
                     <div class="button-title">Stipendio in Oro</div>
-                    <div class="button-description">Analizza l'andamento dello stipendio medio lordo italiano corretto per l'inflazione in oro.</div>
+                    <div class="button-description">Analizza l'andamento dello stipendio medio lordo italiano corretto
+                        per l'inflazione in oro.</div>
                     <span class="button-label">Inflazione</span>
                 </a>
                 <a href="/FireSWR/tir.html" class="button-card calculator">
@@ -613,18 +678,22 @@
 
         <!-- Sezione: Covered Call - Strategie di Reddito -->
         <section id="covered-call" class="section">
-            <h2 class="section-title"><a class="section-link" href="#covered-call">🎯 Covered Call e Quality - Strategie di Reddito</a><button class="copy-link" data-target="covered-call" aria-label="Copia link sezione">🔗</button></h2>
+            <h2 class="section-title"><a class="section-link" href="#covered-call">🎯 Covered Call e Quality - Strategie
+                    di Reddito</a><button class="copy-link" data-target="covered-call"
+                    aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/xyle/studioXyle.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
                     <div class="button-title">Studio XYLE vs S&P500</div>
-                    <div class="button-description">Confronta i rendimenti di XYLE (covered call) con l'indice S&P500.</div>
+                    <div class="button-description">Confronta i rendimenti di XYLE (covered call) con l'indice S&P500.
+                    </div>
                     <span class="button-label">Strategia</span>
                 </a>
                 <a href="/FireSWR/xyld/studioXyld.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
                     <div class="button-title">Studio XYLD vs S&P500</div>
-                    <div class="button-description">Analizza XYLD (covered call americano) rispetto all'indice S&P500.</div>
+                    <div class="button-description">Analizza XYLD (covered call americano) rispetto all'indice S&P500.
+                    </div>
                     <span class="button-label">Strategia</span>
                 </a>
                 <a href="/FireSWR/qyld.mi/studioQyld.mi.html" class="button-card calculator">
@@ -642,19 +711,23 @@
                 <a href="/FireSWR/winc/studioWinc.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
                     <div class="button-title">Studio WINC vs ACWE</div>
-                    <div class="button-description">Confronta WINC (covered call mondiale con Quality Factor) con ACWE (world equity).</div>
+                    <div class="button-description">Confronta WINC (covered call mondiale con Quality Factor) con ACWE
+                        (world equity).</div>
                     <span class="button-label">Strategia</span>
                 </a>
                 <a href="/FireSWR/jepg.mi/studioJepg.mi.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
                     <div class="button-title">Studio JEPG vs ACWE</div>
-                    <div class="button-description">Analizza JEPG (covered call JP Morgan Globale) rispetto ad ACWE mondiale.</div>
+                    <div class="button-description">Analizza JEPG (covered call JP Morgan Globale) rispetto ad ACWE
+                        mondiale.</div>
                     <span class="button-label">Strategia</span>
                 </a>
                 <a href="/FireSWR/fgqi/studioFgqi.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
                     <div class="button-title">Studio FGQI vs ACWE</div>
-                    <div class="button-description">Analizza FGQI (quality factor globale) rispetto ad ACWE mondiale. In Particolare Fidelity Global Quality Income UCITS ETF INC-USD | FGQI vs Spdr Msci All Country World Ucits Etf</div>
+                    <div class="button-description">Analizza FGQI (quality factor globale) rispetto ad ACWE mondiale. In
+                        Particolare Fidelity Global Quality Income UCITS ETF INC-USD | FGQI vs Spdr Msci All Country
+                        World Ucits Etf</div>
                     <span class="button-label">Strategia</span>
                 </a>
             </div>
@@ -662,36 +735,42 @@
 
         <!-- Sezione: Utilità Diverse -->
         <section id="utilita" class="section">
-            <h2 class="section-title"><a class="section-link" href="#utilita">🛠️ Utilità e Strumenti</a><button class="copy-link" data-target="utilita" aria-label="Copia link sezione">🔗</button></h2>
+            <h2 class="section-title"><a class="section-link" href="#utilita">🛠️ Utilità e Strumenti</a><button
+                    class="copy-link" data-target="utilita" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/rlc.html" class="button-card utility">
                     <div class="button-icon"><i class="fas fa-redo"></i></div>
                     <div class="button-title">Gain per Compensare Loss</div>
-                    <div class="button-description">Calcola il guadagno percentuale necessario per recuperare una perdita.</div>
+                    <div class="button-description">Calcola il guadagno percentuale necessario per recuperare una
+                        perdita.</div>
                     <span class="button-label">Utilità</span>
                 </a>
                 <a href="/FireSWR/loss.html" class="button-card utility">
                     <div class="button-icon"><i class="fas fa-redo"></i></div>
                     <div class="button-title">Loss per perdere Gain</div>
-                    <div class="button-description">Calcola la perdita percentuale necessaria per eliminare un Guadagno.</div>
+                    <div class="button-description">Calcola la perdita percentuale necessaria per eliminare un Guadagno.
+                    </div>
                     <span class="button-label">Utilità</span>
                 </a>
                 <a href="/FireSWR/minus.html" class="button-card utility">
                     <div class="button-icon"><i class="fas fa-calculator"></i></div>
                     <div class="button-title">Recupero Minusvalenze</div>
-                    <div class="button-description">Calcola come sfruttare le minusvalenze per recuperare dalla fiscalità.</div>
+                    <div class="button-description">Calcola come sfruttare le minusvalenze per recuperare dalla
+                        fiscalità.</div>
                     <span class="button-label">Utilità</span>
                 </a>
                 <a href="/FireSWR/btc.html" class="button-card utility">
                     <div class="button-icon"><i class="fas fa-bitcoin"></i></div>
                     <div class="button-title">Bitcoin Inflation Calculator</div>
-                    <div class="button-description">Analizza il potere d'acquisto del Bitcoin nel tempo considerando l'inflazione.</div>
+                    <div class="button-description">Analizza il potere d'acquisto del Bitcoin nel tempo considerando
+                        l'inflazione.</div>
                     <span class="button-label">Utilità</span>
                 </a>
                 <a href="/FireSWR/composto.html" class="button-card utility">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">Interesse Composto vs Semplice</div>
-                    <div class="button-description">Confronta l'effetto dell'interesse composto rispetto a quello semplice.</div>
+                    <div class="button-description">Confronta l'effetto dell'interesse composto rispetto a quello
+                        semplice.</div>
                     <span class="button-label">Utilità</span>
                 </a>
                 <a href="/FireSWR/bitcoin_halving.html" class="button-card utility">
@@ -721,13 +800,15 @@
                 <a href="/FireSWR/locazioni_brevi.html" class="button-card utility">
                     <div class="button-icon"><i class="fas fa-download"></i></div>
                     <div class="button-title">Calcolo convenienza locazioni brevi</div>
-                    <div class="button-description">Analisi finanziaria per affitti brevi e turistici, credit - Marco Liera</div>
+                    <div class="button-description">Analisi finanziaria per affitti brevi e turistici, credit - Marco
+                        Liera</div>
                     <span class="button-label">Utilità</span>
                 </a>
                 <a href="/FireSWR/locazioni_lunghe.html" class="button-card utility">
                     <div class="button-icon"><i class="fas fa-download"></i></div>
                     <div class="button-title">Calcolo convenienza locazioni lunghe</div>
-                    <div class="button-description">Analisi finanziaria per contratti 4+4 e 3+2, credit - Marco Liera</div>
+                    <div class="button-description">Analisi finanziaria per contratti 4+4 e 3+2, credit - Marco Liera
+                    </div>
                     <span class="button-label">Utilità</span>
                 </a>
             </div>
@@ -735,30 +816,36 @@
 
         <!-- Sezione: Download Dati -->
         <section id="download" class="section">
-            <h2 class="section-title"><a class="section-link" href="#download">📥 Download Dati Storici</a><button class="copy-link" data-target="download" aria-label="Copia link sezione">🔗</button></h2>
+            <h2 class="section-title"><a class="section-link" href="#download">📥 Download Dati Storici</a><button
+                    class="copy-link" data-target="download" aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/json/sp500.json" class="button-card download" download="^SP500TR.json">
                     <div class="button-icon"><i class="fas fa-download"></i></div>
                     <div class="button-title">SP500 Storico JSON</div>
-                    <div class="button-description">Scarica i dati storici dello SP500 Total Return in formato JSON (1988-2024).</div>
+                    <div class="button-description">Scarica i dati storici dello SP500 Total Return in formato JSON
+                        (1988-2024).</div>
                     <span class="button-label">Dati</span>
                 </a>
                 <a href="/FireSWR/json/acwi.json" class="button-card download" download="ACWI.json">
                     <div class="button-icon"><i class="fas fa-download"></i></div>
                     <div class="button-title">ACWI Storico JSON</div>
-                    <div class="button-description">Scarica i dati storici dell'indice ACWI in formato JSON (2008-2024).</div>
+                    <div class="button-description">Scarica i dati storici dell'indice ACWI in formato JSON (2008-2024).
+                    </div>
                     <span class="button-label">Dati</span>
                 </a>
                 <a href="/FireSWR/json/cambio_eur_usd_storico.json" class="button-card download" download="CAMBIO.json">
                     <div class="button-icon"><i class="fas fa-download"></i></div>
                     <div class="button-title">EUR/USD Storico JSON</div>
-                    <div class="button-description">Scarica i dati storici del cambio Euro/Dollaro in formato JSON (1975-2024).</div>
+                    <div class="button-description">Scarica i dati storici del cambio Euro/Dollaro in formato JSON
+                        (1975-2024).</div>
                     <span class="button-label">Dati</span>
                 </a>
-                <a href="/FireSWR/csv/sp500tr_shiller_1871.csv" class="button-card download" download="SP500TR_HISTORICAL.csv">
+                <a href="/FireSWR/csv/sp500tr_shiller_1871.csv" class="button-card download"
+                    download="SP500TR_HISTORICAL.csv">
                     <div class="button-icon"><i class="fas fa-download"></i></div>
                     <div class="button-title">SP500 Dal 1871 CSV</div>
-                    <div class="button-description">Scarica i dati storici completi dello SP500 Total Return dal 1871 basati su dati Shiller.</div>
+                    <div class="button-description">Scarica i dati storici completi dello SP500 Total Return dal 1871
+                        basati su dati Shiller.</div>
                     <span class="button-label">Dati</span>
                 </a>
             </div>
@@ -767,118 +854,120 @@
         <!-- Footer -->
         <footer>
             <p>🔒 Per maggiori informazioni sui calcolatori finanziari, visita regolarmente il nostro sito.</p>
-            <p style="font-size: 0.85rem; color: #999; margin-top: 20px;">Una collezione completa di strumenti per investitori, pianificatori finanziari e appassionati di economia.</p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 20px;">Una collezione completa di strumenti per
+                investitori, pianificatori finanziari e appassionati di economia.</p>
         </footer>
-        
+
         <!-- Disclaimer -->
         <div class="disclaimer-section" id="disclaimer-container"></div>
-        
+
         <script>
-             document.addEventListener('DOMContentLoaded', function () {
-                 // Carica disclaimer
-                 fetch('html/disclaimer.html')
-                     .then(response => response.text())
-                     .then(data => {
-                         document.getElementById('disclaimer-container').innerHTML = data;
-                         // Applica stili al contenuto del disclaimer caricato
-                         const disclaimerContent = document.getElementById('disclaimer-container');
-                         disclaimerContent.querySelectorAll('h1, h2, h3').forEach(h => {
-                             h.style.color = 'var(--color-primary)';
-                             h.style.fontSize = h.tagName === 'H1' ? '1.5rem' : '1.2rem';
-                             h.style.marginBottom = '15px';
-                         });
-                         disclaimerContent.querySelectorAll('p').forEach(p => {
-                             p.style.color = 'var(--text-light)';
-                             p.style.lineHeight = '1.6';
-                             p.style.marginBottom = '12px';
-                             p.style.fontSize = '0.95rem';
-                         });
-                         disclaimerContent.querySelectorAll('ul, ol').forEach(list => {
-                             list.style.marginLeft = '20px';
-                             list.style.marginBottom = '12px';
-                         });
-                         disclaimerContent.querySelectorAll('li').forEach(li => {
-                             li.style.color = 'var(--text-light)';
-                             li.style.lineHeight = '1.6';
-                             li.style.marginBottom = '8px';
-                             li.style.fontSize = '0.95rem';
-                         });
-                     });
+            document.addEventListener('DOMContentLoaded', function () {
+                // Carica disclaimer
+                fetch('html/disclaimer.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('disclaimer-container').innerHTML = data;
+                        // Applica stili al contenuto del disclaimer caricato
+                        const disclaimerContent = document.getElementById('disclaimer-container');
+                        disclaimerContent.querySelectorAll('h1, h2, h3').forEach(h => {
+                            h.style.color = 'var(--color-primary)';
+                            h.style.fontSize = h.tagName === 'H1' ? '1.5rem' : '1.2rem';
+                            h.style.marginBottom = '15px';
+                        });
+                        disclaimerContent.querySelectorAll('p').forEach(p => {
+                            p.style.color = 'var(--text-light)';
+                            p.style.lineHeight = '1.6';
+                            p.style.marginBottom = '12px';
+                            p.style.fontSize = '0.95rem';
+                        });
+                        disclaimerContent.querySelectorAll('ul, ol').forEach(list => {
+                            list.style.marginLeft = '20px';
+                            list.style.marginBottom = '12px';
+                        });
+                        disclaimerContent.querySelectorAll('li').forEach(li => {
+                            li.style.color = 'var(--text-light)';
+                            li.style.lineHeight = '1.6';
+                            li.style.marginBottom = '8px';
+                            li.style.fontSize = '0.95rem';
+                        });
+                    });
 
-                 // Funzionalità di ricerca dinamica
-                 const searchBox = document.getElementById('search-box');
-                 const cards = Array.from(document.querySelectorAll('.button-card'));
-                 const sections = Array.from(document.querySelectorAll('section.section'));
+                // Funzionalità di ricerca dinamica
+                const searchBox = document.getElementById('search-box');
+                const cards = Array.from(document.querySelectorAll('.button-card'));
+                const sections = Array.from(document.querySelectorAll('section.section'));
 
-                 // Prepara testo ricercabile per ciascuna card
-                 cards.forEach(card => {
-                     const title = (card.querySelector('.button-title')?.textContent || '');
-                     const desc = (card.querySelector('.button-description')?.textContent || '');
-                     const label = (card.querySelector('.button-label')?.textContent || '');
-                     card.dataset.search = (title + ' ' + desc + ' ' + label).toLowerCase();
-                 });
+                // Prepara testo ricercabile per ciascuna card
+                cards.forEach(card => {
+                    const title = (card.querySelector('.button-title')?.textContent || '');
+                    const desc = (card.querySelector('.button-description')?.textContent || '');
+                    const label = (card.querySelector('.button-label')?.textContent || '');
+                    card.dataset.search = (title + ' ' + desc + ' ' + label).toLowerCase();
+                });
 
-                 function filterCards() {
-                     const q = (searchBox?.value || '').trim().toLowerCase();
-                     cards.forEach(card => {
-                         const match = q === '' || (card.dataset.search || '').includes(q);
-                         card.style.display = match ? '' : 'none';
-                     });
+                function filterCards() {
+                    const q = (searchBox?.value || '').trim().toLowerCase();
+                    cards.forEach(card => {
+                        const match = q === '' || (card.dataset.search || '').includes(q);
+                        card.style.display = match ? '' : 'none';
+                    });
 
-                     // Nascondi le sezioni che non hanno card visibili
-                     sections.forEach(sec => {
-                         const visible = Array.from(sec.querySelectorAll('.button-card')).some(c => c.style.display !== 'none');
-                         sec.style.display = visible ? '' : 'none';
-                     });
-                 }
+                    // Nascondi le sezioni che non hanno card visibili
+                    sections.forEach(sec => {
+                        const visible = Array.from(sec.querySelectorAll('.button-card')).some(c => c.style.display !== 'none');
+                        sec.style.display = visible ? '' : 'none';
+                    });
+                }
 
-                 if (searchBox) {
-                     searchBox.addEventListener('input', filterCards);
-                 }
+                if (searchBox) {
+                    searchBox.addEventListener('input', filterCards);
+                }
 
-                 // Gestione hash per scrollare alle sezioni (es. #investimenti)
-                 function scrollToHash() {
-                     if (location.hash) {
-                         const id = decodeURIComponent(location.hash.slice(1));
-                         const el = document.getElementById(id);
-                         if (el) {
-                             setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-                         }
-                     }
-                 }
+                // Gestione hash per scrollare alle sezioni (es. #investimenti)
+                function scrollToHash() {
+                    if (location.hash) {
+                        const id = decodeURIComponent(location.hash.slice(1));
+                        const el = document.getElementById(id);
+                        if (el) {
+                            setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+                        }
+                    }
+                }
 
-                 // Esegui all'avvio e quando cambia l'hash
-                 scrollToHash();
-                 window.addEventListener('hashchange', scrollToHash);
+                // Esegui all'avvio e quando cambia l'hash
+                scrollToHash();
+                window.addEventListener('hashchange', scrollToHash);
 
-                 // Funzionalità copia URL per ogni sezione
-                 const copyButtons = Array.from(document.querySelectorAll('.copy-link'));
-                 function getFullUrlForId(id) {
-                     // Usa pathname + hash per creare URL relativo
-                     const path = location.pathname || window.location.href;
-                     // Se la pagina viene servita da file://, costruisci un URL compatto
-                     const base = (location.origin && location.origin !== 'null') ? (location.origin + location.pathname) : window.location.href.split('#')[0];
-                     return base.split('#')[0] + '#' + encodeURIComponent(id);
-                 }
+                // Funzionalità copia URL per ogni sezione
+                const copyButtons = Array.from(document.querySelectorAll('.copy-link'));
+                function getFullUrlForId(id) {
+                    // Usa pathname + hash per creare URL relativo
+                    const path = location.pathname || window.location.href;
+                    // Se la pagina viene servita da file://, costruisci un URL compatto
+                    const base = (location.origin && location.origin !== 'null') ? (location.origin + location.pathname) : window.location.href.split('#')[0];
+                    return base.split('#')[0] + '#' + encodeURIComponent(id);
+                }
 
-                 copyButtons.forEach(btn => {
-                     btn.addEventListener('click', async (ev) => {
-                         const target = btn.dataset.target;
-                         if (!target) return;
-                         const url = getFullUrlForId(target);
-                         try {
-                             await navigator.clipboard.writeText(url);
-                             const old = btn.textContent;
-                             btn.textContent = 'Copiato!';
-                             setTimeout(() => btn.textContent = old, 1200);
-                         } catch (e) {
-                             // fallback: seleziona e copia usando prompt
-                             prompt('Copia l\'URL della sezione:', url);
-                         }
-                     });
-                 });
-             });
+                copyButtons.forEach(btn => {
+                    btn.addEventListener('click', async (ev) => {
+                        const target = btn.dataset.target;
+                        if (!target) return;
+                        const url = getFullUrlForId(target);
+                        try {
+                            await navigator.clipboard.writeText(url);
+                            const old = btn.textContent;
+                            btn.textContent = 'Copiato!';
+                            setTimeout(() => btn.textContent = old, 1200);
+                        } catch (e) {
+                            // fallback: seleziona e copia usando prompt
+                            prompt('Copia l\'URL della sezione:', url);
+                        }
+                    });
+                });
+            });
         </script>
     </div>
 </body>
+
 </html>
