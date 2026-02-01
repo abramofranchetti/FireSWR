@@ -10,33 +10,39 @@ let charts = {};
 async function loadData() {
     try {
         const [eurResponse, sp500DailyResponse, eurUsdDailyResponse, foiResponse, eurUsdResponse, goldResponse] = await Promise.all([
-            fetch('json/btc-eur.json'),            
+            fetch('json/btc-eur.json'),
             fetch('json/sp500.json'),
-            fetch('json/cambio_eur_usd_storico.json'),            
+            fetch('json/cambio_eur_usd_storico.json'),
             fetch('csv/foi.csv'),
             fetch('csv/eur_usd.csv'),
-            fetch('csv/gold_month.csv'),            
+            fetch('csv/gold_monthly-storico_benner.csv'),
         ]);
 
-        btcEurData = await eurResponse.json();        
+        btcEurData = await eurResponse.json();
         eurUsdChangeData = await eurUsdDailyResponse.json();
         rawSp500Data = await sp500DailyResponse.json();
-        
+
         // Convert SP500 values from USD to EUR
         sp500Data = rawSp500Data.map(item => {
-            const exchangeRate = eurUsdChangeData.find(rate => 
-            rate.Date.substring(0, 10) === item.Date.substring(0, 10))?.Close;
+            const exchangeRate = eurUsdChangeData.find(rate =>
+                rate.Date.substring(0, 10) === item.Date.substring(0, 10))?.Close;
 
             return {
-            ...item,
-            Close: exchangeRate ? item.Close / parseFloat(exchangeRate) : item.Close
+                ...item,
+                Close: exchangeRate ? item.Close / parseFloat(exchangeRate) : item.Close
             };
         });
-                
+
         foiData = await parseCSV(await foiResponse.text());
+        // dopo parseCSV
+        foiData = foiData.map(f => ({
+            date: f.date,
+            value: f.value * 10  // moltiplica per 10 per ottenere il valore del paniere
+        }));
+
         eurUsdData = await parseCSV(await eurUsdResponse.text());
         goldData = await parseGoldCSV(await goldResponse.text());
-        
+
 
         initializeDateFilters();
         createCharts();
@@ -64,16 +70,22 @@ function parseCSV(data) {
 function parseGoldCSV(data) {
     const lines = data.split('\n');
     const result = [];
+
     lines.forEach(line => {
-        if (line.trim()) {
-            const [date, value] = line.split(',');
-            const [month, year] = date.split('/');
-            result.push({
-                date: `${year}-${month.padStart(2, '0')}-01`,
-                value: parseFloat(value)
-            });
-        }
+        if (!line.trim()) return;
+
+        const [ym, value] = line.split(',');
+        const year = parseInt(ym.substring(0, 4), 10);
+
+        // solo dati dal 2000 in poi
+        if (year < 2000) return;
+
+        result.push({
+            date: `${ym}-01`, // YYYY-MM-01
+            value: parseFloat(value)
+        });
     });
+
     return result;
 }
 
@@ -95,7 +107,7 @@ function initializeDateFilters() {
 
     // Add event listeners
     startDate.addEventListener('change', updateChart);
-    endDate.addEventListener('change', updateChart);    
+    endDate.addEventListener('change', updateChart);
 }
 
 function createCharts() {
@@ -167,7 +179,6 @@ function createCharts() {
                 borderColor: 'rgb(255, 215, 0)',
                 tension: 0.1,
                 pointRadius: 0,
-                borderDash: [5, 5]
             }, {
                 label: 'Panieri FOI acquistabili con 10 S&P500',
                 borderColor: 'rgb(128, 128, 128)',
@@ -208,9 +219,9 @@ function createCharts() {
 
 function updateChart() {
     const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;    
+    const endDate = document.getElementById('endDate').value;
 
-    const filteredEurData = filterData(btcEurData, startDate, endDate);    
+    const filteredEurData = filterData(btcEurData, startDate, endDate);
 
     // Calcola la media del periodo
     const avgValue = filteredEurData.reduce((sum, d) => sum + d.Close, 0) / filteredEurData.length;
@@ -340,41 +351,36 @@ function calculateFixedCurrencyFoiPower(btcData, amount, isEuro) {
 }
 
 function calculateGoldFoiPower(btcData, kgAmount) {
-    let toReturn = [];
-    btcData.map(d => {
-        const date = new Date(d.Date);
-        const year = date.getFullYear().toString();
-        const lastValue = toReturn.length > 0 ? toReturn[toReturn.length - 1].value : 0;
+    const OZ_PER_KG = 32.1507466;
 
-        // Trova il valore di gennaio dell'anno corrente e dell'anno successivo
-        const currentYearGold = goldData.find(g => g.date.startsWith(year));
-        const nextYearGold = goldData.find(g => g.date.startsWith((parseInt(year) + 1).toString()));
-        const foiValue = foiData.find(f => f.date === year)?.value || (lastValue || 0);
+    return btcData.map(d => {
+        const date = d.Date.substring(0, 10);
+        const year = date.substring(0, 4);
+        const month = date.substring(0, 7); // YYYY-MM
 
-        if (!currentYearGold || foiValue === 0) {
-            toReturn.push({ date: d.Date, value: (lastValue || 0) });
-            return;
+        // Oro mensile in USD/oncia
+        const goldUsdOz = goldData.find(g => g.date.startsWith(month))?.value || 0;
+
+        // Cambio EUR/USD annuale
+        const eurUsd = eurUsdData.find(e => e.date === year)?.value || 0;
+
+        // FOI annuale
+        const foiValue = foiData.find(f => f.date === year)?.value || 0;
+
+        if (goldUsdOz === 0 || eurUsd === 0 || foiValue === 0) {
+            return { date: d.Date, value: 0 };
         }
 
-        // Calcola la percentuale dell'anno trascorsa
-        const startOfYear = new Date(date.getFullYear(), 0, 1);
-        const endOfYear = new Date(date.getFullYear() + 1, 0, 1);
-        const progressOfYear = (date - startOfYear) / (endOfYear - startOfYear);
+        // USD/oz → EUR/kg
+        const goldEurKg = (goldUsdOz / eurUsd) * OZ_PER_KG;
 
-        // Interpola il valore dell'oro tra gennaio di quest'anno e gennaio del prossimo
-        let goldValue;
-        if (nextYearGold) {
-            goldValue = currentYearGold.value + (nextYearGold.value - currentYearGold.value) * progressOfYear;
-        } else {
-            goldValue = currentYearGold.value;
-        }
-
-        // Calcola quanti panieri FOI si possono comprare con kgAmount di oro
-        const numPanieri = (goldValue * kgAmount) / foiValue;
-        toReturn.push({ date: d.Date, value: numPanieri });
+        return {
+            date: d.Date,
+            value: (goldEurKg * kgAmount) / foiValue
+        };
     });
-    return toReturn;
 }
+
 
 function calculateSP500FoiPower(btcData, amount) {
     let toReturn = [];
