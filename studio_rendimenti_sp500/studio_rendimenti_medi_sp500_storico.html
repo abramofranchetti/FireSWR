@@ -64,10 +64,10 @@
             </p>            
         </div>
 
-        <h3 class="mt-5">Rendimento annualizzato per periodo di detenzione</h3>
+        <h3 class="mt-5">Rendimento annualizzato per periodo di detenzione, in evidenza il 90% percentile</h3>
         <canvas id="chartAnn"></canvas>
 
-        <h3 class="mt-5">Rendimento totale per periodo di detenzione</h3>
+        <h3 class="mt-5">Rendimento totale per periodo di detenzione, in evidenza il 90% percentile</h3>
         <canvas id="chartTotal"></canvas>
 
         <div class="mt-4 p-3 bg-light border rounded">
@@ -139,7 +139,7 @@
             return sorted[lo] * (hi - idx) + sorted[hi] * (idx - lo);
         }
 
-        function computeHoldingStats(trSeries, maxYears = 30) {
+        function computeHoldingStats(trSeries, maxYears = 41) {
             const results = [];
 
             for (let years = 1; years <= maxYears; years++) {
@@ -290,7 +290,7 @@
             const spText = await fetch('./sp500_shiller_price_dividends.csv').then(r => r.text());
             const spParsed = parseSP500CSV(spText);
             const spTR = buildTotalReturnIndex(spParsed);
-            const holdingStats = computeHoldingStats(spTR, 30);
+            const holdingStats = computeHoldingStats(spTR, 41);
             buildHoldingBoxPlot(document.getElementById('chartAnn'), holdingStats, 'ann', 'Rendimento annualizzato');
             buildHoldingBoxPlot(document.getElementById('chartTotal'), holdingStats, 'total', 'Rendimento totale');
 
