@@ -26,7 +26,8 @@
         </div>
         <br>
         <h1 class="text-center">Studio rendimenti medi S&P 500 storico</h1>
-        <h5 class="text-center">Sottotitolo</h5>
+        <h5 class="text-center">Studio dei rendimenti annualizzati e totali per diversi periodi di detenzione
+            (metodologia Rolling) per l'indice S&P 500 TR costruito sui dati di Shiller.</h5>
 
         <h3 class="mt-4">S&P 500 – Total Return</h3>
         <canvas id="chartTR"></canvas>
@@ -56,12 +57,12 @@
             <p>
                 📌 Se da un lato è corretto affermare che nel passato un qualunque investimento trentennale sull'indice
                 S&P 500 ha offerto un rendimento nominale decisamente positivo, dall'altro <strong> non possiamo affatto
-                affermare che il rendimento dell'azionario converge con l'allungarsi del periodo.</strong>
+                    affermare che il rendimento dell'azionario converge con l'allungarsi del periodo.</strong>
             </p>
             <p>
                 Entrare ed uscire nel momento giusto vs entrare ed uscire nel momento sbagliato, avrebbe prodotto una
                 differenza di un fattore 10 (+400% contro +4000%).
-            </p>            
+            </p>
         </div>
 
         <h3 class="mt-5">Rendimento annualizzato per periodo di detenzione, in evidenza il 90% percentile</h3>
@@ -86,6 +87,22 @@
             </ul>
             <p><em>In sintesi: investire a lungo termine può aumentare le probabilità di rendimento positivo, ma non
                     elimina completamente il rischio.</em></p>
+        </div>
+        <div class="mt-4 p-3 bg-light border rounded">
+            <h4>Approfondimenti</h4>
+            <p>Per approfondire la questione allego il paper del 2010 di Andrea Malagoli, Stocks for the Long Run:
+                Historical Facts and Statistical Fallacies disponibile <a
+                    href="./Stocks for the Long Run Historical Facts and Statistical Fallacies - Andrea Malagoli.pdf"
+                    target="_blank">qui</a>.</p>
+            <p>Inoltre consiglio la lettura del libro di Jeremy Siegel, Stocks for the Long Run, disponibile in italiano
+                come <em>"Azioni per il lungo periodo"</em>.</p>
+            <p>Infine, per chi fosse interessato ad un'analisi più tecnica sugli investimenti a lungo termine, consiglio
+                il paper di Robert Shiller, <a href="http://www.econ.yale.edu/~shiller/data/ie_data.xls"
+                    target="_blank">Irrational Exuberance</a>, che include i dati storici utilizzati in questo studio.
+            </p>
+            <p>Altri modi di vedere gli stessi dati,</p>
+            <img src="./annual_return.png">
+            <img src="./total_return.png">
         </div>
     </div>
 
@@ -158,6 +175,14 @@
                     annualizedReturns.push(annualized);
                 }
 
+                const lastStartIndex = trSeries.length - months - 1;
+                const lastStart = trSeries[lastStartIndex].tr;
+                const lastEnd = trSeries[lastStartIndex + months].tr;
+
+                const lastTotal = lastEnd / lastStart - 1;
+                const lastAnn = Math.pow(lastEnd / lastStart, 1 / years) - 1;
+
+
                 results.push({
                     years,
                     total: {
@@ -165,14 +190,17 @@
                         max: Math.max(...totalReturns),
                         p10: percentile(totalReturns, 0.10),
                         p90: percentile(totalReturns, 0.90),
-                        mean: mean(totalReturns)
+                        mean: mean(totalReturns),
+                        last: lastTotal
+
                     },
                     ann: {
                         min: Math.min(...annualizedReturns),
                         max: Math.max(...annualizedReturns),
                         p10: percentile(annualizedReturns, 0.10),
                         p90: percentile(annualizedReturns, 0.90),
-                        mean: mean(annualizedReturns)
+                        mean: mean(annualizedReturns),
+                        last: lastAnn
                     }
                 });
             }
@@ -199,8 +227,17 @@
                         label: 'Mediana',
                         data: stats.map(s => ({ x: s.years, y: s[type].mean * 100 })),
                         pointBackgroundColor: 'red',
-                        pointRadius: 2,                                              
-                    }]
+                        pointRadius: 2,
+                    },
+                    {
+                        type: 'scatter',
+                        label: 'Ultimo portafoglio',
+                        data: stats.map(s => ({ x: s.years, y: s[type].last * 100 })),
+                        pointBackgroundColor: 'orange',
+                        pointBorderColor: 'black',
+                        pointRadius: 2,
+                    }
+                    ]
                 },
                 plugins: [{
                     id: 'drawMedian',
@@ -212,7 +249,19 @@
                                 const x = meta.x; // posizione orizzontale candela
                                 const y = chart.scales.y.getPixelForValue(d.median);
                                 const halfWidth = meta.width / 2; // metà larghezza candela
-                                ctx.strokeStyle = 'black';
+                                ctx.strokeStyle = 'red';
+                                ctx.lineWidth = 0.5;
+                                ctx.beginPath();
+                                ctx.moveTo(x - halfWidth / 2, y);
+                                ctx.lineTo(x + halfWidth / 2, y);
+                                ctx.stroke();
+                            });
+                            dataset.data.forEach((d, j) => {
+                                const meta = chart.getDatasetMeta(i).data[j];
+                                const x = meta.x; // posizione orizzontale candela
+                                const y = chart.scales.y.getPixelForValue(d.last);
+                                const halfWidth = meta.width / 2; // metà larghezza candela
+                                ctx.strokeStyle = 'darkorange';
                                 ctx.lineWidth = 0.5;
                                 ctx.beginPath();
                                 ctx.moveTo(x - halfWidth / 2, y);
@@ -221,7 +270,8 @@
                             });
                         });
                     }
-                }],
+                },
+            ],
                 options: {
                     plugins: {
                         legend: { display: true },
@@ -259,7 +309,8 @@
                 h: s[type].max * 100,   // high
                 l: s[type].min * 100,   // low
                 c: s[type].p90 * 100,    // close
-                median: s[type].mean * 100
+                median: s[type].mean * 100,
+                last: s[type].last * 100
             }));
         }
 
