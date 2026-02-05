@@ -26,10 +26,11 @@
         </div>
         <br>
         <h1 class="text-center">Studio rendimenti medi S&P 500 storico</h1>
-        
+
         <h5 class="text-center">Studio dei rendimenti annualizzati e totali per diversi periodi di detenzione
             (metodologia Rolling) per l'indice S&P 500 Net (senza dividend) costruito sui dati di Shiller.
-        <a href="https://abramofranchetti.github.io/FireSWR/#rendimenti_storici">vai qui per altre tipologie di indice (net price, net tr, ecc)</a>
+            <a href="https://abramofranchetti.github.io/FireSWR/#rendimenti_storici">vai qui per altre tipologie di
+                indice (net price, net tr, ecc)</a>
         </h5>
 
         <h3 class="mt-4">S&P 500 – Net</h3>
@@ -216,6 +217,109 @@
             <img src="./annual_return.png">
             <img src="./total_return.png">
         </div>
+        <div class="mt-4 p-3 bg-light border rounded">
+            <section class="mt-5">
+                <h2>Stima del rendimento atteso forward</h2>
+
+                <p>
+                    L’analisi dei rendimenti storici mostra che i portafogli più recenti hanno prodotto risultati
+                    sensibilmente superiori alla media di lungo periodo, soprattutto quando si considera un indice
+                    <em>price-only</em>. Tuttavia, questo tipo di evidenza non può essere utilizzato direttamente
+                    per stimare il rendimento atteso futuro. Il rendimento forward deve essere stimato scomponendo
+                    le sue componenti fondamentali, distinguendo ciò che è strutturale da ciò che è stato eccezionale.
+                </p>
+
+                <h3>Scomposizione del rendimento azionario</h3>
+
+                <p>
+                    In prima approssimazione, il rendimento nominale atteso di un investimento azionario può essere
+                    espresso come somma delle seguenti componenti:
+                </p>
+
+                <ul>
+                    <li><strong>Dividend yield</strong>: flussi distribuiti agli azionisti;</li>
+                    <li><strong>Crescita reale degli utili</strong>: legata alla crescita economica di lungo periodo;
+                    </li>
+                    <li><strong>Inflazione</strong>: che trasforma la crescita reale in crescita nominale;</li>
+                    <li><strong>Variazione dei multipli</strong>: espansione o contrazione delle valutazioni.</li>
+                </ul>
+
+                <p>
+                    Questa decomposizione è cruciale perché l’ultimo periodo storico è stato caratterizzato
+                    soprattutto da una forte rivalutazione dei prezzi e dall’espansione dei multipli,
+                    fattori che non possono essere assunti come permanenti.
+                </p>
+
+                <h3>Parametri forward realistici</h3>
+
+                <table border="1" cellpadding="6" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Ordine di grandezza</th>
+                            <th>Osservazioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dividend yield (netto)</td>
+                            <td>~1.0 – 1.2%</td>
+                            <td>Molto inferiore alla media storica, riflette payout bassi e buyback</td>
+                        </tr>
+                        <tr>
+                            <td>Crescita reale utili</td>
+                            <td>~1.5 – 2.0%</td>
+                            <td>Vincolata dalla crescita del PIL reale e dai margini già elevati</td>
+                        </tr>
+                        <tr>
+                            <td>Inflazione di lungo periodo</td>
+                            <td>~2.0%</td>
+                            <td>Coerente con i target delle banche centrali</td>
+                        </tr>
+                        <tr>
+                            <td>Variazione dei multipli</td>
+                            <td>0% / –1%</td>
+                            <td>Valutazioni sopra la media storica suggeriscono possibile mean reversion</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Rendimento atteso nominale</h3>
+
+                <p>
+                    Combinando le componenti precedenti si ottiene una stima del rendimento nominale atteso
+                    significativamente inferiore a quello osservato nei portafogli rolling più recenti.
+                    A seconda delle ipotesi sui multipli, il rendimento atteso si colloca indicativamente
+                    in un intervallo compreso tra il <strong>3.5%</strong> e il <strong>5.0%</strong> annuo.
+                </p>
+
+                <p>
+                    Questo risultato è coerente con quanto emerso dall’analisi storica: man mano che si passa
+                    dal Price Index al Total Return e al Total Return Netto, l’apparente eccezionalità
+                    dell’ultimo periodo si riduce. Ciò indica che una parte rilevante della sovraperformance
+                    recente è stata trainata da fattori di prezzo e di valutazione, più che da flussi
+                    strutturali ripetibili.
+                </p>
+
+                <h3>Implicazioni per l’investitore di lungo periodo</h3>
+
+                <p>
+                    La stima del rendimento forward suggerisce che utilizzare i rendimenti medi storici,
+                    soprattutto quelli basati su indici price-only, porta a sovrastimare le aspettative future.
+                    Il Total Return, e in particolare il Total Return Netto, rappresenta una base molto più
+                    solida per formulare ipotesi realistiche di rendimento, perché incorpora il contributo
+                    dei dividendi e riduce l’impatto delle variazioni di valutazione.
+                </p>
+
+                <p>
+                    In sintesi, l’analisi indica che i dividendi, pur avendo oggi un peso inferiore rispetto
+                    al passato, rimangono una componente fondamentale del rendimento atteso di lungo periodo,
+                    mentre la crescita dei prezzi osservata negli ultimi decenni non può essere assunta come
+                    riferimento per il futuro.
+                </p>
+            </section>
+        </div>
+
     </div>
 
     <!-- Disclaimer -->
