@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio rendimenti medi S&P TR 500 storico</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.2.1/dist/chartjs-chart-financial.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="bg-light">
+    <div class="mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Riepilogo e conclusioni Studio rendimenti medi S&P 500 storico con varie metodologie,
+            Total return, Price net e Net Total return</h1>
+        <h5 class="text-center">Studio dei rendimenti annualizzati e totali per diversi periodi di detenzione
+            (metodologia Rolling) per l'indice S&P 500 costruito sui dati di Shiller.
+            <a href="https://abramofranchetti.github.io/FireSWR/#rendimenti_storici">vai qui per altre tipologie di
+                indice (net price, net tr, ecc)</a> 
+        </h5>
+        <p>
+            Termini e definizioni utilizzati nello studio:
+            <ul>
+                <li>Indice Net Price: è l'indice costruito senza considerare i dividendi distribuiti.</li>
+                <li>Indice Net Total Return: è l'indice costruito reinvestendo i dividendi tassati (si reinveste il 70% del dividendo).</li>
+                <li>Indice Total Return: è l'indice costruito reinvestendo i dividendi lordi.</li>
+            </ul>
+        </p>
+        <hr>
+        <h3>Rendimenti medi storici S&P 500 Net Price, Net Total Return e Total Return</h3>
+        <p>Analisi dei rendimenti medi storici dell'S&P 500 utilizzando tre diverse metodologie di calcolo:
+            Total Return, Net Total Return e Net Price. Lo studio si concentra sui rendimenti annualizzati e totali
+            per periodi di detenzione che variano da 1 a 40 anni, utilizzando una metodologia rolling per valutare
+            l'andamento storico dell'indice.</p>
+        <div style="margin-top:1.5rem; padding:1rem; background:#f8f9fa; border:1px solid #ddd; border-radius:6px;
+            display:flex; gap:15px; justify-content:space-between;">
+            <img src="./img/sp500_net_price.png" style="width:32%; height:auto;">            
+            <img src="./img/sp500_net_total_return.png" style="width:32%; height:auto;">
+            <img src="./img/sp500_total_return.png" style="width:32%; height:auto;">
+        </div>
+        <hr>
+        <h3>Rendimenti annualizzati medi storici S&P 500 Net Price, Net Total Return e Total Return</h3>
+        <p>Analisi dei rendimenti annualizzati medi storici dell'S&P 500 utilizzando tre diverse metodologie di calcolo:
+            Total Return, Net Total Return e Net Price. Lo studio si concentra sui rendimenti annualizzati per
+            periodi di detenzione che variano da 1 a 40 anni, utilizzando una metodologia rolling per valutare
+            l'andamento storico dell'indice.</p>
+        <div style="margin-top:1.5rem; padding:1rem; background:#f8f9fa; border:1px solid #ddd; border-radius:6px;
+            display:flex; gap:15px; justify-content:space-between;">
+            <img src="./img/annual_net_price.png" style="width:32%; height:auto;">            
+            <img src="./img/annual_return_net_total.png" style="width:32%; height:auto;">
+            <img src="./img/annual_return_total.png" style="width:32%; height:auto;">
+        </div>
+        <hr>
+        <h3>Rendimenti totali medi storici S&P 500 Net Price, Net Total Return e Total Return</h3>
+        <p>Analisi dei rendimenti totali medi storici dell'S&P 500 utilizzando tre diverse metodologie di calcolo:
+            Total Return, Net Total Return e Net Price. Lo studio si concentra sui rendimenti totali per
+            periodi di detenzione che variano da 1 a 40 anni, utilizzando una metodologia rolling per valutare
+            l'andamento storico dell'indice.</p>
+        <div style="margin-top:1.5rem; padding:1rem; background:#f8f9fa; border:1px solid #ddd; border-radius:6px;
+            display:flex; gap:15px; justify-content:space-between;">
+            <img src="./img/rendimento_tot_net_price.png" style="width:32%; height:auto;">            
+            <img src="./img/rendimento_tot_net_total.png" style="width:32%; height:auto;">
+            <img src="./img/rendimento_tot_total_return.png" style="width:32%; height:auto;">
+        </div>
+
+
+        <div class="mt-4 p-3 bg-light border rounded">
+            <p>
+                Si puo' vedere l'analisi completa e dettagliata dei rendimenti medi storici S&P 500 con le varie
+                metodologie a questo <a href="https://abramofranchetti.github.io/FireSWR/#rendimenti_storici">link</a>.
+                Come si vede il reinvestimento dei dividendi (Total Return vs Net Total Return vs Net Price) ha un impatto
+                significativo sui rendimenti medi storici, riducendo la sovraperformance dell'ultimo periodo rispetto alla
+                media storica.
+            </p>
+        </div>
+
+
+        <div class="mt-4 p-3 bg-light border rounded">
+            <h4>Conclusioni</h4>
+            <p>I grafici mostrano come cambiano i rendimenti in base al periodo di detenzione: Le candele mostrano le
+                fluttuazini e evidenziano il 90% percentile dei risultati e la mediana. Inoltre in arancione viene
+                mostrato l'andamento dell'ultimo portafoglio osservato (esempio quello degli ultimi 1, 2, ..., 30 anni).
+            </p>
+            <ul>
+                <li><strong>Rendimenti annualizzati:</strong> tendono a crescere con l'aumentare degli anni, riducendo
+                    il rischio di perdite importanti, ma la variabilità resta significativa.</li>
+                <li><strong>Rendimenti totali:</strong> mostrano una variabilità ancora maggiore, sottolineando
+                    l'importanza del <strong>timing</strong> di ingresso e uscita dal mercato.</li>
+                <li><strong>Linea rossa (media):</strong> evidenzia che, nonostante le fluttuazioni, i rendimenti
+                    tendono a stabilizzarsi su valori positivi con l'allungarsi del periodo di detenzione.</li>
+                <li><strong>Volatilità:</strong> aumenta con la durata del portafoglio; anche a lungo termine, il
+                    rischio non scompare e il <strong>timing di ingresso e uscita</strong> rimane critico.</li>
+            </ul>
+            <p><em>In sintesi: investire a lungo termine può aumentare le probabilità di rendimento positivo, ma non
+                    elimina completamente il rischio.</em></p>
+        
+            <section>
+                <h2>Rendimenti storici, Total Return e ruolo dei dividendi</h2>
+
+                <p>
+                    Utilizzando serie storiche azionarie dal 1870, sono stati costruiti tre indici distinti:
+                    un <strong>Price Index</strong>, un <strong>Total Return Lordo</strong> (dividendi reinvestiti
+                    integralmente)
+                    e un <strong>Total Return Netto</strong> (dividendi reinvestiti al netto di una ritenuta fiscale
+                    standard).
+                    Su ciascuna serie sono stati calcolati portafogli rolling di <em>n</em> anni, analizzandone la
+                    distribuzione dei rendimenti e confrontando la <strong>media storica</strong> con il rendimento
+                    dell’ultimo periodo disponibile.
+                </p>
+
+                <p>
+                    Il risultato osservato è sistematico e non casuale: il rendimento dell’ultimo portafoglio
+                    di <em>n</em> anni risulta significativamente superiore alla media storica, ma questa
+                    sovraperformance è tanto più accentuata quanto più l’indice considerato si avvicina a una
+                    misura <em>price-only</em>. Il Price Index mostra uno scostamento molto ampio dalla media,
+                    il Total Return Netto uno scostamento più contenuto, mentre il Total Return Lordo riduce
+                    ulteriormente tale differenza.
+                </p>
+
+                <h3>Interpretazione del gradiente Price → Net TR → Gross TR</h3>
+
+                <p>
+                    Questo gradiente è estremamente informativo dal punto di vista economico. Storicamente,
+                    soprattutto tra la fine del XIX secolo e la prima metà del XX secolo, una quota rilevante
+                    del rendimento azionario proveniva dai dividendi. In quel periodo i dividend yield erano
+                    strutturalmente elevati (spesso superiori al 4–5%) e il reinvestimento dei flussi rappresentava
+                    una componente fondamentale del rendimento totale di lungo periodo.
+                </p>
+
+                <p>
+                    Nel regime moderno, invece, il peso dei dividendi si è progressivamente ridotto. I payout
+                    sono più bassi, una parte crescente della remunerazione degli azionisti avviene tramite
+                    riacquisti di azioni proprie (buyback), e il rendimento complessivo è stato trainato in larga
+                    misura dalla crescita dei prezzi e dall’espansione dei multipli di valutazione. Questo
+                    cambiamento strutturale spiega perché l’indice Price risulti oggi eccezionalmente distante
+                    dalla propria media storica, mentre l’inclusione dei dividendi attenua tale anomalia.
+                </p>
+
+                <h3>Confronto sintetico tra le tre misure di rendimento</h3>
+
+                <table border="1" cellpadding="6" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Indice</th>
+                            <th>Fonte principale del rendimento</th>
+                            <th>Scostamento del periodo recente dalla media storica</th>
+                            <th>Interpretazione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Price Index</td>
+                            <td>Rivalutazione dei prezzi</td>
+                            <td>Molto elevato</td>
+                            <td>Forte dipendenza da espansione dei multipli</td>
+                        </tr>
+                        <tr>
+                            <td>Total Return Net</td>
+                            <td>Prezzi + dividendi tassati</td>
+                            <td>Elevato ma più contenuto</td>
+                            <td>Riduzione dell’anomalia grazie ai flussi</td>
+                        </tr>
+                        <tr>
+                            <td>Total Return Lordo</td>
+                            <td>Prezzi + dividendi pieni</td>
+                            <td>Più vicino alla media storica</td>
+                            <td>Misura più stabile e comparabile nel tempo</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Implicazioni di lungo periodo</h3>
+
+                <p>
+                    Il fatto che l’inclusione dei dividendi riduca progressivamente la distanza tra rendimento
+                    recente e media storica suggerisce che l’eccezionalità dell’ultimo periodo è in larga parte
+                    attribuibile a fattori di prezzo, piuttosto che a un rafforzamento strutturale dei flussi
+                    distribuiti dalle imprese. In altri termini, una parte significativa della performance
+                    recente riflette un regime caratterizzato da valutazioni elevate, tassi di sconto bassi
+                    e aspettative di crescita favorevoli.
+                </p>
+
+                <p>
+                    Questo ha un’importante conseguenza interpretativa: il Price Index, soprattutto su orizzonti
+                    recenti, tende a sovrastimare il rendimento strutturalmente replicabile nel lungo periodo.
+                    Il Total Return, in particolare nella sua versione netta o lorda, fornisce invece una
+                    rappresentazione più robusta e confrontabile tra epoche diverse, perché incorpora il ruolo
+                    dei flussi e riduce l’impatto delle variazioni puramente valutative.
+                </p>
+
+                <p>
+                    In sintesi, l’analisi evidenzia come il peso dei dividendi nel rendimento azionario sia oggi
+                    significativamente inferiore rispetto alla media storica di lungo periodo e come una parte
+                    rilevante della sovraperformance recente debba essere interpretata con cautela, soprattutto
+                    quando si formulano aspettative di rendimento future.
+                </p>
+            </section>
+
+        </div>
+
+
+
+        <div class="mt-4 p-3 bg-light border rounded">
+            <h4>Conclusioni</h4>
+            <p>I grafici mostrano come cambiano i rendimenti in base al periodo di detenzione: Le candele mostrano le
+                fluttuazini e evidenziano il 90% percentile dei risultati e la mediana. Inoltre in arancione viene
+                mostrato l'andamento dell'ultimo portafoglio osservato (esempio quello degli ultimi 1, 2, ..., 30 anni).
+            </p>
+            <ul>
+                <li><strong>Rendimenti annualizzati:</strong> tendono a crescere con l'aumentare degli anni, riducendo
+                    il rischio di perdite importanti, ma la variabilità resta significativa.</li>
+                <li><strong>Rendimenti totali:</strong> mostrano una variabilità ancora maggiore, sottolineando
+                    l'importanza del <strong>timing</strong> di ingresso e uscita dal mercato.</li>
+                <li><strong>Linea rossa (media):</strong> evidenzia che, nonostante le fluttuazioni, i rendimenti
+                    tendono a stabilizzarsi su valori positivi con l'allungarsi del periodo di detenzione.</li>
+                <li><strong>Volatilità:</strong> aumenta con la durata del portafoglio; anche a lungo termine, il
+                    rischio non scompare e il <strong>timing di ingresso e uscita</strong> rimane critico.</li>
+            </ul>
+            <p><em>In sintesi: investire a lungo termine può aumentare le probabilità di rendimento positivo, ma non
+                    elimina completamente il rischio.</em></p>
+        </div>
+        <div class="mt-4 p-3 bg-light border rounded">
+            <section class="mt-5">
+                <h2>Stima del rendimento atteso forward</h2>
+
+                <p>
+                    L’analisi dei rendimenti storici mostra che i portafogli più recenti hanno prodotto risultati
+                    sensibilmente superiori alla media di lungo periodo, soprattutto quando si considera un indice
+                    <em>price-only</em>. Tuttavia, questo tipo di evidenza non può essere utilizzato direttamente
+                    per stimare il rendimento atteso futuro. Il rendimento forward deve essere stimato scomponendo
+                    le sue componenti fondamentali, distinguendo ciò che è strutturale da ciò che è stato eccezionale.
+                </p>
+
+                <h3>Scomposizione del rendimento azionario</h3>
+
+                <p>
+                    In prima approssimazione, il rendimento nominale atteso di un investimento azionario può essere
+                    espresso come somma delle seguenti componenti:
+                </p>
+
+                <ul>
+                    <li><strong>Dividend yield</strong>: flussi distribuiti agli azionisti;</li>
+                    <li><strong>Crescita reale degli utili</strong>: legata alla crescita economica di lungo periodo;
+                    </li>
+                    <li><strong>Inflazione</strong>: che trasforma la crescita reale in crescita nominale;</li>
+                    <li><strong>Variazione dei multipli</strong>: espansione o contrazione delle valutazioni.</li>
+                </ul>
+
+                <p>
+                    Questa decomposizione è cruciale perché l’ultimo periodo storico è stato caratterizzato
+                    soprattutto da una forte rivalutazione dei prezzi e dall’espansione dei multipli,
+                    fattori che non possono essere assunti come permanenti.
+                </p>
+
+                <h3>Parametri forward realistici</h3>
+
+                <table border="1" cellpadding="6" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Ordine di grandezza</th>
+                            <th>Osservazioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dividend yield (netto)</td>
+                            <td>~1.0 – 1.2%</td>
+                            <td>Molto inferiore alla media storica, riflette payout bassi e buyback</td>
+                        </tr>
+                        <tr>
+                            <td>Crescita reale utili</td>
+                            <td>~1.5 – 2.0%</td>
+                            <td>Vincolata dalla crescita del PIL reale e dai margini già elevati</td>
+                        </tr>
+                        <tr>
+                            <td>Inflazione di lungo periodo</td>
+                            <td>~2.0%</td>
+                            <td>Coerente con i target delle banche centrali</td>
+                        </tr>
+                        <tr>
+                            <td>Variazione dei multipli</td>
+                            <td>0% / –1%</td>
+                            <td>Valutazioni sopra la media storica suggeriscono possibile mean reversion</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Rendimento atteso nominale</h3>
+
+                <p>
+                    Combinando le componenti precedenti si ottiene una stima del rendimento nominale atteso
+                    significativamente inferiore a quello osservato nei portafogli rolling più recenti.
+                    A seconda delle ipotesi sui multipli, il rendimento atteso si colloca indicativamente
+                    in un intervallo compreso tra il <strong>3.5%</strong> e il <strong>5.0%</strong> annuo.
+                </p>
+
+                <p>
+                    Questo risultato è coerente con quanto emerso dall’analisi storica: man mano che si passa
+                    dal Price Index al Total Return e al Total Return Netto, l’apparente eccezionalità
+                    dell’ultimo periodo si riduce. Ciò indica che una parte rilevante della sovraperformance
+                    recente è stata trainata da fattori di prezzo e di valutazione, più che da flussi
+                    strutturali ripetibili.
+                </p>
+
+                <h3>Implicazioni per l’investitore di lungo periodo</h3>
+
+                <p>
+                    La stima del rendimento forward suggerisce che utilizzare i rendimenti medi storici,
+                    soprattutto quelli basati su indici price-only, porta a sovrastimare le aspettative future.
+                    Il Total Return, e in particolare il Total Return Netto, rappresenta una base molto più
+                    solida per formulare ipotesi realistiche di rendimento, perché incorpora il contributo
+                    dei dividendi e riduce l’impatto delle variazioni di valutazione.
+                </p>
+
+                <p>
+                    In sintesi, l’analisi indica che i dividendi, pur avendo oggi un peso inferiore rispetto
+                    al passato, rimangono una componente fondamentale del rendimento atteso di lungo periodo,
+                    mentre la crescita dei prezzi osservata negli ultimi decenni non può essere assunta come
+                    riferimento per il futuro.
+                </p>
+            </section>
+        </div>
+
+
+        <!-- Disclaimer -->
+        <div id="disclaimer-container"></div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                fetch('../html/disclaimer.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('disclaimer-container').innerHTML = data;
+                    });
+            });
+        </script>
+</body>
+
+</html>
