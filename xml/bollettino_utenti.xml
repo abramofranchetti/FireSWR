@@ -158,7 +158,7 @@
           <previsione title="Temperatura 1500m" type="text" value="min -1 C" />
           <previsione title="Temperatura 2000m" type="text" value="min -3 C" />
 					<previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="Oltre i 1000-1300 m" />
 					<previsione title="Attendibilita'" type="text" value="Scarsa" />
 				</scadenza>
@@ -227,7 +227,7 @@
           <previsione title="Temperatura 1500m" type="text" value="min -1 C" />
           <previsione title="Temperatura 2000m" type="text" value="min -3 C" />
 					<previsione title="Precipitazioni" type="text" value="Modeste sparse" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="Oltre i 1000-1300 m" />
 					<previsione title="Attendibilita'" type="text" value="Scarsa" />
 				</scadenza>
@@ -1267,7 +1267,7 @@ Previsore: R.R.<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
 					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_1.png.jpg" caption=" 6 febbraio mattina" />
 					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_2.png.jpg" caption=" 6 febbraio pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Cielo molto nuvoloso o coperto per nubi medio-alte con nuvolosit&agrave; variabile associata a rare e parziali schiarite. <br /><b>Precipitazioni: </b>Saranno ancora possibili al mattino (40-50%) delle modeste precipitazioni in genere locali, al pi&ugrave; sparse e intermittenti, nevose oltre i 1000-1300 m circa sulle Prealpi e i 900-1200 sulle Dolomiti, con il limite in significativo rialzo nella seconda parte della giornata fino a circa 1400-1700 m in caso di precipitazioni, che saranno tuttavia deboli da locali a sparse e pi&ugrave; probabili sulle Prealpi (30-40%) rispetto alle Dolomiti (10%). <br /><b>Temperature: </b>Senza variazioni di rilievo, salvo qualche aumento lieve o contenuto specie in alta montagna. Su Prealpi a 1500 m min -1&deg;C max 4&deg;C, a 2000 m min -3&deg;C max 1&deg;C. Su Dolomiti a 2000 m min -3&deg;C max 0&deg;C, a 3000 m min -9&deg;C max -7&deg;C.<br /><b>Venti: </b>Nelle valli generalmente deboli con direzione variabile, in quota deboli o moderati, al mattino dai quadranti meridionali, dal pomeriggio da quelli settentrionali, a 5-15 km/h a 2000 m e a 15-30 km/h a 3000 m. <br /><b>Attendibilit&agrave;: </b>Scarsa<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Cielo molto nuvoloso o coperto per nubi medio-alte con nuvolosit&agrave; variabile associata a rare e parziali schiarite. <br /><b>Precipitazioni: </b>Saranno ancora possibili al mattino (40-50%) delle modeste precipitazioni in genere locali, al pi&ugrave; sparse e intermittenti, nevose oltre i 1000-1300 m circa sulle Prealpi e i 900-1200 sulle Dolomiti, con il limite in significativo rialzo nella seconda parte della giornata fino a circa 1400-1700 m in caso di precipitazioni, che saranno tuttavia deboli e pi&ugrave; probabili sulle Prealpi (30-40%) rispetto alle Dolomiti (10%). Gli apporti giornalieri saranno molto scarsi 1-5 mm od anche assenti.<br /><b>Temperature: </b>Senza variazioni di rilievo, salvo qualche aumento lieve o contenuto specie in alta montagna. Su Prealpi a 1500 m min -1&deg;C max 4&deg;C, a 2000 m min -3&deg;C max 1&deg;C. Su Dolomiti a 2000 m min -3&deg;C max 0&deg;C, a 3000 m min -9&deg;C max -7&deg;C.<br /><b>Venti: </b>Nelle valli generalmente deboli con direzione variabile, in quota deboli o moderati, al mattino dai quadranti meridionali, dal pomeriggio da quelli settentrionali, a 5-15 km/h a 2000 m e a 15-30 km/h a 3000 m. <br /><b>Attendibilit&agrave;: </b>Scarsa<br />]]>
 					</text>
 				</giorno>
 				<giorno data=" 7 febbraio">
@@ -1326,7 +1326,7 @@ Previsore: M.Padoan<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
 <localita nome="Agordo">
 <tmin value="1" /><tmax value="5" />
 <scadenza data="ven  6 febbraio Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="40%" />
-</scadenza><scadenza data="ven  6 febbraio Mattina"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="50%" />
+</scadenza><scadenza data="ven  6 febbraio Mattina"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="40%" />
 </scadenza><scadenza data="ven  6 febbraio Pomeriggio"><cielo value="Nuvoloso" /><probabilita_pioggia value="20%" />
 </scadenza><scadenza data="ven  6 febbraio Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="20%" />
 </scadenza><pioggia value="1-2" /><neve value="0-1" />
@@ -1334,7 +1334,7 @@ Previsore: M.Padoan<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
 <localita nome="Arabba">
 <tmin value="-2" /><tmax value="3" />
 <scadenza data="ven  6 febbraio Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="40%" />
-</scadenza><scadenza data="ven  6 febbraio Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
+</scadenza><scadenza data="ven  6 febbraio Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="40%" />
 </scadenza><scadenza data="ven  6 febbraio Pomeriggio"><cielo value="Nuvoloso" /><probabilita_pioggia value="20%" />
 </scadenza><scadenza data="ven  6 febbraio Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="20%" />
 </scadenza><pioggia value="0" /><neve value="1-4" />
@@ -1342,7 +1342,7 @@ Previsore: M.Padoan<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
 <localita nome="Cortina d'Ampezzo">
 <tmin value="-1" /><tmax value="4" />
 <scadenza data="ven  6 febbraio Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="40%" />
-</scadenza><scadenza data="ven  6 febbraio Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
+</scadenza><scadenza data="ven  6 febbraio Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="40%" />
 </scadenza><scadenza data="ven  6 febbraio Pomeriggio"><cielo value="Nuvoloso" /><probabilita_pioggia value="20%" />
 </scadenza><scadenza data="ven  6 febbraio Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="20%" />
 </scadenza><pioggia value="0" /><neve value="1-3" />
@@ -1350,7 +1350,7 @@ Previsore: M.Padoan<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
 <localita nome="Pieve di Cadore">
 <tmin value="0" /><tmax value="6" />
 <scadenza data="ven  6 febbraio Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="40%" />
-</scadenza><scadenza data="ven  6 febbraio Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
+</scadenza><scadenza data="ven  6 febbraio Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="40%" />
 </scadenza><scadenza data="ven  6 febbraio Pomeriggio"><cielo value="Nuvoloso" /><probabilita_pioggia value="20%" />
 </scadenza><scadenza data="ven  6 febbraio Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="20%" />
 </scadenza><pioggia value="0-1" /><neve value="0-2" />
@@ -1358,7 +1358,7 @@ Previsore: M.Padoan<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
 <localita nome="Auronzo di Cadore">
 <tmin value="0" /><tmax value="5" />
 <scadenza data="ven  6 febbraio Notte"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="40%" />
-</scadenza><scadenza data="ven  6 febbraio Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="50%" />
+</scadenza><scadenza data="ven  6 febbraio Mattina"><cielo value="Molto nuvoloso o coperto" /><probabilita_pioggia value="40%" />
 </scadenza><scadenza data="ven  6 febbraio Pomeriggio"><cielo value="Nuvoloso" /><probabilita_pioggia value="20%" />
 </scadenza><scadenza data="ven  6 febbraio Sera"><cielo value="Nuvoloso o molto nuvoloso" /><probabilita_pioggia value="20%" />
 </scadenza><pioggia value="0-1" /><neve value="0-2" />
