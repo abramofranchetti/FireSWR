@@ -26,8 +26,11 @@
         </div>
         <br>
         <h1 class="text-center">Studio rendimenti medi S&P 500 storico</h1>
+        
         <h5 class="text-center">Studio dei rendimenti annualizzati e totali per diversi periodi di detenzione
-            (metodologia Rolling) per l'indice S&P 500 Net (senza dividend) costruito sui dati di Shiller.</h5>
+            (metodologia Rolling) per l'indice S&P 500 Net (senza dividend) costruito sui dati di Shiller.
+        <a href="https://abramofranchetti.github.io/FireSWR/#rendimenti_storici">vai qui per altre tipologie di indice (net price, net tr, ecc)</a>
+        </h5>
 
         <h3 class="mt-4">S&P 500 – Net</h3>
         <canvas id="chartTR"></canvas>
@@ -89,6 +92,111 @@
             </ul>
             <p><em>In sintesi: investire a lungo termine può aumentare le probabilità di rendimento positivo, ma non
                     elimina completamente il rischio.</em></p>
+        </div>
+        <div class="mt-4 p-3 bg-light border rounded">
+            <h4>Conclusioni</h4>
+            <section>
+                <h2>Rendimenti storici, Total Return e ruolo dei dividendi</h2>
+
+                <p>
+                    Utilizzando serie storiche azionarie dal 1870, sono stati costruiti tre indici distinti:
+                    un <strong>Price Index</strong>, un <strong>Total Return Lordo</strong> (dividendi reinvestiti
+                    integralmente)
+                    e un <strong>Total Return Netto</strong> (dividendi reinvestiti al netto di una ritenuta fiscale
+                    standard).
+                    Su ciascuna serie sono stati calcolati portafogli rolling di <em>n</em> anni, analizzandone la
+                    distribuzione dei rendimenti e confrontando la <strong>media storica</strong> con il rendimento
+                    dell’ultimo periodo disponibile.
+                </p>
+
+                <p>
+                    Il risultato osservato è sistematico e non casuale: il rendimento dell’ultimo portafoglio
+                    di <em>n</em> anni risulta significativamente superiore alla media storica, ma questa
+                    sovraperformance è tanto più accentuata quanto più l’indice considerato si avvicina a una
+                    misura <em>price-only</em>. Il Price Index mostra uno scostamento molto ampio dalla media,
+                    il Total Return Netto uno scostamento più contenuto, mentre il Total Return Lordo riduce
+                    ulteriormente tale differenza.
+                </p>
+
+                <h3>Interpretazione del gradiente Price → Net TR → Gross TR</h3>
+
+                <p>
+                    Questo gradiente è estremamente informativo dal punto di vista economico. Storicamente,
+                    soprattutto tra la fine del XIX secolo e la prima metà del XX secolo, una quota rilevante
+                    del rendimento azionario proveniva dai dividendi. In quel periodo i dividend yield erano
+                    strutturalmente elevati (spesso superiori al 4–5%) e il reinvestimento dei flussi rappresentava
+                    una componente fondamentale del rendimento totale di lungo periodo.
+                </p>
+
+                <p>
+                    Nel regime moderno, invece, il peso dei dividendi si è progressivamente ridotto. I payout
+                    sono più bassi, una parte crescente della remunerazione degli azionisti avviene tramite
+                    riacquisti di azioni proprie (buyback), e il rendimento complessivo è stato trainato in larga
+                    misura dalla crescita dei prezzi e dall’espansione dei multipli di valutazione. Questo
+                    cambiamento strutturale spiega perché l’indice Price risulti oggi eccezionalmente distante
+                    dalla propria media storica, mentre l’inclusione dei dividendi attenua tale anomalia.
+                </p>
+
+                <h3>Confronto sintetico tra le tre misure di rendimento</h3>
+
+                <table border="1" cellpadding="6" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Indice</th>
+                            <th>Fonte principale del rendimento</th>
+                            <th>Scostamento del periodo recente dalla media storica</th>
+                            <th>Interpretazione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Price Index</td>
+                            <td>Rivalutazione dei prezzi</td>
+                            <td>Molto elevato</td>
+                            <td>Forte dipendenza da espansione dei multipli</td>
+                        </tr>
+                        <tr>
+                            <td>Total Return Net</td>
+                            <td>Prezzi + dividendi tassati</td>
+                            <td>Elevato ma più contenuto</td>
+                            <td>Riduzione dell’anomalia grazie ai flussi</td>
+                        </tr>
+                        <tr>
+                            <td>Total Return Lordo</td>
+                            <td>Prezzi + dividendi pieni</td>
+                            <td>Più vicino alla media storica</td>
+                            <td>Misura più stabile e comparabile nel tempo</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Implicazioni di lungo periodo</h3>
+
+                <p>
+                    Il fatto che l’inclusione dei dividendi riduca progressivamente la distanza tra rendimento
+                    recente e media storica suggerisce che l’eccezionalità dell’ultimo periodo è in larga parte
+                    attribuibile a fattori di prezzo, piuttosto che a un rafforzamento strutturale dei flussi
+                    distribuiti dalle imprese. In altri termini, una parte significativa della performance
+                    recente riflette un regime caratterizzato da valutazioni elevate, tassi di sconto bassi
+                    e aspettative di crescita favorevoli.
+                </p>
+
+                <p>
+                    Questo ha un’importante conseguenza interpretativa: il Price Index, soprattutto su orizzonti
+                    recenti, tende a sovrastimare il rendimento strutturalmente replicabile nel lungo periodo.
+                    Il Total Return, in particolare nella sua versione netta o lorda, fornisce invece una
+                    rappresentazione più robusta e confrontabile tra epoche diverse, perché incorpora il ruolo
+                    dei flussi e riduce l’impatto delle variazioni puramente valutative.
+                </p>
+
+                <p>
+                    In sintesi, l’analisi evidenzia come il peso dei dividendi nel rendimento azionario sia oggi
+                    significativamente inferiore rispetto alla media storica di lungo periodo e come una parte
+                    rilevante della sovraperformance recente debba essere interpretata con cautela, soprattutto
+                    quando si formulano aspettative di rendimento future.
+                </p>
+            </section>
+
         </div>
         <div class="mt-4 p-3 bg-light border rounded">
             <h4>Approfondimenti</h4>
