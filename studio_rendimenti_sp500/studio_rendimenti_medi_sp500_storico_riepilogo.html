@@ -17,6 +17,16 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        .img-zoom {
+            transition: transform 0.2s ease;
+        }
+
+        .img-zoom:hover {
+            transform: scale(1.03);
+        }
+    </style>
+
 </head>
 
 <body class="bg-light">
@@ -30,15 +40,16 @@
         <h5 class="text-center">Studio dei rendimenti annualizzati e totali per diversi periodi di detenzione
             (metodologia Rolling) per l'indice S&P 500 costruito sui dati di Shiller.
             <a href="https://abramofranchetti.github.io/FireSWR/#rendimenti_storici">vai qui per altre tipologie di
-                indice (net price, net tr, ecc)</a> 
+                indice (net price, net tr, ecc)</a>
         </h5>
         <p>
             Termini e definizioni utilizzati nello studio:
-            <ul>
-                <li>Indice Net Price: è l'indice costruito senza considerare i dividendi distribuiti.</li>
-                <li>Indice Net Total Return: è l'indice costruito reinvestendo i dividendi tassati (si reinveste il 70% del dividendo).</li>
-                <li>Indice Total Return: è l'indice costruito reinvestendo i dividendi lordi.</li>
-            </ul>
+        <ul>
+            <li>Indice Net Price: è l'indice costruito senza considerare i dividendi distribuiti.</li>
+            <li>Indice Net Total Return: è l'indice costruito reinvestendo i dividendi tassati (si reinveste il 70% del
+                dividendo).</li>
+            <li>Indice Total Return: è l'indice costruito reinvestendo i dividendi lordi.</li>
+        </ul>
         </p>
         <hr>
         <h3>Rendimenti medi storici S&P 500 Net Price, Net Total Return e Total Return</h3>
@@ -48,35 +59,48 @@
             l'andamento storico dell'indice.</p>
         <div style="margin-top:1.5rem; padding:1rem; background:#f8f9fa; border:1px solid #ddd; border-radius:6px;
             display:flex; gap:15px; justify-content:space-between;">
-            <img src="./img/sp500_net_price.png" style="width:32%; height:auto;">            
-            <img src="./img/sp500_net_total_return.png" style="width:32%; height:auto;">
-            <img src="./img/sp500_total_return.png" style="width:32%; height:auto;">
+            <img src="./img/sp500_net_price.png" style="width:32%; height:auto;cursor:pointer;" class="img-zoom"
+                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+            <img src="./img/sp500_net_total_return.png" style="width:32%; height:auto;cursor:pointer;" class="img-zoom"
+                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+            <img src="./img/sp500_total_return.png" style="width:32%; height:auto;cursor:pointer;" class="img-zoom"
+                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
         </div>
         <hr>
-        <h3>Rendimenti annualizzati medi storici S&P 500 Net Price, Net Total Return e Total Return e PAC su Net Total Return</h3>
+        <h3>Rendimenti annualizzati medi storici S&P 500 Net Price, Net Total Return e Total Return e PAC su Net Total
+            Return</h3>
         <p>Analisi dei rendimenti annualizzati medi storici dell'S&P 500 utilizzando tre diverse metodologie di calcolo:
             Total Return, Net Total Return e Net Price. Lo studio si concentra sui rendimenti annualizzati per
             periodi di detenzione che variano da 1 a 40 anni, utilizzando una metodologia rolling per valutare
             l'andamento storico dell'indice.</p>
         <div style="margin-top:1.5rem; padding:1rem; background:#f8f9fa; border:1px solid #ddd; border-radius:6px;
             display:flex; gap:15px; justify-content:space-between;">
-            <img src="./img/annual_net_price.png" style="width:25%; height:auto;">            
-            <img src="./img/annual_return_net_total.png" style="width:25%; height:auto;">
-            <img src="./img/annual_return_total.png" style="width:25%; height:auto;">
-            <img src="./img/pac_net_total_tr_annuale.png" style="width:25%; height:auto;">
+            <img src="./img/annual_net_price.png" style="width:25%; height:auto;cursor:pointer;" class="img-zoom"
+                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+            <img src="./img/annual_return_net_total.png" style="width:25%; height:auto;cursor:pointer;" class="img-zoom"
+                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+            <img src="./img/annual_return_total.png" style="width:25%; height:auto;cursor:pointer;" class="img-zoom"
+                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+            <img src="./img/pac_net_total_tr_annuale.png" style="width:25%; height:auto;cursor:pointer;"
+                class="img-zoom" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
         </div>
         <hr>
-        <h3>Rendimenti totali medi storici S&P 500 Net Price, Net Total Return e Total Return e PAC su Net Total Return</h3>
+        <h3>Rendimenti totali medi storici S&P 500 Net Price, Net Total Return e Total Return e PAC su Net Total Return
+        </h3>
         <p>Analisi dei rendimenti totali medi storici dell'S&P 500 utilizzando tre diverse metodologie di calcolo:
             Total Return, Net Total Return e Net Price. Lo studio si concentra sui rendimenti totali per
             periodi di detenzione che variano da 1 a 40 anni, utilizzando una metodologia rolling per valutare
             l'andamento storico dell'indice.</p>
         <div style="margin-top:1.5rem; padding:1rem; background:#f8f9fa; border:1px solid #ddd; border-radius:6px;
             display:flex; gap:15px; justify-content:space-between;">
-            <img src="./img/rendimento_tot_net_price.png" style="width:25%; height:auto;">            
-            <img src="./img/rendimento_tot_net_total.png" style="width:25%; height:auto;">
-            <img src="./img/rendimento_tot_total_return.png" style="width:25%; height:auto;">
-            <img src="./img/pac_net_total_tr_totale.png" style="width:25%; height:auto;">
+            <img src="./img/rendimento_tot_net_price.png" style="width:25%; height:auto;cursor:pointer;"
+                class="img-zoom" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+            <img src="./img/rendimento_tot_net_total.png" style="width:25%; height:auto;cursor:pointer;"
+                class="img-zoom" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+            <img src="./img/rendimento_tot_total_return.png" style="width:25%; height:auto;cursor:pointer;"
+                class="img-zoom" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+            <img src="./img/pac_net_total_tr_totale.png" style="width:25%; height:auto;cursor:pointer;" class="img-zoom"
+                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
         </div>
 
 
@@ -84,8 +108,10 @@
             <p>
                 Si puo' vedere l'analisi completa e dettagliata dei rendimenti medi storici S&P 500 con le varie
                 metodologie a questo <a href="https://abramofranchetti.github.io/FireSWR/#rendimenti_storici">link</a>.
-                Come si vede il reinvestimento dei dividendi (Total Return vs Net Total Return vs Net Price) ha un impatto
-                significativo sui rendimenti medi storici, riducendo la sovraperformance dell'ultimo periodo rispetto alla
+                Come si vede il reinvestimento dei dividendi (Total Return vs Net Total Return vs Net Price) ha un
+                impatto
+                significativo sui rendimenti medi storici, riducendo la sovraperformance dell'ultimo periodo rispetto
+                alla
                 media storica.
             </p>
         </div>
@@ -109,7 +135,7 @@
             </ul>
             <p><em>In sintesi: investire a lungo termine può aumentare le probabilità di rendimento positivo, ma non
                     elimina completamente il rischio.</em></p>
-        
+
             <section>
                 <h2>Rendimenti storici, Total Return e ruolo dei dividendi</h2>
 
@@ -351,6 +377,31 @@
                     });
             });
         </script>
+        <script>
+            document.querySelectorAll('.img-zoom').forEach(img => {
+                img.addEventListener('click', function () {
+                    const modalImg = document.getElementById('modalImage');
+                    modalImg.src = this.src;
+
+                    const modal = new bootstrap.Modal(
+                        document.getElementById('imageModal')
+                    );
+                    modal.show();
+                });
+            });
+        </script>
+
+        <!-- Image Fullscreen Modal -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content bg-dark">
+                    <div class="modal-body d-flex justify-content-center align-items-center p-0">
+                        <img id="modalImage" src="" style="width:90vw;height:90vh;object-fit: contain;cursor: pointer;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
 </body>
 
 </html>
