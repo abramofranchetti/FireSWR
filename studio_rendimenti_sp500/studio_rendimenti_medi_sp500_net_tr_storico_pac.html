@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio rendimenti medi PAC S&P NET TR 500 storico</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.2.1/dist/chartjs-chart-financial.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Studio rendimenti medi PAC S&P 500 NET TR storico</h1>
+        <h5 class="text-center">Studio dei rendimenti annualizzati e totali per diversi periodi di detenzione
+            (metodologia Rolling) per l'indice S&P 500 Net TR costruito sui dati di Shiller.
+            <a href="https://abramofranchetti.github.io/FireSWR/#rendimenti_storici">vai qui per altre tipologie di
+                indice (net price, net tr, ecc)</a>
+        </h5>
+        <div id="calcStatus" class="alert alert-info text-center">
+            ⏳ Calcolo in corso… inizializzazione
+        </div>
+        <h3 class="mt-4">S&P 500 – Net Total Return (Reinvestimento dei dividendi tassati)</h3>
+        <canvas id="chartTR"></canvas>
+
+        <div class="mt-4 p-3 bg-light border rounded">
+            <p>
+                Nel grafico sotto è riportato il rendimento annualizzato, tipicamente chiamato CAGR in finanza (Compound
+                Annual Growth Rate).
+                Il rendimento è nominale, lordo ed include i dividendi.
+                Per un investitore italiano, bisogna togliere la tassazione sui dividendi, la tassazione sulla
+                plusvalenza ed inserire il cambio lira/dollaro prima ed EUR/dollaro poi.
+            </p>
+            <p>
+                Come potete vedere, il rendimento netto annualizzato medio è del 9.5%, ma nel 95% delle simulazioni tale
+                rendimento oscilla fra il 5.9% e il 13.2%.
+                Non sembrerebbe una grossa oscillazione, poiché si parla di poco più di un fattore 2 tra il limite
+                inferiore e il limite superiore della banda.
+            </p>
+            <p>
+                Ma è proprio qui che sta l'inganno.
+                Il rendimento annualizzato, difatti, non è altro che la radice n-esima del rendimento totale e questa
+                operazione, su un investimento di 30 anni, schiaccia la variazione dei rendimenti.
+                Se ci spostiamo sul grafico ancora sotto, dove vengono rappresentati i rendimenti totali, vediamo come
+                in realtà la variazione fra il limite inferiore e il limite superiore è in realtà
+                di quasi un fattore 10.
+            </p>
+            <p>
+                📌 Se da un lato è corretto affermare che nel passato un qualunque investimento trentennale sull'indice
+                S&P 500 ha offerto un rendimento nominale decisamente positivo, dall'altro <strong> non possiamo affatto
+                    affermare che il rendimento dell'azionario converge con l'allungarsi del periodo.</strong>
+            </p>
+            <p>
+                Entrare ed uscire nel momento giusto vs entrare ed uscire nel momento sbagliato, avrebbe prodotto una
+                differenza di un fattore 10 (+400% contro +4000%).
+            </p>
+        </div>
+        <h3 class="mt-5">PAC 100$/mese – Rendimento annualizzato per periodo di detenzione, in evidenza il 90%
+            percentile</h3>
+        <p>
+            Il grafico mostra il <strong>rendimento annualizzato dei Piani di Accumulo (PAC)</strong>
+            sull’indice S&P 500 Net Total Return, calcolato tramite simulazioni <em>rolling</em>
+            su diversi periodi di detenzione.
+        </p>
+
+        <p>
+            Il rendimento annualizzato è stimato utilizzando la metodologia
+            <strong>XIRR (Internal Rate of Return)</strong>, che tiene conto in modo corretto
+            dei <strong>flussi di cassa periodici</strong> tipici di un PAC
+            (versamenti mensili costanti e valore finale del portafoglio).
+        </p>
+
+        <p>
+            A differenza di approssimazioni come il CAGR o il metodo di Dietz,
+            lo XIRR fornisce una misura coerente e finanziariamente corretta
+            del rendimento effettivo, soprattutto su orizzonti brevi,
+            dove il <strong>timing dei versamenti</strong> ha un impatto rilevante.
+        </p>
+
+        <p>
+            Le candele rappresentano la distribuzione dei risultati:
+        <ul>
+            <li><strong>corpo:</strong> intervallo fra 10° e 90° percentile</li>
+            <li><strong>estremi:</strong> minimo e massimo osservati</li>
+            <li><strong>punto rosso:</strong> rendimento medio</li>
+            <li><strong>punto arancione:</strong> ultimo PAC osservato (periodo più recente)</li>
+        </ul>
+        </p>
+
+        <p>
+            Questo approccio evidenzia come, anche a lungo termine,
+            <strong>il rendimento di un PAC non converga a un valore unico</strong>,
+            ma resti fortemente dipendente dal periodo storico di investimento.
+        </p>
+
+        <canvas id="chartAnnPAC"></canvas>
+
+        <h3 class="mt-5">PAC 100$/mese – Rendimento totale per periodo di detenzione, in evidenza il 90% percentile</h3>
+        <canvas id="chartTotalPAC"></canvas>
+
+        <div class="mt-4 p-3 bg-light border rounded">
+            <h4>Conclusioni</h4>
+            <p>I grafici mostrano come cambiano i rendimenti in base al periodo di detenzione: Le candele mostrano le
+                fluttuazini e evidenziano il 90% percentile dei risultati e la mediana. Inoltre in arancione viene
+                mostrato l'andamento dell'ultimo portafoglio osservato (esempio quello degli ultimi 1, 2, ..., 30 anni).
+            </p>
+            <ul>
+                <li><strong>Rendimenti annualizzati:</strong> tendono a crescere con l'aumentare degli anni, riducendo
+                    il rischio di perdite importanti, ma la variabilità resta significativa.</li>
+                <li><strong>Rendimenti totali:</strong> mostrano una variabilità ancora maggiore, sottolineando
+                    l'importanza del <strong>timing</strong> di ingresso e uscita dal mercato.</li>
+                <li><strong>Linea rossa (media):</strong> evidenzia che, nonostante le fluttuazioni, i rendimenti
+                    tendono a stabilizzarsi su valori positivi con l'allungarsi del periodo di detenzione.</li>
+                <li><strong>Volatilità:</strong> aumenta con la durata del portafoglio; anche a lungo termine, il
+                    rischio non scompare e il <strong>timing di ingresso e uscita</strong> rimane critico.</li>
+            </ul>
+            <p><em>In sintesi: investire a lungo termine può aumentare le probabilità di rendimento positivo, ma non
+                    elimina completamente il rischio.</em></p>
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+    <script>
+        /* =======================
+           PARSE S&P 500 CSV
+           ======================= */
+        function parseSP500CSV(text) {
+            return text.replace('\uFEFF', '').trim().split('\n').map(line => {
+                const parts = line.trim().split(/\s+/);
+                if (parts.length < 3) return null;
+                const [ym, priceRaw, divRaw] = parts;
+                if (!ym.includes(',')) return null;
+                const [year, month] = ym.split(',').map(Number);
+                const price = Number(priceRaw.replace(',', '.'));
+                const dividend = Number(divRaw.replace(',', '.'));
+                if (isNaN(price) || isNaN(dividend)) return null;
+                return { date: new Date(Date.UTC(year, month - 1, 1)), price, dividend };
+            }).filter(Boolean);
+        }
+
+        /* =======================
+        BUILD NET TOTAL RETURN INDEX
+        ======================= */
+        function buildNetTotalReturnIndex(data, taxRate = 0.30) {
+            if (!data.length) return [];
+
+            const result = [{
+                date: data[0].date,
+                price: data[0].price,
+                tr: 100
+            }];
+
+            for (let i = 1; i < data.length; i++) {
+                const prev = result[i - 1];
+                const curr = data[i];
+
+                const monthlyDividendGross = curr.dividend / 12;
+                const monthlyDividendNet = monthlyDividendGross * (1 - taxRate);
+
+                const tr =
+                    prev.tr *
+                    ((curr.price + monthlyDividendNet) / prev.price);
+
+                result.push({
+                    date: curr.date,
+                    price: curr.price,
+                    tr
+                });
+            }
+
+            return result;
+        }
+
+
+        function mean(arr) {
+            return arr.reduce((a, b) => a + b, 0) / arr.length;
+        }
+
+        function percentile(arr, p) {
+            if (!arr.length) return null;
+            const sorted = [...arr].sort((a, b) => a - b);
+            const idx = (sorted.length - 1) * p;
+            const lo = Math.floor(idx);
+            const hi = Math.ceil(idx);
+            if (lo === hi) return sorted[lo];
+            return sorted[lo] * (hi - idx) + sorted[hi] * (idx - lo);
+        }
+
+        function xirr(cashFlows, dates, guess = 0.1) {
+            const maxIter = 100;
+            const tol = 1e-6;
+
+            const daysBetween = (d0, d1) =>
+                (d1 - d0) / (1000 * 60 * 60 * 24);
+
+            const npv = rate =>
+                cashFlows.reduce((sum, cf, i) => {
+                    const t = daysBetween(dates[0], dates[i]) / 365;
+                    return sum + cf / Math.pow(1 + rate, t);
+                }, 0);
+
+            const dNpv = rate =>
+                cashFlows.reduce((sum, cf, i) => {
+                    const t = daysBetween(dates[0], dates[i]) / 365;
+                    return sum - (t * cf) / Math.pow(1 + rate, t + 1);
+                }, 0);
+
+            let rate = guess;
+            for (let i = 0; i < maxIter; i++) {
+                const f = npv(rate);
+                const df = dNpv(rate);
+                const newRate = rate - f / df;
+                if (Math.abs(newRate - rate) < tol) return rate;
+                rate = newRate;
+            }
+            return null;
+        }
+
+
+        async function computeHoldingStatsPACAsync(
+            trSeries,
+            maxYears,
+            monthlyContribution,
+            onProgress
+        ) {
+            const results = [];
+
+            for (let years = 1; years <= maxYears; years++) {
+                onProgress?.(`Calcolo PAC: ${years}/${maxYears} anni…`);
+                await new Promise(r => setTimeout(r, 0)); // yield UI
+
+                const months = years * 12;
+                const annReturns = [];
+                const totalReturns = [];
+
+                for (let i = 0; i + months < trSeries.length; i++) {
+                    let quotes = 0;
+                    const cashFlows = [];
+                    const dates = [];
+
+                    for (let m = 0; m < months; m++) {
+                        quotes += monthlyContribution / trSeries[i + m].tr;
+                        cashFlows.push(-monthlyContribution);
+                        dates.push(trSeries[i + m].date);
+                    }
+
+                    const finalValue = quotes * trSeries[i + months].tr;
+                    cashFlows.push(finalValue);
+                    dates.push(trSeries[i + months].date);
+
+                    const irr = xirr(cashFlows, dates);
+                    if (irr == null || !isFinite(irr)) continue;
+
+                    const invested = monthlyContribution * months;
+                    annReturns.push(irr);
+                    totalReturns.push(finalValue / invested - 1);
+                }
+
+                // ===== ultimo PAC osservato =====
+                const startLast = trSeries.length - months - 1;
+                let quotesLast = 0;
+                const cashLast = [];
+                const dateLast = [];
+
+                for (let m = 0; m < months; m++) {
+                    quotesLast += monthlyContribution / trSeries[startLast + m].tr;
+                    cashLast.push(-monthlyContribution);
+                    dateLast.push(trSeries[startLast + m].date);
+                }
+
+                const finalLast = quotesLast * trSeries[startLast + months].tr;
+                cashLast.push(finalLast);
+                dateLast.push(trSeries[startLast + months].date);
+
+                const lastAnn = xirr(cashLast, dateLast);
+                const lastTotal = finalLast / (monthlyContribution * months) - 1;
+
+
+                results.push({
+                    years,
+                    ann: {
+                        min: Math.min(...annReturns),
+                        max: Math.max(...annReturns),
+                        p10: percentile(annReturns, 0.10),
+                        p90: percentile(annReturns, 0.90),
+                        mean: mean(annReturns),
+                        last: lastAnn
+                    },
+                    total: {
+                        min: Math.min(...totalReturns),
+                        max: Math.max(...totalReturns),
+                        p10: percentile(totalReturns, 0.10),
+                        p90: percentile(totalReturns, 0.90),
+                        mean: mean(totalReturns),
+                        last: lastTotal
+                    }
+                });
+
+            }
+
+            return results;
+        }
+
+        function buildHoldingBoxPlot(ctx, stats, type, label) {
+            return new Chart(ctx, {
+                type: 'candlestick',
+                data: {
+                    labels: stats.map(s => s.years),
+                    datasets: [{
+                        label,
+                        data: buildFakeCandles(stats, type),
+                        backgroundColor: 'rgba(173,216,230,0.6)',
+                        borderColor: '#000',
+                        borderWidth: 1,
+                        itemRadius: 0,
+                        pointStyle: 'circle',
+                        showLine: false
+                    },
+                    {
+                        type: 'scatter',
+                        label: 'Mediana',
+                        data: stats.map(s => ({ x: s.years, y: s[type].mean * 100 })),
+                        pointBackgroundColor: 'red',
+                        pointRadius: 2,
+                    },
+                    {
+                        type: 'scatter',
+                        label: 'Ultimo portafoglio',
+                        data: stats.map(s => ({ x: s.years, y: s[type].last * 100 })),
+                        pointBackgroundColor: 'orange',
+                        pointBorderColor: 'black',
+                        pointRadius: 2,
+                    }
+                    ]
+                },
+                plugins: [{
+                    id: 'drawMedian',
+                    afterDatasetsDraw(chart) {
+                        const ctx = chart.ctx;
+                        chart.data.datasets.forEach((dataset, i) => {
+                            dataset.data.forEach((d, j) => {
+                                const meta = chart.getDatasetMeta(i).data[j];
+                                const x = meta.x; // posizione orizzontale candela
+                                const y = chart.scales.y.getPixelForValue(d.median);
+                                const halfWidth = meta.width / 2; // metà larghezza candela
+                                ctx.strokeStyle = 'red';
+                                ctx.lineWidth = 0.5;
+                                ctx.beginPath();
+                                ctx.moveTo(x - halfWidth / 2, y);
+                                ctx.lineTo(x + halfWidth / 2, y);
+                                ctx.stroke();
+                            });
+                            dataset.data.forEach((d, j) => {
+                                const meta = chart.getDatasetMeta(i).data[j];
+                                const x = meta.x; // posizione orizzontale candela
+                                const y = chart.scales.y.getPixelForValue(d.last);
+                                const halfWidth = meta.width / 2; // metà larghezza candela
+                                ctx.strokeStyle = 'darkorange';
+                                ctx.lineWidth = 0.5;
+                                ctx.beginPath();
+                                ctx.moveTo(x - halfWidth / 2, y);
+                                ctx.lineTo(x + halfWidth / 2, y);
+                                ctx.stroke();
+                            });
+                        });
+                    }
+                },
+                ],
+                options: {
+                    plugins: {
+                        legend: { display: true },
+                        annotation: zeroLineAnnotation()
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 0,
+                                minRotation: 0,
+                                callback: (value) => value
+                            },
+                            title: {
+                                display: true,
+                                text: 'Anni di detenzione'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: '%'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function buildFakeCandles(stats, type) {
+            return stats.map(s => ({
+                x: s.years,
+                o: s[type].p10 * 100,   // open
+                h: s[type].max * 100,   // high
+                l: s[type].min * 100,   // low
+                c: s[type].p90 * 100,    // close
+                median: s[type].mean * 100,
+                last: s[type].last * 100
+            }));
+        }
+
+
+
+
+        function zeroLineAnnotation() {
+            return {
+                annotations: {
+                    zeroLine: {
+                        type: 'line',
+                        yMin: 0,
+                        yMax: 0,
+                        borderColor: 'black',
+                        borderWidth: 1,
+                        borderDash: [6, 4], // tratteggiata stile Shiller                        
+                    }
+                }
+            };
+        }
+
+
+
+        /* =======================
+           MAIN
+           ======================= */
+        async function main() {
+            const spText = await fetch('./sp500_shiller_price_dividends.csv').then(r => r.text());
+            const spParsed = parseSP500CSV(spText);
+            const spTR = buildNetTotalReturnIndex(spParsed);
+            const status = document.getElementById('calcStatus');
+            const holdingStatsPAC = await computeHoldingStatsPACAsync(spTR, 41, 100, msg => status.textContent = "⏳ " + msg);
+            status.className = "alert alert-success text-center";
+            status.textContent = "✅ Calcolo completato";
+            buildHoldingBoxPlot(document.getElementById('chartAnnPAC'), holdingStatsPAC, 'ann', 'PAC 100$/mese – rendimento annualizzato');
+            buildHoldingBoxPlot(document.getElementById('chartTotalPAC'), holdingStatsPAC, 'total', 'PAC 100$/mese – rendimento totale');
+
+            // --- GRAFICO S&P 500 TR ---
+            new Chart(document.getElementById('chartTR'), {
+                type: 'line',
+                data: {
+                    datasets: [
+                        { label: 'S&P 500 Net Total Return (USD)', data: spTR.map(d => ({ x: d.date, y: d.tr })), borderWidth: 1, pointRadius: 0, borderColor: 'green' }
+                    ]
+                },
+                options: { scales: { x: { type: 'time' }, y: { title: { display: true, text: 'USD' } } } }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', main);
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('../html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
