@@ -39,17 +39,38 @@
 
         <div class="mt-4 p-3 bg-light border rounded">
             <p>
-                Nel grafico sotto è riportato il rendimento annualizzato, tipicamente chiamato CAGR in finanza (Compound
-                Annual Growth Rate).
-                Il rendimento è nominale, lordo ed include i dividendi.
-                Per un investitore italiano, bisogna togliere la tassazione sui dividendi, la tassazione sulla
-                plusvalenza ed inserire il cambio lira/dollaro prima ed EUR/dollaro poi.
+                Il grafico mostra il <strong>rendimento annualizzato dei Piani di Accumulo (PAC)</strong>
+                sull’indice S&P 500 Net Total Return, calcolato tramite simulazioni <em>rolling</em>
+                su diversi periodi di detenzione.
             </p>
+
             <p>
-                Come potete vedere, il rendimento netto annualizzato medio è del 9.5%, ma nel 95% delle simulazioni tale
-                rendimento oscilla fra il 5.9% e il 13.2%.
-                Non sembrerebbe una grossa oscillazione, poiché si parla di poco più di un fattore 2 tra il limite
-                inferiore e il limite superiore della banda.
+                Il rendimento annualizzato è stimato utilizzando la metodologia
+                <strong>XIRR (Internal Rate of Return)</strong>, che tiene conto in modo corretto
+                dei <strong>flussi di cassa periodici</strong> tipici di un PAC
+                (versamenti mensili costanti e valore finale del portafoglio).
+            </p>
+
+            <p>
+                A differenza di approssimazioni come il CAGR o il metodo di Dietz,
+                lo XIRR fornisce una misura coerente e finanziariamente corretta
+                del rendimento effettivo,in contesti come il pac dove il <strong>timing dei versamenti</strong> ha un impatto rilevante.
+            </p>
+
+            <p>
+                Le candele rappresentano la distribuzione dei risultati:
+            <ul>
+                <li><strong>corpo:</strong> intervallo fra 10° e 90° percentile</li>
+                <li><strong>estremi:</strong> minimo e massimo osservati</li>
+                <li><strong>punto rosso:</strong> rendimento medio</li>
+                <li><strong>punto arancione:</strong> ultimo PAC osservato (periodo più recente)</li>
+            </ul>
+            </p>
+
+            <p>
+                Questo approccio evidenzia come, anche a lungo termine,
+                <strong>il rendimento di un PAC non converga a un valore unico</strong>,
+                ma resti fortemente dipendente dal periodo storico di investimento.
             </p>
             <p>
                 Ma è proprio qui che sta l'inganno.
@@ -71,41 +92,6 @@
         </div>
         <h3 class="mt-5">PAC 100$/mese – Rendimento annualizzato per periodo di detenzione, in evidenza il 90%
             percentile</h3>
-        <p>
-            Il grafico mostra il <strong>rendimento annualizzato dei Piani di Accumulo (PAC)</strong>
-            sull’indice S&P 500 Net Total Return, calcolato tramite simulazioni <em>rolling</em>
-            su diversi periodi di detenzione.
-        </p>
-
-        <p>
-            Il rendimento annualizzato è stimato utilizzando la metodologia
-            <strong>XIRR (Internal Rate of Return)</strong>, che tiene conto in modo corretto
-            dei <strong>flussi di cassa periodici</strong> tipici di un PAC
-            (versamenti mensili costanti e valore finale del portafoglio).
-        </p>
-
-        <p>
-            A differenza di approssimazioni come il CAGR o il metodo di Dietz,
-            lo XIRR fornisce una misura coerente e finanziariamente corretta
-            del rendimento effettivo, soprattutto su orizzonti brevi,
-            dove il <strong>timing dei versamenti</strong> ha un impatto rilevante.
-        </p>
-
-        <p>
-            Le candele rappresentano la distribuzione dei risultati:
-        <ul>
-            <li><strong>corpo:</strong> intervallo fra 10° e 90° percentile</li>
-            <li><strong>estremi:</strong> minimo e massimo osservati</li>
-            <li><strong>punto rosso:</strong> rendimento medio</li>
-            <li><strong>punto arancione:</strong> ultimo PAC osservato (periodo più recente)</li>
-        </ul>
-        </p>
-
-        <p>
-            Questo approccio evidenzia come, anche a lungo termine,
-            <strong>il rendimento di un PAC non converga a un valore unico</strong>,
-            ma resti fortemente dipendente dal periodo storico di investimento.
-        </p>
 
         <canvas id="chartAnnPAC"></canvas>
 
