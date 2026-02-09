@@ -59,12 +59,9 @@
             l'andamento storico dell'indice.</p>
         <div style="margin-top:1.5rem; padding:1rem; background:#f8f9fa; border:1px solid #ddd; border-radius:6px;
             display:flex; gap:15px; justify-content:space-between;">
-            <img src="./img/sp500_net_price.png" style="width:32%; height:auto;cursor:pointer;" class="img-zoom"
-                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
-            <img src="./img/sp500_net_total_return.png" style="width:32%; height:auto;cursor:pointer;" class="img-zoom"
-                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
-            <img src="./img/sp500_total_return.png" style="width:32%; height:auto;cursor:pointer;" class="img-zoom"
-                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+            <img src="./img/sp500_net_price.png" style="width:32%; height:auto;cursor:pointer;" class="img-zoom">
+            <img src="./img/sp500_net_total_return.png" style="width:32%; height:auto;cursor:pointer;" class="img-zoom">
+            <img src="./img/sp500_total_return.png" style="width:32%; height:auto;cursor:pointer;" class="img-zoom">
         </div>
         <hr>
         <h3>Rendimenti annualizzati medi storici S&P 500 Net Price, Net Total Return e Total Return e PAC su Net Total
@@ -75,14 +72,12 @@
             l'andamento storico dell'indice.</p>
         <div style="margin-top:1.5rem; padding:1rem; background:#f8f9fa; border:1px solid #ddd; border-radius:6px;
             display:flex; gap:15px; justify-content:space-between;">
-            <img src="./img/annual_net_price.png" style="width:25%; height:auto;cursor:pointer;" class="img-zoom"
-                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
-            <img src="./img/annual_return_net_total.png" style="width:25%; height:auto;cursor:pointer;" class="img-zoom"
-                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
-            <img src="./img/annual_return_total.png" style="width:25%; height:auto;cursor:pointer;" class="img-zoom"
-                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+            <img src="./img/annual_net_price.png" style="width:25%; height:auto;cursor:pointer;" class="img-zoom">
+            <img src="./img/annual_return_net_total.png" style="width:25%; height:auto;cursor:pointer;"
+                class="img-zoom">
+            <img src="./img/annual_return_total.png" style="width:25%; height:auto;cursor:pointer;" class="img-zoom">
             <img src="./img/pac_net_total_tr_annuale.png" style="width:25%; height:auto;cursor:pointer;"
-                class="img-zoom" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+                class="img-zoom">
         </div>
         <hr>
         <h3>Rendimenti totali medi storici S&P 500 Net Price, Net Total Return e Total Return e PAC su Net Total Return
@@ -91,16 +86,16 @@
             Total Return, Net Total Return e Net Price. Lo studio si concentra sui rendimenti totali per
             periodi di detenzione che variano da 1 a 40 anni, utilizzando una metodologia rolling per valutare
             l'andamento storico dell'indice.</p>
-        <div style="margin-top:1.5rem; padding:1rem; background:#f8f9fa; border:1px solid #ddd; border-radius:6px;
-            display:flex; gap:15px; justify-content:space-between;">
+        <div style=" margin-top:1.5rem; padding:1rem; background:#f8f9fa; border:1px solid #ddd; border-radius:6px;
+                display:flex; gap:15px; justify-content:space-between;">
             <img src="./img/rendimento_tot_net_price.png" style="width:25%; height:auto;cursor:pointer;"
-                class="img-zoom" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+                class="img-zoom">
             <img src="./img/rendimento_tot_net_total.png" style="width:25%; height:auto;cursor:pointer;"
-                class="img-zoom" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+                class="img-zoom">
             <img src="./img/rendimento_tot_total_return.png" style="width:25%; height:auto;cursor:pointer;"
-                class="img-zoom" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
-            <img src="./img/pac_net_total_tr_totale.png" style="width:25%; height:auto;cursor:pointer;" class="img-zoom"
-                onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+                class="img-zoom">
+            <img src="./img/pac_net_total_tr_totale.png" style="width:25%; height:auto;cursor:pointer;"
+                class="img-zoom">
         </div>
 
 
@@ -380,28 +375,24 @@
         <script>
             document.querySelectorAll('.img-zoom').forEach(img => {
                 img.addEventListener('click', function () {
-                    const modalImg = document.getElementById('modalImage');
-                    modalImg.src = this.src;
-
-                    const modal = new bootstrap.Modal(
-                        document.getElementById('imageModal')
-                    );
-                    modal.show();
+                    document.getElementById('modalImage').src = this.src;
+                    $('#imageModal').modal('show');
                 });
             });
         </script>
 
+
         <!-- Image Fullscreen Modal -->
-        <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
-            <div class="modal-dialog modal-fullscreen" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
-                <div class="modal-content bg-dark" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
-                    <div class="modal-body d-flex justify-content-center align-items-center p-0" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
-                        <img id="modalImage" src="" style="width:90vw;height:90vh;object-fit: contain;cursor: pointer;" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+        <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" data-backdrop="true">
+            <div class="modal-dialog modal-fullscreen" role="document">
+                <div class="modal-content bg-dark">
+                    <div class="modal-body p-0 d-flex justify-content-center align-items-center">
+                        <img id="modalImage" src="" style="width:90vw;height:90vh;object-fit:contain;cursor:pointer;"
+                            onclick="$('#imageModal').modal('hide');">
                     </div>
                 </div>
             </div>
         </div>
-
 </body>
 
 </html>
