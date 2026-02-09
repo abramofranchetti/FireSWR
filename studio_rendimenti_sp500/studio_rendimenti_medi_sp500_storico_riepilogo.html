@@ -392,10 +392,10 @@
         </script>
 
         <!-- Image Fullscreen Modal -->
-        <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-fullscreen">
-                <div class="modal-content bg-dark">
-                    <div class="modal-body d-flex justify-content-center align-items-center p-0">
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+            <div class="modal-dialog modal-fullscreen" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+                <div class="modal-content bg-dark" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
+                    <div class="modal-body d-flex justify-content-center align-items-center p-0" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
                         <img id="modalImage" src="" style="width:90vw;height:90vh;object-fit: contain;cursor: pointer;" onclick="bootstrap.Modal.getInstance(document.getElementById('imageModal')).hide();">
                     </div>
                 </div>
