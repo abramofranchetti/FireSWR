@@ -26,7 +26,7 @@
 
         input,
         .form-control {
-            border-radius: 10px !important;                        
+            border-radius: 10px !important;
             border: none !important;
         }
 
@@ -138,22 +138,20 @@
             let monthlyVol = volatility / Math.sqrt(12);
 
             for (let i = 1; i <= months; i++) {
-
                 let drift = monthlyReturn - (monthlyVol * monthlyVol) / 2;
-                let shock = randomNormal() * monthlyVol;
-                let effectiveReturn = drift + shock;
-
-                value = value * (1 + effectiveReturn);
-                value += monthly;
-
-                if (i % 12 === 0) {
+                let shock = randomNormal();
+                let growthFactor = Math.exp(
+                    (monthlyReturn - (monthlyVol * monthlyVol) / 2)
+                    + monthlyVol * shock
+                );
+                value = value * growthFactor;
+                value += monthly;                if (i % 12 === 0) {
                     data.push(Math.round(value));
                 }
             }
 
             return data;
         }
-
         function runSimulation() {
 
             let years = parseInt(document.getElementById("years").value);
