@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Risparmio vs Investimento</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+        }
+
+        input,
+        .form-control {
+            border-radius: 10px !important;                        
+            border: none !important;
+        }
+
+        canvas {
+            background: white;
+            border-radius: 15px;
+            padding: 10px;
+        }
+
+        .home-button {
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #0073e6;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #005bb5;
+        }
+    </style>
+</head>
+
+<body class="container py-4">
+    <a href="/FireSWR" class="home-button">🏠 Home</a>
+    <h2 class="text-center mb-4">Conta di più risparmiare o investire a un tasso maggiore?</h2>
+    <h6 class="text-center mb-4">Simula 3 tipi di risparmio con rendimenti e volatilità diverse.</h6>
+
+    <div class="card p-4 mb-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Durata (anni)</label>
+                <input type="number" id="years" class="form-control" value="30">
+            </div>
+        </div>
+    </div>
+
+    <div class="card p-4 mb-4">
+        <div class="row g-3">
+
+            <div class="col-md-3">
+                <h5>Legenda</h5>
+                <div class="form-control mb-2">Importo mensile (€)</div>
+                <div class="form-control mb-2">Rendimento annuo (%)</div>
+                <div class="form-control">Volatilità annua (%)</div>
+            </div>
+
+
+            <!-- PAC 1 -->
+            <div class="col-md-3">
+                <h5>Scenario 1</h5>
+                <input style="background-color: lightskyblue;" type="number" id="m1" class="form-control mb-2"
+                    value="100" placeholder="€/mese">
+                <input style="background-color: lightskyblue;" type="number" id="r1" class="form-control mb-2"
+                    value="10" placeholder="Rendimento %">
+                <input style="background-color: lightskyblue;" type="number" id="v1" class="form-control" value="15"
+                    placeholder="Volatilità %">
+            </div>
+
+            <!-- PAC 2 -->
+            <div class="col-md-3">
+                <h5>Scenario 2</h5>
+                <input style="background-color: lightcoral;" type="number" id="m2" class="form-control mb-2"
+                    value="200">
+                <input style="background-color: lightcoral;" type="number" id="r2" class="form-control mb-2" value="5">
+                <input style="background-color: lightcoral;" type="number" id="v2" class="form-control" value="10">
+            </div>
+
+            <!-- PAC 3 -->
+            <div class="col-md-3">
+                <h5>Scenario 3</h5>
+                <input style="background-color: orange;" type="number" id="m3" class="form-control mb-2" value="1000">
+                <input style="background-color: orange;" type="number" id="r3" class="form-control mb-2" value="2">
+                <input style="background-color: orange;" type="number" id="v3" class="form-control" value="5">
+            </div>
+
+        </div>
+
+        <div class="text-center mt-4">
+            <button class="btn btn-light btn-lg" onclick="runSimulation()">
+                Simula
+            </button>
+        </div>
+    </div>
+
+    <div class="card p-4">
+        <canvas id="chart"></canvas>
+    </div>
+
+    <script>
+
+        let chart;
+
+        function randomNormal() {
+            return Math.sqrt(-2.0 * Math.log(Math.random())) *
+                Math.cos(2.0 * Math.PI * Math.random());
+        }
+
+        function simulatePAC(years, monthly, annualReturn, volatility) {
+            let months = years * 12;
+            let value = 0;
+            let data = [];
+
+            let monthlyReturn = Math.pow(1 + annualReturn, 1 / 12) - 1;
+            let monthlyVol = volatility / Math.sqrt(12);
+
+            for (let i = 1; i <= months; i++) {
+
+                let drift = monthlyReturn - (monthlyVol * monthlyVol) / 2;
+                let shock = randomNormal() * monthlyVol;
+                let effectiveReturn = drift + shock;
+
+                value = value * (1 + effectiveReturn);
+                value += monthly;
+
+                if (i % 12 === 0) {
+                    data.push(Math.round(value));
+                }
+            }
+
+            return data;
+        }
+
+        function runSimulation() {
+
+            let years = parseInt(document.getElementById("years").value);
+
+            let m1 = parseFloat(document.getElementById("m1").value);
+            let r1 = parseFloat(document.getElementById("r1").value) / 100;
+            let v1 = parseFloat(document.getElementById("v1").value) / 100;
+
+            let m2 = parseFloat(document.getElementById("m2").value);
+            let r2 = parseFloat(document.getElementById("r2").value) / 100;
+            let v2 = parseFloat(document.getElementById("v2").value) / 100;
+
+            let m3 = parseFloat(document.getElementById("m3").value);
+            let r3 = parseFloat(document.getElementById("r3").value) / 100;
+            let v3 = parseFloat(document.getElementById("v3").value) / 100;
+
+            let data1 = simulatePAC(years, m1, r1, v1);
+            let data2 = simulatePAC(years, m2, r2, v2);
+            let data3 = simulatePAC(years, m3, r3, v3);
+
+            let labels = Array.from({ length: years }, (_, i) => i + 1);
+
+            if (chart) chart.destroy();
+
+            chart = new Chart(document.getElementById("chart"), {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "Scenario 1",
+                            data: data1,
+                            borderWidth: 2
+                        },
+                        {
+                            label: "Scenario 2",
+                            data: data2,
+                            borderWidth: 2
+                        },
+                        {
+                            label: "Scenario 3",
+                            data: data3,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: function (value) {
+                                    return value.toLocaleString() + " €";
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        runSimulation();
+
+    </script>
+
+</body>
+
+</html>
