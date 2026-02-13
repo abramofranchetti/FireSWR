@@ -28,7 +28,8 @@
         <h1 class="text-center">Studio rendimenti medi S&P 500 storico</h1>
         <h5 class="text-center">Studio dei rendimenti annualizzati e totali per diversi periodi di detenzione
             (metodologia Rolling) per l'indice S&P 500 TR costruito sui dati di Shiller.
-        <a href="https://abramofranchetti.github.io/FireSWR/#rendimenti_storici">vai qui per altre tipologie di indice (net price, net tr, ecc)</a>
+            <a href="https://abramofranchetti.github.io/FireSWR/#rendimenti_storici">vai qui per altre tipologie di
+                indice (net price, net tr, ecc)</a>
         </h5>
 
         <h3 class="mt-4">S&P 500 – Total Return</h3>
@@ -76,7 +77,9 @@
         <div class="mt-4 p-3 bg-light border rounded">
             <h4>Conclusioni</h4>
             <p>I grafici mostrano come cambiano i rendimenti in base al periodo di detenzione: Le candele mostrano le
-                fluttuazini e evidenziano il 90% percentile dei risultati e la mediana. Inoltre in arancione viene mostrato l'andamento dell'ultimo portafoglio osservato (esempio quello degli ultimi 1, 2, ..., 30 anni).</p>
+                fluttuazini e evidenziano il 90% percentile dei risultati e la mediana. Inoltre in arancione viene
+                mostrato l'andamento dell'ultimo portafoglio osservato (esempio quello degli ultimi 1, 2, ..., 30 anni).
+            </p>
             <ul>
                 <li><strong>Rendimenti annualizzati:</strong> tendono a crescere con l'aumentare degli anni, riducendo
                     il rischio di perdite importanti, ma la variabilità resta significativa.</li>
@@ -102,7 +105,9 @@
                 il paper di Robert Shiller, <a href="http://www.econ.yale.edu/~shiller/data/ie_data.xls"
                     target="_blank">Irrational Exuberance</a>, che include i dati storici utilizzati in questo studio.
             </p>
-            <p>Altri modi di vedere gli stessi dati, da <a href="https://www.lazyportfolioetf.com/allocation/us-stocks-rolling-returns/" target="_blank">Lazy Portfolio ETF</a></p>
+            <p>Altri modi di vedere gli stessi dati, da <a
+                    href="https://www.lazyportfolioetf.com/allocation/us-stocks-rolling-returns/" target="_blank">Lazy
+                    Portfolio ETF</a></p>
             <img src="./annual_return.png">
             <img src="./total_return.png">
         </div>
@@ -142,6 +147,15 @@
                 result.push({ date: curr.date, price: curr.price, tr });
             }
             return result;
+        }
+
+        function median(arr) {
+            const sorted = [...arr].sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+
+            return sorted.length % 2
+                ? sorted[mid]
+                : (sorted[mid - 1] + sorted[mid]) / 2;
         }
 
         function mean(arr) {
@@ -193,6 +207,7 @@
                         p10: percentile(totalReturns, 0.10),
                         p90: percentile(totalReturns, 0.90),
                         mean: mean(totalReturns),
+                        median: median(totalReturns),
                         last: lastTotal
 
                     },
@@ -202,6 +217,7 @@
                         p10: percentile(annualizedReturns, 0.10),
                         p90: percentile(annualizedReturns, 0.90),
                         mean: mean(annualizedReturns),
+                        median: median(annualizedReturns),
                         last: lastAnn
                     }
                 });
@@ -227,8 +243,15 @@
                     {
                         type: 'scatter',
                         label: 'Mediana',
-                        data: stats.map(s => ({ x: s.years, y: s[type].mean * 100 })),
+                        data: stats.map(s => ({ x: s.years, y: s[type].median * 100 })),
                         pointBackgroundColor: 'red',
+                        pointRadius: 2,
+                    },
+                    {
+                        type: 'scatter',
+                        label: 'Media',
+                        data: stats.map(s => ({ x: s.years, y: s[type].mean * 100 })),
+                        pointBackgroundColor: 'blue',
                         pointRadius: 2,
                     },
                     {
@@ -273,7 +296,7 @@
                         });
                     }
                 },
-            ],
+                ],
                 options: {
                     plugins: {
                         legend: { display: true },

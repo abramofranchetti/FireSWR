@@ -28,7 +28,8 @@
         <h1 class="text-center">Studio rendimenti medi S&P 500 NET TR storico</h1>
         <h5 class="text-center">Studio dei rendimenti annualizzati e totali per diversi periodi di detenzione
             (metodologia Rolling) per l'indice S&P 500 Net TR costruito sui dati di Shiller.
-        <a href="https://abramofranchetti.github.io/FireSWR/#rendimenti_storici">vai qui per altre tipologie di indice (net price, net tr, ecc)</a>
+            <a href="https://abramofranchetti.github.io/FireSWR/#rendimenti_storici">vai qui per altre tipologie di
+                indice (net price, net tr, ecc)</a>
         </h5>
 
         <h3 class="mt-4">S&P 500 – Net Total Return (Reinvestimento dei dividendi tassati)</h3>
@@ -166,6 +167,16 @@
         }
 
 
+        function median(arr) {
+            const sorted = [...arr].sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+
+            return sorted.length % 2
+                ? sorted[mid]
+                : (sorted[mid - 1] + sorted[mid]) / 2;
+        }
+
+
         function mean(arr) {
             return arr.reduce((a, b) => a + b, 0) / arr.length;
         }
@@ -215,6 +226,7 @@
                         p10: percentile(totalReturns, 0.10),
                         p90: percentile(totalReturns, 0.90),
                         mean: mean(totalReturns),
+                        median: median(totalReturns),
                         last: lastTotal
 
                     },
@@ -222,8 +234,9 @@
                         min: Math.min(...annualizedReturns),
                         max: Math.max(...annualizedReturns),
                         p10: percentile(annualizedReturns, 0.10),
-                        p90: percentile(annualizedReturns, 0.90),
+                        p90: percentile(annualizedReturns, 0.90),                        
                         mean: mean(annualizedReturns),
+                        median: median(annualizedReturns),
                         last: lastAnn
                     }
                 });
@@ -249,8 +262,15 @@
                     {
                         type: 'scatter',
                         label: 'Mediana',
-                        data: stats.map(s => ({ x: s.years, y: s[type].mean * 100 })),
+                        data: stats.map(s => ({ x: s.years, y: s[type].median * 100 })),
                         pointBackgroundColor: 'red',
+                        pointRadius: 2,
+                    },
+                    {
+                        type: 'scatter',
+                        label: 'Media',
+                        data: stats.map(s => ({ x: s.years, y: s[type].mean * 100 })),
+                        pointBackgroundColor: 'blue',
                         pointRadius: 2,
                     },
                     {
@@ -333,13 +353,11 @@
                 h: s[type].max * 100,   // high
                 l: s[type].min * 100,   // low
                 c: s[type].p90 * 100,    // close
-                median: s[type].mean * 100,
+                median: s[type].median * 100,
+                mean: s[type].mean * 100,
                 last: s[type].last * 100
             }));
         }
-
-
-
 
         function zeroLineAnnotation() {
             return {

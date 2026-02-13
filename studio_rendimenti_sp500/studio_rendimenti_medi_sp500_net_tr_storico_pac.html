@@ -54,7 +54,8 @@
             <p>
                 A differenza di approssimazioni come il CAGR o il metodo di Dietz,
                 lo XIRR fornisce una misura coerente e finanziariamente corretta
-                del rendimento effettivo,in contesti come il pac dove il <strong>timing dei versamenti</strong> ha un impatto rilevante.
+                del rendimento effettivo,in contesti come il pac dove il <strong>timing dei versamenti</strong> ha un
+                impatto rilevante.
             </p>
 
             <p>
@@ -172,6 +173,14 @@
             return result;
         }
 
+        function median(arr) {
+            const sorted = [...arr].sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+
+            return sorted.length % 2
+                ? sorted[mid]
+                : (sorted[mid - 1] + sorted[mid]) / 2;
+        }
 
         function mean(arr) {
             return arr.reduce((a, b) => a + b, 0) / arr.length;
@@ -285,6 +294,7 @@
                         p10: percentile(annReturns, 0.10),
                         p90: percentile(annReturns, 0.90),
                         mean: mean(annReturns),
+                        median: median(annReturns),
                         last: lastAnn
                     },
                     total: {
@@ -293,6 +303,7 @@
                         p10: percentile(totalReturns, 0.10),
                         p90: percentile(totalReturns, 0.90),
                         mean: mean(totalReturns),
+                        median: median(totalReturns),
                         last: lastTotal
                     }
                 });
@@ -320,8 +331,15 @@
                     {
                         type: 'scatter',
                         label: 'Mediana',
-                        data: stats.map(s => ({ x: s.years, y: s[type].mean * 100 })),
+                        data: stats.map(s => ({ x: s.years, y: s[type].median * 100 })),
                         pointBackgroundColor: 'red',
+                        pointRadius: 2,
+                    },
+                    {
+                        type: 'scatter',
+                        label: 'Media',
+                        data: stats.map(s => ({ x: s.years, y: s[type].mean * 100 })),
+                        pointBackgroundColor: 'blue',
                         pointRadius: 2,
                     },
                     {
