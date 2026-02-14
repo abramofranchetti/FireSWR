@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Esperimento fiscale PAC vs Tranche</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #a3c3ff;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding-bottom: 50px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            text-align: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 40px;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 6px 10px;
+            text-align: right;
+        }
+
+        th {
+            background: rgba(106, 113, 207, 0.8);
+            color: white;
+        }
+
+        td {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .summary td,
+        .summary th {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .home-button {
+            display: inline-block;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #0073e6;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin: 10px 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #005bb5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.75rem;
+            }
+
+            .card {
+                padding: 15px;
+            }
+        }
+
+        .explanation {
+            margin: 20px auto;
+            max-width: 900px;
+        }
+
+        .explanation p {
+            margin-bottom: 10px;
+            line-height: 1.4rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="/FireSWR" class="home-button">🏠 Home</a>
+        <h1 class="card p-4">Esperimento fiscale: PAC unico vs PAC a Tranche</h1>
+
+        <div class="card explanation">
+            <h3>Descrizione dell'esperimento</h3>
+            <p>Si simula un investimento di 100€ al mese per 15 anni con un rendimento annuo composto del 7% e
+                tassazione
+                del 26% sulle plusvalenze.</p>
+            <p>Scenario 1 (Tranche): investimento su 3 strumenti consecutivi (A → B → C), 5 anni ciascuno.</p>
+            <p>Scenario 2 (PAC unico): investimento su un unico strumento per 15 anni.</p>
+            <p>Successivamente si effettua un decumulo vendendo 200€ lordi al mese, considerando le tasse sulle
+                plusvalenze.</p>
+            <p>Le tabelle mostreranno capitale accumulato, plusvalenze, tasse e flusso netto mensile per entrambi i
+                scenari, sia durante l'accumulo sia durante il decumulo.</p>
+        </div>
+
+        <h2>Riepilogo risultati</h2>
+        <div class="card p-3">
+            <table class="summary" id="summary"></table>
+        </div>
+        <h2>Riepilogo testuale dell'esperimento</h2>
+        <div class="card p-4 mb-4">
+            <p>
+                In questo esperimento abbiamo confrontato due strategie di investimento con versamenti mensili di 100€
+                per 15 anni, rendimento annuo del 7% e tassazione del 26% sulle plusvalenze.
+            </p>
+            <p>
+                La prima strategia (“Tranche”) consiste nell’investire su tre strumenti consecutivi (A → B → C) per 5
+                anni ciascuno,
+                mentre la seconda strategia (“PAC unico”) investe tutto su un unico strumento per l’intera durata.
+            </p>
+            <p>
+                Dopo l’accumulo, abbiamo simulato il decumulo vendendo 200€ lordi al mese, applicando le tasse sulle
+                plusvalenze maturate.
+            </p>
+            <p>
+                I risultati mostrano che il capitale finale, la plusvalenza complessiva e le tasse totali sono identici
+                nelle due strategie.
+                Questo accade perché, con strumenti identici e stesso rendimento, la somma delle plusvalenze maturate è
+                la stessa
+                indipendentemente da come si distribuiscono gli investimenti in vari strumenti.
+            </p>
+            <p>
+                La differenza principale riguarda il flusso netto mensile durante il decumulo.
+                Nel caso delle tranche, ogni strumento viene esaurito sequenzialmente: si vende prima lo strumento C,
+                poi B, infine A.
+                Questo significa che nelle prime fasi del decumulo la maggior parte del capitale proviene dallo
+                strumento più recente,
+                che ha subito meno accumulo di plusvalenze rispetto agli strumenti investiti prima.
+                Di conseguenza, le tasse sul prelievo mensile sono inizialmente più basse e il netto disponibile può
+                essere più elevato.
+                Man mano che si procede, gli strumenti più vecchi vengono liquidati e il flusso netto può diminuire
+                leggermente,
+                fino all’esaurimento completo.
+            </p>
+            <p>
+                Nel PAC unico, invece, l’intero capitale è concentrato in un solo strumento accumulato per 15 anni:
+                ogni prelievo mensile rappresenta una porzione del capitale complessivo e della plusvalenza maturata,
+                rendendo il flusso netto mensile più costante ma leggermente inferiore rispetto alle prime fasi delle
+                tranche.
+                In altre parole, mentre le tasse totali complessive sono identiche tra le due strategie,
+                la sequenza di riscatti influisce sul timing delle tasse pagate e sulla liquidità mensile disponibile,
+                il che può essere rilevante per pianificare i prelievi e gestire il budget durante il decumulo.
+            </p>
+            <p>
+                L’esperimento evidenzia come, con strumenti identici e stessa volatilità, la suddivisione in tranche non
+                riduce
+                le tasse totali, poiché le plusvalenze complessive sono identiche, ma può influenzare il flusso netto
+                mensile
+                e la disponibilità di capitale durante il decumulo.
+            </p>
+            <p>
+                Nel caso delle tranche, ogni strumento viene liquidato sequenzialmente (C → B → A).
+                Questo fa sì che nelle prime fasi del decumulo il capitale provenga principalmente dallo strumento più
+                recente,
+                con plusvalenze ancora contenute, producendo un flusso netto iniziale più elevato.
+                Man mano che si liquidano gli strumenti più vecchi, il netto disponibile può variare leggermente, fino
+                all’esaurimento completo.
+            </p>
+            <p>
+                Nel PAC unico, invece, l’intero capitale accumulato per 15 anni viene decumulato progressivamente.
+                Ogni prelievo rappresenta una quota uniforme di capitale e plusvalenza, rendendo il flusso netto mensile
+                più costante
+                ma leggermente inferiore nelle fasi iniziali rispetto alle tranche.
+            </p>
+            <p>
+                <strong>
+                In sintesi, il PAC unico tende a produrre un capitale leggermente più elevato alla fine dell’accumulo,
+                mentre le tranche offrono una distribuzione più graduata dei riscatti durante il decumulo.
+                La scelta tra le due strategie non incide sulle tasse totali, ma può essere rilevante per pianificare la
+                liquidità mensile
+                e la gestione del flusso netto durante il periodo di decumulo.
+                </strong>
+            </p>
+
+
+        </div>
+
+
+
+        <h2>Accumulo – Tranche (A, B, C)</h2>
+        <div class="card p-3">
+            <table id="accTranche"></table>
+        </div>
+
+        <h2>Accumulo – PAC unico</h2>
+        <div class="card p-3">
+            <table id="accSingle"></table>
+        </div>
+
+        <h2>Decumulo – Tranche</h2>
+        <div class="card p-3">
+            <table id="decTranche"></table>
+        </div>
+
+        <h2>Decumulo – PAC unico</h2>
+        <div class="card p-3">
+            <table id="decSingle"></table>
+        </div>
+
+    </div>
+
+    <script>
+        const taxRate = 0.26;
+        const annualRate = 0.07;
+        const monthlyRate = Math.pow(1 + annualRate, 1 / 12) - 1;
+        const monthlyInvestment = 100;
+        const withdrawal = 200;
+        const monthsAccumulation = 180;
+
+        function simulateTranche() {
+            let instruments = [
+                { name: "A", value: 0, cost: 0 },
+                { name: "B", value: 0, cost: 0 },
+                { name: "C", value: 0, cost: 0 }
+            ];
+
+            let accTable = [];
+            let totalCost = 0;
+
+            for (let m = 1; m <= monthsAccumulation; m++) {
+                instruments.forEach(i => {
+                    i.value *= (1 + monthlyRate);
+                });
+
+                let index = Math.floor((m - 1) / 60);
+                instruments[index].value += monthlyInvestment;
+                instruments[index].cost += monthlyInvestment;
+                totalCost += monthlyInvestment;
+
+                let totalValue = instruments.reduce((s, i) => s + i.value, 0);
+
+                accTable.push([
+                    m,
+                    instruments[0].value,
+                    instruments[1].value,
+                    instruments[2].value,
+                    totalValue
+                ]);
+            }
+
+            let peakCapital = instruments.reduce((s, i) => s + i.value, 0);
+            let gain = peakCapital - totalCost;
+
+            // DECUMULO
+            let decTable = [];
+            let totalTaxes = 0;
+            let totalNet = 0;
+            let month = 0;
+
+            while (true) {
+                let totalValue = instruments.reduce((s, i) => s + i.value, 0);
+                if (totalValue <= 0) break;
+
+                month++;
+                instruments.forEach(i => {
+                    i.value *= (1 + monthlyRate);
+                });
+
+                let totalValueNow = instruments.reduce((s, i) => s + i.value, 0);
+
+                let gross = Math.min(withdrawal, totalValueNow);
+                let remaining = gross;
+                let taxMonth = 0;
+
+                for (let i = 2; i >= 0; i--) {
+                    if (remaining <= 0) break;
+                    let inst = instruments[i];
+                    if (inst.value <= 0) continue;
+
+                    let sell = Math.min(remaining, inst.value);
+                    let gainRatio = Math.max(0, (inst.value - inst.cost) / inst.value);
+                    let gainPart = sell * gainRatio;
+                    let tax = gainPart * taxRate;
+                    let costPortion = sell * (inst.cost / inst.value);
+
+                    inst.value -= sell;
+                    inst.cost -= costPortion;
+
+                    taxMonth += tax;
+                    remaining -= sell;
+                }
+
+                let net = gross - taxMonth;
+                totalTaxes += taxMonth;
+                totalNet += net;
+
+                let totalRemaining = instruments.reduce((s, i) => s + i.value, 0);
+
+                decTable.push([
+                    month,
+                    instruments[0].value,
+                    instruments[1].value,
+                    instruments[2].value,
+                    gross,
+                    taxMonth,
+                    net,
+                    totalRemaining
+                ]);
+            }
+
+            return { peakCapital, gain, taxes: totalTaxes, months: month, netAvg: totalNet / month, accTable, decTable };
+        }
+
+        function simulateSingle() {
+            let value = 0;
+            let cost = 0;
+            let accTable = [];
+
+            for (let m = 1; m <= monthsAccumulation; m++) {
+                value *= (1 + monthlyRate);
+                value += monthlyInvestment;
+                cost += monthlyInvestment;
+
+                accTable.push([m, value]);
+            }
+
+            let peakCapital = value;
+            let gain = value - cost;
+
+            let decTable = [];
+            let totalTaxes = 0;
+            let totalNet = 0;
+            let month = 0;
+
+            while (value > 0) {
+                month++;
+                value *= (1 + monthlyRate);
+
+                let gross = Math.min(withdrawal, value);
+                let gainRatio = Math.max(0, (value - cost) / value);
+                let gainPart = gross * gainRatio;
+                let tax = gainPart * taxRate;
+                let costPortion = gross * (cost / value);
+
+                value -= gross;
+                cost -= costPortion;
+
+                let net = gross - tax;
+
+                totalTaxes += tax;
+                totalNet += net;
+
+                decTable.push([month, gross, tax, net, value]);
+            }
+
+            return { peakCapital, gain, taxes: totalTaxes, months: month, netAvg: totalNet / month, accTable, decTable };
+        }
+
+        function buildTable(id, headers, data) {
+            let html = "<tr>";
+            headers.forEach(h => html += "<th>" + h + "</th>");
+            html += "</tr>";
+
+            data.forEach(row => {
+                html += "<tr>";
+                row.forEach(cell => {
+                    html += "<td>" + (typeof cell === "number" ? cell.toFixed(2) : cell) + "</td>";
+                });
+                html += "</tr>";
+            });
+
+            document.getElementById(id).innerHTML = html;
+        }
+
+        window.onload = function () {
+            let tranche = simulateTranche();
+            let single = simulateSingle();
+
+            buildTable("summary",
+                ["Scenario", "Capitale dopo 15 anni", "Plusvalenza maturata", "Tasse totali", "Mesi di decumulo", "Decumulo netto medio"],
+                [
+                    ["Tranche", tranche.peakCapital, tranche.gain, tranche.taxes, tranche.months, tranche.netAvg],
+                    ["PAC unico", single.peakCapital, single.gain, single.taxes, single.months, single.netAvg]
+                ]
+            );
+
+            buildTable("accTranche", ["Mese", "A", "B", "C", "Totale"], tranche.accTable);
+            buildTable("accSingle", ["Mese", "Valore totale"], single.accTable);
+            buildTable("decTranche", ["Mese", "A residuo", "B residuo", "C residuo", "Lordo", "Tasse", "Netto", "Totale residuo"], tranche.decTable);
+            buildTable("decSingle", ["Mese", "Lordo", "Tasse", "Netto", "Capitale residuo"], single.decTable);
+        }
+    </script>
+</body>
+
+</html>
