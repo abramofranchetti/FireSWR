@@ -99,15 +99,15 @@
                 tassazione del 26% sulle plusvalenze.</p>
             <p>Scenario 1 (Tranche): investimento su 3 strumenti consecutivi (A → B → C), 5 anni ciascuno.</p>
             <p>Scenario 2 (PAC unico): investimento su un unico strumento per 15 anni.</p>
-            <p>Successivamente si effettua un decumulo vendendo tot dollari lordi al mese, considerando le tasse sulle
-                plusvalenze.</p>
+            <p>Successivamente si effettua un decumulo vendendo tot dollari lordi al mese (variabile), considerando le tasse sulle
+                plusvalenze, in modo da ottenere X dollari netti impostabili sotto.</p>
             <p>Le tabelle mostreranno capitale accumulato, plusvalenze, tasse e flusso netto mensile per entrambi i
                 scenari, sia durante l'accumulo sia durante il decumulo.</p>
         </div>
 
         <div class="card text-center">
             <label class="form-label">
-                Decumulo netto mensile ($)
+                Decumulo netto mensile desiderato($)
             </label>
             <input type="number" id="withdrawInput" class="form-control text-center" value="250" min="250" step="10">
             <button class="btn btn-light mt-3" onclick="runSimulation()">
