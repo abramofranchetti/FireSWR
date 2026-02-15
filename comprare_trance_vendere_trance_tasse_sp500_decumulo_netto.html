@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Esperimento fiscale PAC vs Tranche</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+
+
+    <style>
+        body {
+            background: #a3c3ff;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding-bottom: 50px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            text-align: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 40px;
+            font-size: 0.85rem;
+        }
+
+        th,
+        td {
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 6px 10px;
+            text-align: right;
+        }
+
+        th {
+            background: rgba(106, 113, 207, 0.8);
+        }
+
+        td {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .summary td,
+        .summary th {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        input {
+            max-width: 200px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <h1 class="card p-4">
+            Esperimento fiscale: PAC unico vs Tranche su SP500 Total Return, in dollari. Dati dal 1970 al 2025, da
+            Shiller.
+        </h1>
+
+        <div class="card explanation">
+            <h3>Descrizione dell'esperimento</h3>
+            <p>Si simula un investimento di 100$ al mese per 15 anni su SP500 storico e
+                tassazione del 26% sulle plusvalenze.</p>
+            <p>Scenario 1 (Tranche): investimento su 3 strumenti consecutivi (A → B → C), 5 anni ciascuno.</p>
+            <p>Scenario 2 (PAC unico): investimento su un unico strumento per 15 anni.</p>
+            <p>Successivamente si effettua un decumulo vendendo tot dollari lordi al mese, considerando le tasse sulle
+                plusvalenze.</p>
+            <p>Le tabelle mostreranno capitale accumulato, plusvalenze, tasse e flusso netto mensile per entrambi i
+                scenari, sia durante l'accumulo sia durante il decumulo.</p>
+        </div>
+
+        <div class="card text-center">
+            <label class="form-label">
+                Decumulo netto mensile ($)
+            </label>
+            <input type="number" id="withdrawInput" class="form-control text-center" value="250" min="250" step="10">
+            <button class="btn btn-light mt-3" onclick="runSimulation()">
+                Ricalcola simulazione
+            </button>
+        </div>
+
+        <h2>Riepilogo risultati</h2>
+        <div class="card">
+            <table class="summary" id="summary"></table>
+        </div>
+
+        <div class="card">
+            <h3>Equity Line – Accumulo + Decumulo</h3>
+            <canvas id="equityChart"></canvas>
+        </div>
+
+        <h2>Accumulo – Tranche</h2>
+        <div class="card">
+            <table id="accTranche"></table>
+        </div>
+
+        <h2>Accumulo – PAC unico</h2>
+        <div class="card">
+            <table id="accSingle"></table>
+        </div>
+
+        <h2>Decumulo – Tranche</h2>
+        <div class="card">
+            <table id="decTranche"></table>
+        </div>
+
+        <h2>Decumulo – PAC unico</h2>
+        <div class="card">
+            <table id="decSingle"></table>
+        </div>
+
+        <h2>Rolling Windows – Medie simulazioni</h2>
+        <div class="card">
+            <table class="summary" id="summaryRolling"></table>
+        </div>
+
+        <div class="card mt-4">
+            <h3>Nota metodologica e riepilogo finale</h3>
+
+            <p>
+                La sezione <strong>Rolling Windows</strong> utilizza una metodologia basata su
+                finestre storiche mobili di 15 anni (180 mesi) applicate ai dati mensili
+                dell'SP500 dal 1970 al 2025.
+                Ogni finestra rappresenta un possibile punto di ingresso storico e simula
+                l’intero ciclo di accumulo e successivo decumulo fino alla fine dei dati disponibili.
+            </p>
+
+            <p>
+                In totale sono state utilizzate <strong>491 finestre storiche consecutive</strong>,
+                senza alcuna simulazione casuale: ogni scenario è realmente accaduto nella storia.
+                I valori riportati rappresentano quindi medie storiche dei possibili risultati
+                ottenibili in diversi momenti temporali.
+            </p>
+
+            <hr>
+
+            <h5>Considerazioni fiscali</h5>
+
+            <p>
+                Il confronto tra strategia a <strong>Tranche</strong> e <strong>PAC unico</strong>
+                mostra differenze marginali nella distribuzione temporale delle imposte,
+                ma non rappresenta una vera strategia di ottimizzazione fiscale.
+            </p>
+
+            <p>
+                Le tasse sulle plusvalenze vengono sempre pagate sui guadagni realizzati.
+                Suddividere gli strumenti o modificare la sequenza di vendita può cambiare
+                il <em>timing</em> del pagamento, ma non elimina l’imposta dovuta sul rendimento complessivo.
+            </p>
+
+            <p>
+                In termini strutturali:
+                <strong>le tasse si pagano sempre sui guadagni</strong>.
+                L’unico modo per non pagare imposte sulle plusvalenze è non generare plusvalenze.
+            </p>
+
+            <p>
+                Pertanto, la scelta tra le due modalità analizzate non costituisce una
+                strategia efficace di riduzione fiscale, ma al massimo una diversa
+                distribuzione temporale del carico fiscale lungo il ciclo di vita
+                dell’investimento.
+            </p>
+        </div>
+
+
+    </div>
+
+    <script>
+
+        const taxRate = 0.26;
+        const monthlyInvestment = 100;
+        const monthsAccumulation = 180;
+        let netWithdrawalTarget = 250;
+        let chart = null;
+
+        async function loadSP500() {
+            const response = await fetch("csv/sp500_montly_historical_benner.csv");
+            const text = await response.text();
+            const lines = text.trim().split("\n");
+            let prices = [];
+            lines.forEach(line => {
+                const parts = line.trim().split(" ");
+                prices.push(parseFloat(parts[1]));
+            });
+            return prices;
+        }
+
+        function getMonthlyReturns(prices) {
+            let returns = [];
+            for (let i = 1; i < prices.length; i++)
+                returns.push((prices[i] / prices[i - 1]) - 1);
+            return returns;
+        }
+
+        function buildTable(id, headers, data) {
+            let html = "<tr>";
+            headers.forEach(h => html += "<th>" + h + "</th>");
+            html += "</tr>";
+            data.forEach(row => {
+                html += "<tr>";
+                row.forEach(cell => {
+                    html += "<td>" + (typeof cell === "number" ? cell.toFixed(2) : cell) + "</td>";
+                });
+                html += "</tr>";
+            });
+            document.getElementById(id).innerHTML = html;
+        }
+
+        function simulateTranche(returns) {
+
+            let instruments = [
+                { name: "A", value: 0, cost: 0, equity: [] },
+                { name: "B", value: 0, cost: 0, equity: [] },
+                { name: "C", value: 0, cost: 0, equity: [] }
+            ];
+
+            let accTable = [];
+            let decTable = [];
+            let totalCost = 0;
+
+            // ======================
+            // ACCUMULO
+            // ======================
+            for (let m = 0; m < monthsAccumulation; m++) {
+
+                // 1️⃣ rendimento
+                instruments.forEach(i => i.value *= (1 + returns[m]));
+
+                // 2️⃣ versamento
+                let index = Math.floor(m / 60);
+                instruments[index].value += monthlyInvestment;
+                instruments[index].cost += monthlyInvestment;
+                totalCost += monthlyInvestment;
+
+                // 3️⃣ equity fine mese
+                instruments.forEach(i => i.equity.push(i.value));
+
+                accTable.push([
+                    m + 1,
+                    instruments[0].value,
+                    instruments[1].value,
+                    instruments[2].value,
+                    instruments.reduce((s, i) => s + i.value, 0)
+                ]);
+            }
+
+            let peakCapital = instruments.reduce((s, i) => s + i.value, 0);
+            let gain = peakCapital - totalCost;
+
+            let totalTaxes = 0;
+            let totalGross = 0;
+            let totalNet = 0;
+            let month = 0;
+
+            // ======================
+            // DECUMULO
+            // ======================
+            for (let m = monthsAccumulation; m < returns.length; m++) {
+
+                let totalValue = instruments.reduce((s, i) => s + i.value, 0);
+                if (totalValue <= 0) break;
+
+                month++;
+
+                // 1️⃣ rendimento
+                instruments.forEach(i => i.value *= (1 + returns[m]));
+
+                // 2️⃣ vendita
+                let remainingNet = netWithdrawalTarget;
+                let grossTotal = 0;
+                let taxMonth = 0;
+
+                for (let i = 2; i >= 0; i--) {
+
+                    if (remainingNet <= 0) break;
+                    let inst = instruments[i];
+                    if (inst.value <= 0) continue;
+
+                    let gainRatio = Math.max(0, (inst.value - inst.cost) / inst.value);
+                    let grossNeeded = remainingNet / (1 - gainRatio * taxRate);
+                    let sell = Math.min(grossNeeded, inst.value);
+
+                    let gainPart = sell * gainRatio;
+                    let tax = gainPart * taxRate;
+                    let net = sell - tax;
+                    let costPortion = sell * (inst.cost / inst.value);
+
+                    inst.value -= sell;
+                    inst.cost -= costPortion;
+
+                    remainingNet -= net;
+                    grossTotal += sell;
+                    taxMonth += tax;
+                }
+
+                totalTaxes += taxMonth;
+                totalGross += grossTotal;
+                totalNet += netWithdrawalTarget;
+
+                // 3️⃣ equity fine mese (DOPO vendita)
+                instruments.forEach(i => i.equity.push(i.value));
+
+                decTable.push([
+                    month,
+                    instruments[0].value,
+                    instruments[1].value,
+                    instruments[2].value,
+                    grossTotal,
+                    taxMonth,
+                    netWithdrawalTarget,
+                    instruments.reduce((s, i) => s + i.value, 0)
+                ]);
+            }
+
+            return {
+                peakCapital,
+                gain,
+                taxes: totalTaxes,
+                months: month,
+                netAvg: totalNet / month,
+                grossAvg: totalGross / month,
+                instruments,
+                accTable,
+                decTable
+            };
+        }
+
+
+        function simulateSingle(returns) {
+
+            let value = 0;
+            let cost = 0;
+            let equity = [];
+            let accTable = [];
+            let decTable = [];
+
+            // ======================
+            // ACCUMULO
+            // ======================
+            for (let m = 0; m < monthsAccumulation; m++) {
+
+                // 1️⃣ rendimento
+                value *= (1 + returns[m]);
+
+                // 2️⃣ versamento
+                value += monthlyInvestment;
+                cost += monthlyInvestment;
+
+                // 3️⃣ equity fine mese
+                equity.push(value);
+
+                accTable.push([m + 1, value]);
+            }
+
+            let peakCapital = value;
+            let gain = value - cost;
+
+            let totalTaxes = 0;
+            let totalGross = 0;
+            let totalNet = 0;
+            let month = 0;
+
+            // ======================
+            // DECUMULO
+            // ======================
+            for (let m = monthsAccumulation; m < returns.length; m++) {
+
+                if (value <= 0) break;
+
+                month++;
+
+                // 1️⃣ rendimento
+                value *= (1 + returns[m]);
+
+                // 2️⃣ vendita
+                let gainRatio = Math.max(0, (value - cost) / value);
+                let gross = netWithdrawalTarget / (1 - gainRatio * taxRate);
+                gross = Math.min(gross, value);
+
+                let gainPart = gross * gainRatio;
+                let tax = gainPart * taxRate;
+                let costPortion = gross * (cost / value);
+
+                value -= gross;
+                cost -= costPortion;
+
+                totalTaxes += tax;
+                totalGross += gross;
+                totalNet += netWithdrawalTarget;
+
+                // 3️⃣ equity fine mese (DOPO vendita)
+                equity.push(value);
+
+                decTable.push([
+                    month,
+                    gross,
+                    tax,
+                    netWithdrawalTarget,
+                    value
+                ]);
+            }
+
+            return {
+                peakCapital,
+                gain,
+                taxes: totalTaxes,
+                months: month,
+                netAvg: totalNet / month,
+                grossAvg: totalGross / month,
+                equity,
+                accTable,
+                decTable
+            };
+        }
+
+        function rollingWindows(returns, windowSize = 180) {
+            let windows = [];
+            for (let start = 0; start <= returns.length - windowSize; start++) {
+                windows.push(returns.slice(start, start + windowSize));
+            }
+            return windows;
+        }
+
+        function extendWindowWithDecumulo(returns, startIndex) {
+            // Tutti i mesi dal periodo accumulo fino alla fine dati
+            return returns.slice(startIndex);
+        }
+        function monteCarloRolling(returns, windowSize = 180) {
+            const windows = rollingWindows(returns, windowSize);
+
+            let trancheResults = [];
+            let singleResults = [];
+
+            windows.forEach((windowReturns, i) => {
+                const fullReturns = returns.slice(i); // dal periodo corrente fino alla fine
+                const tranche = simulateTranche(fullReturns);
+                const single = simulateSingle(fullReturns);
+
+                trancheResults.push(tranche);
+                singleResults.push(single);
+            });
+
+            function avg(arr, key) {
+                // Ignora valori NaN
+                let valid = arr.map(r => r[key]).filter(v => !isNaN(v));
+                return valid.reduce((sum, v) => sum + v, 0) / valid.length;
+            }
+
+            // Conteggio finestre effettive
+            const nWindows = windows.length;
+
+            const trancheAvg = {
+                peakCapital: avg(trancheResults, 'peakCapital'),
+                gain: avg(trancheResults, 'gain'),
+                taxes: avg(trancheResults, 'taxes'),
+                months: avg(trancheResults, 'months'),
+                netAvg: avg(trancheResults, 'netAvg'),
+                grossAvg: avg(trancheResults, 'grossAvg'),
+                nWindows
+            };
+
+            const singleAvg = {
+                peakCapital: avg(singleResults, 'peakCapital'),
+                gain: avg(singleResults, 'gain'),
+                taxes: avg(singleResults, 'taxes'),
+                months: avg(singleResults, 'months'),
+                netAvg: avg(singleResults, 'netAvg'),
+                grossAvg: avg(singleResults, 'grossAvg'),
+                nWindows
+            };
+
+            return { trancheAvg, singleAvg };
+        }
+
+
+        async function runSimulation() {
+
+            netWithdrawalTarget = Math.max(250,
+                parseFloat(document.getElementById("withdrawInput").value)
+            );
+
+            const prices = await loadSP500();
+            const returns = getMonthlyReturns(prices);
+
+            const tranche = simulateTranche(returns);
+            const single = simulateSingle(returns);
+
+            // RIEPILOGO
+            buildTable("summary",
+                ["Scenario", "Capitale 15 anni", "Plusvalenza", "Tasse totali", "Mesi decumulo", "Netto medio", "Lordo medio"],
+                [
+                    ["Tranche", tranche.peakCapital, tranche.gain, tranche.taxes, tranche.months, tranche.netAvg, tranche.grossAvg],
+                    ["PAC unico", single.peakCapital, single.gain, single.taxes, single.months, single.netAvg, single.grossAvg]
+                ]);
+
+            // Tabelle
+            buildTable("accTranche", ["Mese", "A", "B", "C", "Totale"], tranche.accTable);
+            buildTable("accSingle", ["Mese", "Valore totale"], single.accTable);
+            buildTable("decTranche", ["Mese", "A residuo", "B residuo", "C residuo", "Lordo", "Tasse", "Netto", "Totale residuo"], tranche.decTable);
+            buildTable("decSingle", ["Mese", "Lordo", "Tasse", "Netto", "Capitale residuo"], single.decTable);
+
+            // ============================
+            // Rolling Windows
+            // ============================
+            const mcRolling = monteCarloRolling(returns, monthsAccumulation);
+
+            buildTable("summaryRolling",
+                ["Scenario", "Finestre", "Capitale medio", "Plusvalenza media", "Tasse medie", "Mesi decumulo medi", "Netto medio", "Lordo medio"],
+                [
+                    ["Tranche (Rolling Windows)", mcRolling.trancheAvg.nWindows, mcRolling.trancheAvg.peakCapital, mcRolling.trancheAvg.gain,
+                        mcRolling.trancheAvg.taxes, mcRolling.trancheAvg.months, mcRolling.trancheAvg.netAvg, mcRolling.trancheAvg.grossAvg],
+                    ["PAC unico (Rolling Windows)", mcRolling.singleAvg.nWindows, mcRolling.singleAvg.peakCapital, mcRolling.singleAvg.gain,
+                        mcRolling.singleAvg.taxes, mcRolling.singleAvg.months, mcRolling.singleAvg.netAvg, mcRolling.singleAvg.grossAvg]
+                ]
+            );
+
+
+            // EQUITY
+            let totalEquity = tranche.instruments[0].equity.map((_, i) =>
+                tranche.instruments[0].equity[i] +
+                tranche.instruments[1].equity[i] +
+                tranche.instruments[2].equity[i]
+            );
+
+            let labels = Array.from({ length: totalEquity.length }, (_, i) => i + 1);
+
+            if (chart) chart.destroy();
+
+            chart = new Chart(document.getElementById("equityChart"), {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: "Totale Tranche", data: totalEquity, borderWidth: 3, pointRadius: 0 },
+                        { label: "Fondo A", data: tranche.instruments[0].equity, borderWidth: 1, pointRadius: 0 },
+                        { label: "Fondo B", data: tranche.instruments[1].equity, borderWidth: 1, pointRadius: 0 },
+                        { label: "Fondo C", data: tranche.instruments[2].equity, borderWidth: 1, pointRadius: 0 },
+                        { label: "PAC unico", data: single.equity, borderWidth: 3, pointRadius: 0 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' },
+                        annotation: {
+                            annotations: {
+                                decumuloLine: {
+                                    type: 'line',
+                                    xMin: monthsAccumulation,
+                                    xMax: monthsAccumulation,
+                                    borderColor: 'red',
+                                    borderWidth: 1.5,
+                                    label: {
+                                        content: 'Inizio decumulo',
+                                        enabled: true,
+                                        position: 'start',
+                                        color: 'red',
+                                        font: {
+                                            size: 12,
+                                            weight: 'bold'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: "Mesi" } },
+                        y: { title: { display: true, text: "Capitale ($)" } }
+                    }
+                }
+            });
+        }
+
+        window.onload = runSimulation;
+
+    </script>
+</body>
+
+</html>
