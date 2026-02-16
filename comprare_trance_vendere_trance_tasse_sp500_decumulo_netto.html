@@ -734,10 +734,17 @@
                 data: {
                     labels: rollingLabels,
                     datasets: [
+
+                        // ========================
+                        // TRANCHE – Banda σ
+                        // ========================
+
                         {
-                            label: "Tranche – Media",
-                            data: mcRolling.trancheTaxStats.mean,
-                            borderWidth: 2,
+                            label: "Tranche -σ",
+                            data: mcRolling.trancheTaxStats.mean.map((v, i) =>
+                                v - mcRolling.trancheTaxStats.sigma[i]
+                            ),
+                            borderWidth: 0,
                             pointRadius: 0
                         },
                         {
@@ -745,35 +752,66 @@
                             data: mcRolling.trancheTaxStats.mean.map((v, i) =>
                                 v + mcRolling.trancheTaxStats.sigma[i]
                             ),
-                            borderDash: [5, 5],
+                            fill: "-1",
+                            backgroundColor: "rgba(0, 123, 255, 0.15)",
+                            borderWidth: 0,
                             pointRadius: 0
                         },
                         {
-                            label: "Tranche -σ",
-                            data: mcRolling.trancheTaxStats.mean.map((v, i) =>
-                                v - mcRolling.trancheTaxStats.sigma[i]
+                            label: "Tranche – Media",
+                            data: mcRolling.trancheTaxStats.mean,
+                            borderColor: "rgba(0, 123, 255, 1)",
+                            backgroundColor: "rgba(0, 123, 255, 1)",
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.1
+                        },
+
+                        // ========================
+                        // PAC UNICO – Banda σ
+                        // ========================
+
+                        {
+                            label: "PAC unico -σ",
+                            data: mcRolling.singleTaxStats.mean.map((v, i) =>
+                                v - mcRolling.singleTaxStats.sigma[i]
                             ),
-                            borderDash: [5, 5],
+                            borderWidth: 0,
+                            pointRadius: 0,
+                        },
+                        {
+                            label: "PAC unico +σ",
+                            data: mcRolling.singleTaxStats.mean.map((v, i) =>
+                                v + mcRolling.singleTaxStats.sigma[i]
+                            ),
+                            fill: "-1",
+                            backgroundColor: "rgba(255, 193, 7, 0.15)",
+                            borderWidth: 0,
                             pointRadius: 0
                         },
                         {
                             label: "PAC unico – Media",
                             data: mcRolling.singleTaxStats.mean,
+                            borderColor: "rgba(255, 193, 7, 1)",
+                            backgroundColor: "rgba(255, 193, 7, 1)",
                             borderWidth: 2,
-                            pointRadius: 0
+                            pointRadius: 0,
+                            tension: 0.1
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
                     scales: {
                         x: { title: { display: true, text: "Mesi dal decumulo" } },
                         y: { title: { display: true, text: "Tasse mensili medie ($)" } }
                     }
                 }
             });
-
 
         }
 
