@@ -126,6 +126,11 @@
             <canvas id="equityChart"></canvas>
         </div>
 
+        <div class="card">
+            <h3>Tasse pagate ogni mese – Simulazione completa</h3>
+            <canvas id="taxChart"></canvas>
+        </div>
+
         <h2>Accumulo – Tranche</h2>
         <div class="card">
             <table id="accTranche"></table>
@@ -150,6 +155,11 @@
         <div class="card">
             <table class="summary" id="summaryRolling"></table>
         </div>
+        <div class="card">
+            <h3>Tasse medie mensili – Rolling Windows (media ± σ)</h3>
+            <canvas id="rollingTaxChart"></canvas>
+        </div>
+
 
         <div class="card mt-4">
             <h3>Nota metodologica e riepilogo finale</h3>
@@ -199,10 +209,14 @@
             </p>
 
             <p>
-                Tuttavia l'analisi mostra come tale diversificazione non porti a risparmi significativi e a seconda dell'andamento
-                imprevedibile del sottostante, porti addirittura a pagare a volte più tasse. Tuttavia dato che l'andamento del sottostante non è 
-                prevedibile a priori, non è possibile utilizzare tale strategia per ottenere un rispario/guadagno sistematico. E a meno che le cifre in gioco non siano enormi, 
-                la differenza si riduce a poche decine di dollari su decumuli mensili da 1000$/2000$, del tutto trascurabili acorpiù perchè non conoscibili a priori.
+                Tuttavia l'analisi mostra come tale diversificazione non porti a risparmi significativi e a seconda
+                dell'andamento
+                imprevedibile del sottostante, porti addirittura a pagare a volte più tasse. Tuttavia dato che
+                l'andamento del sottostante non è
+                prevedibile a priori, non è possibile utilizzare tale strategia per ottenere un rispario/guadagno
+                sistematico. E a meno che le cifre in gioco non siano enormi,
+                la differenza si riduce a poche decine di dollari su decumuli mensili da 1000$/2000$, del tutto
+                trascurabili acorpiù perchè non conoscibili a priori.
             </p>
         </div>
 
@@ -303,6 +317,7 @@
             let gain = peakCapital - totalCost;
 
             let totalTaxes = 0;
+            let taxesSeries = [];
             let totalGross = 0;
             let totalNet = 0;
             let month = 0;
@@ -349,6 +364,7 @@
                 }
 
                 totalTaxes += taxMonth;
+                taxesSeries.push(taxMonth);
                 totalGross += grossTotal;
                 totalNet += netWithdrawalTarget;
 
@@ -376,7 +392,8 @@
                 grossAvg: totalGross / month,
                 instruments,
                 accTable,
-                decTable
+                decTable,
+                taxesSeries,
             };
         }
 
@@ -411,6 +428,7 @@
             let gain = value - cost;
 
             let totalTaxes = 0;
+            let taxesSeries = [];
             let totalGross = 0;
             let totalNet = 0;
             let month = 0;
@@ -440,6 +458,7 @@
                 cost -= costPortion;
 
                 totalTaxes += tax;
+                taxesSeries.push(tax);
                 totalGross += gross;
                 totalNet += netWithdrawalTarget;
 
@@ -464,7 +483,8 @@
                 grossAvg: totalGross / month,
                 equity,
                 accTable,
-                decTable
+                decTable,
+                taxesSeries,
             };
         }
 
@@ -480,11 +500,41 @@
             // Tutti i mesi dal periodo accumulo fino alla fine dati
             return returns.slice(startIndex);
         }
+
+        function computeStats(seriesArray) {
+
+            let maxLength = Math.max(...seriesArray.map(s => s.length));
+
+            let mean = [];
+            let sigma = [];
+
+            for (let m = 0; m < maxLength; m++) {
+
+                let values = seriesArray
+                    .map(s => s[m])
+                    .filter(v => v !== undefined);
+
+                if (values.length === 0) continue;
+
+                let avg = values.reduce((a, b) => a + b, 0) / values.length;
+
+                let variance = values.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / values.length;
+
+                mean.push(avg);
+                sigma.push(Math.sqrt(variance));
+            }
+
+            return { mean, sigma };
+        }
+
         function monteCarloRolling(returns, windowSize = 180) {
             const windows = rollingWindows(returns, windowSize);
 
             let trancheResults = [];
             let singleResults = [];
+            let trancheTaxSeriesAll = [];
+            let singleTaxSeriesAll = [];
+
 
             windows.forEach((windowReturns, i) => {
                 const fullReturns = returns.slice(i); // dal periodo corrente fino alla fine
@@ -493,6 +543,8 @@
 
                 trancheResults.push(tranche);
                 singleResults.push(single);
+                trancheTaxSeriesAll.push(tranche.taxesSeries);
+                singleTaxSeriesAll.push(single.taxesSeries);
             });
 
             function avg(arr, key) {
@@ -524,7 +576,10 @@
                 nWindows
             };
 
-            return { trancheAvg, singleAvg };
+            const trancheTaxStats = computeStats(trancheTaxSeriesAll);
+            const singleTaxStats = computeStats(singleTaxSeriesAll);
+
+            return { trancheAvg, singleAvg, trancheTaxStats, singleTaxStats };
         }
 
 
@@ -626,6 +681,100 @@
                     }
                 }
             });
+
+            // ============================
+            // GRAFICO TASSE MENSILI
+            // ============================
+
+            let taxLabels = Array.from(
+                { length: tranche.taxesSeries.length },
+                (_, i) => i + 1
+            );
+
+            new Chart(document.getElementById("taxChart"), {
+                type: "line",
+                data: {
+                    labels: taxLabels,
+                    datasets: [
+                        {
+                            label: "Tranche",
+                            data: tranche.taxesSeries,
+                            borderWidth: 2,
+                            pointRadius: 0
+                        },
+                        {
+                            label: "PAC unico",
+                            data: single.taxesSeries,
+                            borderWidth: 2,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: { title: { display: true, text: "Mesi dal decumulo" } },
+                        y: { title: { display: true, text: "Tasse mensili ($)" } }
+                    }
+                }
+            });
+
+            // ============================
+            // Rolling tasse mensili
+            // ============================
+
+            let rollingLabels = Array.from(
+                { length: mcRolling.trancheTaxStats.mean.length },
+                (_, i) => i + 1
+            );
+
+            new Chart(document.getElementById("rollingTaxChart"), {
+                type: "line",
+                data: {
+                    labels: rollingLabels,
+                    datasets: [
+                        {
+                            label: "Tranche – Media",
+                            data: mcRolling.trancheTaxStats.mean,
+                            borderWidth: 2,
+                            pointRadius: 0
+                        },
+                        {
+                            label: "Tranche +σ",
+                            data: mcRolling.trancheTaxStats.mean.map((v, i) =>
+                                v + mcRolling.trancheTaxStats.sigma[i]
+                            ),
+                            borderDash: [5, 5],
+                            pointRadius: 0
+                        },
+                        {
+                            label: "Tranche -σ",
+                            data: mcRolling.trancheTaxStats.mean.map((v, i) =>
+                                v - mcRolling.trancheTaxStats.sigma[i]
+                            ),
+                            borderDash: [5, 5],
+                            pointRadius: 0
+                        },
+                        {
+                            label: "PAC unico – Media",
+                            data: mcRolling.singleTaxStats.mean,
+                            borderWidth: 2,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: { title: { display: true, text: "Mesi dal decumulo" } },
+                        y: { title: { display: true, text: "Tasse mensili medie ($)" } }
+                    }
+                }
+            });
+
+
         }
 
         window.onload = runSimulation;
