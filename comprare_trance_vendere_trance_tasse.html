@@ -186,11 +186,13 @@
             </p>
             <p>
                 <strong>
-                In sintesi, il PAC unico tende a produrre un capitale leggermente più elevato alla fine dell’accumulo,
-                mentre le tranche offrono una distribuzione più graduata dei riscatti durante il decumulo.
-                La scelta tra le due strategie non incide sulle tasse totali, ma può essere rilevante per pianificare la
-                liquidità mensile
-                e la gestione del flusso netto durante il periodo di decumulo.
+                    In sintesi, il PAC unico tende a produrre un capitale leggermente più elevato alla fine
+                    dell’accumulo,
+                    mentre le tranche offrono una distribuzione più graduata dei riscatti durante il decumulo.
+                    La scelta tra le due strategie non incide sulle tasse totali, ma può essere rilevante per
+                    pianificare la
+                    liquidità mensile
+                    e la gestione del flusso netto durante il periodo di decumulo.
                 </strong>
             </p>
 
@@ -220,6 +222,18 @@
         </div>
 
     </div>
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
 
     <script>
         const taxRate = 0.26;
