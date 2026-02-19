@@ -477,20 +477,18 @@
             const riskFreePercent = parseFloat(document.getElementById('riskFree').value);
             const riskFreeAnnual = !isNaN(riskFreePercent) ? (riskFreePercent / 100) : 0.005; // default 0.5% se non valido
             try {
-                const [xyleResp, csspxResp, distribuzioniResp, cambioEurUsdResp] = await Promise.all([
+                const [xyleResp, csspxResp, distribuzioniResp] = await Promise.all([
                     fetch('WINC.DE.json'),
                     fetch('ACWE.MI.json'),
-                    fetch('Distribuzioni_WINC.txt'),
-                    fetch('cambio_eur_usd.json')
+                    fetch('Distribuzioni_WINC.txt')
                 ]);
 
-                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok || !cambioEurUsdResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');
+                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');
 
-                let [xyleRaw, csspxRaw, distribuzioniRaw, cambioEurUsdRaw] = await Promise.all([
+                let [xyleRaw, csspxRaw, distribuzioniRaw] = await Promise.all([
                     xyleResp.json(),
                     csspxResp.json(),
-                    distribuzioniResp.text(),
-                    cambioEurUsdResp.json()
+                    distribuzioniResp.text()
                 ]);
 
                 const startDateInput = document.getElementById('startDate');
@@ -542,11 +540,7 @@
                     mapCSSPX.set(item.Date, { adj: item.AdjClose ?? null });
                 });
 
-                const mapCambio = new Map();
-                cambioEurUsdRaw.forEach(item => {
-                    if (!item.Date) return;
-                    mapCambio.set(item.Date, { cambio: item.Close ?? null });
-                });
+
 
                 // unione delle date
                 const dateSet = new Set([...mapXYLE.keys(), ...mapCSSPX.keys()]);
@@ -652,7 +646,7 @@
                 });
 
 
-                populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali, mapCambio);
+                populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali);
 
 
 
@@ -900,7 +894,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
             }
         }
 
-        function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali, mapCambio) {
+        function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali) {
             const tableBody = document.getElementById('dividendiTableBody');
             tableBody.innerHTML = '';
             let sommaNettiXyle = 0;
@@ -917,7 +911,6 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
 
             distribuzioni.forEach(dist => {
                 const { date, amount } = dist;
-                const cambioAlGiorno = mapCambio.get(dist.date).cambio;
                 const distribuzioneCSSPX = distribuzioniCSSPXVirtuali.find(d => d.date === date);
                 // Calcolo dividendi XYLE
                 const lordoXYLE = amount * xyleShares;
@@ -926,7 +919,8 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                 // push per grafico
                 chartLabels.push(date);
                 nettoWincSeries.push(Number(nettoXYLE.toFixed(2)));
-                const percentualeDist = (nettoXYLE / xyleShares / (distribuzioneCSSPX.xyle_value / cambioAlGiorno)) * 100;
+                // percentuale basata sul valore dell'ETF directly (dati già in euro)
+                const percentualeDist = (nettoXYLE / xyleShares / distribuzioneCSSPX.xyle_value) * 100;
                 const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
                 const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
                 const commission = distribuzioneCSSPX ? (distribuzioneCSSPX.commission || 0) : 0;
