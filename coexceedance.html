@@ -27,7 +27,7 @@
         <br>
 
         <h1 class="text-3xl font-bold mb-4">
-            ETF – Correlazione e Co-Exceedance (dati reali)
+            ETF – Correlazione e Co-Exceedance (dati reali), inserimento di una nuova metrica CED (Conditional Expected Drawdown) per analizzare i drawdown condizionali durante i periodi di stress.
         </h1>
 
         <div class="bg-white p-4 rounded shadow mb-6 text-sm">
@@ -94,6 +94,23 @@
             Se è alta, la diversificazione fallisce proprio quando serve.
             <br><br>
 
+            <b>Conditional Expected Drawdown (CED)</b><br>
+            Misura la media dei peggiori drawdown su finestre mobili
+            oltre una soglia di confidenza α (e.g. 90%).
+            A differenza della volatilità, il CED è sensibile al percorso dei prezzi
+            e cattura la correlazione seriale delle perdite durante i crash.
+            <br>
+            <b>Interpretazione</b>: ad esempio, un output tipo
+            <code>SGLD.MI: 16.64% (soglia 14.13%)</code> e
+            <code>SWDA.MI: 31.53% (soglia 21.63%)</code>
+            significa che nei peggiori 10% dei percorsi a 252 giorni
+            la perdita media di SGLD è ~16.6%, mentre quella di SWDA è oltre il 31%.
+            Il secondo ETF quindi ha drawdown più profondi e frequenti, un aspetto
+            rilevante quando si valuta la resilienza di un portafoglio.
+            La soglia indica che il 90% dei drawdown rolling è inferiore a 14.13%.
+            Solo il 10% supera quella profondità.
+            <br><br>
+
             <b>Nota matematica (breve)</b><br>
             La correlazione è una media globale.
             La co-exceedance approssima la <b>dipendenza di coda</b>:
@@ -135,6 +152,8 @@
         updateSelectedText();
 
         // Carica dati di un ETF e calcola rendimenti
+        // Carica dati di un ETF: prezzo + rendimenti giornalieri
+        // restituisce un oggetto con due array separati per semplicità
         async function loadETF(ticker) {
             if (cache[ticker]) return cache[ticker];
 
@@ -145,16 +164,44 @@
                 .filter(r => r.Date && r.TRDPRC_1)
                 .map(r => ({ date: r.Date, price: r.TRDPRC_1 }));
 
-            let out = [];
+            const prices = rows.map(r => r.price);
+            let returns = [];
             for (let i = 1; i < rows.length; i++) {
-                out.push({
+                returns.push({
                     date: rows[i].date,
                     ret: rows[i].price / rows[i - 1].price - 1
                 });
             }
 
-            cache[ticker] = out;
-            return out;
+            const result = { prices, returns };
+            cache[ticker] = result;
+            return result;
+        }
+
+        // Conditional Expected Drawdown (CED)
+        // priceArray: serie storica dei prezzi ordinata nel tempo
+        // windowLength: lunghezza della finestra mobile (crea percorsi sovrapposti)
+        // alpha: livello di confidenza (es. 0.90)
+        // restituisce oggetto con ced, soglia e array dei mdd
+        function computeCED(priceArray, windowLength = 252, alpha = 0.9) {
+            const mdds = [];
+            const n = priceArray.length;
+            for (let i = 0; i <= n - windowLength; i++) {
+                let peak = priceArray[i];
+                let mdd = 0;
+                for (let j = i + 1; j < i + windowLength; j++) {
+                    const p = priceArray[j];
+                    if (p > peak) peak = p;
+                    const dd = (peak - p) / peak;
+                    if (dd > mdd) mdd = dd;
+                }
+                mdds.push(mdd);
+            }
+            if (mdds.length === 0) return { ced: NaN, threshold: NaN, mdds };
+            const threshold = math.quantileSeq(mdds, alpha);
+            const tail = mdds.filter(v => v > threshold);
+            const ced = tail.length ? tail.reduce((a, b) => a + b, 0) / tail.length : 0;
+            return { ced, threshold, mdds };
         }
 
         function runAnalysis() {
@@ -165,8 +212,9 @@
             const X = document.getElementById("drop").value / 100;
             output.textContent = "";
 
-            Promise.all(selected.map(loadETF)).then(series => {
-                const dateSets = series.map(s => new Set(s.map(d => d.date)));
+            Promise.all(selected.map(loadETF)).then(dataSets => {
+                // dataSets[i] = { prices: [...], returns: [{date,ret},...] }
+                const dateSets = dataSets.map(ds => new Set(ds.returns.map(d => d.date)));
                 const commonDates = [...dateSets[0]].filter(d => dateSets.every(s => s.has(d))).sort();
                 const T = commonDates.length;
                 const startDate = commonDates[0];
@@ -182,9 +230,17 @@ Drop assoluto X: ${X * 100}%
 
 `;
 
-                const maps = series.map(s => {
+                // compute CED for each asset with default window/alpha
+                output.textContent += "Conditional Expected Drawdown (CED) 252d α=0.90:\n";
+                dataSets.forEach((ds, idx) => {
+                    const cedInfo = computeCED(ds.prices, 252, 0.90);
+                    output.textContent += `${selected[idx]}: ${(cedInfo.ced * 100).toFixed(2)}% (soglia ${(cedInfo.threshold * 100).toFixed(2)}%)\n`;
+                });
+                output.textContent += "\n";
+
+                const maps = dataSets.map(ds => {
                     const m = {};
-                    s.forEach(r => m[r.date] = r.ret);
+                    ds.returns.forEach(r => m[r.date] = r.ret);
                     return m;
                 });
 
