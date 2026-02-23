@@ -111,6 +111,25 @@
             Solo il 10% supera quella profondità.
             <br><br>
 
+            <b>Ulcer Index</b><br>
+            L'Ulcer Index combina profondità e durata dei drawdown.
+            Si calcola come la radice quadrata della media dei quadrati dei
+            drawdown percentuali rispetto ai picchi precedenti. 
+            Valori più bassi indicano drawdown più piccoli o meno prolungati.
+            Nel report viene mostrato per ogni singolo titolo e per un
+            portafoglio equal‑weighted: una diminuzione nell'indice del
+            portafoglio rispetto agli ETF individuali evidenzia un miglior
+            profilo di rischiosità.
+            <br><br>
+
+            <b>Underwater time</b><br>
+            Percentuale di giorni in cui il prezzo si trova sotto il massimo
+            storico precedente (il "tempo sott'acqua").
+            Anche questa metrica può essere calcolata per il portafoglio;
+            un valore inferiore per il portafoglio rispetto ai singoli asset
+            indica una riduzione della frequenza dei periodi di drawdown.
+            <br><br>
+
             <b>Nota matematica (breve)</b><br>
             La correlazione è una media globale.
             La co-exceedance approssima la <b>dipendenza di coda</b>:
@@ -165,6 +184,7 @@
                 .map(r => ({ date: r.Date, price: r.TRDPRC_1 }));
 
             const prices = rows.map(r => r.price);
+            const dates = rows.map(r => r.date);
             let returns = [];
             for (let i = 1; i < rows.length; i++) {
                 returns.push({
@@ -173,7 +193,7 @@
                 });
             }
 
-            const result = { prices, returns };
+            const result = { prices, dates, returns };
             cache[ticker] = result;
             return result;
         }
@@ -204,6 +224,35 @@
             return { ced, threshold, mdds };
         }
 
+        // Ulcer index
+        // semplice implementazione: radice quadrata della media dei quadrati dei drawdown
+        // priceArray deve essere ordinato cronologicamente
+        function computeUlcer(priceArray) {
+            if (!priceArray.length) return NaN;
+            let peak = priceArray[0];
+            let sumSq = 0;
+            for (let i = 0; i < priceArray.length; i++) {
+                const p = priceArray[i];
+                if (p > peak) peak = p;
+                const dd = (peak - p) / peak;
+                sumSq += dd * dd;
+            }
+            return Math.sqrt(sumSq / priceArray.length);
+        }
+
+        // Underwater time: percentuale di giorni in cui il prezzo è sotto il massimo storico precedente
+        function computeUnderwater(priceArray) {
+            if (!priceArray.length) return NaN;
+            let peak = priceArray[0];
+            let underwaterDays = 0;
+            for (let i = 0; i < priceArray.length; i++) {
+                const p = priceArray[i];
+                if (p > peak) peak = p;
+                if (p < peak) underwaterDays++;
+            }
+            return underwaterDays / priceArray.length;
+        }
+
         function runAnalysis() {
             const selected = [...select.selectedOptions].map(o => o.value);
             if (selected.length < 2) { alert("Seleziona almeno due ETF"); return; }
@@ -230,6 +279,18 @@ Drop assoluto X: ${X * 100}%
 
 `;
 
+                // prepare maps for returns and prices on common dates
+                const maps = dataSets.map(ds => {
+                    const m = {};
+                    ds.returns.forEach(r => m[r.date] = r.ret);
+                    return m;
+                });
+                const priceMaps = dataSets.map(ds => {
+                    const m = {};
+                    ds.dates.forEach((d,i) => { m[d] = ds.prices[i]; });
+                    return m;
+                });
+
                 // compute CED for each asset with default window/alpha
                 output.textContent += "Conditional Expected Drawdown (CED) 252d α=0.90:\n";
                 dataSets.forEach((ds, idx) => {
@@ -238,11 +299,26 @@ Drop assoluto X: ${X * 100}%
                 });
                 output.textContent += "\n";
 
-                const maps = dataSets.map(ds => {
-                    const m = {};
-                    ds.returns.forEach(r => m[r.date] = r.ret);
-                    return m;
+                // ulcer index and underwater time for each asset on period comune
+                output.textContent += "Ulcer Index / Underwater time (periodo comune):\n";
+                selected.forEach((tck, idx) => {
+                    const prices = commonDates.map(d => priceMaps[idx][d]);
+                    const ui = computeUlcer(prices);
+                    const ut = computeUnderwater(prices);
+                    output.textContent += `${tck}: Ulcer ${(ui * 100).toFixed(2)}%, Underwater ${(ut * 100).toFixed(2)}%\n`;
                 });
+
+                // portfolio prices and ulcer/underwater
+                const portPrices = [];
+                let prev = 1;
+                commonDates.forEach(d => {
+                    const avgRet = selected.reduce((s,_,j) => s + maps[j][d], 0) / selected.length;
+                    prev = prev * (1 + avgRet);
+                    portPrices.push(prev);
+                });
+                const portUI = computeUlcer(portPrices);
+                const portUT = computeUnderwater(portPrices);
+                output.textContent += `Portafoglio equal-weighted: Ulcer ${(portUI * 100).toFixed(2)}%, Underwater ${(portUT * 100).toFixed(2)}%\n\n`;
 
                 for (let i = 0; i < selected.length; i++) {
                     for (let j = i + 1; j < selected.length; j++) {
