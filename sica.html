@@ -39,12 +39,17 @@
                 <label for="amount">Importo ($):</label>
                 <input type="number" id="amount" class="form-control" value="100">
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="commission">Commissioni ($):</label>
                 <input type="number" id="commission" class="form-control" value="7">
                 <small id="commissionPercentage" class="form-text text-muted">Percentuale: 7.00%</small>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <label for="ter">TER (% annuo):</label>
+                <input type="number" step="0.01" id="ter" class="form-control" value="0">
+                <small id="terPercentage" class="form-text text-muted">Percentuale annuale</small>
+            </div>
+            <div class="col-md-3">
                 <label for="startDate">Data Inizio:</label>
                 <input type="date" id="startDate" class="form-control">
             </div>
@@ -63,7 +68,9 @@
                         <th>Valore Finale ($)</th>
                         <th>Rendimento (%)</th>
                         <th>Commissioni Totali ($)</th>
+                        <th>TER Totali ($)</th>
                         <th>Commissioni (% del Valore Finale)</th>
+                        <th>TER (% del Valore Finale)</th>
                         <th>Differenza rendimento (%)</th>
                         <th>Differenza rendimento ($)</th>
                     </tr>

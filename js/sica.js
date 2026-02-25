@@ -2,11 +2,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const frequencyInput = document.getElementById('frequency');
     const amountInput = document.getElementById('amount');
     const commissionInput = document.getElementById('commission');
+    const terInput = document.getElementById('ter');
     const startDateInput = document.getElementById('startDate');
     const endDateInput = document.getElementById('endDate');
     const resultsTable = document.getElementById('resultsTable');
     const ctx = document.getElementById('pacChart').getContext('2d');
     const commissionPercentageLabel = document.getElementById('commissionPercentage');
+    const terPercentageLabel = document.getElementById('terPercentage');
+
+    // inizializza etichette percentuali
+    const initAmount = parseFloat(amountInput.value);
+    const initCommission = parseFloat(commissionInput.value);
+    commissionPercentageLabel.textContent = `Percentuale: ${(initCommission / initAmount * 100).toFixed(2)}%`;
+    terPercentageLabel.textContent = `Percentuale annuale: ${parseFloat(terInput.value).toFixed(2)}%`;
 
     let chart;
 
@@ -42,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
     // Aggiorna la simulazione quando cambiano i valori
-    [frequencyInput, amountInput, commissionInput, startDateInput, endDateInput].forEach(input => {
+    [frequencyInput, amountInput, commissionInput, terInput, startDateInput, endDateInput].forEach(input => {
         input.addEventListener('input', () => {
             // Aggiorna la percentuale di commissione
             if (input === commissionInput || input === amountInput) {
@@ -50,6 +58,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 const commission = parseFloat(commissionInput.value);
                 const percentage = (commission / amount) * 100;
                 commissionPercentageLabel.textContent = `Percentuale: ${percentage.toFixed(2)}%`;
+            }
+            // Aggiorna etichetta TER
+            if (input === terInput) {
+                const ter = parseFloat(terInput.value);
+                terPercentageLabel.textContent = `Percentuale annuale: ${ter.toFixed(2)}%`;
             }
 
             // Aggiorna la simulazione
@@ -67,6 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const frequency = frequencies[frequencyInput.value];
         const amount = parseFloat(amountInput.value);
         const commission = parseFloat(commissionInput.value);
+        const ter = parseFloat(terInput.value) / 100; // annual fraction
         const startDate = new Date(startDateInput.value);
         const endDate = new Date(endDateInput.value);
 
@@ -78,32 +92,39 @@ document.addEventListener('DOMContentLoaded', function () {
         const filteredPrices = filteredData.map(entry => entry.price);
         const filteredDates = filteredData.map(entry => entry.date.toISOString().split('T')[0]);
 
-        const { valuesWithoutCommission, valuesWithCommission, totalCommissions, capitalInvested, chartDates } = calculatePAC(
+        const { valuesWithoutCommission, valuesWithCommission, valuesWithCommissionAndTER, totalCommissions, totalTER, capitalInvested, chartDates } = calculatePAC(
             filteredPrices,
             frequency,
             amount,
             commission,
+            ter,
             filteredDates
         );
 
         // Calcola i risultati finali
         const finalWithoutCommission = valuesWithoutCommission[valuesWithoutCommission.length - 1];
         const finalWithCommission = valuesWithCommission[valuesWithCommission.length - 1];
+        const finalWithCommissionAndTER = valuesWithCommissionAndTER[valuesWithCommissionAndTER.length - 1];
         const initialInvestment = capitalInvested[capitalInvested.length - 1];
 
         const returnWithoutCommission = ((finalWithoutCommission - initialInvestment) / initialInvestment) * 100;
         const returnWithCommission = ((finalWithCommission - initialInvestment) / initialInvestment) * 100;
-        const commissionPercentage = (totalCommissions / finalWithCommission) * 100;
+        const returnWithCommissionAndTER = ((finalWithCommissionAndTER - initialInvestment) / initialInvestment) * 100;
+
+        const commissionPercentage = (totalCommissions / finalWithCommissionAndTER) * 100;
+        const terPercentage = (totalTER / finalWithCommissionAndTER) * 100;
 
         // Aggiorna il grafico
-        updateChart(chartDates, valuesWithoutCommission, valuesWithCommission, capitalInvested);
+        updateChart(chartDates, valuesWithoutCommission, valuesWithCommission, valuesWithCommissionAndTER, capitalInvested);
 
         // Aggiorna la tabella
-        resultsTable.innerHTML = `
+        let tableHtml = `
             <tr>
                 <td>Senza Commissioni</td>
                 <td>${finalWithoutCommission.toFixed(2)}$</td>
                 <td>${returnWithoutCommission.toFixed(2)}%</td>
+                <td>-</td>
+                <td>-</td>
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
@@ -114,21 +135,38 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${finalWithCommission.toFixed(2)}$</td>
                 <td>${returnWithCommission.toFixed(2)}%</td>
                 <td>${totalCommissions.toFixed(2)}</td>
+                <td>-</td>
                 <td>${commissionPercentage.toFixed(2)}%</td>
+                <td>-</td>
                 <td>${(returnWithCommission - returnWithoutCommission).toFixed(2)}%</td>
                 <td>${(finalWithCommission - finalWithoutCommission).toFixed(2)}$</td>
             </tr>
+            <tr>
+                <td>Con Commissioni + TER</td>
+                <td>${finalWithCommissionAndTER.toFixed(2)}$</td>
+                <td>${returnWithCommissionAndTER.toFixed(2)}%</td>
+                <td>${totalCommissions.toFixed(2)}</td>
+                <td>${totalTER.toFixed(2)}</td>
+                <td>${commissionPercentage.toFixed(2)}%</td>
+                <td>${terPercentage.toFixed(2)}%</td>
+                <td>${(returnWithCommissionAndTER - returnWithoutCommission).toFixed(2)}%</td>
+                <td>${(finalWithCommissionAndTER - finalWithoutCommission).toFixed(2)}$</td>
+            </tr>
         `;
+        resultsTable.innerHTML = tableHtml;
     }
 
-    function calculatePAC(prices, frequency, amount, commission, dates) {
+    function calculatePAC(prices, frequency, amount, commission, ter, dates) {
         let chartDates = dates.filter((_, index) => index % frequency === 0);
         let valuesWithoutCommission = [];
         let valuesWithCommission = [];
+        let valuesWithCommissionAndTER = [];
         let capitalInvested = [];
         let sharesWithoutCommission = 0;
         let sharesWithCommission = 0;
+        let sharesWithCommissionAndTER = 0;
         let totalCommissions = 0;
+        let totalTER = 0;
         let totalCapital = 0;
 
         for (let i = 0; i < prices.length; i += frequency) {
@@ -143,44 +181,74 @@ document.addEventListener('DOMContentLoaded', function () {
             sharesWithoutCommission += amount / price;
             valuesWithoutCommission.push(sharesWithoutCommission * price);
 
-            // Con commissioni
+            // Con commissioni (aggiungo le stesse quote al portafoglio TER per iniziare)
             const commissionCost = commission;
             totalCommissions += commissionCost;
             const adjustedPrice = price + commissionCost / (amount / price);
-            sharesWithCommission += amount / adjustedPrice;
-            valuesWithCommission.push(sharesWithCommission * price);
+            const newShares = amount / adjustedPrice;
+            sharesWithCommission += newShares;
+            sharesWithCommissionAndTER += newShares;
+
+            // Valore prima del TER
+            let valueWithCommAndTER = sharesWithCommissionAndTER * price;
+
+            // Applica TER proporzionale al periodo: riduce le quote equivalenti
+            if (ter > 0) {
+                const terCost = valueWithCommAndTER * ter * (frequency / 365);
+                totalTER += terCost;
+                const lostShares = terCost / price;
+                sharesWithCommissionAndTER -= lostShares;
+                // aggiorna il valore dopo la perdita
+                valueWithCommAndTER = sharesWithCommissionAndTER * price;
+            }
+
+            valuesWithCommission.push(sharesWithCommission * price); // senza TER
+            valuesWithCommissionAndTER.push(valueWithCommAndTER);
         }
 
-        return { valuesWithoutCommission, valuesWithCommission, totalCommissions, capitalInvested, chartDates };
+        return { valuesWithoutCommission, valuesWithCommission, valuesWithCommissionAndTER, totalCommissions, totalTER, capitalInvested, chartDates };
     }
 
-    function updateChart(dates, valuesWithoutCommission, valuesWithCommission, capitalInvested) {
+    function updateChart(dates, valuesWithoutCommission, valuesWithCommission, valuesWithCommissionAndTER, capitalInvested) {
         if (chart) chart.destroy();
+
+        const datasets = [];
+        // always show green line (base)
+        datasets.push({
+            label: 'Senza Commissioni',
+            data: valuesWithoutCommission,
+            borderColor: 'green',
+            fill: false,
+        });
+        // red line showing only impact of purchase commissions
+        datasets.push({
+            label: 'Con Commissioni',
+            data: valuesWithCommission,
+            borderColor: 'red',
+            fill: false,
+        });
+        // TER line styled dashed and always shown on top
+        datasets.push({
+            label: 'Con Commissioni + TER',
+            data: valuesWithCommissionAndTER,
+            borderColor: 'orange',
+            borderDash: [5, 5],
+            fill: false,
+            tension: 0,
+        });
+        // capital line
+        datasets.push({
+            label: 'Capitale Versato',
+            data: capitalInvested,
+            borderColor: 'blue',
+            fill: false,
+        });
 
         chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: dates,
-                datasets: [
-                    {
-                        label: 'Senza Commissioni',
-                        data: valuesWithoutCommission,
-                        borderColor: 'green',
-                        fill: false,
-                    },
-                    {
-                        label: 'Con Commissioni',
-                        data: valuesWithCommission,
-                        borderColor: 'red',
-                        fill: false,
-                    },
-                    {
-                        label: 'Capitale Versato',
-                        data: capitalInvested,
-                        borderColor: 'blue',
-                        fill: false,
-                    },
-                ],                
+                datasets,
             },
             options: {
                 responsive: true,
