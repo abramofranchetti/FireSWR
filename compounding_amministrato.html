@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Regime Gestito vs Amministrato – tassazione annuale vs a scadenza</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #28afe9;
+            color: white;
+            margin: 0;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .inputs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);            
+            margin-bottom: 20px;            
+        }
+
+
+        .inputs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);            
+            margin-bottom: 20px;            
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 6px;
+        }
+
+        button {
+            padding: 10px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin: auto;
+        }
+
+        canvas {
+            margin-top: 30px;
+            max-width: 100%;
+            height: auto !important;
+        }
+
+        .big-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .footer-note {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .summary {
+            margin-top: 25px;
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 6px;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #b00020;
+        }
+
+        /* Smartphone */
+        @media (max-width: 600px) {
+            .inputs {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            h3 {
+                font-size: 16px;
+            }
+
+            button {
+                width: 100%;
+                font-size: 18px;
+            }
+
+            input,
+            select {
+                font-size: 16px;
+                padding: 10px;
+            }
+
+            label {
+                font-size: 14px;
+            }
+
+            .explain {
+                background: #eef4ff;
+                padding: 15px;
+                border-radius: 6px;
+                margin-bottom: 25px;
+            }
+
+            .summary {
+                margin-top: 25px;
+                padding: 15px;
+                background: #f0f8ff;
+                border-radius: 6px;
+            }
+
+            .highlight {
+                font-weight: bold;
+                color: #b00020;
+            }
+
+            /* ensure container doesn't overflow */
+            .container {
+                padding: 1rem !important;
+                margin: 0 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="container py-4">
+    <div class="text-center mb-4">
+        <a href="/FireSWR" class="home-button">🏠 Home</a>
+    </div>
+
+    <h1 class="text-center mb-4">Regime Gestito vs Regime Amministrato italiano</h1>
+    <h3 class="text-center mb-4">Tassazione annuale sul guadagno vs tassazione a scadenza</h3>
+
+    <div class="card mb-4">
+        <p>
+            Si confrontano due modalità di tassazione dello stesso investimento con
+            pari rendimento lordo annuo.
+        </p>
+        <ul>
+            <li><b>Regime Gestito</b> (tassazione annuale): ogni 31&nbsp;dicembre il guadagno dell'anno viene tassato al <b>26%</b> (o aliquota scelta) e il netto viene reinvestito.</li>
+            <li><b>Regime Amministrato</b> (tassazione differita): l'intero rendimento resta investito e viene tassato solo al momento della liquidazione, come per un'obbligazione tenuta fino a scadenza o un fondo in regime sintetico.</li>
+        </ul>
+        <p>
+            La simulazione pone a confronto il regime gestito (prelievo annuale) con un regime amministrato a scadenza.
+            Si vede quanto la tassazione ogni anno riduca l'effetto dell'interesse composto rispetto a un'imposizione differita.
+        </p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card">
+                <h4>Parametri</h4>
+                <div class="inputs">
+                    <div>
+                        <label>Capitale iniziale (€)</label>
+                        <input type="number" id="capital" value="10000">
+                    </div>
+                    <div>
+                        <label>Rendimento lordo annuo (%)</label>
+                        <input type="number" id="rate" value="7" step="0.1">
+                    </div>
+                    <div>
+                        <label>Aliquota</label>
+                        <select id="tax">
+                            <option value="0.26">26% (investimenti generici)</option>
+                            <option value="0.125">12,5% (alcuni titoli di Stato)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Anni</label>
+                        <input type="number" id="years" value="20">
+                    </div>
+                </div>
+                <button onclick="simulate()" class="btn btn-primary w-100 mt-3">Simula</button>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="card">
+                <h4>Risultati</h4>
+                <canvas id="chart" height="120"></canvas>
+                <div class="summary mt-3" id="summary"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chart;
+
+        function simulate() {
+
+            const capital = parseFloat(document.getElementById("capital").value);
+            const rate = parseFloat(document.getElementById("rate").value) / 100;
+            const years = parseInt(document.getElementById("years").value);
+            const tax = parseFloat(document.getElementById("tax").value);
+
+            // inizializza capitali
+            let gestito = capital;          // regime gestito (tassazione annuale)
+            let amministrato = capital;     // regime amministrato (tassazione a scadenza)
+
+            let gestitoHistory = [];
+            let amministratoHistory = [];
+            let labels = [];
+
+            let totalTaxesGestito = 0;
+            let totalTaxesAmministrato = 0;
+
+            for (let year = 1; year <= years; year++) {
+                // crescita regime amministrato (nessun prelievo annuale)
+                amministrato *= (1 + rate);
+
+                // regime gestito: prelievo sull'incremento annuale
+                const gain = gestito * rate;
+                const taxPaid = gain * tax;
+                totalTaxesGestito += taxPaid;
+                gestito += (gain - taxPaid);
+
+                gestitoHistory.push(gestito);
+                amministratoHistory.push(amministrato);
+                labels.push("Anno " + year);
+            }
+
+            const gestitoNet = gestito;
+            const amministratoNet = amministrato - (amministrato - capital) * tax;
+            totalTaxesAmministrato = (amministrato - capital) * tax;
+            const diff = gestitoNet - amministratoNet;
+
+            const gestitoCAGR = Math.pow(gestitoNet / capital, 1 / years) - 1;
+            const amministratoCAGR = Math.pow(amministratoNet / capital, 1 / years) - 1;
+
+            if (chart) chart.destroy();
+
+            chart = new Chart(document.getElementById("chart"), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'Regime Gestito (annuale)', data: gestitoHistory, borderWidth: 2 },
+                        { label: 'Regime Amministrato (netto)', data: amministratoHistory, borderWidth: 2 }
+                    ]
+                }
+            });
+
+            document.getElementById("summary").innerHTML = `
+        <h3>📊 Risultati finali</h3>
+        
+        <p><b>Capitale lordo finale – regime gestito:</b> ${gestito.toFixed(2)} €</p>
+        <p><b>Capitale lordo finale – regime amministrato:</b> ${amministrato.toFixed(2)} €</p>
+
+        <hr>
+
+        <p><b>Capitale netto - regime gestito:</b> ${gestitoNet.toFixed(2)} €</p>
+        <p><b>Capitale netto - regime amministrato:</b> ${amministratoNet.toFixed(2)} €</p>
+
+        <p class="highlight">
+            Differenza tra gestito e amministrato:
+            ${diff.toFixed(2)} € (${(diff / amministratoNet * 100).toFixed(2)}%)
+        </p>
+
+        <hr>
+
+        <p><b>Rendimento annuo netto effettivo:</b></p>
+        <ul>
+            <li>Regime gestito: ${(gestitoCAGR * 100).toFixed(2)}%</li>
+            <li>Regime amministrato: ${(amministratoCAGR * 100).toFixed(2)}%</li>
+        </ul>
+
+        <p class="highlight">
+            Tasse totali pagate nel regime gestito: ${totalTaxesGestito.toFixed(2)} €
+        </p>
+        <p class="highlight">
+            Tasse totali pagate nel regime amministrato: ${totalTaxesAmministrato.toFixed(2)} €
+        </p>
+
+        <p>
+            Nel regime <b>gestito</b> l'imposta colpisce ogni anno il gain e frena il compounding;
+            nel regime amministrato la tassazione è differita fino al realizzo.
+        </p>
+    `;
+        }
+
+        simulate();
+    </script>
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
