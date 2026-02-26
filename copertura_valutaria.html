@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETF Hedged vs Non Hedged - Simulatore della copertura valutaria</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+    background: #28afe9;
+    color: white;
+    font-family: system-ui;
+}
+.card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 20px;
+}
+.slider-label {
+    display:flex;
+    justify-content:space-between;
+}
+.big-number {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+.footer-note {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+canvas {
+    background: white;
+    border-radius: 15px;
+    padding: 10px;
+}
+</style>
+</head>
+
+<body class="container py-4">
+
+<h1 class="text-center mb-4">ETF Hedged vs Non Hedged</h1>
+<p class="text-center mb-4">
+Simulazione realistica della copertura valutaria EUR/USD
+</p>
+
+<div class="row g-4">
+
+<!-- CONTROLLI -->
+<div class="col-lg-5">
+<div class="card">
+
+<h4>Parametri</h4>
+
+<!-- descrizione parametri -->
+<p>Usa i cursori qui sotto per variare i principali fattori che influenzano il rendimento di un ETF statunitense riportato in euro:</p>
+<ul>
+    <li><strong>Rendimento indice USA (USD)</strong>: aspettativa di crescita annua dell'indice azionario in dollari.</li>
+    <li><strong>Variazione EUR/USD</strong>: percentuale di apprezzamento o deprezzamento del dollaro rispetto all'euro.</li>
+    <li><strong>Tasso USD</strong>: tasso di interesse a breve termine vigente in USA (utilizzato per determinare il forward).</li>
+    <li><strong>Tasso EUR</strong>: tasso di interesse a breve termine in area euro.</li>
+    <li><strong>TER ETF</strong>: Total Expense Ratio, costi annuali fatti sostenere dall'ETF (identici per hedged e non).</li>
+</ul>
+
+<div class="mt-3">
+<div class="slider-label">
+<span>Rendimento indice USA (USD)</span>
+<span id="usdReturnLabel"></span>
+</div>
+<input type="range" min="-20" max="20" value="8" step="0.5" id="usdReturn" class="form-range">
+</div>
+
+<div class="mt-3">
+<div class="slider-label">
+<span>Variazione EUR/USD</span>
+<span id="fxLabel"></span>
+</div>
+<input type="range" min="-20" max="20" value="-5" step="0.5" id="fxChange" class="form-range">
+</div>
+
+<div class="mt-3">
+<div class="slider-label">
+<span>Tasso USD</span>
+<span id="usdRateLabel"></span>
+</div>
+<input type="range" min="0" max="8" value="5" step="0.25" id="usdRate" class="form-range">
+</div>
+
+<div class="mt-3">
+<div class="slider-label">
+<span>Tasso EUR</span>
+<span id="eurRateLabel"></span>
+</div>
+<input type="range" min="-1" max="6" value="3" step="0.25" id="eurRate" class="form-range">
+</div>
+
+<div class="mt-3">
+<div class="slider-label">
+<span>TER ETF</span>
+<span id="terLabel"></span>
+</div>
+<input type="range" min="0.05" max="0.8" value="0.2" step="0.05" id="ter" class="form-range">
+</div>
+
+</div>
+</div>
+
+<!-- RISULTATI -->
+<div class="col-lg-7">
+<div class="card">
+
+<h4>Risultato annuale stimato</h4>
+
+<div class="row text-center mt-4">
+<div class="col-6">
+<div>ETF Non Hedged</div>
+<div id="nonHedgedResult" class="big-number"></div>
+</div>
+<div class="col-6">
+<div>ETF Hedged</div>
+<div id="hedgedResult" class="big-number"></div>
+</div>
+</div>
+
+<div class="mt-4">
+Costo stimato copertura:
+<strong id="hedgeCost"></strong>
+</div>
+
+<canvas id="chart" height="120"></canvas>
+
+</div>
+</div>
+
+</div>
+
+<div class="mt-5 card">
+<h4>Come funziona davvero la copertura valutaria?</h4>
+
+<p>
+Un ETF "hedged" amplia la sua offerta sottostante con un meccanismo di <em>hedging
+valutario</em>: al posto di lasciare il rendimento dell'investimento esposto
+all'andamento del cambio EUR/USD, il gestore entra in contratti <strong>forward</strong>
+mensili (o trimestrali) che impegnano a vendere dollari e comprare euro ad una
+scadenza futura fissata oggi. In questo modo il valore dell'ETF, espresso in
+euro, non varia se il dollaro si apprezza o si deprezza;
+solo il rendimento dell'indice USA rimane.
+</p>
+
+<p>
+Dal punto di vista finanziario la copertura si ottiene prendendo in prestito la
+valuta che si detiene (USD) e investendo nella valuta di riferimento (EUR),
+o viceversa: il differenziale tra i tassi d'interesse delle due aree diventa il
+prezzo che si paga o si incassa per chiudere il forward. Questo spiega perché
+la copertura non è gratuita e varia con i tassi.
+</p>
+
+<p>
+Se i tassi USA sono più alti di quelli europei, l'ETF paga un costo, perché per
+vendere dollari a termine deve offrire un prezzo leggermente più basso (il forward
+è solo un poco peggiore rispetto allo spot). Quando i due tassi sono molto vicini
+il costo è praticamente nullo; al contrario, se il tasso EUR supera quello USD si
+può addirittura avere un piccolo guadagno.
+</p>
+
+<p>
+Espresso in formula molto semplificata:
+</p>
+
+<pre>
+Costo ≈ (Tasso USD − Tasso EUR) + 0,05‑0,10%
+</pre>
+
+<p>
+Il termine finale (0,05‑0,10%) rappresenta gli oneri di negoziazione e di
+<a href="#" target="_blank">rolling</a> del contratto (rinnovo mensile o trimestrale).
+Nella pratica questo corrisponde a poche decine di punti base e viene già
+incorporato nella TER dell'ETF, perciò l'impatto sulla performance è molto
+contenuto.</p>
+
+<h5>Esempio numerico</h5>
+<p>
+Per mostrare un caso più realistico consideriamo un differenziale di tassi
+modesto. Un investitore europeo acquista un ETF sull&#39;S&amp;P 500 con 100 USD
+d’inizio anno. I parametri pesati sono:
+<ul>
+    <li>tasso USD = 4&nbsp;%</li>
+    <li>tasso EUR = 3,5&nbsp;%</li>
+    <li>spot EUR/USD = 1,10</li>
+</ul>
+La parità dei tassi porta a un forward one‑year di circa
+1,10×(1+0.04)/(1+0.035) ≈ 1,104. Il fondo vende pertanto 100 USD a 1,104 e riceve
+90,58 EUR.
+</p>
+<p>
+Se a fine anno l&#39;indice USA sale dell&#39;8&nbsp;% e il cambio spot rimane a 1,10,
+l&#39;ETF hedged converte così:
+100×1,08=108 USD che, venduti al tasso forward, diventano 108/1,104≈97,83 EUR.
+L&#39;ETF non hedged, lasciando correre il cambio, finirebbe a
+108/1,10=98,18 EUR. La differenza è ora soltanto 0,35 EUR su 100 – quindi circa
+0,35 % di costo di copertura (0,5 % dal differenziale più ~0,05 % di rolling).
+</p>
+<p>
+Questo esempio illustra come nella pratica la cifra pagata per la copertura sia
+spesso di pochi decimi di punto percentuale e quindi difficilmente “gonfiata”.
+Con tassi quasi allineati il costo può essere trascurabile o addirittura
+egativo, mentre in situazioni di ampio spread arriva a qualche punto base,
+sempre contenuto rispetto al rendimento dell&#39;indice sottostante.
+</p>
+<p>
+In ultima analisi, il costo di copertura rappresenta il prezzo per aggiungere
+stabilità valutaria al portafoglio: si paga (o si guadagna) il differenziale di
+tassi più le commissioni, ma si elimina la componente di rischio cambio.
+</p>
+
+<div class="footer-note">
+Nota: simulazione realistica ma semplificata. Non include tracking error, slippage, fiscalità.
+</div>
+
+</div>
+
+<script>
+const usdReturn = document.getElementById("usdReturn");
+const fxChange = document.getElementById("fxChange");
+const usdRate = document.getElementById("usdRate");
+const eurRate = document.getElementById("eurRate");
+const ter = document.getElementById("ter");
+
+const labels = [
+"Indice USD",
+"Effetto Cambio",
+"Costi",
+"Risultato"
+];
+
+const ctx = document.getElementById('chart');
+
+const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ["Non Hedged", "Hedged"],
+        datasets: [{
+            label: "Rendimento %",
+            data: [0,0]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                ticks: {
+                    callback: function(value) {
+                        return value + "%"
+                    }
+                }
+            }
+        }
+    }
+});
+
+function update() {
+
+    const rUSD = parseFloat(usdReturn.value)/100;
+    const fx = parseFloat(fxChange.value)/100;
+    const rUsdRate = parseFloat(usdRate.value)/100;
+    const rEurRate = parseFloat(eurRate.value)/100;
+    const terVal = parseFloat(ter.value)/100;
+
+    document.getElementById("usdReturnLabel").innerText = usdReturn.value + "%";
+    document.getElementById("fxLabel").innerText = fxChange.value + "%";
+    document.getElementById("usdRateLabel").innerText = usdRate.value + "%";
+    document.getElementById("eurRateLabel").innerText = eurRate.value + "%";
+    document.getElementById("terLabel").innerText = ter.value + "%";
+
+    const hedgeCost = (rUsdRate - rEurRate) + 0.001;
+
+    const nonHedged = ((1 + rUSD) * (1 + fx) - 1) - terVal;
+    const hedged = rUSD - hedgeCost - terVal;
+
+    document.getElementById("nonHedgedResult").innerText = (nonHedged*100).toFixed(2) + "%";
+    document.getElementById("hedgedResult").innerText = (hedged*100).toFixed(2) + "%";
+    document.getElementById("hedgeCost").innerText = (hedgeCost*100).toFixed(2) + "%";
+
+    chart.data.datasets[0].data = [
+        (nonHedged*100).toFixed(2),
+        (hedged*100).toFixed(2)
+    ];
+
+    chart.update();
+}
+
+[usdReturn, fxChange, usdRate, eurRate, ter].forEach(el => {
+    el.addEventListener("input", update);
+});
+
+update();
+</script>
+
+</body>
+</html>
