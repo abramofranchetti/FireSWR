@@ -84,6 +84,31 @@
             margin-bottom: 50px;
         }
 
+        /* Navigation */
+        .category-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0 40px 0;
+        }
+
+        .category-nav a {
+            background: white;
+            padding: 8px 14px;
+            border-radius: 999px;
+            text-decoration: none;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+            font-size: 0.95rem;
+        }
+
+        .category-nav a:hover {
+            background: var(--color-primary);
+            color: white;
+        }
+
         .section-title {
             font-size: clamp(1.3rem, 3vw, 1.8rem);
             color: #333;
@@ -266,6 +291,27 @@
 
         .disclaimer-section strong {
             color: #333;
+        }
+
+        /* Section collapse for small screens */
+        .toggle-section {
+            background: transparent;
+            border: none;
+            font-size: 1.05rem;
+            margin-left: 10px;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 6px 8px;
+            border-radius: 8px;
+        }
+
+        .toggle-section:hover {
+            color: var(--color-primary);
+            background: rgba(0,0,0,0.03);
+        }
+
+        .section.collapsed .button-grid {
+            display: none;
         }
 
         /* Responsive Design */
@@ -1022,6 +1068,53 @@
                             li.style.marginBottom = '8px';
                             li.style.fontSize = '0.95rem';
                         });
+
+                        // Costruisci navigazione dinamica basata sulle sezioni
+                        const nav = document.createElement('nav');
+                        nav.id = 'category-nav';
+                        nav.className = 'category-nav';
+                        sections.forEach(sec => {
+                            const titleEl = sec.querySelector('.section-title a.section-link');
+                            const titleText = titleEl ? titleEl.textContent.trim() : sec.id;
+                            const a = document.createElement('a');
+                            a.href = '#' + encodeURIComponent(sec.id);
+                            a.textContent = titleText.replace(/^[^\u0000-\u007F]*\s*/, '');
+                            nav.appendChild(a);
+                        });
+                        // Inserisci nav dopo l'header
+                        const container = document.querySelector('.container');
+                        const headerEl = container.querySelector('header');
+                        if (headerEl && headerEl.parentNode) headerEl.parentNode.insertBefore(nav, headerEl.nextSibling);
+
+                        // Aggiungi pulsanti toggle per ogni sezione (utile su mobile)
+                        sections.forEach(sec => {
+                            const h2 = sec.querySelector('.section-title');
+                            if (!h2) return;
+                            const btn = document.createElement('button');
+                            btn.className = 'toggle-section';
+                            btn.setAttribute('aria-expanded', 'true');
+                            btn.title = 'Mostra/Nascondi contenuti sezione';
+                            btn.textContent = '▾';
+                            btn.addEventListener('click', () => {
+                                const expanded = btn.getAttribute('aria-expanded') === 'true';
+                                btn.setAttribute('aria-expanded', String(!expanded));
+                                sec.classList.toggle('collapsed');
+                                btn.textContent = expanded ? '▸' : '▾';
+                            });
+                            h2.appendChild(btn);
+                        });
+
+                        // Mantieni sempre le sezioni espanse (no auto-collapse su mobile)
+                        function adaptForWidth() {
+                            sections.forEach(s => s.classList.remove('collapsed'));
+                            sections.forEach(s => {
+                                const btn = s.querySelector('.toggle-section');
+                                if (btn) { btn.setAttribute('aria-expanded', 'true'); btn.textContent = '▾'; }
+                            });
+                        }
+
+                        adaptForWidth();
+                        window.addEventListener('resize', adaptForWidth);
                     });
 
                 // Funzionalità di ricerca dinamica
