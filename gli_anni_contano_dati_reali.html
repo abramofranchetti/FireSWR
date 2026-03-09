@@ -392,7 +392,7 @@
             // NUOVI DATI
             document.getElementById("capVersA").innerText = scenA.capitaleVersato.toFixed(0);
             document.getElementById("capVersB").innerText = scenB.capitaleVersato.toFixed(0);
-            document.getElementById("capB").innerText = scenA.capitaleFinale.toFixed(0);
+            document.getElementById("capB").innerText = scenB.capitaleFinale.toFixed(0);
             document.getElementById("guadagnoB").innerText = (scenB.capitaleFinale - scenB.capitaleVersato).toFixed(0) + " ovvero " + ((scenB.capitaleFinale - scenB.capitaleVersato) / scenB.capitaleVersato * 100).toFixed(2) + "%";
 
             disegnaGrafico(start, anniPAC, anniFuturi, versamento, versB, continuaPAC);
@@ -406,6 +406,7 @@
                 guadA: [],
                 versB: [],
                 capVersB: [],
+                capFinaleB: [],
                 guadB: []
             };
 
@@ -432,13 +433,13 @@
                 const versB = trovaVersamentoRolling(
                     scenA.capitaleFinale,
                     startB,
-                    mesiPAC
+                    anniFuturi * 12
                 );
 
                 const scenB = simulaPACRolling(
                     startB,
                     versB,
-                    mesiPAC
+                    anniFuturi * 12
                 );
 
                 risultati.finestreUsate = maxStart + 1;
@@ -449,6 +450,7 @@
 
                 risultati.versB.push(versB);
                 risultati.capVersB.push(scenB.capitaleVersato);
+                risultati.capFinaleB.push(scenB.capitaleFinale);
                 risultati.guadB.push(scenB.capitaleFinale - scenB.capitaleVersato);
             }
 
@@ -485,6 +487,7 @@
 
             const versB = media(r.versB);
             const capVersB = media(r.capVersB);
+            const capFinaleB = media(r.capFinaleB);
             const guadB = media(r.guadB);
 
             const out = document.getElementById("outputRolling");
@@ -498,6 +501,7 @@
             const q90A = quantile(r.capFinaleA, 0.90);
 
             const stdA = deviazioneStandard(r.capFinaleA);
+            const stdB = deviazioneStandard(r.capFinaleB);
             const stdVersB = deviazioneStandard(r.versB);
 
             // Probabilità: A versa meno capitale di B
@@ -518,7 +522,7 @@
 
         <b>Versamento medio mensile iniziando alla fine del PAC A (scenario B):</b> $ ${versB.toFixed(0)}<br>
         <b>Capitale medio versato scenario B:</b> $ ${capVersB.toFixed(0)}<br>
-        <b>Capitale medio finale scenario B:</b> $ ${capFinaleA.toFixed(0)}<br>
+        <b>Capitale medio finale scenario B:</b> $ ${capFinaleB.toFixed(0)}<br>
         <b>Guadagno medio scenario B:</b> $ ${guadB.toFixed(0)}
         ovvero ${(guadB / capVersB * 100).toFixed(2)}%
     `;
@@ -532,14 +536,10 @@
     75° percentile: $ ${q75A.toFixed(0)}<br>
     90° percentile: $ ${q90A.toFixed(0)}<br><br>
 
-    <b>Rischio (deviazione standard):</b><br>
-    Scenario A: $ ${stdA.toFixed(0)}<br>
-    Versamento richiesto scenario B: $ ${stdVersB.toFixed(0)}<br><br>
-    
 
     <b>Confronto probabilistico:</b><br>
     Nel <b>${probBetterA.toFixed(1)}%</b> delle finestre storiche
-    lo scenario A ha richiesto <b>meno capitale versato</b> rispetto allo scenario B.
+    lo scenario A ha richiesto <b>meno capitale versato</b> rispetto allo scenario B per arrivare ad avere un montante finale lordo identico.
 `;
 
         }
