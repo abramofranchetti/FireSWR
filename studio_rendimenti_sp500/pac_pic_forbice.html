@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confronto PAC vs PIC - forbice rendimenti rolling</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.2.1/dist/chartjs-chart-financial.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">PAC vs PIC - confronto rolling</h1>
+        <h5 class="text-center">Per ogni durata di detenzione, mettiamo a confronto la forbice (migliore/peggiore) dei rendimenti PAC e PIC e mostriamo anche i valori medi.</h5>
+        <div id="calcStatus" class="alert alert-info text-center">
+            ⏳ Calcolo in corso… inizializzazione
+        </div>
+
+        <div class="mt-4 p-3 bg-light border rounded">
+            <p>
+                Questo esperimento confronta due strategie su ogni finestra storica:
+            </p>
+            <ul>
+                <li><strong>PAC (Piano di Accumulo):</strong> investe un ammontare fisso ogni mese. Il rendimento è calcolato con
+                    <strong>XIRR</strong> sui flussi mensili (versamento + valore finale).</li>
+                <li><strong>PIC (Piano in Unica Soluzione):</strong> investe lo stesso capitale totale del PAC in un'unica data di inizio,
+                    e lo vende al termine della finestra. Anche qui il rendimento è calcolato con <strong>XIRR</strong>.</li>
+            </ul>
+            <p>
+                La simulazione è <em>rolling</em>: per ogni durata (1 anno, 2 anni, ..., 40 anni) scorro tutte le possibili
+                finestre storiche usando dati mensili dell'S&amp;P 500 Net Total Return. Per ogni finestra ottengo:
+            </p>
+            <ul>
+                <li>rendimento annualizzato minimo/massimo/medio del PAC</li>
+                <li>rendimento annualizzato minimo/massimo/medio del PIC</li>
+            </ul>
+            <p>
+                I grafici mostrano le forbici min/max (e la media) per PAC e PIC, sia per il rendimento
+                <strong>annualizzato</strong> che per il rendimento <strong>totale</strong> (rolling).
+                La tabella sotto riporta i valori annualizzati per alcune durate chiave e indica se la forbice PAC è
+                completamente contenuta nella forbice PIC.
+            </p>
+            <p>
+                In altre parole, la tabella e il grafico rispondono alla domanda: <strong>il rendimento del miglior/peggiore PAC
+                è sempre dentro la forbice del miglior/peggiore PIC</strong> sullo stesso periodo storico?
+            </p>
+        </div>
+
+        <h3 class="mt-4">Rendimento annualizzato (rolling)</h3>
+        <canvas id="chartComparison" class="mt-2"></canvas>
+
+        <h3 class="mt-5">Rendimento totale (rolling)</h3>
+        <canvas id="chartComparisonTotal" class="mt-2"></canvas>
+
+        <div class="mt-4 p-3 bg-light border rounded">
+            <h4>Statistiche a confronto</h4>
+            <p>Le tabelle riportano per alcune durate chiave (anni) la forbice e la media per PAC e PIC.</p>
+            <p>
+                - La prima tabella mostra i rendimenti <strong>annualizzati</strong> (come nel grafico superiore).
+                - La seconda tabella mostra i rendimenti <strong>totali</strong> (come nel grafico inferiore).
+            </p>
+            <div id="statsTableContainer"></div>
+            <div id="statsTableContainerTotal" class="mt-3"></div>
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+    <script>
+        /* =======================
+           PARSE S&P 500 CSV
+           ======================= */
+        function parseSP500CSV(text) {
+            return text.replace('\uFEFF', '').trim().split('\n').map(line => {
+                const parts = line.trim().split(/\s+/);
+                if (parts.length < 3) return null;
+                const [ym, priceRaw, divRaw] = parts;
+                if (!ym.includes(',')) return null;
+                const [year, month] = ym.split(',').map(Number);
+                const price = Number(priceRaw.replace(',', '.'));
+                const dividend = Number(divRaw.replace(',', '.'));
+                if (isNaN(price) || isNaN(dividend)) return null;
+                return { date: new Date(Date.UTC(year, month - 1, 1)), price, dividend };
+            }).filter(Boolean);
+        }
+
+        /* =======================
+        BUILD NET TOTAL RETURN INDEX
+        ======================= */
+        function buildNetTotalReturnIndex(data, taxRate = 0.30) {
+            if (!data.length) return [];
+
+            const result = [{
+                date: data[0].date,
+                price: data[0].price,
+                tr: 100
+            }];
+
+            for (let i = 1; i < data.length; i++) {
+                const prev = result[i - 1];
+                const curr = data[i];
+
+                const monthlyDividendGross = curr.dividend / 12;
+                const monthlyDividendNet = monthlyDividendGross * (1 - taxRate);
+
+                const tr =
+                    prev.tr *
+                    ((curr.price + monthlyDividendNet) / prev.price);
+
+                result.push({
+                    date: curr.date,
+                    price: curr.price,
+                    tr
+                });
+            }
+
+            return result;
+        }
+
+        function median(arr) {
+            const sorted = [...arr].sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+
+            return sorted.length % 2
+                ? sorted[mid]
+                : (sorted[mid - 1] + sorted[mid]) / 2;
+        }
+
+        function mean(arr) {
+            return arr.reduce((a, b) => a + b, 0) / arr.length;
+        }
+
+        function percentile(arr, p) {
+            if (!arr.length) return null;
+            const sorted = [...arr].sort((a, b) => a - b);
+            const idx = (sorted.length - 1) * p;
+            const lo = Math.floor(idx);
+            const hi = Math.ceil(idx);
+            if (lo === hi) return sorted[lo];
+            return sorted[lo] * (hi - idx) + sorted[hi] * (idx - lo);
+        }
+
+        function xirr(cashFlows, dates, guess = 0.1) {
+            const maxIter = 100;
+            const tol = 1e-6;
+
+            const daysBetween = (d0, d1) =>
+                (d1 - d0) / (1000 * 60 * 60 * 24);
+
+            const npv = rate =>
+                cashFlows.reduce((sum, cf, i) => {
+                    const t = daysBetween(dates[0], dates[i]) / 365;
+                    return sum + cf / Math.pow(1 + rate, t);
+                }, 0);
+
+            const dNpv = rate =>
+                cashFlows.reduce((sum, cf, i) => {
+                    const t = daysBetween(dates[0], dates[i]) / 365;
+                    return sum - (t * cf) / Math.pow(1 + rate, t + 1);
+                }, 0);
+
+            let rate = guess;
+            for (let i = 0; i < maxIter; i++) {
+                const f = npv(rate);
+                const df = dNpv(rate);
+                const newRate = rate - f / df;
+                if (Math.abs(newRate - rate) < tol) return rate;
+                rate = newRate;
+            }
+            return null;
+        }
+
+
+        async function computeRollingStatsAsync(
+            trSeries,
+            maxYears,
+            monthlyContribution,
+            onProgress
+        ) {
+            const results = [];
+
+            for (let years = 1; years <= maxYears; years++) {
+                onProgress?.(`Calcolo: ${years}/${maxYears} anni…`);
+                await new Promise(r => setTimeout(r, 0)); // yield UI
+
+                const months = years * 12;
+                const pacAnn = [];
+                const pacTotal = [];
+                const picAnn = [];
+                const picTotal = [];
+
+                for (let i = 0; i + months < trSeries.length; i++) {
+                    // PAC (investimento mensile)
+                    let quotes = 0;
+                    const cashFlows = [];
+                    const dates = [];
+
+                    for (let m = 0; m < months; m++) {
+                        quotes += monthlyContribution / trSeries[i + m].tr;
+                        cashFlows.push(-monthlyContribution);
+                        dates.push(trSeries[i + m].date);
+                    }
+
+                    const finalValue = quotes * trSeries[i + months].tr;
+                    cashFlows.push(finalValue);
+                    dates.push(trSeries[i + months].date);
+
+                    const irr = xirr(cashFlows, dates);
+                    if (irr != null && isFinite(irr)) {
+                        pacAnn.push(irr);
+                        pacTotal.push(finalValue / (monthlyContribution * months) - 1);
+                    }
+
+                    // PIC (una tantum) con lo stesso capitale totale del PAC
+                    const totalInvested = monthlyContribution * months;
+                    const startTr = trSeries[i].tr;
+                    const endTr = trSeries[i + months].tr;
+                    if (startTr > 0 && endTr > 0) {
+                        const units = totalInvested / startTr;
+                        const finalPicValue = units * endTr;
+
+                        const picIrr = xirr(
+                            [-totalInvested, finalPicValue],
+                            [trSeries[i].date, trSeries[i + months].date]
+                        );
+                        if (picIrr != null && isFinite(picIrr)) {
+                            picAnn.push(picIrr);
+                            picTotal.push(finalPicValue / totalInvested - 1);
+                        }
+                    }
+                }
+
+                if (!pacAnn.length || !picAnn.length) continue;
+
+                const pacAnnMin = Math.min(...pacAnn);
+                const pacAnnMax = Math.max(...pacAnn);
+                const picAnnMin = Math.min(...picAnn);
+                const picAnnMax = Math.max(...picAnn);
+
+                const pacTotMin = Math.min(...pacTotal);
+                const pacTotMax = Math.max(...pacTotal);
+                const picTotMin = Math.min(...picTotal);
+                const picTotMax = Math.max(...picTotal);
+
+                results.push({
+                    years,
+                    pac: {
+                        ann: {
+                            min: pacAnnMin,
+                            max: pacAnnMax,
+                            mean: mean(pacAnn),
+                            median: median(pacAnn)
+                        },
+                        total: {
+                            min: pacTotMin,
+                            max: pacTotMax,
+                            mean: mean(pacTotal),
+                            median: median(pacTotal)
+                        }
+                    },
+                    pic: {
+                        ann: {
+                            min: picAnnMin,
+                            max: picAnnMax,
+                            mean: mean(picAnn),
+                            median: median(picAnn)
+                        },
+                        total: {
+                            min: picTotMin,
+                            max: picTotMax,
+                            mean: mean(picTotal),
+                            median: median(picTotal)
+                        }
+                    },
+                    pacWithinPic: pacAnnMin >= picAnnMin && pacAnnMax <= picAnnMax,
+                    pacWithinPicTotal: pacTotMin >= picTotMin && pacTotMax <= picTotMax
+                });
+            }
+
+            return results;
+        }
+
+        function zeroLineAnnotation() {
+            return {
+                annotations: {
+                    zeroLine: {
+                        type: 'line',
+                        yMin: 0,
+                        yMax: 0,
+                        borderColor: 'black',
+                        borderWidth: 1,
+                        borderDash: [6, 4], // tratteggiata stile Shiller                        
+                    }
+                }
+            };
+        }
+
+        function buildComparisonChart(ctx, stats, measure = 'ann') {
+            const labels = stats.map(s => s.years);
+            const pacMax = stats.map(s => s.pac[measure].max * 100);
+            const pacMin = stats.map(s => s.pac[measure].min * 100);
+            const pacMean = stats.map(s => s.pac[measure].mean * 100);
+            const picMax = stats.map(s => s.pic[measure].max * 100);
+            const picMin = stats.map(s => s.pic[measure].min * 100);
+            const picMean = stats.map(s => s.pic[measure].mean * 100);
+
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'PAC - max', data: pacMax, borderColor: 'rgba(0,128,0,0.8)', backgroundColor: 'rgba(0,128,0,0.2)', fill: false, pointRadius: 0, borderWidth: 2 },
+                        { label: 'PAC - min', data: pacMin, borderColor: 'rgba(0,128,0,0.8)', backgroundColor: 'rgba(0,128,0,0.2)', fill: '-1', pointRadius: 0, borderWidth: 2 },
+                        { label: 'PAC - media', data: pacMean, borderColor: 'rgba(0,128,0,1)', borderDash: [6, 4], fill: false, pointRadius: 0, borderWidth: 2 },
+                        { label: 'PIC - max', data: picMax, borderColor: 'rgba(0,0,255,0.8)', backgroundColor: 'rgba(0,0,255,0.2)', fill: false, pointRadius: 0, borderWidth: 2 },
+                        { label: 'PIC - min', data: picMin, borderColor: 'rgba(0,0,255,0.8)', backgroundColor: 'rgba(0,0,255,0.2)', fill: '-1', pointRadius: 0, borderWidth: 2 },
+                        { label: 'PIC - media', data: picMean, borderColor: 'rgba(0,0,255,1)', borderDash: [6, 4], fill: false, pointRadius: 0, borderWidth: 2 }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        legend: { display: true },
+                        annotation: zeroLineAnnotation()
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Anni di detenzione' }
+                        },
+                        y: {
+                            title: { display: true, text: measure === 'total' ? '% totale' : '% annualizzato' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderStatsTable(container, stats, yearsList, measure = 'ann') {
+            const label = measure === 'total' ? 'totale' : 'annualizzato';
+            const rows = yearsList
+                .map(years => {
+                    const entry = stats.find(s => s.years === years);
+                    if (!entry) return null;
+                    const fmt = v => (v == null ? '-' : `${(v * 100).toFixed(2)}%`);
+                    const inRange = measure === 'total' ? (entry.pacWithinPicTotal ? '✓' : '✗') : (entry.pacWithinPic ? '✓' : '✗');
+                    return `
+                        <tr>
+                            <td>${years}</td>
+                            <td>${fmt(entry.pac[measure].min)}</td>
+                            <td>${fmt(entry.pac[measure].mean)}</td>
+                            <td>${fmt(entry.pac[measure].max)}</td>
+                            <td>${fmt(entry.pic[measure].min)}</td>
+                            <td>${fmt(entry.pic[measure].mean)}</td>
+                            <td>${fmt(entry.pic[measure].max)}</td>
+                            <td class="text-center">${inRange}</td>
+                        </tr>`;
+                })
+                .filter(Boolean)
+                .join('');
+
+            container.innerHTML = `
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Anni</th>
+                                <th>PAC min</th>
+                                <th>PAC media</th>
+                                <th>PAC max</th>
+                                <th>PIC min</th>
+                                <th>PIC media</th>
+                                <th>PIC max</th>
+                                <th>PAC ⊆ PIC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows}
+                        </tbody>
+                    </table>
+                    <p class="text-muted mb-0"><em>Dati basati su rendimenti ${label} (rolling).</em></p>
+                </div>`;
+        }
+
+
+        /* =======================
+           MAIN
+           ======================= */
+        async function main() {
+            const spText = await fetch('./sp500_shiller_price_dividends.csv').then(r => r.text());
+            const spParsed = parseSP500CSV(spText);
+            const spTR = buildNetTotalReturnIndex(spParsed);
+            const status = document.getElementById('calcStatus');
+            const rollingStats = await computeRollingStatsAsync(spTR, 41, 100, msg => status.textContent = "⏳ " + msg);
+            status.className = "alert alert-success text-center";
+            status.textContent = "✅ Calcolo completato";
+
+            buildComparisonChart(document.getElementById('chartComparison'), rollingStats, 'ann');
+            buildComparisonChart(document.getElementById('chartComparisonTotal'), rollingStats, 'total');
+            renderStatsTable(document.getElementById('statsTableContainer'), rollingStats, [1, 5, 10, 20, 30, 40], 'ann');
+            renderStatsTable(document.getElementById('statsTableContainerTotal'), rollingStats, [1, 5, 10, 20, 30, 40], 'total');
+        }
+
+        document.addEventListener('DOMContentLoaded', main);
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('../html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
