@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simulatore Volatilità e CAGR</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background: #f3f6fb;
+        }
+
+        .card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        canvas {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .explanation {
+            font-size: 0.95rem;
+            color: #555;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body class="container py-4">
+
+    <h2 class="text-center mb-4">Simulatore Volatilità e Crescita Composta</h2>
+
+    <div class="card mb-4">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-2">
+                    <label class="form-label">Durata (anni)</label>
+                    <input id="years" type="number" class="form-control" value="10">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Rendimento medio %</label>
+                    <input id="mean" type="number" class="form-control" value="10">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Volatilità A %</label>
+                    <input id="volA" type="number" class="form-control" value="7">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Volatilità B %</label>
+                    <input id="volB" type="number" class="form-control" value="22">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Curve visibili</label>
+                    <input id="paths" type="number" class="form-control" value="20">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Tipo investimento</label>
+                    <select id="modeInvest" class="form-control">
+                        <option value="PIC">PIC</option>
+                        <option value="PAC">PAC</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Modalità simulazione</label>
+                    <select id="modeReturn" class="form-control">
+                        <option value="sameMean">Stesso rendimento medio</option>
+                        <option value="sameCAGR">Stesso CAGR atteso</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-3">
+                <button class="btn btn-primary" onclick="runSimulation()">Simula</button>
+            </div>
+
+            <div class="explanation">
+                Questa simulazione confronta due portafogli con la stessa performance attesa ma con volatilità diversa.
+                <strong>Modalità disponibili:</strong>
+            </div>
+
+            <div class="explanation">
+                <b>Stesso rendimento medio (aritmetico)</b><br>
+                In questa modalità entrambi i portafogli hanno lo stesso rendimento medio annuo "aritmetico" (la media semplice dei rendimenti annuali).
+                Non è tenuto conto dell'effetto composto: ogni anno il rendimento viene preso come se fosse indipendente.
+                <br><br>
+                Nel mondo reale, però, l'effetto composto significa che rendimenti negativi pesano di più di rendimenti positivi dello stesso valore.
+                Quindi, con lo stesso rendimento medio aritmetico, un portafoglio più volatile avrà generalmente un CAGR atteso più basso (volatility drag).
+            </div>
+
+            <div class="explanation">
+                <b>Stesso CAGR (rendimento composto atteso)</b><br>
+                Qui si assicura che i due portafogli abbiano **la stessa crescita composta attesa** nel lungo periodo.
+                In pratica il simulatore calibra i rendimenti in modo che il **rendiconto logaritmico medio** (log-return medio) sia uguale.
+                Questo significa che, se consideri ogni percorso come una crescita esponenziale, il valore atteso finale cresce con lo stesso tasso annuo composto.
+                <br><br>
+                Per ottenere lo stesso CAGR, il portafoglio più volatile deve avere un rendimento aritmetico medio più alto.
+                In altre parole:
+                - Il portafoglio meno volatile può avere rendimenti medi "normali".
+                - Il portafoglio più volatile deve avere rendimenti medi più elevati per compensare il drag della volatilità.
+                <br><br>
+                📌 Esempio (numeri approssimativi):
+                - Se cerchi un CAGR del 10%, con volatilità al 7% il rendimento aritmetico medio necessario è circa il 10,3%.
+                - Con volatilità al 22%, per ottenere sempre lo stesso CAGR del 10% serve un rendimento aritmetico medio più alto, circa il 12,7%.
+                <br><br>
+                Questa modalità è utile per isolare l'effetto della volatilità sulla **dispersione dei risultati** (quanto sono distanti i possibili scenari) mantenendo costante la crescita composta attesa.
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <h5>Traiettorie simulate</h5>
+
+            <canvas id="pathsChart"></canvas>
+
+            <div class="explanation">
+
+                Ogni linea rappresenta un possibile mercato.
+
+                La volatilità bassa produce traiettorie più regolari e concentrate.
+                La volatilità alta produce traiettorie molto disperse.
+
+                Questo dimostra che la volatilità **aumenta l'incertezza dei risultati** ma non determina
+                automaticamente un risultato finale peggiore.
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <h5>Distribuzione risultati finali</h5>
+
+            <canvas id="histogramChart"></canvas>
+
+            <div class="explanation">
+
+                Questo grafico mostra la distribuzione dei risultati dopo 1000 simulazioni.
+
+                Con volatilità più alta la distribuzione diventa più ampia:
+                - aumentano sia i risultati molto alti
+                - sia quelli molto bassi.
+
+                La volatilità quindi aumenta l'incertezza ma non implica automaticamente una crescita composta minore.
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+
+            <h5>Risultati Monte Carlo</h5>
+
+            <table class="table table-bordered text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>Portafoglio</th>
+                        <th>Media finale</th>
+                        <th>Mediana</th>
+                        <th>Peggiore</th>
+                        <th>Migliore</th>
+                        <th>CAGR medio</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable"></tbody>
+            </table>
+
+            <div class="alert alert-info mt-3">
+                <strong>% simulazioni in cui la volatilità alta batte quella bassa:</strong>
+                <span id="winrate"></span>
+            </div>
+
+            <div class="explanation">
+
+                La percentuale sopra indica in quanti casi il portafoglio più volatile ha ottenuto un risultato finale
+                migliore.
+
+                Se il valore è vicino al 50% significa che **non esiste una relazione deterministica tra volatilità e
+                risultato finale**.
+
+                La volatilità modifica la distribuzione dei risultati, non una traiettoria certa.
+
+            </div>
+
+        </div>
+    </div>
+     <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+
+    <script>
+
+        let pathsChart
+        let histogramChart
+
+        function gaussianRandom(mean, std) {
+
+            let u = 1 - Math.random()
+            let v = Math.random()
+
+            let z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v)
+
+            return mean + z * std
+
+        }
+
+        function simulatePath(years, mu, vol, modeInvest) {
+
+            let value = 100
+            let path = [value]
+
+            for (let i = 0; i < years; i++) {
+
+                // Versamento annuale (PAC) all'inizio del periodo
+                if (modeInvest === "PAC") value += 10
+
+                // r è il rendimento logaritmico (log-return) distribuito normalmente
+                let r = gaussianRandom(mu, vol)
+
+                // Crescita lognormale: garantisce valore sempre positivo
+                value = value * Math.exp(r)
+
+                path.push(value)
+
+            }
+
+            return path
+
+        }
+
+        function runSimulation() {
+
+            let years = parseInt(yearsInput.value)
+            let mean = parseFloat(meanInput.value) / 100
+            let volA = parseFloat(volAInput.value) / 100
+            let volB = parseFloat(volBInput.value) / 100
+            let paths = parseInt(pathsInput.value)
+            let modeInvest = modeInvestInput.value
+            let modeReturn = modeReturnInput.value
+
+            // mean interpreta:
+            // - in "Stesso rendimento medio": rendimento aritmetico atteso
+            // - in "Stesso CAGR": rendimento composto atteso (CAGR)
+           
+            let muA, muB
+
+            if (modeReturn === "sameMean") {
+                // Calibro il drift logaritmico affinché l'"arithmetic mean" atteso sia quello scelto
+                muA = Math.log(1 + mean) - 0.5 * volA * volA
+                muB = Math.log(1 + mean) - 0.5 * volB * volB
+            } else {
+                // Imposto lo stesso rendimento composto (log-return medio) per entrambe le volatilità
+                muA = Math.log(1 + mean)
+                muB = Math.log(1 + mean)
+            }
+
+            drawPaths(years, muA, muB, volA, volB, paths, modeInvest)
+
+            runMonteCarlo(years, muA, muB, volA, volB, modeInvest)
+
+        }
+
+        function drawPaths(years, meanA, meanB, volA, volB, paths, modeInvest) {
+
+            let labels = []
+
+            for (let i = 0; i <= years; i++) labels.push(i)
+
+            let datasets = []
+
+            for (let i = 0; i < paths; i++) {
+
+                datasets.push({
+                    data: simulatePath(years, meanA, volA, modeInvest),
+                    borderColor: "rgba(40,167,69,0.4)",
+                    borderWidth: 1,
+                    fill: false
+                })
+
+            }
+
+            for (let i = 0; i < paths; i++) {
+
+                datasets.push({
+                    data: simulatePath(years, meanB, volB, modeInvest),
+                    borderColor: "rgba(220,53,69,0.4)",
+                    borderWidth: 1,
+                    fill: false
+                })
+
+            }
+
+            if (pathsChart) pathsChart.destroy()
+
+            pathsChart = new Chart(pathsChartCanvas, {
+                type: 'line',
+                data: { labels: labels, datasets: datasets },
+                options: { plugins: { legend: { display: false } } }
+            })
+
+        }
+
+        function runMonteCarlo(years, meanA, meanB, volA, volB, modeInvest) {
+
+            let sims = 1000
+
+            let resA = []
+            let resB = []
+            let wins = 0
+
+            for (let i = 0; i < sims; i++) {
+
+                let a = simulatePath(years, meanA, volA, modeInvest)
+                let b = simulatePath(years, meanB, volB, modeInvest)
+
+                let finalA = a[a.length - 1]
+                let finalB = b[b.length - 1]
+
+                resA.push(finalA)
+                resB.push(finalB)
+
+                if (finalB > finalA) wins++
+
+            }
+
+            updateTable(resA, resB, years)
+            drawHistogram(resA, resB)
+
+            let winrate = (wins / sims * 100).toFixed(1)
+            winrateSpan.innerText = winrate + " %"
+
+        }
+
+        function stats(arr, years) {
+
+            let sorted = [...arr].sort((a, b) => a - b)
+
+            let avg = sorted.reduce((a, b) => a + b, 0) / sorted.length
+
+            let median
+            if (sorted.length % 2 === 1) {
+                median = sorted[Math.floor(sorted.length / 2)]
+            } else {
+                let mid = sorted.length / 2
+                median = (sorted[mid - 1] + sorted[mid]) / 2
+            }
+
+            let min = sorted[0]
+            let max = sorted[sorted.length - 1]
+
+            // Calcolo il CAGR per ogni simulazione e poi ne prendo la media
+            let cagrValues = sorted.map(v => Math.pow(v / 100, 1 / years) - 1)
+            let cagr = cagrValues.reduce((a, b) => a + b, 0) / cagrValues.length
+
+            return { avg, median, min, max, cagr }
+
+        }
+
+        function updateTable(resA, resB, years) {
+
+            let sA = stats(resA, years)
+            let sB = stats(resB, years)
+
+            resultsTable.innerHTML = ""
+
+            function row(name, s) {
+
+                resultsTable.innerHTML += `
+<tr>
+<td>${name}</td>
+<td>${s.avg.toFixed(1)}</td>
+<td>${s.median.toFixed(1)}</td>
+<td>${s.min.toFixed(1)}</td>
+<td>${s.max.toFixed(1)}</td>
+<td>${(s.cagr * 100).toFixed(2)}%</td>
+</tr>
+`
+
+            }
+
+            row("Volatilità bassa", sA)
+            row("Volatilità alta", sB)
+
+        }
+
+        function drawHistogram(resA, resB) {
+
+            let bins = 30
+
+            let min = Math.min(...resA, ...resB)
+            let max = Math.max(...resA, ...resB)
+            let width = (max - min) / bins
+
+            function hist(data) {
+
+                let hist = new Array(bins).fill(0)
+
+                for (let v of data) {
+                    let i = Math.min(bins - 1, Math.floor((v - min) / width))
+                    hist[i]++
+                }
+
+                return hist
+
+            }
+
+            let hA = hist(resA)
+            let hB = hist(resB)
+
+            let labels = Array.from({ length: bins }, (_, i) => {
+                let mid = min + (i + 0.5) * width
+                return mid.toFixed(0)
+            })
+
+            if (histogramChart) histogramChart.destroy()
+
+            histogramChart = new Chart(histogramChartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: "Vol bassa", data: hA, backgroundColor: "rgba(40,167,69,0.6)" },
+                        { label: "Vol alta", data: hB, backgroundColor: "rgba(220,53,69,0.6)" }
+                    ]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: { display: true, text: "Valore finale (circa)" }
+                        },
+                        y: {
+                            title: { display: true, text: "Numero simulazioni" }
+                        }
+                    }
+                }
+            })
+
+        }
+
+        const yearsInput = document.getElementById("years")
+        const meanInput = document.getElementById("mean")
+        const volAInput = document.getElementById("volA")
+        const volBInput = document.getElementById("volB")
+        const pathsInput = document.getElementById("paths")
+        const modeInvestInput = document.getElementById("modeInvest")
+        const modeReturnInput = document.getElementById("modeReturn")
+
+        const resultsTable = document.getElementById("resultsTable")
+        const winrateSpan = document.getElementById("winrate")
+
+        const pathsChartCanvas = document.getElementById("pathsChart")
+        const histogramChartCanvas = document.getElementById("histogramChart")
+
+        runSimulation()
+
+    </script>
+
+</body>
+
+</html>
