@@ -266,6 +266,92 @@
             </div>
         </div>
 
+        <div class="card card-section shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Analisi Strategie Covered Call & ETF Income</h5>
+
+                <p>Basato sugli studi di <strong>Israelov & Nielsen (AQR)</strong> e sull'analisi delle strategie
+                    <em>BuyWrite</em>.
+                </p>
+
+                <h3 style="color: #2980b9;">1. I Tre Pilastri del Rendimento (Framework Israelov)</h3>
+                <p>Secondo la ricerca accademica, il rendimento di una Covered Call si scompone in tre componenti
+                    distinte [1, 2]:</p>
+                <ul>
+                    <li><strong>Passive Equity (~85% del rendimento):</strong> Deriva dal possesso del sottostante.
+                        È il motore principale ma anche la fonte del 65-75% del rischio totale [3, 4].</li>
+                    <li><strong>Short Volatility (~33% del rendimento):</strong> È il "premio" incassato vendendo
+                        opzioni. Sfrutta il <em>Volatility Risk Premium</em> (VRP), ovvero la tendenza del mercato a
+                        sovrastimare la volatilità futura [4-6]. Offre uno Sharpe Ratio elevato (~1.0) con solo il
+                        10% del rischio [4, 7].</li>
+                    <li><strong>Equity Reversal (~25% del rischio):</strong> Un costo nascosto dovuto al cambiamento
+                        del Delta (esposizione) mentre il mercato si muove [4, 8]. Genera un rendimento neutro o
+                        negativo, agendo come un market timing inefficiente: si vende quando il mercato sale e si
+                        compra quando scende [8, 9].</li>
+                </ul>
+
+                <h3 style="color: #2980b9;">2. Il Problema dell'Erosione (ATM vs OTM)</h3>
+                <p>La scelta dello <em>Strike Price</em> determina la sostenibilità nel lungo periodo:</p>
+                <ul>
+                    <li><strong>Strategie ATM (es. QYLD, XYLE):</strong> Vendono opzioni al prezzo corrente. Questo
+                        massimizza l'income immediato ma causa l'<strong>erosione del NAV</strong> (Net Asset Value)
+                        [10, 11]. Se il mercato sale, l'ETF vende i titoli a prezzi vecchi e li ricompra a prezzi
+                        nuovi più alti, "mangiando" il capitale [12].</li>
+                    <li><strong>Strategie OTM (es. JEPI, JEPQ):</strong> Vendono opzioni sopra il prezzo corrente
+                        (solitamente 2-5%). Permettono di partecipare parzialmente ai rialzi del mercato, riducendo
+                        drasticamente il rischio di erosione del capitale [10, 13, 14].</li>
+                </ul>
+
+                <h3 style="color: #2980b9;">3. Performance in Diversi Regimi di Mercato</h3>
+                <p>Le strategie Covered Call non sono miracolose, ma offrono un trade-off chiaro [15, 16]:</p>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="border: 1px solid #ddd; padding: 8px;">Scenario</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Risultato Strategia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;">Mercato Laterale / Rialzo Moderato
+                            </td>
+                            <td style="border: 1px solid #ddd; padding: 8px; color: green;">
+                                <strong>Outperformance:</strong> Il premio incassato batte l'indice puro [15, 17,
+                                18].
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;">Forte Bull Market</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; color: red;">
+                                <strong>Sottoperformance:</strong> Il "cap" delle opzioni impedisce di seguire i
+                                rally [15, 19, 20].
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;">Crollo del Mercato (Crash)</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;"><strong>Protezione Minima:</strong> Il
+                                premio mitiga la perdita di pochi punti percentuali, ma non protegge dai grandi
+                                drawdown [21-23].</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="color: #2980b9;">4. Conclusioni per l'Investitore</h3>
+                <ul>
+                    <li><strong>Hedging Naturale:</strong> Affiancare un ETF azionario puro (es. ACWE o S&P 500) a
+                        un ETF Covered Call aiuta a stabilizzare l'esposizione ed eliminare i costi dell'Equity
+                        Reversal [24, 25].</li>
+                    <li><strong>Diversificazione Globale:</strong> Strategie diversificate su più indici globali
+                        mostrano Sharpe Ratio superiori e drawdown inferiori rispetto a strategie concentrate su un
+                        singolo paese [25, 26].</li>
+                    <li><strong>Efficienza:</strong> L'uso di ETF professionali (TER 0.35% - 0.60%) è spesso più
+                        efficiente della gestione manuale, che può costare fino all'8% annuo tra commissioni e tempo
+                        dedicato [27, 28].</li>
+                </ul>
+            </div>
+        </div>
+
+
         <!-- DISCLAIMER -->
         <div id="disclaimer-container"></div>
 
