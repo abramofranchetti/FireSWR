@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covered Call - Studio</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <!-- <script src="js/ytm.js" defer></script>    -->
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Covered Call</h1>
+        <h5 class="text-center">Riepilogo dei miei studi sulle covered call</h5>
+
+        In questa pagina raccolgo i miei studi sulle covered call, una strategia di investimento che prevede la vendita
+        di opzioni call su un titolo che si possiede già. L'obiettivo è generare reddito aggiuntivo attraverso i premi
+        delle opzioni, ma è importante comprendere i rischi associati a questa strategia, come la potenziale perdita del
+        titolo se il prezzo supera lo strike price dell'opzione venduta. Di seguito, esplorerò vari aspetti delle
+        covered call, inclusi i vantaggi, gli svantaggi e le considerazioni chiave per gli investitori interessati a
+        questa strategia.
+
+        I miei studi numerici su dati storici di mercato sono elencati qui sotto
+
+        <h6 class="mt-4">Studi su ETF Europei UCITS con strategia covered call</h6>
+        <ul>
+            <li><a href="../winc/studioWinc.html">Studio su WINC - iShares World Equity High Income UCITS ETF USD (Dist)
+                </a>
+            </li>
+            <li><a href="../jepg/studioJepg.html">Studio su JEPG - JPMorgan Global Equity Premium Income Active UCITS
+                    ETF USD (dist)
+                </a>
+            </li>
+            <li><a href="../jepg.mi/studioJepg.mi.html">Studio su JEPG - JPMorgan Global Equity Premium Income Active
+                    UCITS
+                    ETF USD (dist)
+                </a>
+            </li>
+            <li><a href="../qyld.mi/studioQyld.mi.html">Studio su QYLD - Global X Nasdaq 100 Covered Call UCITS ETF ETF
+                    D
+                </a>
+            </li>
+            <li><a href="../qyld.mi/studioQyld.mi.html">Studio su QYLD - Global X Nasdaq 100 Covered Call UCITS ETF ETF
+                    D
+                </a>
+            </li>
+            <li><a href="../xyle/studioXyle.html">Studio su XYLE - Global X S&P 500 Covered Call UCITS ETF D
+                </a>
+            </li>
+        </ul>
+        <h6 class="mt-4">Studi su ETF Americani con strategia covered call, utili perchè hanno uno storico molto più
+            lungo di quelli europei</h6>
+        <ul>
+            <li><a href="../qyld/studioQyld.html">Studio su QYLD - Global X Nasdaq 100 Covered Call ETF
+                </a>
+            </li>
+            <li><a href="../xyld/studioXyld.html">Studio su XYLD - Global X S&P 500 Covered Call ETF
+                </a>
+            </li>
+        </ul>
+
+        <h6>Altro materiale raccolto studi accademici e considerazioni</h6>
+        <ul>
+            <li><a href="./Covered Call Strategy_ Guida Completa 2026 e Performance - Simone Balestri.pdf">Studio di
+                    Simone Balestri di Investitore Comune relativo alle covered Call
+                </a>
+            </li>
+            <li><a href="./Covered Calls Uncovered.pdf">Studio di Roni Israelov and Lars N. Nielsen
+                </a>
+            </li>
+            <li><a href="./Covering the world global evidence on covered calls.pdf">Studio di Roni Israelov, Matthew
+                    Klein and Harsha Tummala</a>
+            </li>
+        </ul>
+
+        <h6>Cosa sono le opzioni call</h6>
+        Opzioni call: strategia di investimento
+        Alcuni investitori utilizzano le opzioni come parte della loro strategia di investimento. Leggi questo articolo
+        per saperne di più sulle opzioni call!
+        Che cosa sono le opzioni call?
+        Un'opzione call ti dà il diritto di acquistare uno strumento finanziario, ad esempio un'azione, a un determinato
+        prezzo. Le opzioni call sono l'opposto delle opzioni put, in quanto ti danno il diritto di vendere. Le opzioni
+        possono riguardare tutti i tipi di strumenti finanziari, come azioni, futures e indici.
+        Prezzo di esercizio e data di scadenza
+        Il prezzo di esercizio (o strike price) di un'opzione call è il prezzo al quale il titolare può vendere
+        l'attività sottostante. I contratti di opzione hanno solitamente una dimensione di cento. Inoltre, le opzioni
+        call hanno sempre una data di scadenza. Esistono opzioni call su tutti i tipi di attività sottostanti, come
+        azioni e indici, nonché titoli a reddito fisso e futures.
+        Opzioni call americane ed europee
+        Ci sono anche le cosiddette opzioni call americane ed europee. La differenza tra le due tipologie riguarda il
+        momento in cui il diritto di acquisto può essere esercitato. Per le opzioni americane, questa operazione può
+        essere effettuata in qualsiasi momento. Per le opzioni europee, è possibile farlo solo alla data di scadenza
+        dell'opzione call. Pertanto, il fatto che le opzioni siano statunitensi o europee non ha nulla a che vedere con
+        il luogo in cui vengono negoziate le opzioni o gli strumenti sottostanti. Le opzioni call su azioni sono quasi
+        sempre americane. Le opzioni call su un indice sono spesso europee.
+        Esempio di liquidazione di opzioni call
+        Per dare un'idea di come funziona, facciamo un esempio. Prendiamo in considerazione un'opzione call sulle azioni
+        di una compagnia X con un prezzo di esercizio di 60 €. Questa opzione call dà il diritto di acquistare cento
+        azioni della suddetta compagnia per 60 €. Se il prezzo dell'azione è pari a 63 €, l'esercizio dell'opzione
+        produce 300 € (aumento di 3 €*100). Infatti, è possibile acquistare cento azioni a 60 €, che l'investitore può
+        poi vendere in Borsa a 63 €.
+        Opzioni call in the money, out of the money e near the money
+        Se il prezzo dello strumento sottostante è superiore al prezzo di esercizio di un'opzione call, l'opzione è "in
+        the money". Ciò significa che l'opzione rende quando viene esercitata. Se il prezzo è inferiore al prezzo di
+        esercizio, l'opzione call non produce alcun guadagno quando viene esercitata. Allora l'opzione è ‘’out of the
+        money’’. Se il prezzo e il prezzo d'esercizio sono vicini, invece, un'opzione call è "near the money".
+        Rischi delle opzioni call
+        Le opzioni call consentono agli investitori di seguire strategie di investimento complesse. Queste sono adatte a
+        strategie sia lunghe che corte sullo strumento finanziario sottostante. Un vantaggio delle opzioni call è che
+        consentono agli investitori di ottenere rendimenti consistenti. Lo svantaggio, però, è che comporta dei rischi.
+        I rischi dipendono dalla strategia di investimento.
+        Scrittura di opzioni call
+        Uno dei modi per investire in opzioni call è quello di scriverle. Con questo termine si intende che
+        l'investitore vende un'opzione call. In cambio, il venditore o l'autore dell'opzione riceve un premio
+        dall'acquirente. Questo può dare agli investitori che scrivono opzioni call un rendimento aggiuntivo. Lo
+        scrittore ha ora l'obbligo di vendere l'attività sottostante a un prezzo predeterminato (prezzo di esercizio) a
+        una data predeterminata (data di scadenza).
+        Scrittura coperta di opzioni call
+        La scrittura coperta di opzioni call è una strategia di opzioni molto utilizzata dagli investitori che investono
+        in azioni a lungo termine. Ad esempio, un investitore che segue questa strategia ha un portafoglio di azioni per
+        le quali si prevede un aumento graduale dei prezzi. Un investitore scrive opzioni call per ottenere un reddito
+        aggiuntivo dal premio pagato dall'acquirente delle opzioni call. Ogni volta che un'opzione call scade,
+        l'investitore scrive una nuova opzione call. Questa operazione è chiamata anche "rollover" o "switch".
+        La scrittura di opzioni call limita i guadagni di prezzo
+        Scrivendo opzioni call, l'investitore scambia la possibilità di un guadagno di prezzo con il premio. Infatti, se
+        il prezzo sale oltre il prezzo di esercizio, l'acquirente dell'opzione call può esercitarla. Ciò significa che
+        lo scrittore deve vendere a quel prezzo. Di conseguenza, il guadagno che lo scrittore può ottenere è
+        effettivamente limitato al prezzo di esercizio dell'opzione call più il premio.
+        La scrittura di opzioni call limita il rischio di ribasso dei prezzi
+        Allo stesso tempo, la scrittura dell'opzione call limita in qualche modo il rischio in caso di calo dei prezzi.
+        L'opzione call scadrà senza valore. Finché la perdita di prezzo è inferiore al premio, la scrittura dell'opzione
+        offre all'investitore un vantaggio.
+        Esempio di scrittura di un'opzione call
+        Facciamo un esempio per chiarire il concetto. Anche in questo caso ipotizziamo un'opzione sulle azioni X con un
+        prezzo di esercizio di 60 €. Nel momento in cui l'investitore sottoscrive l'opzione, l'azione si trova a 63 € e
+        il premio che riceve è di 200 €. Se il prezzo dell'azione rimane al di sotto dei 63 € durante il periodo di
+        validità, l'opzione scade senza alcun beneficio per l'acquirente. Lo scrittore trattiene il premio di 200 €. Se
+        il prezzo delle azioni supera i 63 €, le cose cambiano. Lo scrittore conserva il premio di 200 €, ma perde il
+        guadagno di prezzo al di sopra dei 63 €. Se il prezzo sale oltre i 65 €, il mancato guadagno è maggiore del
+        premio (perché l'aumento è di 2*100 €=200 €). Se il prezzo scende a 57 €, lo scrittore ha ancora il premio di
+        200 €. Tuttavia, lo scrittore ha anche una perdita di prezzo di 300 €.
+        Riacquisto di opzioni call scritte
+        È sempre possibile riacquistare le opzioni call scritte. Con l'avvicinarsi della data di scadenza, il prezzo
+        delle opzioni si avvicina sempre più al valore di esercizio. Gli investitori possono così evitare di dover
+        vendere l'attività sottostante e possono tenere per sé l'eventuale guadagno di prezzo.
+        Scrittura di opzioni call scoperte
+        Un'altra strategia di investimento è quella di scrivere opzioni call scoperte. In questo caso, l'autore
+        dell'opzione call non possiede gli strumenti finanziari sottostanti in portafoglio. L'investitore specula sul
+        fatto che il prezzo non salirà oltre il prezzo di esercizio dell'opzione call. Se ciò accade e anche il prezzo
+        sale più del premio, l'investitore subisce una perdita.
+        Alto rischio con la scrittura di opzioni call scoperte
+        Un investitore che scrive opzioni call scoperte corre un grosso rischio. Questo perché non c'è una perdita
+        massima. Dopo tutto, il prezzo può continuare a salire all'infinito. All'aumentare del prezzo, aumenta la
+        perdita. Gli investitori possono limitare il rischio delle opzioni call scritte con altre opzioni. Se il prezzo
+        sale, possono anche riacquistare le opzioni scritte o acquistare direttamente le attività sottostanti. La
+        scrittura di opzioni call scoperte è una strategia di investimento molto rischiosa, adatta solo a investitori
+        molto esperti.
+        Sicurezza
+        Per la scrittura di opzioni call scoperte, i broker richiedono una garanzia. Questo importo riservato è chiamato
+        anche margine iniziale. La garanzia è una percentuale del valore del contratto. Sulla nostra piattaforma di
+        investimento, oltre al nome del prodotto, troverete anche la categoria di rischio corrispondente. Questa
+        categoria di rischio indica l'ammontare del margine iniziale da depositare per chiudere il contratto.
+    </div>
+
+    <!-- Disclaimer -->
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
