@@ -83,6 +83,13 @@
 
         <h4 class="mt-5">Distribuzione capitale finale</h4>
 
+        <canvas id="cagrChart"></canvas>
+
+        <p class="mt-3 text-muted"><strong>Conclusioni CAGR:</strong> Il tasso di crescita annuale composto (CAGR)
+            mostra Perfect Timer con il rendimento più alto, ma con volatilità implicita. Lump Sum e PAC hanno CAGR
+            simili, con PAC leggermente inferiore a causa del timing diluito. Il monetario offre CAGR prevedibile ma
+            modesto.</p>
+
         <canvas id="distributionChart"></canvas>
 
         <p class="mt-3 text-muted"><strong>Conclusioni distribuzione:</strong> L'istogramma evidenzia la variabilità dei
@@ -90,14 +97,7 @@
             hanno distribuzioni più simmetriche. Il benchmark monetario ha una distribuzione concentrata intorno al
             valore atteso, riflettendo l'assenza di rischio di mercato.</p>
 
-        <h4 class="mt-5">CAGR medio per strategia</h4>
-
-        <canvas id="cagrChart"></canvas>
-
-        <p class="mt-3 text-muted"><strong>Conclusioni CAGR:</strong> Il tasso di crescita annuale composto (CAGR)
-            mostra Perfect Timer con il rendimento più alto, ma con volatilità implicita. Lump Sum e PAC hanno CAGR
-            simili, con PAC leggermente inferiore a causa del timing diluito. Il monetario offre CAGR prevedibile ma
-            modesto.</p>
+        <h4 class="mt-5">CAGR medio per strategia</h4>    
 
         <h4 class="mt-5">Differenza PAC vs Lump Sum</h4>
 
@@ -385,9 +385,9 @@
                 // Definizione strategie
                 let strategies = {
                     "Perfect Timer": "best",
-                    "Worst Timer": "worst",
                     "Lump Sum annuale": "first",
                     "PAC mensile": "pac",
+                    "Worst Timer": "worst",                                
                     "Tasso risk-free (Shiller)": "cash"
                 };
 
