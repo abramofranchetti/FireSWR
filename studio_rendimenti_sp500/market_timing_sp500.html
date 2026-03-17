@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Studio Market Timing S&P500</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body class="bg-light">
+
+    <div class="container mt-5 bg-white p-4 rounded shadow">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <h2 class="mb-4">Studio Market Timing S&P 500 - Analisi Strategie di Investimento</h2>
+
+        <p class="text-muted">Questo studio analizza le performance di diverse strategie di investimento sull'indice S&P
+            500 utilizzando dati storici mensili dal 1871 al 2026 (circa 155 anni).
+            Ci sono 5 Strategie analizzate: Perfect Timer (acquisto al minimo annuale), Worst Timer (acquisto al massimo
+            annuale), Lump Sum annuale (investimento totale a inizio anno), PAC mensile (investimento diluito ogni mese)
+            e Tasso risk-free (rendimenti monetari Shiller).
+            I calcoli tengono conto delle imposte sul 15% dei dividendi
+            e reinvestimento netto. L'analisi rolling simula investimenti di 10 anni (modificabile) iniziati in ogni
+            mese storico, fornendo statistiche robuste su migliaia di scenari.</p>
+
+        <div class="row mb-4 align-items-end">
+
+            <div class="col-md-3 col-sm-6 mb-2">
+                <label>Periodo investimento (anni)</label>
+                <input id="yearsInput" type="number" value="10" class="form-control">
+            </div>
+
+            <div class="col-md-3 col-sm-6 mb-2">
+                <label>Investimento annuo</label>
+                <input id="amountInput" type="number" value="10000" class="form-control">
+            </div>
+
+            <div class="col-md-3 col-sm-6 mb-2">
+                <button class="btn btn-primary btn-block" id="calcButton">Calcola</button>
+            </div>
+
+            <div class="col-12">
+                <div id="loading" style="display:none;">Calcolo in corso...</div>
+            </div>
+
+        </div>
+        <h4>Risultati strategie</h4>
+
+        <table class="table table-bordered" id="resultTable">
+
+            <thead>
+
+                <tr>
+
+                    <th>Strategia</th>
+                    <th>Capitale medio</th>
+                    <th>Capitale mediano</th>
+                    <th>Min</th>
+                    <th>Max</th>
+                    <th>P10</th>
+                    <th>P90</th>
+                    <th>CAGR medio</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody></tbody>
+
+        </table>
+
+        <p class="mt-3 text-muted"><strong>Conclusioni tabella:</strong> La strategia Perfect Timer ottiene il
+            rendimento medio più alto grazie all'acquisto nei momenti di minimo mercato, mentre Worst Timer mostra le
+            perdite più severe. Lump Sum e PAC hanno performance simili, con PAC leggermente più stabile grazie alla
+            dollar-cost averaging. Il benchmark monetario offre rendimenti inferiori ma senza rischio di mercato.</p>
+
+        <h4 class="mt-5">Distribuzione capitale finale</h4>
+
+        <canvas id="distributionChart"></canvas>
+
+        <p class="mt-3 text-muted"><strong>Conclusioni distribuzione:</strong> L'istogramma evidenzia la variabilità dei
+            capitali finali. Strategie di market timing mostrano code pesanti (rischi elevati), mentre PAC e Lump Sum
+            hanno distribuzioni più simmetriche. Il benchmark monetario ha una distribuzione concentrata intorno al
+            valore atteso, riflettendo l'assenza di rischio di mercato.</p>
+
+        <h4 class="mt-5">CAGR medio per strategia</h4>
+
+        <canvas id="cagrChart"></canvas>
+
+        <p class="mt-3 text-muted"><strong>Conclusioni CAGR:</strong> Il tasso di crescita annuale composto (CAGR)
+            mostra Perfect Timer con il rendimento più alto, ma con volatilità implicita. Lump Sum e PAC hanno CAGR
+            simili, con PAC leggermente inferiore a causa del timing diluito. Il monetario offre CAGR prevedibile ma
+            modesto.</p>
+
+        <h4 class="mt-5">Differenza PAC vs Lump Sum</h4>
+
+        <canvas id="pacVsLump"></canvas>
+
+        <p class="mt-3 text-muted"><strong>Conclusioni differenza PAC vs Lump Sum:</strong> Il grafico raw mostra
+            variazioni mensili volatili, mentre la linea smoothed evidenzia trend secolari. PAC tende a performare
+            meglio in periodi di mercato ribassista iniziale (beneficio dollar-cost averaging), mentre Lump Sum vince
+            quando il mercato sale immediatamente. L'alta volatilità visibile nel grafico è dovuta al timing di ingresso
+            e uscita e mostra come questo giochi un ruolo molto importante nel determinare il rendimento.</p>
+
+        <h4 class="mt-5">Istogramma Differenze PAC vs Lump Sum</h4>
+
+        <canvas id="pacVsLumpHist"></canvas>
+
+        <p class="mt-3 text-muted"><strong>Conclusioni istogramma differenze:</strong> La distribuzione è
+            approssimativamente normale centrata su zero, indicando che PAC e Lump Sum hanno performance simili nel
+            lungo periodo. Le code mostrano che in casi estremi PAC può offrire protezione (differenze positive) o Lump
+            Sum vantaggi (differenze negative), ma la maggior parte degli scenari ha differenze minime.</p>
+
+        <h4 class="mt-5">Probabilità Lump Sum > PAC</h4>
+
+        <canvas id="probChart"></canvas>
+
+        <p class="mt-3 text-muted"><strong>Conclusioni probabilità:</strong> La probabilità che Lump Sum batta PAC
+            aumenta con l'orizzonte temporale, raggiungendo circa 60-70% per periodi lunghi. Questo suggerisce che in
+            mercati efficienti, l'investimento immediato ha un leggero vantaggio, ma PAC offre maggiore sicurezza
+            psicologica e riduce il rischio di timing errato.</p>
+
+    </div>
+    <!-- Disclaimer -->
+    <footer id="disclaimer-container"></footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('../html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+
+    <script>
+        function parseShillerCSV(text) {
+            // CSV Shiller: anno,mese\tLong Interest Rate (GS10)
+            return text.trim().split('\n').filter(line => line.trim()).map(line => {
+                let [ym, val] = line.split('\t');
+                let [y, m] = ym.split(',');
+                return {
+                    date: new Date(Number(y), Number(m) - 1, 1),
+                    rate: Number(val.replace(',', '.')) / 100
+                };
+            });
+        }
+
+        function parseCSV(text) {
+
+            return text.trim().split('\n').filter(line => line.trim()).map(line => {
+
+                let p = line.trim().split('\t')
+
+                if (p.length < 3) {
+
+                    console.warn("Riga CSV malformata:", line);
+
+                    return null;
+
+                }
+
+                let [ym, priceRaw, divRaw] = p
+
+                let [y, m] = ym.split(',')
+
+                if (!y || !m) {
+
+                    console.warn("Data malformata:", ym);
+
+                    return null;
+
+                }
+
+                return {
+
+                    date: new Date(y, m - 1, 1),
+
+                    price: Number(priceRaw.replace(',', '.')),
+
+                    div: Number(divRaw.replace(',', '.'))
+
+                }
+
+            }).filter(item => item !== null)
+
+        }
+
+        function buildNetTR(data, tax = 0.15) {
+
+            let res = []
+
+            res.push({ date: data[0].date, price: data[0].price, tr: 100 })
+
+            for (let i = 1; i < data.length; i++) {
+
+                let prev = res[i - 1]
+
+                let curr = data[i]
+
+                let div = (curr.div / 12) * (1 - tax)
+
+                let tr = prev.tr * ((curr.price + div) / prev.price)
+
+                res.push({ date: curr.date, price: curr.price, tr })
+
+            }
+
+            return res
+
+        }
+
+        function mean(a) { return a.reduce((x, y) => x + y, 0) / a.length }
+
+        function median(a) {
+
+            let s = [...a].sort((x, y) => x - y)
+
+            let m = Math.floor(s.length / 2)
+
+            return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2
+
+        }
+
+        function percentile(a, p) {
+
+            let s = [...a].sort((x, y) => x - y)
+
+            let i = (s.length - 1) * p
+
+            let lo = Math.floor(i)
+
+            let hi = Math.ceil(i)
+
+            if (hi >= s.length) hi = s.length - 1;
+
+            if (lo >= s.length) lo = s.length - 1;
+
+            if (lo === hi) {
+
+                return s[lo]
+
+            }
+
+            let result = s[lo] * (hi - i) + s[hi] * (i - lo)
+
+            return result
+
+        }
+
+        // Funzione simulate aggiornata per usare tassi mensili risk-free
+        function simulate(series, startIndex, years, amount, strategy, cashSeries = []) {
+            let months = years * 12;
+            let shares = 0;
+
+            if (strategy === "cash") {
+                let value = 0;
+                for (let y = 0; y < years; y++) {
+                    let rate = cashSeries[startIndex + y]?.rate ?? 0; // frazione annuale
+                    value = (value + amount) * (1 + rate);
+                }
+                let endValue = value;
+                let cagr = Math.pow(endValue / (years * amount), 1 / years) - 1;
+                return { endValue, cagr };
+            }
+
+            for (let y = 0; y < years; y++) {
+                let yearStart = startIndex + y * 12;
+                let yearEnd = yearStart + 12;
+
+                if (strategy === "first") {
+                    shares += amount / series[yearStart].tr;
+                }
+
+                if (strategy === "pac") {
+                    for (let m = yearStart; m < yearEnd; m++) {
+                        shares += (amount / 12) / series[m].tr;
+                    }
+                }
+
+                if (strategy === "best") {
+                    // Trova minimo dell'intero anno
+                    let minIdx = yearStart;
+                    let minVal = series[yearStart].tr;
+                    for (let m = yearStart; m < yearEnd; m++) {
+                        if (series[m].tr < minVal) {
+                            minVal = series[m].tr;
+                            minIdx = m;
+                        }
+                    }
+                    shares += amount / series[minIdx].tr;
+                }
+
+                if (strategy === "worst") {
+                    // Trova massimo dell'intero anno
+                    let maxIdx = yearStart;
+                    let maxVal = series[yearStart].tr;
+                    for (let m = yearStart; m < yearEnd; m++) {
+                        if (series[m].tr > maxVal) {
+                            maxVal = series[m].tr;
+                            maxIdx = m;
+                        }
+                    }
+                    shares += amount / series[maxIdx].tr;
+                }
+            }
+
+            let endValue = shares * series[startIndex + months].tr;
+            let invested = years * amount;
+            let cagr = Math.pow(endValue / invested, 1 / years) - 1;
+
+            return { endValue, cagr };
+        }
+        // Rolling aggiornato: passa cashSeries solo per strategia "cash"
+        function rolling(series, years, amount, strategy, cashSeries = []) {
+            let months = years * 12;
+            let results = [];
+
+            for (let i = 0; i + months < series.length; i++) {
+                results.push(simulate(series, i, years, amount, strategy, cashSeries));
+            }
+
+            return results;
+        }
+
+        function stats(results) {
+
+            let values = results.map(r => r.endValue)
+
+            let cagr = results.map(r => r.cagr)
+
+            return {
+
+                values,
+
+                mean: mean(values),
+
+                median: median(values),
+
+                min: Math.min(...values),
+
+                max: Math.max(...values),
+
+                p10: percentile(values, 0.10),
+
+                p90: percentile(values, 0.90),
+
+                cagrMean: mean(cagr)
+
+            }
+
+        }
+
+        async function runStudy() {
+            try {
+                // Controllo dati
+                if (!window.trSeries || !window.cashSeries) {
+                    alert("Dati non ancora caricati.");
+                    return;
+                }
+
+                let years = Number(yearsInput.value);
+                let amount = Number(amountInput.value);
+
+                if (years < 1 || years > 50 || isNaN(years)) {
+                    alert("Periodo investimento deve essere tra 1 e 50 anni.");
+                    return;
+                }
+                if (years * 12 > window.trSeries.length) {
+                    alert("Periodo troppo lungo per i dati disponibili.");
+                    return;
+                }
+
+                document.getElementById('calcButton').disabled = true;
+                document.getElementById('loading').style.display = 'block';
+
+                // Definizione strategie
+                let strategies = {
+                    "Perfect Timer": "best",
+                    "Worst Timer": "worst",
+                    "Lump Sum annuale": "first",
+                    "PAC mensile": "pac",
+                    "Tasso risk-free (Shiller)": "cash"
+                };
+
+                let tbody = document.querySelector("#resultTable tbody");
+                tbody.innerHTML = "";
+
+                let chartValues = {};
+                let cagrData = [];
+
+                for (let name in strategies) {
+                    let strat = strategies[name];
+                    let res = (strat === "cash")
+                        ? rolling(window.trSeries, years, amount, strat, window.cashSeries)
+                        : rolling(window.trSeries, years, amount, strat);
+
+                    let s = stats(res);
+
+                    chartValues[name] = s.values;
+                    cagrData.push(s.cagrMean * 100);
+
+                    // Costruzione riga tabella
+                    let row = document.createElement("tr");
+                    row.innerHTML = `
+<td>${name}</td>
+<td>${Math.round(s.mean).toLocaleString()}</td>
+<td>${Math.round(s.median).toLocaleString()}</td>
+<td>${Math.round(s.min).toLocaleString()}</td>
+<td>${Math.round(s.max).toLocaleString()}</td>
+<td>${Math.round(s.p10).toLocaleString()}</td>
+<td>${Math.round(s.p90).toLocaleString()}</td>
+<td>${(s.cagrMean * 100).toFixed(2)}%</td>`;
+                    tbody.appendChild(row);
+                }
+
+                // Grafici
+                drawDistribution(chartValues);
+                drawCAGR(cagrData, Object.keys(strategies));
+                drawPACDiff(years, amount);
+                drawProbability(amount);
+
+                document.getElementById('calcButton').disabled = false;
+                document.getElementById('loading').style.display = 'none';
+            } catch (e) {
+                console.error("Errore runStudy:", e);
+                alert("Errore durante il calcolo: " + e.message);
+                document.getElementById('calcButton').disabled = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+
+        function createHistogram(data, bins = 20) {
+
+            if (!data || data.length === 0) return { labels: [], data: [] };
+
+            let min = Math.min(...data);
+
+            let max = Math.max(...data);
+
+            let binSize = (max - min) / bins;
+
+            let hist = new Array(bins).fill(0);
+
+            data.forEach(val => {
+
+                let bin = Math.min(Math.floor((val - min) / binSize), bins - 1);
+
+                hist[bin]++;
+
+            });
+
+            let labels = [];
+
+            for (let i = 0; i < bins; i++) {
+
+                let start = min + i * binSize;
+
+                let end = start + binSize;
+
+                labels.push(`${Math.round(start).toLocaleString()} - ${Math.round(end).toLocaleString()}`);
+
+            }
+
+            return { labels, data: hist };
+
+        }
+
+        function drawDistribution(values) {
+            if (window.distributionChart && typeof window.distributionChart.destroy === "function") {
+                window.distributionChart.destroy();
+            }
+            let ctx = document.getElementById('distributionChart').getContext('2d');
+
+            let datasets = [];
+            let colors = ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 205, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)'];
+            let i = 0;
+
+            Object.keys(values).forEach(k => {
+                let hist = createHistogram(values[k]);
+                datasets.push({
+                    label: k,
+                    data: hist.data,
+                    backgroundColor: colors[i % colors.length],
+                    borderColor: colors[i % colors.length].replace('0.5', '1'),
+                    borderWidth: 1
+                });
+                i++;
+            });
+
+            window.distributionChart = new Chart(ctx, {
+                type: "bar",
+                data: { labels: createHistogram(Object.values(values)[0]).labels, datasets },
+                options: {
+                    scales: {
+                        x: { stacked: false },
+                        y: { title: { display: true, text: "Frequenza" } }
+                    }
+                }
+            });
+        }
+
+        function drawCAGR(data, labels) {
+            if (window.cagrChart && typeof window.cagrChart.destroy === "function") {
+                window.cagrChart.destroy();
+            }
+            let ctx = document.getElementById('cagrChart').getContext('2d');
+
+            window.cagrChart = new Chart(ctx, {
+                type: "bar",
+                data: { labels, datasets: [{ label: "CAGR medio %", data }] },
+                options: {
+                    scales: {
+                        y: { title: { display: true, text: "CAGR %" } },
+                        x: { title: { display: true, text: "Strategia" } }
+                    }
+                }
+            });
+        }
+
+        function drawPACDiff(years, amount) {
+            let months = years * 12;
+            let diff = [];
+            let labels = [];
+
+            for (let i = 0; i + months < trSeries.length; i++) {
+                let pac = simulate(trSeries, i, years, amount, "pac").endValue;
+                let lump = simulate(trSeries, i, years, amount, "first").endValue;
+
+                diff.push((pac - lump) / lump * 100);
+                labels.push(trSeries[i].date.getFullYear());
+            }
+
+            // Media mobile 12 mesi
+            let smoothed = [];
+            for (let i = 0; i < diff.length; i++) {
+                let sum = 0, count = 0;
+                for (let j = Math.max(0, i - 6); j <= Math.min(diff.length - 1, i + 6); j++) {
+                    sum += diff[j];
+                    count++;
+                }
+                smoothed.push(sum / count);
+            }
+
+            if (window.pacVsLumpChart && typeof window.pacVsLumpChart.destroy === "function") {
+                window.pacVsLumpChart.destroy();
+            }
+            let ctx = document.getElementById('pacVsLump').getContext('2d');
+
+            window.pacVsLumpChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "Differenza Raw %",
+                        data: diff,
+                        pointRadius: 0,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        borderWidth: 1
+                    }, {
+                        label: "Differenza Smoothed %",
+                        data: smoothed,
+                        pointRadius: 0,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { title: { display: true, text: "Differenza %" } },
+                        x: { title: { display: true, text: "Anno di inizio" } }
+                    }
+                }
+            });
+
+            // Istogramma differenze PAC vs Lump Sum
+            drawPACDiffHist(diff);
+        }
+
+        function drawPACDiffHist(diff) {
+            let hist = createHistogram(diff, 30);
+
+            if (window.pacVsLumpHistChart && typeof window.pacVsLumpHistChart.destroy === "function") {
+                window.pacVsLumpHistChart.destroy();
+            }
+            let ctx = document.getElementById('pacVsLumpHist').getContext('2d');
+
+            window.pacVsLumpHistChart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: hist.labels,
+                    datasets: [{
+                        label: "Frequenza Differenze %",
+                        data: hist.data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: { title: { display: true, text: "Differenza %" } },
+                        y: { title: { display: true, text: "Frequenza" } }
+                    }
+                }
+            });
+        }
+
+        function drawProbability(amount) {
+            let probs = [];
+            let labels = [];
+
+            for (let years = 1; years <= 40; years++) {
+                let months = years * 12;
+                let wins = 0, tot = 0;
+
+                for (let i = 0; i + months < trSeries.length; i++) {
+                    let pac = simulate(trSeries, i, years, amount, "pac").endValue;
+                    let lump = simulate(trSeries, i, years, amount, "first").endValue;
+                    if (lump > pac) wins++;
+                    tot++;
+                }
+
+                probs.push(wins / tot * 100);
+                labels.push(years);
+            }
+
+            if (window.probChart && typeof window.probChart.destroy === "function") {
+                window.probChart.destroy();
+            }
+            let ctx = document.getElementById('probChart').getContext('2d');
+
+            window.probChart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "Probabilità Lump Sum > PAC %",
+                        data: probs,
+                        backgroundColor: 'rgba(153, 102, 255, 0.5)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { title: { display: true, text: "Probabilità %" }, max: 100 },
+                        x: { title: { display: true, text: "Orizzonte anni" } }
+                    }
+                }
+            });
+        } async function init() {
+            try {
+                // Dati S&P500
+                let csv = await fetch("./sp500_shiller_price_dividends.csv").then(r => r.text());
+                let parsed = parseCSV(csv);
+                window.trSeries = buildNetTR(parsed);
+
+                // Dati risk-free Shiller
+                let csvCash = await fetch("./shiller_monetary_rate.csv").then(r => r.text());
+                window.cashSeries = await parseShillerCSV(csvCash);
+
+                runStudy();
+            } catch (e) {
+                console.error("Errore caricamento dati:", e);
+                alert("Errore caricamento dati: " + e.message);
+            }
+        }
+
+        init();
+        document.getElementById('calcButton').addEventListener('click', runStudy);
+
+    </script>
+</body>
+
+</html>
