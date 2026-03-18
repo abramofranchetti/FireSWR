@@ -38,7 +38,7 @@
             </div>
 
             <div class="col-md-3 col-sm-6 mb-2">
-                <label>Investimento annuo</label>
+                <label>Investimento annuo ($)</label>
                 <input id="amountInput" type="number" value="10000" class="form-control">
             </div>
 
@@ -60,12 +60,13 @@
                 <tr>
 
                     <th>Strategia</th>
-                    <th>Capitale medio</th>
-                    <th>Capitale mediano</th>
-                    <th>Min</th>
-                    <th>Max</th>
-                    <th>P10</th>
-                    <th>P90</th>
+                    <th>Totale versato $</th>
+                    <th>Capitale medio $</th>
+                    <th>Capitale mediano $</th>
+                    <th>Min $</th>
+                    <th>Max $</th>
+                    <th>P10 $</th>
+                    <th>P90 $</th>
                     <th>CAGR medio</th>
 
                 </tr>
@@ -97,7 +98,7 @@
             hanno distribuzioni più simmetriche. Il benchmark monetario ha una distribuzione concentrata intorno al
             valore atteso, riflettendo l'assenza di rischio di mercato.</p>
 
-        <h4 class="mt-5">CAGR medio per strategia</h4>    
+        <h4 class="mt-5">CAGR medio per strategia</h4>
 
         <h4 class="mt-5">Differenza PAC vs Lump Sum</h4>
 
@@ -331,7 +332,7 @@
             return results;
         }
 
-        function stats(results) {
+        function stats(results, years, amount) {
 
             let values = results.map(r => r.endValue)
 
@@ -340,6 +341,8 @@
             return {
 
                 values,
+
+                versato: years * amount,
 
                 mean: mean(values),
 
@@ -387,7 +390,7 @@
                     "Perfect Timer": "best",
                     "Lump Sum annuale": "first",
                     "PAC mensile": "pac",
-                    "Worst Timer": "worst",                                
+                    "Worst Timer": "worst",
                     "Tasso risk-free (Shiller)": "cash"
                 };
 
@@ -403,7 +406,7 @@
                         ? rolling(window.trSeries, years, amount, strat, window.cashSeries)
                         : rolling(window.trSeries, years, amount, strat);
 
-                    let s = stats(res);
+                    let s = stats(res, years, amount);
 
                     chartValues[name] = s.values;
                     cagrData.push(s.cagrMean * 100);
@@ -412,6 +415,7 @@
                     let row = document.createElement("tr");
                     row.innerHTML = `
 <td>${name}</td>
+<td>${Math.round(s.versato).toLocaleString()}</td>
 <td>${Math.round(s.mean).toLocaleString()}</td>
 <td>${Math.round(s.median).toLocaleString()}</td>
 <td>${Math.round(s.min).toLocaleString()}</td>
