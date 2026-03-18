@@ -97,6 +97,17 @@
             background-color: #f2f6fa;
         }
 
+        .formula-box {
+            background: #f8fafc;
+            border: 1px solid #dfe7ef;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+        }
+
+        .formula-box p:last-child {
+            margin-bottom: 0;
+        }
+
         .text-positive {
             color: #1e7e34;
         }
@@ -140,6 +151,41 @@
                 </p>
             </div>
         </section>
+
+        <section class="card card-section shadow-sm">
+            <div class="card-body">
+                <h2 class="section-title h5">ETF Europei UCITS</h2>
+                <ul class="mb-0">
+                    <li><a href="../winc/studioWinc.html">WINC - iShares World Equity High Income UCITS ETF</a></li>
+                    <li><a href="../jepg.mi/studioJepg.mi.html">JEPG - JPMorgan Global Equity Premium Income UCITS ETF</a></li>
+                    <li><a href="../qyld.mi/studioQyld.mi.html">QYLD - Global X Nasdaq 100 Covered Call UCITS ETF D</a></li>
+                    <li><a href="../xyle/studioXyle.html">XYLE - Global X S&amp;P 500 Covered Call UCITS ETF D</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="card card-section shadow-sm">
+            <div class="card-body">
+                <h2 class="section-title h5">ETF Americani (storico più lungo)</h2>
+                <ul class="mb-0">
+                    <li><a href="../qyld/studioQyld.html">QYLD - Global X Nasdaq 100 Covered Call ETF</a></li>
+                    <li><a href="../xyld/studioXyld.html">XYLD - Global X S&amp;P 500 Covered Call ETF</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="card card-section shadow-sm">
+            <div class="card-body">
+                <h2 class="section-title h5">Materiale accademico</h2>
+                <ul class="mb-0">
+                    <li><a href="./Covered Call Strategy_ Guida Completa 2026 e Performance - Simone Balestri.pdf">Studio di Simone Balestri</a></li>
+                    <li><a href="./Covered Calls Uncovered.pdf">Israelov &amp; Nielsen</a></li>
+                    <li><a href="./Covering the world global evidence on covered calls.pdf">Global evidence study</a></li>
+                    <li><a href="https://www.linkedin.com/pulse/price-return-vs-total-options-income-etps-incomeshares-41zef/">Articolo di Global X sulla differenza di price index e TR index sui prodotti IncomeShares</a></li>
+                </ul>
+            </div>
+        </section>
+
         <section class="card card-section shadow-sm">
             <div class="card-body theory-block">
                 <h2 class="section-title h3">Opzioni call: strategia di investimento</h2>
@@ -287,42 +333,30 @@
                 <h2 class="section-title h5">Analisi Strategie Covered Call &amp; ETF Income</h2>
 
                 <p>
-                    Basato sugli studi di <strong>Israelov &amp; Nielsen (AQR)</strong> e sull'analisi delle strategie
-                    <em>BuyWrite</em>.
+                    Questa sezione è basata sugli studi di <strong>Israelov &amp; Nielsen (AQR)</strong> e sull'analisi
+                    delle strategie <em>BuyWrite</em>.
                 </p>
 
                 <h3 class="subsection-title">1. I Tre Pilastri del Rendimento (Framework Israelov)</h3>
                 <p>
                     Secondo la ricerca accademica, il rendimento di una Covered Call si scompone in tre componenti
-                    distinte [1, 2]:
+                    distinte:
                 </p>
                 <ul>
-                    <li><strong>Passive Equity (~85% del rendimento):</strong> Deriva dal possesso del sottostante. È il
-                        motore principale ma anche la fonte del 65-75% del rischio totale [3, 4].</li>
-                    <li><strong>Short Volatility (~33% del rendimento):</strong> È il "premio" incassato vendendo
-                        opzioni. Sfrutta il <em>Volatility Risk Premium</em> (VRP), ovvero la tendenza del mercato a
-                        sovrastimare la volatilità futura [4-6]. Offre uno Sharpe Ratio elevato (~1.0) con solo il 10%
-                        del rischio [4, 7].</li>
-                    <li><strong>Equity Reversal (~25% del rischio):</strong> Un costo nascosto dovuto al cambiamento del
-                        Delta (esposizione) mentre il mercato si muove [4, 8]. Genera un rendimento neutro o negativo,
-                        agendo come un market timing inefficiente: si vende quando il mercato sale e si compra quando
-                        scende [8, 9].</li>
+                    <li><strong>Passive Equity (~85% del rendimento):</strong> Deriva dal possesso del sottostante. È il motore principale, ma anche la fonte del 65-75% del rischio totale.</li>
+                    <li><strong>Short Volatility (~33% del rendimento):</strong> È il "premio" incassato vendendo opzioni. Sfrutta il <em>Volatility Risk Premium</em> (VRP), cioè la tendenza del mercato a sovrastimare la volatilità futura. Offre uno Sharpe Ratio elevato (~1.0) con solo il 10% del rischio.</li>
+                    <li><strong>Equity Reversal (~25% del rischio):</strong> È un costo nascosto dovuto al cambiamento del Delta (esposizione) mentre il mercato si muove. Genera un rendimento neutro o negativo, agendo come un market timing inefficiente: si vende quando il mercato sale e si compra quando scende .</li>
                 </ul>
 
                 <h3 class="subsection-title">2. Il Problema dell'Erosione (ATM vs OTM)</h3>
-                <p>La scelta dello <em>Strike Price</em> determina la sostenibilità nel lungo periodo:</p>
+                <p>La scelta dello <em>strike price</em> determina la sostenibilità nel lungo periodo:</p>
                 <ul>
-                    <li><strong>Strategie ATM (es. QYLD, XYLE):</strong> Vendono opzioni al prezzo corrente. Questo
-                        massimizza l'income immediato ma causa l'<strong>erosione del NAV</strong> (Net Asset Value)
-                        [10, 11]. Se il mercato sale, l'ETF vende i titoli a prezzi vecchi e li ricompra a prezzi nuovi
-                        più alti, "mangiando" il capitale [12].</li>
-                    <li><strong>Strategie OTM (es. JEPI, JEPQ):</strong> Vendono opzioni sopra il prezzo corrente
-                        (solitamente 2-5%). Permettono di partecipare parzialmente ai rialzi del mercato, riducendo
-                        drasticamente il rischio di erosione del capitale [10, 13, 14].</li>
+                    <li><strong>Strategie ATM (es. QYLD, XYLE):</strong> Vendono opzioni al prezzo corrente. Questo massimizza l'income immediato ma causa l'<strong>erosione del NAV</strong> (Net Asset Value). Se il mercato sale, l'ETF vende i titoli a prezzi vecchi e li ricompra a prezzi nuovi più alti, "mangiando" il capitale.</li>
+                    <li><strong>Strategie OTM (es. JEPI, JEPQ):</strong> Vendono opzioni sopra il prezzo corrente (solitamente 2-5%). Permettono di partecipare parzialmente ai rialzi del mercato, riducendo drasticamente il rischio di erosione del capitale.</li>
                 </ul>
 
                 <h3 class="subsection-title">3. Performance in Diversi Regimi di Mercato</h3>
-                <p>Le strategie Covered Call non sono miracolose, ma offrono un trade-off chiaro [15, 16]:</p>
+                <p>Le strategie Covered Call non sono miracolose, ma offrono un trade-off chiaro:</p>
 
                 <div class="table-wrap">
                     <table class="analysis-table">
@@ -335,76 +369,113 @@
                         <tbody>
                             <tr>
                                 <td>Mercato Laterale / Rialzo Moderato</td>
-                                <td class="text-positive"><strong>Outperformance:</strong> Il premio incassato batte
-                                    l'indice puro [15, 17, 18].</td>
+                                <td class="text-positive"><strong>Outperformance:</strong> Il premio incassato batte l'indice puro.</td>
                             </tr>
                             <tr>
                                 <td>Forte Bull Market</td>
-                                <td class="text-negative"><strong>Sottoperformance:</strong> Il "cap" delle opzioni
-                                    impedisce di seguire i rally [15, 19, 20].</td>
+                                <td class="text-negative"><strong>Sottoperformance:</strong> Il "cap" delle opzioni impedisce di seguire i rally.</td>
                             </tr>
                             <tr>
                                 <td>Crollo del Mercato (Crash)</td>
-                                <td><strong>Protezione Minima:</strong> Il premio mitiga la perdita di pochi punti
-                                    percentuali, ma non protegge dai grandi drawdown [21-23].</td>
+                                <td><strong>Protezione Minima:</strong> Il premio mitiga la perdita di pochi punti percentuali, ma non protegge dai grandi drawdown.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
                 <h3 class="subsection-title">4. Conclusioni per l'Investitore</h3>
-                <ul class="mb-0">
-                    <li><strong>Hedging Naturale:</strong> Affiancare un ETF azionario puro (es. ACWE o S&amp;P 500) a
-                        un ETF Covered Call aiuta a stabilizzare l'esposizione ed eliminare i costi dell'Equity Reversal
-                        [24, 25].</li>
-                    <li><strong>Diversificazione Globale:</strong> Strategie diversificate su più indici globali
-                        mostrano Sharpe Ratio superiori e drawdown inferiori rispetto a strategie concentrate su un
-                        singolo paese [25, 26].</li>
-                    <li><strong>Efficienza:</strong> L'uso di ETF professionali (TER 0.35% - 0.60%) è spesso più
-                        efficiente della gestione manuale, che può costare fino all'8% annuo tra commissioni e tempo
-                        dedicato [27, 28].</li>
+                <ul>
+                    <li><strong>Hedging Naturale:</strong> Affiancare un ETF azionario puro (es. ACWE o S&amp;P 500) a un ETF Covered Call aiuta a stabilizzare l'esposizione ed eliminare i costi dell'Equity Reversal.</li>
+                    <li><strong>Diversificazione Globale:</strong> Strategie diversificate su più indici globali mostrano Sharpe Ratio superiori e drawdown inferiori rispetto a strategie concentrate su un singolo paese.</li>
+                    <li><strong>Efficienza:</strong> L'uso di ETF professionali (TER 0.35% - 0.60%) è spesso più efficiente della gestione manuale, che può costare fino all'8% annuo tra commissioni e tempo dedicato.</li>
                 </ul>
-            </div>
-        </section>
 
+                <h3 class="subsection-title">5. Perché nel lungo periodo una covered call non può sovraperformare</h3>
+                <p>
+                    Un punto chiave è che il premio incassato vendendo una call non è un rendimento extra "gratuito", ma
+                    il prezzo a cui il mercato valuta oggi la rinuncia a una parte dell'upside futuro. La covered call
+                    quindi anticipa nel presente una porzione della crescita attesa del sottostante, ma non crea valore
+                    aggiuntivo dal nulla.
+                </p>
 
-        <section class="card card-section shadow-sm">
-            <div class="card-body">
-                <h2 class="section-title h5">Studi numerici su ETF Europei UCITS</h2>
-                <ul class="mb-0">
-                    <li><a href="../winc/studioWinc.html">WINC - iShares World Equity High Income UCITS ETF</a></li>
-                    <li><a href="../jepg.mi/studioJepg.mi.html">JEPG - JPMorgan Global Equity Premium Income UCITS
-                            ETF</a></li>
-                    <li><a href="../qyld.mi/studioQyld.mi.html">QYLD - Global X Nasdaq 100 Covered Call UCITS ETF D</a>
-                    </li>
-                    <li><a href="../xyle/studioXyle.html">XYLE - Global X S&amp;P 500 Covered Call UCITS ETF D</a></li>
-                </ul>
-            </div>
-        </section>
+                <p>
+                    In assenza di arbitraggio, il premio di una call non può essere sistematicamente superiore al valore
+                    atteso dell'upside ceduto oltre lo strike. In misura neutrale al rischio questo valore è dato da:
+                </p>
 
-        <section class="card card-section shadow-sm">
-            <div class="card-body">
-                <h2 class="section-title h5">Studi numerici su ETF Americani (storico più lungo)</h2>
-                <ul class="mb-0">
-                    <li><a href="../qyld/studioQyld.html">QYLD - Global X Nasdaq 100 Covered Call ETF</a></li>
-                    <li><a href="../xyld/studioXyld.html">XYLD - Global X S&amp;P 500 Covered Call ETF</a></li>
-                </ul>
-            </div>
-        </section>
+                <p class="text-center">
+                    $$ C = e^{-rT}\,\mathbb{E}^{\mathbb{Q}}[(S_T - K)^+] $$
+                </p>
 
-        <section class="card card-section shadow-sm">
-            <div class="card-body">
-                <h2 class="section-title h5">Materiale accademico</h2>
-                <ul class="mb-0">
-                    <li><a href="./Covered Call Strategy_ Guida Completa 2026 e Performance - Simone Balestri.pdf">Studio
-                            di Simone Balestri</a></li>
-                    <li><a href="./Covered Calls Uncovered.pdf">Israelov &amp; Nielsen</a></li>
-                    <li><a href="./Covering the world global evidence on covered calls.pdf">Global evidence study</a>
-                    </li>
-                    <li><a
-                            href="https://www.linkedin.com/pulse/price-return-vs-total-options-income-etps-incomeshares-41zef/">Articolo
-                            di Global X sulla differenza di price index e TR index sui prodotti IncomeShares</a></li>
-                </ul>
+                <p>
+                    Se fosse possibile ottenere con una covered call un premio sistematicamente maggiore della crescita
+                    attesa a cui si rinuncia oltre lo strike, allora un investitore potrebbe costruire una strategia di
+                    arbitraggio: acquistare il sottostante, vendere call troppo care e coprirsi con strumenti lineari.
+                    Un profitto certo e immediato di questo tipo verrebbe però rapidamente eliminato dal mercato tramite
+                    l'aggiustamento dei prezzi delle opzioni.
+                </p>
+
+                <p class="mb-0">
+                    Il mercato impone quindi una relazione strutturale:
+                </p>
+
+                <p class="text-center">
+                    $$ \text{Valore estratto via call} \;\approx\; \text{upside ceduto} $$
+                </p>
+
+                <p>
+                    Per questo motivo, una strategia costruita vendendo call non può battere in modo strutturale ciò
+                    che si otterrebbe monetizzando il sottostante in modo dinamico. Se si cerca di estrarre più valore
+                    di quello incorporato nel premio, il risultato economico sarà una riduzione progressiva del capitale
+                    oppure un aumento del rischio assunto.
+                </p>
+
+                <div class="formula-box mt-3">
+                    <p><em>Posizione covered call:</em></p>
+                    <p>
+                        $$ \text{Covered Call}(0) = S_0 - C $$
+                    </p>
+
+                    <p><em>Payoff a scadenza:</em></p>
+                    <p>
+                        $$ \text{Payoff}_{CC}(T) = S_T - \max(S_T - K, 0) = \min(S_T, K) $$
+                    </p>
+
+                    <p><em>Prezzo della call in misura neutrale al rischio:</em></p>
+                    <p>
+                        $$ C = e^{-rT}\,\mathbb{E}^{\mathbb{Q}}[(S_T - K)^+] $$
+                    </p>
+
+                    <p><em>Strategia equivalente tramite vendita dinamica del sottostante:</em></p>
+                    <p>
+                        Vendendo una quota \( q \) del sottostante tale che:
+                        $$ q S_0 = C $$
+                        si ottiene una posizione iniziale:
+                        $$ \text{Synthetic}(0) = S_0 - q S_0 = (1-q)S_0 $$
+                    </p>
+
+                    <p><em>Equivalenza dei valori iniziali:</em></p>
+                    <p>
+                        $$ \text{Covered Call}(0) = S_0 - C $$
+                        $$ \text{Synthetic}(0) = S_0 - q S_0 $$
+                        imponendo \( q S_0 = C \), segue:
+                        $$ \text{Covered Call}(0) = \text{Synthetic}(0) $$
+                    </p>
+                </div>
+
+                <p class="mt-3">
+                    L'interpretazione pratica è semplice: il premio della call è il valore atteso dell'upside a cui si
+                    rinuncia oltre lo strike. Quindi una covered call non può sovraperformare nel lungo periodo una
+                    liquidazione dinamica del sottostante con un profilo di rischio comparabile; può solo cambiare il
+                    momento in cui quel valore viene incassato.
+                </p>
+
+                <p class="mb-0">
+                    Nella pratica possono emergere differenze dovute a tassazione, costi di transazione, frequenza del
+                    rollaggio, frazionamento delle quote e modalità di implementazione del gestore. Ma la relazione
+                    teorica di fondo resta valida: la covered call non crea rendimento extra strutturale, lo anticipa e lo redistribuisce
+                    nel tempo.
+                </p>
             </div>
         </section>
 
