@@ -67,6 +67,7 @@
                     <th>Max $</th>
                     <th>P10 $</th>
                     <th>P90 $</th>
+                    <th>Sotto il versato %</th>
                     <th>CAGR medio</th>
 
                 </tr>
@@ -76,6 +77,13 @@
             <tbody></tbody>
 
         </table>
+
+        <p class="mt-2 text-muted"><strong>Nota su P10 e P90:</strong> P10 indica il 10° percentile del capitale
+            finale, cioè il valore sotto cui cade il 10% degli scenari peggiori. P90 indica il 90° percentile, cioè il
+            valore sotto cui cade il 90% degli scenari e sopra cui resta solo il 10% degli scenari migliori. In
+            pratica, questi due valori aiutano a capire l'intervallo dei risultati più probabili oltre a media e
+            mediana. La colonna <strong>Sotto il versato %</strong> mostra invece in quante simulazioni il capitale finale
+            è inferiore al totale investito, cioè la quota di scenari chiusi in perdita rispetto ai versamenti.</p>
 
         <p class="mt-3 text-muted"><strong>Conclusioni tabella:</strong> La strategia Perfect Timer ottiene il
             rendimento medio più alto grazie all'acquisto nei momenti di minimo mercato, mentre Worst Timer mostra le
@@ -356,6 +364,8 @@
 
                 p90: percentile(values, 0.90),
 
+                belowInvestedPct: values.filter(v => v < years * amount).length / values.length * 100,
+
                 cagrMean: mean(cagr)
 
             }
@@ -422,6 +432,7 @@
 <td>${Math.round(s.max).toLocaleString()}</td>
 <td>${Math.round(s.p10).toLocaleString()}</td>
 <td>${Math.round(s.p90).toLocaleString()}</td>
+<td>${s.belowInvestedPct.toFixed(1)}%</td>
 <td>${(s.cagrMean * 100).toFixed(2)}%</td>`;
                     tbody.appendChild(row);
                 }
