@@ -44,6 +44,8 @@
                 <br>
                 Selezionare una data tra quelle disponibili nello storico del relativo indice.
                 <br>
+                Puoi impostare anche una soglia di crollo per contare quante discese oltre tale drawdown si sono verificate mediamente ogni anno.
+                <br>
                 <strong>Per Lordo si intente il rendimento senza spese e tasse, per Netto si intende il rendimento dopo
                     l'applicazione del TER e Nettissimo è il risultato netto dopo l'applicazione della tassazione del
                     26% sul guadagno. </strong>
@@ -89,6 +91,11 @@
                 <div class="form-group col-md-3">
                     <label for="endDate">Data Fine:</label>
                     <input type="date" class="form-control" id="endDate" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="crashThresholdPct">Soglia crollo [%]:</label>
+                    <input type="number" class="form-control" id="crashThresholdPct" placeholder="es. 20" required
+                        value="20" min="0" max="100" step="1">
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Simula</button>

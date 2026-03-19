@@ -46,8 +46,99 @@ function calcolaDrawdownGiornaliero(valori) {
         if (valore > maxValore) {
             maxValore = valore;
         }
+        if (!Number.isFinite(maxValore) || maxValore <= 0 || !Number.isFinite(valore)) {
+            return 0;
+        }
         return (maxValore - valore) / maxValore;
     });
+}
+
+function calcolaDrawdownValore(valori) {
+    if (!valori || valori.length === 0) return [];
+
+    let maxValore = valori[0];
+    return valori.map(valore => {
+        if (valore > maxValore) {
+            maxValore = valore;
+        }
+        if (!Number.isFinite(maxValore) || !Number.isFinite(valore)) {
+            return 0;
+        }
+        return maxValore - valore;
+    });
+}
+
+function contaEventiCrollo(drawdowns, soglia) {
+    if (!drawdowns || drawdowns.length === 0) return 0;
+
+    let eventi = 0;
+    let inCrollo = false;
+
+    drawdowns.forEach(drawdown => {
+        if (drawdown >= soglia && !inCrollo) {
+            eventi += 1;
+            inCrollo = true;
+        }
+
+        if (drawdown <= 1e-10) {
+            inCrollo = false;
+        }
+    });
+
+    return eventi;
+}
+
+function calcolaXnpv(tasso, flussi) {
+    if (!flussi || flussi.length === 0) return NaN;
+
+    const dataBase = parseDate(flussi[0].date);
+    return flussi.reduce((totale, flusso) => {
+        const anni = (parseDate(flusso.date) - dataBase) / (1000 * 60 * 60 * 24 * 365.25);
+        return totale + (flusso.amount / ((1 + tasso) ** anni));
+    }, 0);
+}
+
+function calcolaXirr(flussi) {
+    if (!flussi || flussi.length < 2) return NaN;
+
+    const hasPositive = flussi.some(flusso => flusso.amount > 0);
+    const hasNegative = flussi.some(flusso => flusso.amount < 0);
+    if (!hasPositive || !hasNegative) return NaN;
+
+    let minimo = -0.9999;
+    let massimo = 10;
+    let npvMin = calcolaXnpv(minimo, flussi);
+    let npvMax = calcolaXnpv(massimo, flussi);
+    let tentativi = 0;
+
+    while (npvMin * npvMax > 0 && tentativi < 50) {
+        massimo *= 2;
+        npvMax = calcolaXnpv(massimo, flussi);
+        tentativi += 1;
+    }
+
+    if (npvMin * npvMax > 0) {
+        return NaN;
+    }
+
+    for (let i = 0; i < 100; i++) {
+        const medio = (minimo + massimo) / 2;
+        const npvMedio = calcolaXnpv(medio, flussi);
+
+        if (Math.abs(npvMedio) < 1e-7) {
+            return medio;
+        }
+
+        if (npvMin * npvMedio <= 0) {
+            massimo = medio;
+            npvMax = npvMedio;
+        } else {
+            minimo = medio;
+            npvMin = npvMedio;
+        }
+    }
+
+    return (minimo + massimo) / 2;
 }
 
 // Carica il dataset dal file
@@ -543,7 +634,7 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
             datasets: [
                 {
                     label: 'Nettissimo (€)',
-                    data: netValuesEur.map((value, index) => ((value / firstNonZeroEur) - 1)),
+                    data: netValuesEur.map(value => ((value / firstNonZeroEur) - 1) * 100),
                     borderColor: 'rgba(255, 99, 132, 0.6)',
                     backgroundColor: 'rgba(255, 99, 132, 0.1)',
                     fill: false,
@@ -552,7 +643,7 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
                 },
                 {
                     label: 'Nettissimo Infl. Adjusted (€)',
-                    data: realNettissimoValuesEur.map((value, index) => ((value / firstNonZeroRealEur) - 1)),
+                    data: realNettissimoValuesEur.map(value => ((value / firstNonZeroRealEur) - 1) * 100),
                     borderColor: 'rgba(107, 248, 107, 0.6)',
                     backgroundColor: 'rgba(107, 248, 107, 0.1)',
                     fill: false,
@@ -561,7 +652,7 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
                 },
                 {
                     label: 'Nettissimo ($)',
-                    data: netValuesDollar.map((value, index) => ((value / firstNonZeroDollar) - 1)),
+                    data: netValuesDollar.map(value => ((value / firstNonZeroDollar) - 1) * 100),
                     borderColor: 'rgba(54, 162, 235, 0.6)',
                     backgroundColor: 'rgba(54, 162, 235, 0.1)',
                     fill: false,
@@ -638,19 +729,20 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
 
 // Funzione per eseguire la simulazione
 function runSimulation() {
-    // Array per memorizzare i drawdown giornalieri
-    const drawdownNettissimoDollar = [];
-    const drawdownNettissimoEur = [];
-    const drawdownNettissimoEurValore = [];
-    const drawdownNettissimoDollarValore = [];
     // Legge i parametri di input
     let initialCapitalEur = parseFloat($('#initialCapitalEur').val());
     
     const monthlyDepositEur = parseFloat($('#monthlyDepositEur').val());
     const terFee = parseFloat($('#terFee').val()); // espresso in percentuale
+    const crashThresholdPct = parseFloat($('#crashThresholdPct').val());
     const startDate = new Date($('#startDate').val());
     const endDate = new Date($('#endDate').val());
     const initialCapitalDollar = initialCapitalEur * exchangeRates[0];
+
+    if (Number.isNaN(crashThresholdPct) || crashThresholdPct < 0 || crashThresholdPct > 100) {
+        alert("La soglia di crollo deve essere compresa tra 0 e 100.");
+        return;
+    }
 
     // Filtra il dataset per il range di date selezionato
     const simData = indexDatasetValues.filter(item => {
@@ -673,6 +765,8 @@ function runSimulation() {
     const netValuesEur = [];
     const nettissimoValuesEur = [];
     const totalDepositsEur = [];
+    const cashFlowsDollar = [];
+    const cashFlowsEur = [];
 
     // Per il calcolo delle plusvalenze, memorizziamo i contributi cumulativi
     let cumulativeContributionsDollar = initialCapitalEur * exchangeRates[0];
@@ -687,6 +781,12 @@ function runSimulation() {
     let currentGrossEur = initialCapitalEur;
     let currentNetEur = initialCapitalEur;
     dates.push(simData[0].Date);
+    if (initialCapitalDollar > 0) {
+        cashFlowsDollar.push({ date: simData[0].Date, amount: -initialCapitalDollar });
+    }
+    if (initialCapitalEur > 0) {
+        cashFlowsEur.push({ date: simData[0].Date, amount: -initialCapitalEur });
+    }
     grossValuesDollar.push(currentGrossDollar);
     netValuesDollar.push(currentNetDollar);
     totalDepositsDollar.push(currentGrossDollar);
@@ -723,10 +823,16 @@ function runSimulation() {
             currentGrossDollar += monthlyDepositEur * exchangeRates[i];
             currentNetDollar += monthlyDepositEur * exchangeRates[i];
             cumulativeContributionsDollar += monthlyDepositEur * exchangeRates[i];
+            if (monthlyDepositEur > 0) {
+                cashFlowsDollar.push({ date: simData[i].Date, amount: -(monthlyDepositEur * exchangeRates[i]) });
+            }
             totalDepositsDollar.push(cumulativeContributionsDollar);
             currentGrossEur += monthlyDepositEur;
             currentNetEur += monthlyDepositEur;
             cumulativeContributionsEur += monthlyDepositEur;
+            if (monthlyDepositEur > 0) {
+                cashFlowsEur.push({ date: simData[i].Date, amount: -monthlyDepositEur });
+            }
             totalDepositsEur.push(cumulativeContributionsEur);
             lastDepositMonth = currentMonth;
         } else {
@@ -749,27 +855,16 @@ function runSimulation() {
         netValuesEur.push(currentNetEur);
         nettissimoValuesEur.push(currentNettissimoEur);
 
-        // Calcola il drawdown giornaliero
-        drawdownNettissimoDollar.push(
-            nettissimoValuesDollar.length > 0 ? 
-            (Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]) / 
-            Math.max(Math.max(...nettissimoValuesDollar.slice(0, i + 1)), 0.000001) : 0
-        );
-        drawdownNettissimoEur.push(
-            nettissimoValuesEur.length > 0 ? 
-            (Math.max(...nettissimoValuesEur.slice(0, i + 1)) - nettissimoValuesEur[i]) / 
-            Math.max(Math.max(...nettissimoValuesEur.slice(0, i + 1)), 0.000001) : 0
-        );
-        
-        // Calcolo drawdown in valore assoluto
-        drawdownNettissimoEurValore.push(
-            Math.max(...nettissimoValuesEur.slice(0, i + 1)) - nettissimoValuesEur[i]
-        );
-
-        drawdownNettissimoDollarValore.push(
-            Math.max(...nettissimoValuesDollar.slice(0, i + 1)) - nettissimoValuesDollar[i]
-        );
     }
+
+    const drawdownGrossDollar = calcolaDrawdownGiornaliero(grossValuesDollar);
+    const drawdownNetDollar = calcolaDrawdownGiornaliero(netValuesDollar);
+    const drawdownNettissimoDollar = calcolaDrawdownGiornaliero(nettissimoValuesDollar);
+    const drawdownGrossEur = calcolaDrawdownGiornaliero(grossValuesEur);
+    const drawdownNetEur = calcolaDrawdownGiornaliero(netValuesEur);
+    const drawdownNettissimoEur = calcolaDrawdownGiornaliero(nettissimoValuesEur);
+    const drawdownNettissimoEurValore = calcolaDrawdownValore(nettissimoValuesEur);
+    const drawdownNettissimoDollarValore = calcolaDrawdownValore(nettissimoValuesDollar);
     // Funzione per calcolare la deviazione standard annualizzata
     function calcolaDeviazioneStandardAnnualizzata(data) {
         // Se tutti i valori sono 0 o non ci sono dati, ritorna 0
@@ -806,30 +901,41 @@ function runSimulation() {
     // in %
     const maxDrawdownNettissimoDollar = Math.max(...drawdownNettissimoDollar);
     const maxDrawdownNettissimoDollarIndex = drawdownNettissimoDollar.indexOf(maxDrawdownNettissimoDollar);
-    const maxDrawdownNettissimoDollarDate = dates[maxDrawdownNettissimoDollarIndex];
+    const maxDrawdownNettissimoDollarDate = dates[maxDrawdownNettissimoDollarIndex] || dates[0];
     // in %
     const maxDrawdownNettissimoEur = Math.max(...drawdownNettissimoEur);
     const maxDrawdownNettissimoEuroIndex = drawdownNettissimoEur.indexOf(maxDrawdownNettissimoEur);
-    const maxDrawdownNettissimoEuroDate = dates[maxDrawdownNettissimoEuroIndex];
+    const maxDrawdownNettissimoEuroDate = dates[maxDrawdownNettissimoEuroIndex] || dates[0];
     // in valore
     const maxDrawdownValoreNettissimoEur = Math.max(...drawdownNettissimoEurValore);
     // in valore
     const maxDrawdownValoreNettissimoDollar = Math.max(...drawdownNettissimoDollarValore);
 
     const maxDrawdownValoreNettissimoEurIndex = drawdownNettissimoEurValore.indexOf(maxDrawdownValoreNettissimoEur);
-    const maxDrawdownValoreNettissimoEurDate = dates[maxDrawdownValoreNettissimoEurIndex];
+    const maxDrawdownValoreNettissimoEurDate = dates[maxDrawdownValoreNettissimoEurIndex] || dates[0];
     const maxDrawdownValoreNettissimoDollarIndex = drawdownNettissimoDollarValore.indexOf(maxDrawdownValoreNettissimoDollar);
-    const maxDrawdownValoreNettissimoDollarDate = dates[maxDrawdownValoreNettissimoDollarIndex];
-    const maxDrawdownNettissimoTotValueEur = nettissimoValuesEur[maxDrawdownValoreNettissimoEurIndex];
-    const maxDrawdownNettissimoTotValueDollar = nettissimoValuesDollar[maxDrawdownValoreNettissimoDollarIndex];
+    const maxDrawdownValoreNettissimoDollarDate = dates[maxDrawdownValoreNettissimoDollarIndex] || dates[0];
+    const maxDrawdownNettissimoTotValueEur = nettissimoValuesEur[maxDrawdownValoreNettissimoEurIndex] ?? 0;
+    const maxDrawdownNettissimoTotValueDollar = nettissimoValuesDollar[maxDrawdownValoreNettissimoDollarIndex] ?? 0;
 
     // Calcola i valori reali al netto dell'inflazione        
     const adjustedNettissimoValuesEur = adjustForInflationCumulative(nettissimoValuesEur, dates, inflationData);
+    const anniTotali = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24 * 365.25);
+    const crashThreshold = crashThresholdPct / 100;
 
     createMoneryValueChart(dates, grossValuesDollar, netValuesDollar, nettissimoValuesDollar, totalDepositsDollar, grossValuesEur, netValuesEur, nettissimoValuesEur, totalDepositsEur, adjustedNettissimoValuesEur);
     createPercentageChart(dates, nettissimoValuesEur, adjustedNettissimoValuesEur, nettissimoValuesDollar);
     createDrawdownChart(dates, drawdownNettissimoEur, drawdownNettissimoDollar);
     createDrawdownValueChart(dates, drawdownNettissimoEurValore, drawdownNettissimoDollarValore);
+
+    const eventiCrollo = {
+        grossEur: contaEventiCrollo(drawdownGrossEur, crashThreshold),
+        netEur: contaEventiCrollo(drawdownNetEur, crashThreshold),
+        nettissimoEur: contaEventiCrollo(drawdownNettissimoEur, crashThreshold),
+        grossDollar: contaEventiCrollo(drawdownGrossDollar, crashThreshold),
+        netDollar: contaEventiCrollo(drawdownNetDollar, crashThreshold),
+        nettissimoDollar: contaEventiCrollo(drawdownNettissimoDollar, crashThreshold)
+    };
 
     // Funzione per formattare i numeri in euro con separatore delle migliaia
     function formatEuro(value) {
@@ -853,20 +959,30 @@ function runSimulation() {
             }).format(value);
     }
 
-    // Funzione per calcolare il rendimento totale e annualizzato (CAGR)
-    function calcolaRendimento(valoreFinale, valoreIniziale, anniTotali, totaleVersamenti) {
-        const rendimentoTotale = ((valoreFinale - totaleVersamenti) / totaleVersamenti) * 100;
-        const rendimentoAnnualizzato = (((valoreFinale / totaleVersamenti) ** (1 / anniTotali)) - 1) * 100;
+    function calcolaRendimentoConXirr(valoreFinale, totaleVersamenti, flussiBase, dataFinale) {
+        const rendimentoTotale = totaleVersamenti === 0 ? 0 : ((valoreFinale - totaleVersamenti) / totaleVersamenti) * 100;
+        const flussi = [...flussiBase, { date: dataFinale, amount: valoreFinale }];
+        const xirr = calcolaXirr(flussi);
 
         return {
-            rendimentoTotale: rendimentoTotale,
-            rendimentoAnnualizzato: rendimentoAnnualizzato
+            rendimentoTotale,
+            rendimentoAnnualizzato: Number.isFinite(xirr) ? xirr * 100 : NaN
         };
     }
 
     // Funzione per formattare le percentuali
     function formatPercent(value) {
+        if (!Number.isFinite(value)) {
+            return 'n.d.';
+        }
         return value.toFixed(1) + '%';
+    }
+
+    function formatMediaEventi(eventi) {
+        if (anniTotali <= 0) {
+            return '0,00';
+        }
+        return (eventi / anniTotali).toFixed(2).replace('.', ',');
     }
 
     // Visualizza i risultati finali della simulazione
@@ -879,21 +995,19 @@ function runSimulation() {
     const finalNettissimoEur = nettissimoValuesEur[finalIndex];
 
     // Calcolo delle differenze
-    const diffGrossNetDollar = finalGrossDollar - finalNetDollar;
-    const diffGrossNetPercDollar = (diffGrossNetDollar / finalGrossDollar) * 100;
+    const diffGrossNetEur = finalGrossEur - finalNetEur;
+    const diffGrossNetPercEur = (diffGrossNetEur / finalGrossEur) * 100;
+    const diffGrossNettissimoEur = finalGrossEur - finalNettissimoEur;
+    const diffGrossNettissimoPercEur = (diffGrossNettissimoEur / finalGrossEur) * 100;
 
-    const diffGrossNettissimoDollar = finalGrossDollar - finalNettissimoDollar;
-    const diffGrossNettissimoPercDollar = (diffGrossNettissimoDollar / finalGrossDollar) * 100;
-
-    const anniTotali = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24 * 365.25);
-
-    const rendimentoLordoDollar = calcolaRendimento(finalGrossDollar, initialCapitalDollar, anniTotali, cumulativeContributionsDollar);
-    const rendimentoNettoDollar = calcolaRendimento(finalNetDollar, initialCapitalDollar, anniTotali, cumulativeContributionsDollar);
-    const rendimentoNettissimoDollar = calcolaRendimento(finalNettissimoDollar, initialCapitalDollar, anniTotali, cumulativeContributionsDollar);
-    const rendimentoLordoEur = calcolaRendimento(finalGrossEur, initialCapitalEur, anniTotali, cumulativeContributionsEur);
-    const rendimentoNettoEur = calcolaRendimento(finalNetEur, initialCapitalEur, anniTotali, cumulativeContributionsEur);
-    const rendimentoNettissimoEur = calcolaRendimento(finalNettissimoEur, initialCapitalEur, anniTotali, cumulativeContributionsEur);
-    const rendimenttoRealeNettissimoEur = calcolaRendimento(adjustedNettissimoValuesEur[finalIndex], initialCapitalEur, anniTotali, cumulativeContributionsEur);
+    const dataFinale = dates[finalIndex];
+    const rendimentoLordoDollar = calcolaRendimentoConXirr(finalGrossDollar, cumulativeContributionsDollar, cashFlowsDollar, dataFinale);
+    const rendimentoNettoDollar = calcolaRendimentoConXirr(finalNetDollar, cumulativeContributionsDollar, cashFlowsDollar, dataFinale);
+    const rendimentoNettissimoDollar = calcolaRendimentoConXirr(finalNettissimoDollar, cumulativeContributionsDollar, cashFlowsDollar, dataFinale);
+    const rendimentoLordoEur = calcolaRendimentoConXirr(finalGrossEur, cumulativeContributionsEur, cashFlowsEur, dataFinale);
+    const rendimentoNettoEur = calcolaRendimentoConXirr(finalNetEur, cumulativeContributionsEur, cashFlowsEur, dataFinale);
+    const rendimentoNettissimoEur = calcolaRendimentoConXirr(finalNettissimoEur, cumulativeContributionsEur, cashFlowsEur, dataFinale);
+    const rendimenttoRealeNettissimoEur = calcolaRendimentoConXirr(adjustedNettissimoValuesEur[finalIndex], cumulativeContributionsEur, cashFlowsEur, dataFinale);
 
     let resultHtml = `<h3>Risultati della simulazione</h3>`;
     resultHtml += `<div class="box">`;
@@ -919,27 +1033,27 @@ function runSimulation() {
     resultHtml += `<div class="box">`;
     resultHtml += `<p><strong>Rendimento assoluto Lordo (€):</strong> ${formatEuro(finalGrossEur)}</p>`;
     resultHtml += `<p><strong>Rendimento Totale Lordo (€):</strong> ${formatPercent(rendimentoLordoEur.rendimentoTotale)}</p>`;
-    resultHtml += `<p><strong>Rendimento Annualizzato Lordo (CAGR) (€):</strong> ${formatPercent(rendimentoLordoEur.rendimentoAnnualizzato)}</p>`;
+    resultHtml += `<p><strong>Rendimento Annualizzato Lordo (XIRR) (€):</strong> ${formatPercent(rendimentoLordoEur.rendimentoAnnualizzato)}</p>`;
     resultHtml += `</div>`;
 
     resultHtml += `<div class="box">`;
     resultHtml += `<p><strong>Rendimento assoluto Netto (€):</strong> ${formatEuro(finalNetEur)}</p>`;
     resultHtml += `<p><strong>Rendimento Totale Netto (€):</strong> ${formatPercent(rendimentoNettoEur.rendimentoTotale)}</p>`;
-    resultHtml += `<p><strong>Rendimento Annualizzato Netto (CAGR) (€):</strong> ${formatPercent(rendimentoNettoEur.rendimentoAnnualizzato)}</p>`;
+    resultHtml += `<p><strong>Rendimento Annualizzato Netto (XIRR) (€):</strong> ${formatPercent(rendimentoNettoEur.rendimentoAnnualizzato)}</p>`;
     resultHtml += `</div>`;
 
     resultHtml += `<div class="box">`;
     resultHtml += `<p><strong>Rendimento Nettissimo (€):</strong> ${formatEuro(finalNettissimoEur)}</p>`;
     resultHtml += `<p><strong>Rendimento Totale Nettissimo (€):</strong> ${formatPercent(rendimentoNettissimoEur.rendimentoTotale)}</p>`;
-    resultHtml += `<p><strong>Rendimento Annualizzato Nettissimo (CAGR) (€):</strong> ${formatPercent(rendimentoNettissimoEur.rendimentoAnnualizzato)}</p>`;
+    resultHtml += `<p><strong>Rendimento Annualizzato Nettissimo (XIRR) (€):</strong> ${formatPercent(rendimentoNettissimoEur.rendimentoAnnualizzato)}</p>`;
     resultHtml += `<p><strong>Rendimento Totale Nettissimo Infl. Adjusted (€):</strong> ${formatPercent(rendimenttoRealeNettissimoEur.rendimentoTotale)}</p>`;
-    resultHtml += `<p><strong>Rendimento Annualizzato Nettissimo Infl Adjusted (CAGR Reale) (€):</strong> ${formatPercent(rendimenttoRealeNettissimoEur.rendimentoAnnualizzato)}</p>`;
+    resultHtml += `<p><strong>Rendimento Annualizzato Nettissimo Infl Adjusted (XIRR Reale) (€):</strong> ${formatPercent(rendimenttoRealeNettissimoEur.rendimentoAnnualizzato)}</p>`;
     resultHtml += `</div>`;
 
     resultHtml += `<div class="box">`;
-    resultHtml += `<p><strong>Diff. Lordo - Netto  (TWR Terminal Wealth Ratio) ossia Impatto del TER:</strong> ${formatEuro(diffGrossNetDollar)} (${formatPercent(diffGrossNetPercDollar)})</p>`;
-    resultHtml += `<p><strong>Diff. Lordo - Nettissimo (tassazione effetiva sul totale lordo e spese TER):</strong> ${formatEuro(diffGrossNettissimoDollar)} (${formatPercent(diffGrossNettissimoPercDollar)})</p>`;
-    resultHtml += `<p>Nota, questa percentuale può risultare < 26% perchè mostrando la differenza con il lordo, comprende anche il TER, che in quanto spesa, non partecipa al capital gain e non viene tassata.
+    resultHtml += `<p><strong>Diff. Lordo - Netto  (TWR Terminal Wealth Ratio) ossia Impatto del TER:</strong> ${formatEuro(diffGrossNetEur)} (${formatPercent(diffGrossNetPercEur)})</p>`;
+    resultHtml += `<p><strong>Diff. Lordo - Nettissimo (tassazione effetiva sul totale lordo e spese TER):</strong> ${formatEuro(diffGrossNettissimoEur)} (${formatPercent(diffGrossNettissimoPercEur)})</p>`;
+    resultHtml += `<p>Nota, questa percentuale può risultare &lt; 26% perchè mostrando la differenza con il lordo, comprende anche il TER, che in quanto spesa, non partecipa al capital gain e non viene tassata.
               Inoltre, solo il gain viene tassato al 26% e non l'intera somma lorda.</p>`;
     resultHtml += `</div>`;
 
@@ -964,6 +1078,13 @@ function runSimulation() {
               </p>`;
     resultHtml += `</div>`;
 
+    resultHtml += `<div class="box">`;
+    resultHtml += `<p><strong>Crolli superiori al ${formatPercent(crashThresholdPct)} in EUR:</strong></p>`;
+    resultHtml += `<p>Lordo: ${eventiCrollo.grossEur} eventi totali, media ${formatMediaEventi(eventiCrollo.grossEur)} volte/anno</p>`;
+    resultHtml += `<p>Netto: ${eventiCrollo.netEur} eventi totali, media ${formatMediaEventi(eventiCrollo.netEur)} volte/anno</p>`;
+    resultHtml += `<p>Nettissimo: ${eventiCrollo.nettissimoEur} eventi totali, media ${formatMediaEventi(eventiCrollo.nettissimoEur)} volte/anno</p>`;
+    resultHtml += `</div>`;
+
     resultHtml += `</div>`;
     resultHtml += `</div>`;
     resultHtml += `</div>`;
@@ -977,9 +1098,6 @@ function runSimulation() {
     resultHtml += `</button>`;
     resultHtml += `</h2>`;
     resultHtml += `</div>`;
-    resultHtml += `</button>`;
-    resultHtml += `</h2>`;
-    resultHtml += `</div>`;
 
     resultHtml += `<div id="collapseDollar" class="collapse" aria-labelledby="headingDollar" data-parent="#accordionResults">`;
     resultHtml += `<div class="card-body">`;
@@ -987,19 +1105,19 @@ function runSimulation() {
     resultHtml += `<div class="box">`;
     resultHtml += `<p><strong>Rendimento assoluto Lordo ($):</strong> ${formatDollar(finalGrossDollar)}</p>`;
     resultHtml += `<p><strong>Rendimento Totale Lordo ($):</strong> ${formatPercent(rendimentoLordoDollar.rendimentoTotale)}</p>`;
-    resultHtml += `<p><strong>Rendimento Annualizzato Lordo (CAGR) ($):</strong> ${formatPercent(rendimentoLordoDollar.rendimentoAnnualizzato)}</p>`;
+    resultHtml += `<p><strong>Rendimento Annualizzato Lordo (XIRR) ($):</strong> ${formatPercent(rendimentoLordoDollar.rendimentoAnnualizzato)}</p>`;
     resultHtml += `</div>`;
 
     resultHtml += `<div class="box">`;
     resultHtml += `<p><strong>Rendimento assoluto Netto ($):</strong> ${formatDollar(finalNetDollar)}</p>`;
     resultHtml += `<p><strong>Rendimento Totale Netto ($):</strong> ${formatPercent(rendimentoNettoDollar.rendimentoTotale)}</p>`;
-    resultHtml += `<p><strong>Rendimento Annualizzato Netto (CAGR) ($):</strong> ${formatPercent(rendimentoNettoDollar.rendimentoAnnualizzato)}</p>`;
+    resultHtml += `<p><strong>Rendimento Annualizzato Netto (XIRR) ($):</strong> ${formatPercent(rendimentoNettoDollar.rendimentoAnnualizzato)}</p>`;
     resultHtml += `</div>`;
 
     resultHtml += `<div class="box">`;
     resultHtml += `<p><strong>Rendimento Nettissimo ($):</strong> ${formatDollar(finalNettissimoDollar)}</p>`;
     resultHtml += `<p><strong>Rendimento Totale Nettissimo ($):</strong> ${formatPercent(rendimentoNettissimoDollar.rendimentoTotale)}</p>`;
-    resultHtml += `<p><strong>Rendimento Annualizzato Nettissimo (CAGR) ($):</strong> ${formatPercent(rendimentoNettissimoDollar.rendimentoAnnualizzato)}</p>`;
+    resultHtml += `<p><strong>Rendimento Annualizzato Nettissimo (XIRR) ($):</strong> ${formatPercent(rendimentoNettissimoDollar.rendimentoAnnualizzato)}</p>`;
     resultHtml += `</div>`;
 
     resultHtml += `<div class="box">`;
@@ -1018,6 +1136,12 @@ function runSimulation() {
               </p>`;
     resultHtml += `</div>`;
 
+    resultHtml += `<div class="box">`;
+    resultHtml += `<p><strong>Crolli superiori al ${formatPercent(crashThresholdPct)} in USD:</strong></p>`;
+    resultHtml += `<p>Lordo: ${eventiCrollo.grossDollar} eventi totali, media ${formatMediaEventi(eventiCrollo.grossDollar)} volte/anno</p>`;
+    resultHtml += `<p>Netto: ${eventiCrollo.netDollar} eventi totali, media ${formatMediaEventi(eventiCrollo.netDollar)} volte/anno</p>`;
+    resultHtml += `<p>Nettissimo: ${eventiCrollo.nettissimoDollar} eventi totali, media ${formatMediaEventi(eventiCrollo.nettissimoDollar)} volte/anno</p>`;
+    resultHtml += `</div>`;
 
     resultHtml += `</div>`;
     resultHtml += `</div>`;
