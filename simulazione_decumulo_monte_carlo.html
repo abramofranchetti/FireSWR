@@ -63,7 +63,7 @@
 
         <h1 class="text-center">Simulazione Monte Carlo di un PDC</h1>
         <h5 class="text-center text-muted mb-4">
-            Simuliamo molte traiettorie di mercato con lo stesso rendimento medio atteso e osserviamo
+            Simuliamo molte traiettorie di mercato con lo stesso rendimento finale atteso e osserviamo
             come cambia il piano di decumulo del capitale al variare della sequenza dei rendimenti.
         </h5>
 
@@ -112,12 +112,13 @@
             <div class="card-body">
                 <h5 class="card-title mb-2"><strong>Cosa mostra questa simulazione</strong></h5>
                 <p class="mb-2">
-                    Ogni linea blu rappresenta una possibile traiettoria del mercato. La linea rossa rappresenta la media.
+                    Ogni linea blu rappresenta una possibile traiettoria del mercato con lo stesso punto di arrivo finale.
+                    La linea rossa rappresenta la media.
                     Il primo grafico mostra il mercato normalizzato, il secondo come quel mercato impatta un
                     piano di decumulo con prelievo mensile costante.
                 </p>
                 <p class="mb-0 small text-muted">
-                    Il punto chiave è il rischio di sequenza dei rendimenti: anche con lo stesso rendimento medio atteso,
+                    Il punto chiave è il rischio di sequenza dei rendimenti: anche con lo stesso rendimento finale,
                     un mercato negativo nei primi anni può rendere molto più fragile il decumulo.
                 </p>
             </div>
@@ -230,18 +231,27 @@
             const nSteps = years * stepsPerYear;
             const dt = 1 / stepsPerYear;
             const mu = Math.log(1 + annualReturn);
+            const targetFactor = Math.pow(1 + annualReturn, years);
+            const targetLog = Math.log(targetFactor);
             const paths = [];
 
             for (let scenario = 0; scenario < nScen; scenario++) {
-                const path = new Array(nSteps + 1);
-                let level = 1;
-                path[0] = level;
+                const logPath = new Array(nSteps + 1);
+                let logLevel = 0;
+                logPath[0] = logLevel;
 
                 for (let step = 1; step <= nSteps; step++) {
                     const shock = randnBm();
-                    const growth = Math.exp((mu - 0.5 * sigma * sigma) * dt + sigma * Math.sqrt(dt) * shock);
-                    level *= growth;
-                    path[step] = level;
+                    const increment = (mu - 0.5 * sigma * sigma) * dt + sigma * Math.sqrt(dt) * shock;
+                    logLevel += increment;
+                    logPath[step] = logLevel;
+                }
+
+                const bridgeAdjustment = targetLog - logPath[nSteps];
+                const path = new Array(nSteps + 1);
+                for (let step = 0; step <= nSteps; step++) {
+                    const adjustedLogLevel = logPath[step] + bridgeAdjustment * (step / nSteps);
+                    path[step] = Math.exp(adjustedLogLevel);
                 }
 
                 paths.push(path);
