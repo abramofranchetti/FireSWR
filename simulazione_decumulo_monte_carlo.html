@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione PDC Monte Carlo</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .metric-card {
+            height: 100%;
+            border: 1px solid #dbe5f1;
+            border-radius: 12px;
+            background: linear-gradient(180deg, #f9fbff 0%, #f2f7ff 100%);
+            padding: 1rem;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #617085;
+            margin-bottom: 0.35rem;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #17324d;
+            line-height: 1.1;
+        }
+
+        .metric-note {
+            margin-top: 0.35rem;
+            color: #617085;
+            font-size: 0.9rem;
+        }
+
+        .chart-wrap {
+            height: 420px;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box {
+            border: 1px solid #d6e4f5;
+            background: #f7fbff;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">Home</a>
+        </div>
+
+        <h1 class="text-center">Simulazione Monte Carlo di un PDC</h1>
+        <h5 class="text-center text-muted mb-4">
+            Simuliamo molte traiettorie di mercato con lo stesso rendimento medio atteso e osserviamo
+            come cambia il piano di decumulo del capitale al variare della sequenza dei rendimenti.
+        </h5>
+
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="initialCapital">Capitale iniziale (€)</label>
+                <input type="number" id="initialCapital" class="form-control" value="300000" min="0" step="1000">
+            </div>
+            <div class="col-md-3">
+                <label for="monthlyWithdrawal">Decumulo mensile (€)</label>
+                <input type="number" id="monthlyWithdrawal" class="form-control" value="1500" min="0" step="50">
+            </div>
+            <div class="col-md-2">
+                <label for="years">Anni</label>
+                <input type="number" id="years" class="form-control" value="30" min="1" max="100">
+            </div>
+            <div class="col-md-2">
+                <label for="annualReturn">Rendimento annuo atteso %</label>
+                <input type="number" id="annualReturn" class="form-control" value="5" step="0.1">
+            </div>
+            <div class="col-md-2">
+                <label for="nScen">Scenari</label>
+                <input type="number" id="nScen" class="form-control" value="300" min="10" max="3000">
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label for="volSlider">Volatilità annua (σ) %</label>
+                <input type="range" id="volSlider" min="0" max="80" value="15" class="custom-range">
+                <div class="d-flex justify-content-between">
+                    <small id="volVal">15%</small>
+                    <small class="text-muted">Più alta = traiettorie più disperse</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label for="annualNeed">Fabbisogno annuo stimato</label>
+                <input type="text" id="annualNeed" class="form-control" readonly>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button id="runBtn" class="btn btn-primary btn-block">Simula PDC</button>
+            </div>
+        </div>
+
+        <div class="card info-box mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-2"><strong>Cosa mostra questa simulazione</strong></h5>
+                <p class="mb-2">
+                    Ogni linea blu rappresenta una possibile traiettoria del mercato. La linea rossa rappresenta la media.
+                    Il primo grafico mostra il mercato normalizzato, il secondo come quel mercato impatta un
+                    piano di decumulo con prelievo mensile costante.
+                </p>
+                <p class="mb-0 small text-muted">
+                    Il punto chiave è il rischio di sequenza dei rendimenti: anche con lo stesso rendimento medio atteso,
+                    un mercato negativo nei primi anni può rendere molto più fragile il decumulo.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="metric-card">
+                    <div class="metric-label">Probabilità di successo</div>
+                    <div id="successRate" class="metric-value">-</div>
+                    <div class="metric-note">Scenari in cui il capitale sopravvive fino alla fine</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="metric-card">
+                    <div class="metric-label">Capitale finale medio</div>
+                    <div id="meanFinal" class="metric-value">-</div>
+                    <div class="metric-note">Media del patrimonio residuo a fine orizzonte</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="metric-card">
+                    <div class="metric-label">Mediana finale</div>
+                    <div id="medianFinal" class="metric-value">-</div>
+                    <div class="metric-note">Scenario centrale del patrimonio residuo</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="metric-card">
+                    <div class="metric-label">Esaurimento medio</div>
+                    <div id="depletionInfo" class="metric-value">-</div>
+                    <div class="metric-note">Quando il capitale si azzera negli scenari falliti</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 chart-wrap">
+                <h6 class="text-center">Traiettorie del mercato</h6>
+                <canvas id="chartMarket"></canvas>
+            </div>
+            <div class="col-md-6 chart-wrap">
+                <h6 class="text-center">Andamento del piano di decumulo</h6>
+                <canvas id="chartDecumulation"></canvas>
+            </div>
+        </div>
+
+        <p class="text-muted mb-1">Linee blu sottili: singoli scenari. Linea rossa: media degli scenari.</p>
+        <p class="text-muted mb-0">
+            La simulazione applica un prelievo mensile costante al patrimonio e mostra quanto il risultato finale
+            dipenda dall'ordine con cui si presentano rendimenti positivi e negativi.
+        </p>
+
+        <div id="disclaimer-container" class="mt-4"></div>
+    </div>
+
+    <script>
+        function randnBm() {
+            let u = 0;
+            let v = 0;
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+
+        function euro(value, digits) {
+            return new Intl.NumberFormat('it-IT', {
+                style: 'currency',
+                currency: 'EUR',
+                maximumFractionDigits: digits === undefined ? 0 : digits,
+                minimumFractionDigits: digits === undefined ? 0 : digits
+            }).format(value);
+        }
+
+        function percentile(values, p) {
+            const sorted = values.slice().sort((a, b) => a - b);
+            const pos = (sorted.length - 1) * p;
+            const base = Math.floor(pos);
+            const rest = pos - base;
+            if (sorted[base + 1] !== undefined) {
+                return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+            }
+            return sorted[base];
+        }
+
+        function meanSeries(seriesList, step) {
+            let total = 0;
+            for (let i = 0; i < seriesList.length; i++) {
+                total += seriesList[i][step];
+            }
+            return total / seriesList.length;
+        }
+
+        function buildLabels(nSteps, stepsPerYear) {
+            const labels = [];
+            for (let step = 0; step <= nSteps; step++) {
+                labels.push((step / stepsPerYear).toFixed(1));
+            }
+            return labels;
+        }
+
+        function pathToCumulativePercent(path) {
+            return path.map(function (value) {
+                return (value - 1) * 100;
+            });
+        }
+
+        function simulateMarketPaths(nScen, years, sigma, annualReturn) {
+            const stepsPerYear = 12;
+            const nSteps = years * stepsPerYear;
+            const dt = 1 / stepsPerYear;
+            const mu = Math.log(1 + annualReturn);
+            const paths = [];
+
+            for (let scenario = 0; scenario < nScen; scenario++) {
+                const path = new Array(nSteps + 1);
+                let level = 1;
+                path[0] = level;
+
+                for (let step = 1; step <= nSteps; step++) {
+                    const shock = randnBm();
+                    const growth = Math.exp((mu - 0.5 * sigma * sigma) * dt + sigma * Math.sqrt(dt) * shock);
+                    level *= growth;
+                    path[step] = level;
+                }
+
+                paths.push(path);
+            }
+
+            return { paths: paths, nSteps: nSteps, stepsPerYear: stepsPerYear };
+        }
+
+        function simulateDecumulation(path, initialCapital, monthlyWithdrawal) {
+            const values = new Array(path.length);
+            let capital = initialCapital;
+            let exhaustedAt = null;
+            values[0] = capital;
+
+            for (let step = 1; step < path.length; step++) {
+                const monthlyReturn = path[step] / path[step - 1] - 1;
+                capital = capital * (1 + monthlyReturn);
+                capital = Math.max(capital - monthlyWithdrawal, 0);
+                values[step] = capital;
+
+                if (capital === 0 && exhaustedAt === null) {
+                    exhaustedAt = step;
+                }
+            }
+
+            return {
+                values: values,
+                finalValue: values[values.length - 1],
+                exhaustedAt: exhaustedAt
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const volSlider = document.getElementById('volSlider');
+            const volVal = document.getElementById('volVal');
+            const runBtn = document.getElementById('runBtn');
+            const monthlyWithdrawalInput = document.getElementById('monthlyWithdrawal');
+            const annualNeedInput = document.getElementById('annualNeed');
+
+            let chartMarket = null;
+            let chartDecumulation = null;
+
+            function updateAnnualNeed() {
+                const monthlyWithdrawal = parseFloat(monthlyWithdrawalInput.value) || 0;
+                annualNeedInput.value = euro(monthlyWithdrawal * 12);
+            }
+
+            function buildScenarioDataset(series, color) {
+                return {
+                    label: '',
+                    data: series,
+                    borderColor: color,
+                    borderWidth: 0.8,
+                    pointRadius: 0,
+                    pointHoverRadius: 0,
+                    hitRadius: 0,
+                    showLine: true,
+                    spanGaps: true,
+                    fill: false,
+                    tension: 0,
+                    order: 1
+                };
+            }
+
+            function buildMeanDataset(series) {
+                return {
+                    label: 'Media',
+                    data: series,
+                    borderColor: 'rgba(220, 53, 69, 1)',
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    order: 0
+                };
+            }
+
+            function renderCharts(simulation, decumulationSeries) {
+                const labels = buildLabels(simulation.nSteps, simulation.stepsPerYear);
+                const marketDatasets = [];
+                const decumulationDatasets = [];
+                const meanMarket = new Array(simulation.nSteps + 1);
+                const meanDecumulation = new Array(simulation.nSteps + 1);
+                const marketPercentValues = simulation.paths.map(function (path) {
+                    return pathToCumulativePercent(path);
+                });
+                const decumulationValues = decumulationSeries.map(function (item) {
+                    return item.values;
+                });
+
+                for (let i = 0; i < simulation.paths.length; i++) {
+                    marketDatasets.push(buildScenarioDataset(marketPercentValues[i], 'rgba(52, 152, 219, 0.30)'));
+                    decumulationDatasets.push(buildScenarioDataset(decumulationValues[i], 'rgba(39, 174, 96, 0.28)'));
+                }
+
+                for (let step = 0; step <= simulation.nSteps; step++) {
+                    meanMarket[step] = meanSeries(marketPercentValues, step);
+                    meanDecumulation[step] = meanSeries(decumulationValues, step);
+                }
+
+                marketDatasets.push(buildMeanDataset(meanMarket));
+                decumulationDatasets.push(buildMeanDataset(meanDecumulation));
+
+                if (chartMarket) chartMarket.destroy();
+                if (chartDecumulation) chartDecumulation.destroy();
+
+                chartMarket = new Chart(document.getElementById('chartMarket').getContext('2d'), {
+                    type: 'line',
+                    data: { labels: labels, datasets: marketDatasets },
+                    options: {
+                        animation: false,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Anni' }
+                            },
+                            y: {
+                                title: { display: true, text: 'Rendimento cumulato (%)' },
+                                ticks: {
+                                    callback: function (value) {
+                                        return Math.round(value) + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                chartDecumulation = new Chart(document.getElementById('chartDecumulation').getContext('2d'), {
+                    type: 'line',
+                    data: { labels: labels, datasets: decumulationDatasets },
+                    options: {
+                        animation: false,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Anni' }
+                            },
+                            y: {
+                                title: { display: true, text: 'Capitale residuo (€)' },
+                                ticks: {
+                                    callback: function (value) {
+                                        return value >= 1000 ? (value / 1000).toFixed(0) + 'k' : Math.round(value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function renderSummary(decumulationSeries, years) {
+                const finalValues = decumulationSeries.map(function (item) {
+                    return item.finalValue;
+                });
+                const successfulScenarios = decumulationSeries.filter(function (item) {
+                    return item.finalValue > 0;
+                });
+                const failedScenarios = decumulationSeries.filter(function (item) {
+                    return item.exhaustedAt !== null;
+                });
+                const successRate = (successfulScenarios.length / decumulationSeries.length) * 100;
+                const averageFinal = finalValues.reduce(function (sum, value) {
+                    return sum + value;
+                }, 0) / finalValues.length;
+                const medianFinal = percentile(finalValues, 0.5);
+
+                document.getElementById('successRate').textContent = successRate.toFixed(1) + '%';
+                document.getElementById('meanFinal').textContent = euro(averageFinal);
+                document.getElementById('medianFinal').textContent = euro(medianFinal);
+
+                if (failedScenarios.length === 0) {
+                    document.getElementById('depletionInfo').textContent = '> ' + years + ' anni';
+                } else {
+                    const averageExhaustedMonth = failedScenarios.reduce(function (sum, item) {
+                        return sum + item.exhaustedAt;
+                    }, 0) / failedScenarios.length;
+                    document.getElementById('depletionInfo').textContent = (averageExhaustedMonth / 12).toFixed(1) + ' anni';
+                }
+            }
+
+            function runSimulation() {
+                const initialCapital = parseFloat(document.getElementById('initialCapital').value) || 0;
+                const monthlyWithdrawal = parseFloat(document.getElementById('monthlyWithdrawal').value) || 0;
+                const years = parseInt(document.getElementById('years').value, 10) || 0;
+                const annualReturn = (parseFloat(document.getElementById('annualReturn').value) || 0) / 100;
+                const sigma = (parseFloat(volSlider.value) || 0) / 100;
+                const nScen = parseInt(document.getElementById('nScen').value, 10) || 0;
+
+                const simulation = simulateMarketPaths(nScen, years, sigma, annualReturn);
+                const decumulationSeries = simulation.paths.map(function (path) {
+                    return simulateDecumulation(path, initialCapital, monthlyWithdrawal);
+                });
+
+                renderCharts(simulation, decumulationSeries);
+                renderSummary(decumulationSeries, years);
+            }
+
+            volSlider.addEventListener('input', function () {
+                volVal.textContent = volSlider.value + '%';
+            });
+            monthlyWithdrawalInput.addEventListener('input', updateAnnualNeed);
+            runBtn.addEventListener('click', runSimulation);
+
+            updateAnnualNeed();
+            volVal.textContent = volSlider.value + '%';
+            runSimulation();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(function (response) {
+                    return response.text();
+                })
+                .then(function (data) {
+                    const disclaimerContainer = document.getElementById('disclaimer-container');
+                    if (disclaimerContainer) {
+                        disclaimerContainer.innerHTML = data;
+                    }
+                });
+        });
+    </script>
+</body>
+
+</html>
