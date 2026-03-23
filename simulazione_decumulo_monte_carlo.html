@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulazione Piano Di Decumulo del Capitale tramite metodo Monte Carlo</title>
+    <title>Simulazione Piano di Decumulo del Capitale tramite Monte Carlo</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -69,11 +69,11 @@
 
         <div class="row mb-3">
             <div class="col-md-3">
-                <label for="initialCapital">Capitale iniziale (€)</label>
+                <label for="initialCapital">Capitale iniziale (EUR)</label>
                 <input type="number" id="initialCapital" class="form-control" value="300000" min="0" step="1000">
             </div>
             <div class="col-md-3">
-                <label for="monthlyWithdrawal">Decumulo mensile (€)</label>
+                <label for="monthlyWithdrawal">Decumulo mensile (EUR)</label>
                 <input type="number" id="monthlyWithdrawal" class="form-control" value="1500" min="0" step="50">
             </div>
             <div class="col-md-2">
@@ -91,19 +91,26 @@
         </div>
 
         <div class="row mb-4">
-            <div class="col-md-4">
-                <label for="volSlider">Volatilità annua (σ) %</label>
+            <div class="col-md-3">
+                <label for="volSlider">Volatilita annua (sigma) %</label>
                 <input type="range" id="volSlider" min="0" max="80" value="16" class="custom-range">
                 <div class="d-flex justify-content-between">
                     <small id="volVal">16%</small>
-                    <small class="text-muted">Più alta = traiettorie più disperse</small>
+                    <small class="text-muted">Piu alta = traiettorie piu disperse</small>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <label for="chartScale">Scala grafici</label>
+                <select id="chartScale" class="form-control">
+                    <option value="percent" selected>Percentuale (%)</option>
+                    <option value="euro">Euro (EUR)</option>
+                </select>
+            </div>
+            <div class="col-md-3">
                 <label for="annualNeed">Fabbisogno annuo stimato</label>
                 <input type="text" id="annualNeed" class="form-control" readonly>
             </div>
-            <div class="col-md-4 d-flex align-items-end">
+            <div class="col-md-3 d-flex align-items-end">
                 <button id="runBtn" class="btn btn-primary btn-block">Simula PDC</button>
             </div>
         </div>
@@ -113,13 +120,12 @@
                 <h5 class="card-title mb-2"><strong>Cosa mostra questa simulazione</strong></h5>
                 <p class="mb-2">
                     Ogni linea blu rappresenta una possibile traiettoria del mercato con lo stesso punto di arrivo finale.
-                    La linea rossa rappresenta la media.
-                    Il primo grafico mostra il mercato normalizzato, il secondo come quel mercato impatta un
-                    piano di decumulo con prelievo mensile costante.
+                    La linea rossa rappresenta la media. Il primo grafico mostra il percorso del mercato, il secondo
+                    come quel percorso impatta un piano di decumulo con prelievo mensile costante.
                 </p>
                 <p class="mb-0 small text-muted">
-                    Il punto chiave è il rischio di sequenza dei rendimenti: anche con lo stesso rendimento finale,
-                    un mercato negativo nei primi anni può rendere molto più fragile il decumulo.
+                    Il punto chiave e il rischio di sequenza dei rendimenti: anche con lo stesso rendimento finale,
+                    un mercato negativo nei primi anni puo rendere molto piu fragile il decumulo.
                 </p>
             </div>
         </div>
@@ -127,7 +133,7 @@
         <div class="row mb-4">
             <div class="col-md-3 mb-3">
                 <div class="metric-card">
-                    <div class="metric-label">Probabilità di successo</div>
+                    <div class="metric-label">Probabilita di successo</div>
                     <div id="successRate" class="metric-value">-</div>
                     <div class="metric-note">Scenari in cui il capitale sopravvive fino alla fine</div>
                 </div>
@@ -194,7 +200,9 @@
         }
 
         function percentile(values, p) {
-            const sorted = values.slice().sort((a, b) => a - b);
+            const sorted = values.slice().sort(function (a, b) {
+                return a - b;
+            });
             const pos = (sorted.length - 1) * p;
             const base = Math.floor(pos);
             const rest = pos - base;
@@ -223,6 +231,24 @@
         function pathToCumulativePercent(path) {
             return path.map(function (value) {
                 return (value - 1) * 100;
+            });
+        }
+
+        function pathToEuroValue(path, initialCapital) {
+            return path.map(function (value) {
+                return value * initialCapital;
+            });
+        }
+
+        function valuesToPercentOfInitial(values, initialCapital) {
+            if (initialCapital <= 0) {
+                return values.map(function () {
+                    return 0;
+                });
+            }
+
+            return values.map(function (value) {
+                return (value / initialCapital) * 100;
             });
         }
 
@@ -287,6 +313,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const volSlider = document.getElementById('volSlider');
             const volVal = document.getElementById('volVal');
+            const chartScaleInput = document.getElementById('chartScale');
             const runBtn = document.getElementById('runBtn');
             const monthlyWithdrawalInput = document.getElementById('monthlyWithdrawal');
             const annualNeedInput = document.getElementById('annualNeed');
@@ -329,26 +356,41 @@
                 };
             }
 
-            function renderCharts(simulation, decumulationSeries) {
+            function formatAxisValue(value, chartScale) {
+                if (chartScale === 'euro') {
+                    if (Math.abs(value) >= 1000) {
+                        return (value / 1000).toFixed(0) + 'k';
+                    }
+                    return Math.round(value);
+                }
+
+                return Math.round(value) + '%';
+            }
+
+            function renderCharts(simulation, decumulationSeries, initialCapital, chartScale) {
                 const labels = buildLabels(simulation.nSteps, simulation.stepsPerYear);
                 const marketDatasets = [];
                 const decumulationDatasets = [];
                 const meanMarket = new Array(simulation.nSteps + 1);
                 const meanDecumulation = new Array(simulation.nSteps + 1);
-                const marketPercentValues = simulation.paths.map(function (path) {
-                    return pathToCumulativePercent(path);
+                const marketValues = simulation.paths.map(function (path) {
+                    return chartScale === 'euro'
+                        ? pathToEuroValue(path, initialCapital)
+                        : pathToCumulativePercent(path);
                 });
                 const decumulationValues = decumulationSeries.map(function (item) {
-                    return item.values;
+                    return chartScale === 'euro'
+                        ? item.values
+                        : valuesToPercentOfInitial(item.values, initialCapital);
                 });
 
                 for (let i = 0; i < simulation.paths.length; i++) {
-                    marketDatasets.push(buildScenarioDataset(marketPercentValues[i], 'rgba(52, 152, 219, 0.30)'));
+                    marketDatasets.push(buildScenarioDataset(marketValues[i], 'rgba(52, 152, 219, 0.30)'));
                     decumulationDatasets.push(buildScenarioDataset(decumulationValues[i], 'rgba(39, 174, 96, 0.28)'));
                 }
 
                 for (let step = 0; step <= simulation.nSteps; step++) {
-                    meanMarket[step] = meanSeries(marketPercentValues, step);
+                    meanMarket[step] = meanSeries(marketValues, step);
                     meanDecumulation[step] = meanSeries(decumulationValues, step);
                 }
 
@@ -371,10 +413,15 @@
                                 title: { display: true, text: 'Anni' }
                             },
                             y: {
-                                title: { display: true, text: 'Rendimento cumulato (%)' },
+                                title: {
+                                    display: true,
+                                    text: chartScale === 'euro'
+                                        ? 'Valore teorico del mercato (EUR)'
+                                        : 'Rendimento cumulato (%)'
+                                },
                                 ticks: {
                                     callback: function (value) {
-                                        return Math.round(value) + '%';
+                                        return formatAxisValue(value, chartScale);
                                     }
                                 }
                             }
@@ -395,10 +442,15 @@
                                 title: { display: true, text: 'Anni' }
                             },
                             y: {
-                                title: { display: true, text: 'Capitale residuo (€)' },
+                                title: {
+                                    display: true,
+                                    text: chartScale === 'euro'
+                                        ? 'Capitale residuo (EUR)'
+                                        : 'Capitale residuo (% del capitale iniziale)'
+                                },
                                 ticks: {
                                     callback: function (value) {
-                                        return value >= 1000 ? (value / 1000).toFixed(0) + 'k' : Math.round(value);
+                                        return formatAxisValue(value, chartScale);
                                     }
                                 }
                             }
@@ -444,13 +496,14 @@
                 const annualReturn = (parseFloat(document.getElementById('annualReturn').value) || 0) / 100;
                 const sigma = (parseFloat(volSlider.value) || 0) / 100;
                 const nScen = parseInt(document.getElementById('nScen').value, 10) || 0;
+                const chartScale = chartScaleInput.value;
 
                 const simulation = simulateMarketPaths(nScen, years, sigma, annualReturn);
                 const decumulationSeries = simulation.paths.map(function (path) {
                     return simulateDecumulation(path, initialCapital, monthlyWithdrawal);
                 });
 
-                renderCharts(simulation, decumulationSeries);
+                renderCharts(simulation, decumulationSeries, initialCapital, chartScale);
                 renderSummary(decumulationSeries, years);
             }
 
@@ -458,6 +511,7 @@
                 volVal.textContent = volSlider.value + '%';
             });
             monthlyWithdrawalInput.addEventListener('input', updateAnnualNeed);
+            chartScaleInput.addEventListener('change', runSimulation);
             runBtn.addEventListener('click', runSimulation);
 
             updateAnnualNeed();
