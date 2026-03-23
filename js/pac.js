@@ -68,6 +68,18 @@ function calcolaDrawdownValore(valori) {
     });
 }
 
+function calcolaMassimiProgressivi(valori) {
+    if (!valori || valori.length === 0) return [];
+
+    let maxValore = valori[0];
+    return valori.map(valore => {
+        if (valore > maxValore) {
+            maxValore = valore;
+        }
+        return maxValore;
+    });
+}
+
 function contaEventiCrollo(drawdowns, soglia) {
     if (!drawdowns || drawdowns.length === 0) return 0;
 
@@ -261,19 +273,29 @@ function adjustForInflation(values, dates) {
     });
 }
 
-function adjustForInflationCumulative(values, dates, inflationData) {
-    return values.map((value, index) => {
-        const startYear = new Date(dates[0]).getFullYear();
-        const currentYear = new Date(dates[index]).getFullYear();
-        let adjustedValue = value;
+function calcolaFattoreInflazione(baseDate, targetDate, inflationData) {
+    const baseYear = new Date(baseDate).getFullYear();
+    const targetYear = new Date(targetDate).getFullYear();
 
-        for (let year = startYear; year <= currentYear; year++) {
-            if (inflationData[year]) {
-                adjustedValue /= (1 + inflationData[year]);
-            }
+    if (targetYear <= baseYear) {
+        return 1;
+    }
+
+    let fattore = 1;
+    for (let year = baseYear + 1; year <= targetYear; year++) {
+        if (inflationData[year]) {
+            fattore *= (1 + inflationData[year]);
         }
+    }
 
-        return adjustedValue;
+    return fattore;
+}
+
+function adjustForInflationCumulative(values, dates, inflationData) {
+    const baseDate = dates[0];
+    return values.map((value, index) => {
+        const fattoreInflazione = calcolaFattoreInflazione(baseDate, dates[index], inflationData);
+        return value / fattoreInflazione;
     });
 }
 
@@ -767,13 +789,15 @@ function runSimulation() {
     const totalDepositsEur = [];
     const cashFlowsDollar = [];
     const cashFlowsEur = [];
+    const realCashFlowsEur = [];
 
     // Per il calcolo delle plusvalenze, memorizziamo i contributi cumulativi
     let cumulativeContributionsDollar = initialCapitalEur * exchangeRates[0];
     let cumulativeContributionsEur = initialCapitalEur;
 
     // Per applicare il TER su base giornaliera (si assume 252 giorni di trading/anno)
-    const terDaily = (terFee / 100) / 252;
+    const terAnnual = terFee / 100;
+    const terDaily = 1 - Math.pow(1 - terAnnual, 1 / 252);
 
     // Inizializziamo la simulazione con il primo giorno disponibile
     let currentGrossDollar = initialCapitalEur * exchangeRates[0];
@@ -786,6 +810,7 @@ function runSimulation() {
     }
     if (initialCapitalEur > 0) {
         cashFlowsEur.push({ date: simData[0].Date, amount: -initialCapitalEur });
+        realCashFlowsEur.push({ date: simData[0].Date, amount: -initialCapitalEur });
     }
     grossValuesDollar.push(currentGrossDollar);
     netValuesDollar.push(currentNetDollar);
@@ -793,11 +818,10 @@ function runSimulation() {
     grossValuesEur.push(currentGrossEur);
     netValuesEur.push(currentNetEur);
     totalDepositsEur.push(currentGrossEur);
-    let gainDollar = currentNetDollar - cumulativeContributionsDollar;
-    let currentNettissimoDollar = currentNetDollar - (gainDollar > 0 ? gainDollar * 0.26 : 0);
-    nettissimoValuesDollar.push(currentNettissimoDollar);
     let gainEur = currentNetEur - cumulativeContributionsEur;
     let currentNettissimoEur = currentNetEur - (gainEur > 0 ? gainEur * 0.26 : 0);
+    let currentNettissimoDollar = currentNettissimoEur * exchangeRates[0];
+    nettissimoValuesDollar.push(currentNettissimoDollar);
     nettissimoValuesEur.push(currentNettissimoEur);
 
     // Per gestire il deposito mensile, teniamo traccia del mese dell'ultimo deposito
@@ -832,6 +856,8 @@ function runSimulation() {
             cumulativeContributionsEur += monthlyDepositEur;
             if (monthlyDepositEur > 0) {
                 cashFlowsEur.push({ date: simData[i].Date, amount: -monthlyDepositEur });
+                const fattoreInflazioneVersamento = calcolaFattoreInflazione(dates[0], simData[i].Date, inflationData);
+                realCashFlowsEur.push({ date: simData[i].Date, amount: -(monthlyDepositEur / fattoreInflazioneVersamento) });
             }
             totalDepositsEur.push(cumulativeContributionsEur);
             lastDepositMonth = currentMonth;
@@ -840,11 +866,11 @@ function runSimulation() {
             totalDepositsEur.push(cumulativeContributionsEur);
         }
 
-        // Calcola il valore "nettissimo": si tassano al 26% le plusvalenze (guadagno oltre i contributi)
-        gainDollar = currentNetDollar - cumulativeContributionsDollar;
-        currentNettissimoDollar = currentNetDollar - (gainDollar > 0 ? gainDollar * 0.26 : 0);
+        // Il "nettissimo" fiscale viene calcolato in EUR e poi convertito in USD.
+        // In questo modo la vista in dollari rimane coerente con la fiscalita' del simulatore.
         gainEur = currentNetEur - cumulativeContributionsEur;
         currentNettissimoEur = currentNetEur - (gainEur > 0 ? gainEur * 0.26 : 0);
+        currentNettissimoDollar = currentNettissimoEur * exchangeRates[i];
 
         // Salva i dati per il grafico
         dates.push(simData[i].Date);
@@ -865,6 +891,8 @@ function runSimulation() {
     const drawdownNettissimoEur = calcolaDrawdownGiornaliero(nettissimoValuesEur);
     const drawdownNettissimoEurValore = calcolaDrawdownValore(nettissimoValuesEur);
     const drawdownNettissimoDollarValore = calcolaDrawdownValore(nettissimoValuesDollar);
+    const picchiNettissimoEur = calcolaMassimiProgressivi(nettissimoValuesEur);
+    const picchiNettissimoDollar = calcolaMassimiProgressivi(nettissimoValuesDollar);
     // Funzione per calcolare la deviazione standard annualizzata
     function calcolaDeviazioneStandardAnnualizzata(data) {
         // Se tutti i valori sono 0 o non ci sono dati, ritorna 0
@@ -917,6 +945,8 @@ function runSimulation() {
     const maxDrawdownValoreNettissimoDollarDate = dates[maxDrawdownValoreNettissimoDollarIndex] || dates[0];
     const maxDrawdownNettissimoTotValueEur = nettissimoValuesEur[maxDrawdownValoreNettissimoEurIndex] ?? 0;
     const maxDrawdownNettissimoTotValueDollar = nettissimoValuesDollar[maxDrawdownValoreNettissimoDollarIndex] ?? 0;
+    const perditaValoreMaxDrawdownNettissimoEur = picchiNettissimoEur[maxDrawdownNettissimoEuroIndex] ? picchiNettissimoEur[maxDrawdownNettissimoEuroIndex] - nettissimoValuesEur[maxDrawdownNettissimoEuroIndex] : 0;
+    const perditaValoreMaxDrawdownNettissimoDollar = picchiNettissimoDollar[maxDrawdownNettissimoDollarIndex] ? picchiNettissimoDollar[maxDrawdownNettissimoDollarIndex] - nettissimoValuesDollar[maxDrawdownNettissimoDollarIndex] : 0;
 
     // Calcola i valori reali al netto dell'inflazione        
     const adjustedNettissimoValuesEur = adjustForInflationCumulative(nettissimoValuesEur, dates, inflationData);
@@ -1007,7 +1037,8 @@ function runSimulation() {
     const rendimentoLordoEur = calcolaRendimentoConXirr(finalGrossEur, cumulativeContributionsEur, cashFlowsEur, dataFinale);
     const rendimentoNettoEur = calcolaRendimentoConXirr(finalNetEur, cumulativeContributionsEur, cashFlowsEur, dataFinale);
     const rendimentoNettissimoEur = calcolaRendimentoConXirr(finalNettissimoEur, cumulativeContributionsEur, cashFlowsEur, dataFinale);
-    const rendimenttoRealeNettissimoEur = calcolaRendimentoConXirr(adjustedNettissimoValuesEur[finalIndex], cumulativeContributionsEur, cashFlowsEur, dataFinale);
+    const cumulativeRealContributionsEur = realCashFlowsEur.reduce((totale, flusso) => totale + Math.abs(flusso.amount), 0);
+    const rendimenttoRealeNettissimoEur = calcolaRendimentoConXirr(adjustedNettissimoValuesEur[finalIndex], cumulativeRealContributionsEur, realCashFlowsEur, dataFinale);
 
     let resultHtml = `<h3>Risultati della simulazione</h3>`;
     resultHtml += `<div class="box">`;
@@ -1068,7 +1099,7 @@ function runSimulation() {
               </strong> perdita del ${formatPercent(maxDrawdownNettissimoEur * 100)} 
               in data ${maxDrawdownNettissimoEuroDate} 
               (su capitale che al momento era di ${formatEuro(nettissimoValuesEur[maxDrawdownNettissimoEuroIndex])}
-              al netto delle tasse) quindi una perdita di ${formatEuro(nettissimoValuesEur[maxDrawdownNettissimoEuroIndex] * maxDrawdownNettissimoEur)}</p>`;
+              al netto delle tasse) quindi una perdita di ${formatEuro(perditaValoreMaxDrawdownNettissimoEur)}</p>`;
     resultHtml += `<p><strong>Drawdown Massimo (MDD) in euro (sul nettissimo):
               </strong> in data ${maxDrawdownValoreNettissimoEurDate} perdita di 
               ${formatEuro(maxDrawdownValoreNettissimoEur)} 
@@ -1126,7 +1157,7 @@ function runSimulation() {
               </strong> perdita del ${formatPercent(maxDrawdownNettissimoDollar * 100)} 
               in data ${maxDrawdownNettissimoDollarDate} 
               (su capitale che al momento era di ${formatDollar(nettissimoValuesDollar[maxDrawdownNettissimoDollarIndex])}
-              al netto delle tasse) quindi una perdita di ${formatDollar(nettissimoValuesDollar[maxDrawdownNettissimoDollarIndex] * maxDrawdownNettissimoDollar)}</p>`;
+              al netto delle tasse) quindi una perdita di ${formatDollar(perditaValoreMaxDrawdownNettissimoDollar)}</p>`;
     resultHtml += `<p><strong>Drawdown Massimo (MDD) in $ (sul nettissimo):
               </strong> in data ${maxDrawdownValoreNettissimoDollarDate} perdita di 
               ${formatDollar(maxDrawdownValoreNettissimoDollar)} 
