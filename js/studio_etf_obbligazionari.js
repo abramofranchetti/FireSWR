@@ -379,7 +379,7 @@
             metricCard('Massimo divario forward-spot', formatBasisPoints(stats.maxGap.forward - stats.maxGap.spot), 'Il massimo scarto si osserva attorno a ' + formatYears(stats.maxGap.x) + ': spot ' + formatPercent(stats.maxGap.spot) + ', forward ' + formatPercent(stats.maxGap.forward) + '.'),
             metricCard('Massimo spot', formatPercent(stats.maxSpot.y), 'Raggiunto a ' + formatYears(stats.maxSpot.x) + '.'),
             metricCard('Massimo forward', formatPercent(stats.maxForward.y), 'Raggiunto a ' + formatYears(stats.maxForward.x) + '.'),
-            metricCard('Pickup annuo ETF a 10 anni', formatBasisPoints(tenYear.pickupHoldAnnualized), 'ETF tenuto oggi -> 10Y: annuo medio ' + formatPercent(tenYear.etfAnnualizedHold) + ' vs bond spot ' + formatPercent(tenYear.spot) + '.'),
+            metricCard('Pickup annuo ETF a 10 anni', formatBasisPoints(tenYear.pickupHoldAnnualized), 'ETF tenuto oggi fino a 10Y: annuo medio ' + formatPercent(tenYear.etfAnnualizedHold) + ' vs bond spot ' + formatPercent(tenYear.spot) + '.'),
             metricCard('Differenza totale a 15 anni', formatSignedPercent(fifteenYear.maturityExcessPct), 'Su base 100: ' + formatSignedEuro(fifteenYear.maturityExcessOn100) + '.')
         ].join('');
     }
@@ -397,7 +397,7 @@
                 '<p class="mb-0">A 5 anni leggiamo spot ' + formatPercent(fiveYear.spot) + ' e forward ' + formatPercent(fiveYear.forward) + '.</p>' +
             '</article>',
             '<article class="insight-card">' +
-                '<h3>2. Confronto pratico oggi -> D</h3>' +
+                '<h3>2. Confronto pratico oggi fino a D</h3>' +
                 '<p>Per rispondere alla domanda pratica, qui simuliamo ETF comprato oggi e tenuto per D anni con roll annuale a duration costante.</p>' +
                 '<p class="mb-0">Sul 10Y: ETF annuo medio ' + formatPercent(tenYear.etfAnnualizedHold) + ' vs bond spot ' + formatPercent(tenYear.spot) + ', pickup annuo ' + formatBasisPoints(tenYear.pickupHoldAnnualized) + '.</p>' +
             '</article>',
