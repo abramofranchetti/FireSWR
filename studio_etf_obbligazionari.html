@@ -262,6 +262,34 @@
             color: #60788d;
         }
 
+        .simulator-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .simulator-form .form-group {
+            margin-bottom: 0;
+        }
+
+        .simulator-chart {
+            position: relative;
+            height: 320px;
+            margin-top: 18px;
+        }
+
+        .simulator-result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .simulator-breakdown {
+            margin-top: 14px;
+        }
+
         @media (max-width: 768px) {
             .yield-page {
                 padding: 20px 10px 36px;
@@ -467,6 +495,80 @@
                 </p>
             </div>
             <div class="examples-grid" id="examples-grid"></div>
+        </section>
+
+        <section class="mt-4">
+            <h2 class="section-title">Simulatore dinamico ETF obbligazionario</h2>
+            <p class="section-intro">
+                Modello annuale semplificato ma dinamico: carry, roll-down, shock tassi/spread, costi TER e reinvestimento implicito tramite aggiornamento del rendimento anno per anno.
+            </p>
+            <article class="content-card">
+                <form id="bond-etf-simulator-form" class="simulator-form">
+                    <div class="form-group">
+                        <label for="sim-yield">Yield iniziale (%)</label>
+                        <input id="sim-yield" class="form-control" type="number" step="0.01" value="3.20">
+                    </div>
+                    <div class="form-group">
+                        <label for="sim-duration">Duration modificata</label>
+                        <input id="sim-duration" class="form-control" type="number" step="0.1" min="0.1" value="7">
+                    </div>
+                    <div class="form-group">
+                        <label for="sim-horizon">Orizzonte D (anni)</label>
+                        <input id="sim-horizon" class="form-control" type="number" step="1" min="1" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="sim-rate-shift">Variazione annua tassi (pp)</label>
+                        <input id="sim-rate-shift" class="form-control" type="number" step="0.01" value="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="sim-rate-path">Percorso tassi opzionale (pp)</label>
+                        <input id="sim-rate-path" class="form-control" type="text" placeholder="es. 0.30;0.10;-0.20">
+                    </div>
+                    <div class="form-group">
+                        <label for="sim-ter">TER annuo (%)</label>
+                        <input id="sim-ter" class="form-control" type="number" step="0.01" min="0" value="0.20">
+                    </div>
+                    <div class="form-group">
+                        <label for="sim-spread-shift">Variazione spread annua (pp)</label>
+                        <input id="sim-spread-shift" class="form-control" type="number" step="0.01" value="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="sim-spread-path">Percorso spread opzionale (pp)</label>
+                        <input id="sim-spread-path" class="form-control" type="text" placeholder="es. 0.05;0.05;0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="sim-slope">Slope curva (pp per anno)</label>
+                        <input id="sim-slope" class="form-control" type="number" step="0.01" value="0.60">
+                    </div>
+                    <div class="form-group d-flex align-items-end">
+                        <button type="submit" class="toggle-btn active w-100">Aggiorna simulazione</button>
+                    </div>
+                </form>
+                <p class="small-muted mt-3 mb-0">
+                    Nota pratica: il roll-down richiede la pendenza di curva. Se non hai una stima esplicita, usa 0 e il modello riduce il termine di roll.
+                </p>
+                <div class="simulator-result-grid" id="simulator-summary"></div>
+                <div class="simulator-chart">
+                    <canvas id="bondEtfSimulationChart"></canvas>
+                </div>
+                <div class="table-responsive simulator-breakdown">
+                    <table class="table comparison-table mb-0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Anno</th>
+                                <th>Yield inizio anno</th>
+                                <th>Carry</th>
+                                <th>Roll-down</th>
+                                <th>Effetto tassi+spread</th>
+                                <th>TER</th>
+                                <th>Rendimento annuo</th>
+                                <th>Capitale finale</th>
+                            </tr>
+                        </thead>
+                        <tbody id="simulator-breakdown-body"></tbody>
+                    </table>
+                </div>
+            </article>
         </section>
 
         <section class="mt-4" id="disclaimer-container"></section>

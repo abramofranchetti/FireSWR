@@ -5,6 +5,7 @@
     const state = {
         mode: 'AAA',
         chart: null,
+        simulatorChart: null,
         datasets: null,
         stats: null
     };
@@ -28,6 +29,9 @@
     const etfInsights = document.getElementById('etf-insights');
     const btnAAA = document.getElementById('btnAAA');
     const btnAll = document.getElementById('btnAll');
+    const simulatorForm = document.getElementById('bond-etf-simulator-form');
+    const simulatorSummary = document.getElementById('simulator-summary');
+    const simulatorBreakdownBody = document.getElementById('simulator-breakdown-body');
 
     fetch('xml/data.xml')
         .then(function (response) {
@@ -60,6 +64,7 @@
 
         createChart(parsed.datasets);
         updateView('AAA');
+        initializeBondEtfSimulator();
 
         btnAAA.addEventListener('click', function () {
             updateView('AAA');
@@ -67,6 +72,297 @@
 
         btnAll.addEventListener('click', function () {
             updateView('ALL');
+        });
+    }
+
+    function initializeBondEtfSimulator() {
+        if (!simulatorForm || !simulatorSummary || !simulatorBreakdownBody) {
+            return;
+        }
+
+        simulatorForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            runBondEtfSimulationFromForm();
+        });
+
+        runBondEtfSimulationFromForm();
+    }
+
+    function runBondEtfSimulationFromForm() {
+        const params = readSimulationParamsFromUI();
+        const dynamicResult = simulateBondETF(params);
+        const simpleResult = simulateSimpleBondModel(params);
+        renderBondEtfSimulationResults(dynamicResult, simpleResult);
+    }
+
+    function readSimulationParamsFromUI() {
+        const horizonYears = Math.max(1, parseInt(readInputValue('sim-horizon', '10'), 10));
+        const ratePath = parseScenarioVector(readInputValue('sim-rate-path', ''));
+        const spreadPath = parseScenarioVector(readInputValue('sim-spread-path', ''));
+        return {
+            initialYield: parsePercentInput(readInputValue('sim-yield', '0')),
+            modifiedDuration: Math.max(0.1, parseFloat(readInputValue('sim-duration', '1')) || 1),
+            horizonYears: horizonYears,
+            annualRateShift: parsePercentInput(readInputValue('sim-rate-shift', '0')),
+            annualRateShiftPath: ratePath.length ? ratePath : null,
+            ter: Math.max(0, parsePercentInput(readInputValue('sim-ter', '0'))),
+            annualSpreadShift: parsePercentInput(readInputValue('sim-spread-shift', '0')),
+            annualSpreadShiftPath: spreadPath.length ? spreadPath : null,
+            curveSlope: parsePercentInput(readInputValue('sim-slope', '0')),
+            initialCapital: 100
+        };
+    }
+
+    function readInputValue(id, fallback) {
+        const element = document.getElementById(id);
+        if (!element) {
+            return fallback;
+        }
+        return element.value;
+    }
+
+    function parsePercentInput(value) {
+        const parsed = parseFloat((value || '0').toString().replace(',', '.'));
+        if (Number.isNaN(parsed)) {
+            return 0;
+        }
+        return parsed / 100;
+    }
+
+    function parseScenarioVector(raw) {
+        if (!raw || !raw.trim()) {
+            return [];
+        }
+        return raw.split(/[;,]+/).map(function (item) {
+            const parsed = parseFloat(item.trim().replace(',', '.'));
+            return Number.isNaN(parsed) ? null : parsed / 100;
+        }).filter(function (item) {
+            return item !== null;
+        });
+    }
+
+    // Simulazione dinamica ETF obbligazionario con approccio annuale.
+    // Ogni termine replica la scomposizione economica:
+    // total return ≈ carry + roll-down - duration*delta_tassi - TER.
+    function simulateBondETF(params) {
+        const horizon = Math.max(1, Math.floor(params.horizonYears));
+        const yearlyRatePath = buildScenarioPath(params.annualRateShiftPath, params.annualRateShift, horizon);
+        const spreadPath = buildScenarioPath(params.annualSpreadShiftPath, params.annualSpreadShift, horizon);
+        const duration = Math.max(0.1, params.modifiedDuration);
+        const ter = Math.max(0, params.ter || 0);
+        const curveSlope = params.curveSlope || 0;
+
+        let currentYield = params.initialYield;
+        let capital = params.initialCapital || 100;
+
+        const yearlyRows = [];
+        const capitalPath = [capital];
+
+        const totals = {
+            carry: 0,
+            rollDown: 0,
+            rateEffect: 0,
+            cost: 0
+        };
+
+        for (let year = 0; year < horizon; year += 1) {
+            const rateShift = yearlyRatePath[year];
+            const spreadShift = spreadPath[year];
+            const totalShift = rateShift + spreadShift;
+
+            // Carry: rendimento corrente del portafoglio che remunera il tempo.
+            const carry = currentYield;
+            // Roll-down: approssima il guadagno prezzo quando i bond "scendono" sulla curva.
+            const rollDown = curveSlope / duration;
+            // Sensibilita prezzo: duration * shock di tasso/spread (con segno negativo).
+            const rateEffect = -duration * totalShift;
+            // Costo gestione annuo.
+            const cost = -ter;
+
+            const annualReturn = carry + rollDown + rateEffect + cost;
+            const capitalStart = capital;
+            capital = capitalStart * (1 + annualReturn);
+            capitalPath.push(capital);
+
+            totals.carry += capitalStart * carry;
+            totals.rollDown += capitalStart * rollDown;
+            totals.rateEffect += capitalStart * rateEffect;
+            totals.cost += capitalStart * cost;
+
+            yearlyRows.push({
+                year: year + 1,
+                yieldStart: currentYield,
+                carry: carry,
+                rollDown: rollDown,
+                rateEffect: rateEffect,
+                cost: cost,
+                annualReturn: annualReturn,
+                capitalEnd: capital
+            });
+
+            // Reinvestimento implicito: l'ETF rinnova il portafoglio ai nuovi livelli di rendimento.
+            currentYield = Math.max(-0.95, currentYield + totalShift);
+        }
+
+        const cumulativeReturn = (capital / (params.initialCapital || 100)) - 1;
+        const cagr = Math.pow(1 + cumulativeReturn, 1 / horizon) - 1;
+
+        return {
+            params: params,
+            horizon: horizon,
+            capitalPath: capitalPath,
+            yearlyRows: yearlyRows,
+            cumulativeReturn: cumulativeReturn,
+            cagr: cagr,
+            finalCapital: capital,
+            contributionsAmount: totals,
+            contributionsPctOfInitial: {
+                carry: totals.carry / (params.initialCapital || 100),
+                rollDown: totals.rollDown / (params.initialCapital || 100),
+                rateEffect: totals.rateEffect / (params.initialCapital || 100),
+                cost: totals.cost / (params.initialCapital || 100)
+            }
+        };
+    }
+
+    // Modello base "yield costante": proxy del vecchio approccio semplificato.
+    function simulateSimpleBondModel(params) {
+        const horizon = Math.max(1, Math.floor(params.horizonYears));
+        const initialCapital = params.initialCapital || 100;
+        const annualReturn = params.initialYield - (params.ter || 0);
+        const finalCapital = initialCapital * Math.pow(1 + annualReturn, horizon);
+        const cumulativeReturn = (finalCapital / initialCapital) - 1;
+        const cagr = Math.pow(1 + cumulativeReturn, 1 / horizon) - 1;
+        const capitalPath = [];
+        for (let i = 0; i <= horizon; i += 1) {
+            capitalPath.push(initialCapital * Math.pow(1 + annualReturn, i));
+        }
+        return {
+            finalCapital: finalCapital,
+            cumulativeReturn: cumulativeReturn,
+            cagr: cagr,
+            capitalPath: capitalPath
+        };
+    }
+
+    window.simulateBondETF = simulateBondETF;
+    window.simulateSimpleBondModel = simulateSimpleBondModel;
+
+    function buildScenarioPath(path, fallbackValue, horizon) {
+        if (Array.isArray(path) && path.length) {
+            const out = [];
+            for (let i = 0; i < horizon; i += 1) {
+                out.push(i < path.length ? path[i] : path[path.length - 1]);
+            }
+            return out;
+        }
+        return Array(horizon).fill(fallbackValue || 0);
+    }
+
+    function renderBondEtfSimulationResults(dynamicResult, simpleResult) {
+        renderSimulationSummary(dynamicResult, simpleResult);
+        renderSimulationBreakdown(dynamicResult);
+        renderSimulationChart(dynamicResult, simpleResult);
+    }
+
+    function renderSimulationSummary(dynamicResult, simpleResult) {
+        const diffCapital = dynamicResult.finalCapital - simpleResult.finalCapital;
+        const diffCagr = dynamicResult.cagr - simpleResult.cagr;
+        const contributions = dynamicResult.contributionsPctOfInitial;
+
+        simulatorSummary.innerHTML = [
+            metricCard('Capitale finale dinamico', formatAmount(dynamicResult.finalCapital), 'Rendimento cumulato: ' + formatSignedPercent(dynamicResult.cumulativeReturn * 100) + ' | CAGR: ' + formatSignedPercent(dynamicResult.cagr * 100)),
+            metricCard('Capitale finale modello semplice', formatAmount(simpleResult.finalCapital), 'Rendimento cumulato: ' + formatSignedPercent(simpleResult.cumulativeReturn * 100) + ' | CAGR: ' + formatSignedPercent(simpleResult.cagr * 100)),
+            metricCard('Differenza dinamico - semplice', formatSignedAmount(diffCapital), 'Delta CAGR: ' + formatBasisPoints(diffCagr * 100)),
+            metricCard('Breakdown contributi', 'Carry ' + formatSignedPercent(contributions.carry * 100), 'Roll-down ' + formatSignedPercent(contributions.rollDown * 100) + ' | Effetto tassi ' + formatSignedPercent(contributions.rateEffect * 100) + ' | Costi ' + formatSignedPercent(contributions.cost * 100))
+        ].join('');
+    }
+
+    function renderSimulationBreakdown(dynamicResult) {
+        simulatorBreakdownBody.innerHTML = dynamicResult.yearlyRows.map(function (row) {
+            return '<tr>' +
+                '<td><strong>' + row.year + '</strong></td>' +
+                '<td>' + formatPercent(row.yieldStart * 100) + '</td>' +
+                '<td>' + formatSignedPercent(row.carry * 100) + '</td>' +
+                '<td>' + formatSignedPercent(row.rollDown * 100) + '</td>' +
+                '<td>' + formatSignedPercent(row.rateEffect * 100) + '</td>' +
+                '<td>' + formatSignedPercent(row.cost * 100) + '</td>' +
+                '<td><strong>' + formatSignedPercent(row.annualReturn * 100) + '</strong></td>' +
+                '<td>' + formatAmount(row.capitalEnd) + '</td>' +
+                '</tr>';
+        }).join('');
+    }
+
+    function renderSimulationChart(dynamicResult, simpleResult) {
+        const labels = dynamicResult.capitalPath.map(function (_, i) { return i.toString(); });
+        const ctx = document.getElementById('bondEtfSimulationChart');
+        if (!ctx) {
+            return;
+        }
+
+        if (state.simulatorChart) {
+            state.simulatorChart.destroy();
+        }
+
+        state.simulatorChart = new Chart(ctx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Capitale dinamico',
+                        data: dynamicResult.capitalPath,
+                        borderColor: '#0f766e',
+                        backgroundColor: 'rgba(15, 118, 110, 0.12)',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.15
+                    },
+                    {
+                        label: 'Capitale modello semplice',
+                        data: simpleResult.capitalPath,
+                        borderColor: '#1d4f91',
+                        backgroundColor: 'rgba(29, 79, 145, 0.12)',
+                        borderWidth: 2,
+                        borderDash: [8, 6],
+                        fill: false,
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function (items) {
+                                return 'Anno ' + items[0].label;
+                            },
+                            label: function (context) {
+                                return context.dataset.label + ': ' + formatAmount(context.parsed.y);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Anno'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Capitale (base 100)'
+                        }
+                    }
+                }
+            }
         });
     }
 
@@ -663,5 +959,14 @@
     function formatSignedEuro(value) {
         const sign = value > 0 ? '+' : '';
         return sign + value.toFixed(2) + '&euro;';
+    }
+
+    function formatAmount(value) {
+        return value.toFixed(2);
+    }
+
+    function formatSignedAmount(value) {
+        const sign = value > 0 ? '+' : '';
+        return sign + value.toFixed(2);
     }
 });
