@@ -290,6 +290,28 @@
             margin-top: 14px;
         }
 
+        .simulator-params-legend {
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid rgba(22, 50, 79, 0.10);
+            color: #3f5b71;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .simulator-legend {
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: #f2f7fb;
+            border: 1px solid rgba(22, 50, 79, 0.10);
+            color: #355269;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
         @media (max-width: 768px) {
             .yield-page {
                 padding: 20px 10px 36px;
@@ -544,12 +566,31 @@
                         <button type="submit" class="toggle-btn active w-100">Aggiorna simulazione</button>
                     </div>
                 </form>
+                <div class="simulator-params-legend">
+                    <strong>Legenda parametri:</strong>
+                    Yield iniziale = rendimento di partenza del portafoglio;
+                    Duration modificata = sensibilita del prezzo ai movimenti di tasso;
+                    Orizzonte D = anni di detenzione;
+                    Variazione annua tassi = shock tassi costante per anno;
+                    Percorso tassi opzionale = sequenza anno per anno (sovrascrive lo shock costante);
+                    TER = costo annuo del fondo;
+                    Variazione spread annua = shock costante del premio credito;
+                    Percorso spread opzionale = sequenza spread anno per anno;
+                    Slope curva = pendenza usata per stimare il roll-down.
+                </div>
                 <p class="small-muted mt-3 mb-0">
                     Nota pratica: il roll-down richiede la pendenza di curva. Se non hai una stima esplicita, usa 0 e il modello riduce il termine di roll.
                 </p>
                 <div class="simulator-result-grid" id="simulator-summary"></div>
                 <div class="simulator-chart">
                     <canvas id="bondEtfSimulationChart"></canvas>
+                </div>
+                <div class="simulator-legend">
+                    <strong>Legenda rapida simulatore:</strong>
+                    Carry = rendimento corrente del portafoglio;
+                    Roll-down = beneficio (o costo) da scorrimento sulla curva a duration costante;
+                    Effetto tassi+spread = impatto prezzo da variazioni di tassi e premio credito via duration;
+                    TER = costo annuo di gestione.
                 </div>
                 <div class="table-responsive simulator-breakdown">
                     <table class="table comparison-table mb-0">

@@ -64,6 +64,7 @@
 
         createChart(parsed.datasets);
         updateView('AAA');
+        applyBceDefaultsToSimulator(parsed.datasets);
         initializeBondEtfSimulator();
 
         btnAAA.addEventListener('click', function () {
@@ -73,6 +74,93 @@
         btnAll.addEventListener('click', function () {
             updateView('ALL');
         });
+    }
+
+    function applyBceDefaultsToSimulator(datasets) {
+        if (!simulatorForm) {
+            return;
+        }
+
+        const maturityYears = 10;
+        const horizonYears = 10;
+        const curve = datasets.AAA && datasets.AAA.spot.length ? datasets.AAA : datasets.ALL;
+        if (!curve || !curve.spot.length) {
+            return;
+        }
+
+        const spot10 = interpolate(curve.spot, maturityYears);
+        const slope10 = estimateSpotSlope(curve.spot, maturityYears);
+        const impliedPaths = buildImpliedScenarioPaths(datasets, maturityYears, horizonYears);
+
+        setInputValue('sim-yield', toInputNumber(spot10, 2));
+        setInputValue('sim-duration', toInputNumber(maturityYears, 1));
+        setInputValue('sim-horizon', String(horizonYears));
+        setInputValue('sim-rate-shift', toInputNumber(impliedPaths.defaultRateShift, 2));
+        setInputValue('sim-rate-path', formatScenarioPathForInput(impliedPaths.rateShiftPath));
+        setInputValue('sim-ter', '0.20');
+        setInputValue('sim-spread-shift', toInputNumber(impliedPaths.defaultSpreadShift, 2));
+        setInputValue('sim-spread-path', formatScenarioPathForInput(impliedPaths.spreadShiftPath));
+        setInputValue('sim-slope', toInputNumber(slope10, 2));
+    }
+
+    function estimateSpotSlope(spotCurve, maturityYears) {
+        const left = Math.max(0.5, maturityYears - 1);
+        const right = maturityYears + 1;
+        const yLeft = interpolate(spotCurve, left);
+        const yRight = interpolate(spotCurve, right);
+        return (yRight - yLeft) / (right - left);
+    }
+
+    function setInputValue(id, value) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.value = value;
+        }
+    }
+
+    function toInputNumber(value, decimals) {
+        return Number(value).toFixed(decimals);
+    }
+
+    function formatScenarioPathForInput(path) {
+        if (!Array.isArray(path) || !path.length) {
+            return '';
+        }
+        return path.map(function (value) {
+            return Number(value).toFixed(2);
+        }).join(';');
+    }
+
+    function buildImpliedScenarioPaths(datasets, durationYears, horizonYears) {
+        const aaaForward = datasets.AAA && datasets.AAA.forward.length ? datasets.AAA.forward : (datasets.ALL ? datasets.ALL.forward : []);
+        const allForward = datasets.ALL && datasets.ALL.forward ? datasets.ALL.forward : [];
+
+        const rateShiftPath = [];
+        const spreadShiftPath = [];
+
+        for (let year = 1; year <= horizonYears; year += 1) {
+            const currentMat = durationYears + year;
+            const previousMat = durationYears + year - 1;
+
+            const currentForwardAaa = interpolate(aaaForward, currentMat);
+            const previousForwardAaa = interpolate(aaaForward, previousMat);
+            rateShiftPath.push(currentForwardAaa - previousForwardAaa);
+
+            if (allForward.length && datasets.AAA && datasets.AAA.forward.length) {
+                const spreadCurrent = interpolate(allForward, currentMat) - interpolate(datasets.AAA.forward, currentMat);
+                const spreadPrev = interpolate(allForward, previousMat) - interpolate(datasets.AAA.forward, previousMat);
+                spreadShiftPath.push(spreadCurrent - spreadPrev);
+            } else {
+                spreadShiftPath.push(0);
+            }
+        }
+
+        return {
+            rateShiftPath: rateShiftPath,
+            spreadShiftPath: spreadShiftPath,
+            defaultRateShift: rateShiftPath.length ? rateShiftPath[0] : 0,
+            defaultSpreadShift: spreadShiftPath.length ? spreadShiftPath[0] : 0
+        };
     }
 
     function initializeBondEtfSimulator() {
