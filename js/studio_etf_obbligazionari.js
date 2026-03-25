@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+﻿document.addEventListener('DOMContentLoaded', function () {
     const nsMessage = 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message';
     const nsGeneric = 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic';
 
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     'Spot S(t): ' + formatPercent(reading.spot),
                                     'Forward f(t): ' + formatPercent(reading.forward),
                                     'Yield implicito ETF fra 1Y: ' + formatPercent(reading.rollYield1Y),
-                                    'Yield implicito ETF fra t anni: ' + formatPercent(reading.rollYieldSameHorizon)
+                                    'Rendimento annuo medio ETF (oggi -> t): ' + formatPercent(reading.etfAnnualizedHold)
                                 ];
                             },
                             label: function (context) {
@@ -297,8 +297,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 return [
                                     'Gap forward-spot: ' + formatBasisPoints(reading.forward - reading.spot),
                                     'Pickup ETF vs spot fra 1Y: ' + formatBasisPoints(reading.rollPickup1Y),
-                                    'Pickup ETF vs spot fra t anni: ' + formatBasisPoints(reading.rollPickupSameHorizon),
-                                    'Check identita\' spot=(1/t)∫f: ' + formatPercent(reading.identityAverage)
+                                    'Pickup ETF vs spot su orizzonte t: ' + formatBasisPoints(reading.pickupHoldAnnualized),
+                                    'Check identita spot=(1/t)int f: ' + formatPercent(reading.identityAverage)
                                 ];
                             }
                         }
@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderSummary(mode) {
         const stats = state.stats[mode];
         const tenYear = getReading(mode, 10);
-        const twentyYear = getReading(mode, 20);
+        const fifteenYear = getReading(mode, 15);
         const label = mode === 'AAA' ? 'Titoli AAA' : 'Tutti i rating';
 
         summaryMetrics.innerHTML = [
@@ -379,15 +379,15 @@ document.addEventListener('DOMContentLoaded', function () {
             metricCard('Massimo divario forward-spot', formatBasisPoints(stats.maxGap.forward - stats.maxGap.spot), 'Il massimo scarto si osserva attorno a ' + formatYears(stats.maxGap.x) + ': spot ' + formatPercent(stats.maxGap.spot) + ', forward ' + formatPercent(stats.maxGap.forward) + '.'),
             metricCard('Massimo spot', formatPercent(stats.maxSpot.y), 'Raggiunto a ' + formatYears(stats.maxSpot.x) + '.'),
             metricCard('Massimo forward', formatPercent(stats.maxForward.y), 'Raggiunto a ' + formatYears(stats.maxForward.x) + '.'),
-            metricCard('Pickup ETF a 10 anni', formatBasisPoints(tenYear.rollPickup1Y), 'Fra 1 anno il roll implicito e\' ' + formatPercent(tenYear.rollYield1Y) + '; su orizzonte 10 anni sale a ' + formatBasisPoints(tenYear.rollPickupSameHorizon) + '.'),
-            metricCard('Pickup ETF a 15 anni', formatBasisPoints(getReading(mode, 15).rollPickup1Y), 'Fra 1 anno il roll implicito e\' ' + formatPercent(getReading(mode, 15).rollYield1Y) + '; su orizzonte 15 anni sale a ' + formatBasisPoints(getReading(mode, 15).rollPickupSameHorizon) + '.')
+            metricCard('Pickup annuo ETF a 10 anni', formatBasisPoints(tenYear.pickupHoldAnnualized), 'ETF tenuto oggi -> 10Y: annuo medio ' + formatPercent(tenYear.etfAnnualizedHold) + ' vs bond spot ' + formatPercent(tenYear.spot) + '.'),
+            metricCard('Differenza totale a 15 anni', formatSignedPercent(fifteenYear.maturityExcessPct), 'Su base 100: ' + formatSignedEuro(fifteenYear.maturityExcessOn100) + '.')
         ].join('');
     }
 
     function renderInsights(mode) {
         const tenYear = getReading(mode, 10);
         const fiveYear = getReading(mode, 5);
-        const twentyYear = getReading(mode, 20);
+        const fifteenYear = getReading(mode, 15);
         const datasetName = mode === 'AAA' ? 'curva AAA' : 'curva All Ratings';
 
         etfInsights.innerHTML = [
@@ -397,14 +397,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 '<p class="mb-0">A 5 anni leggiamo spot ' + formatPercent(fiveYear.spot) + ' e forward ' + formatPercent(fiveYear.forward) + '.</p>' +
             '</article>',
             '<article class="insight-card">' +
-                '<h3>2. Cosa vede davvero un ETF a duration costante</h3>' +
-                '<p>La media forward da 0 a 10 anni ricostruisce quasi la spot 10Y. Per vedere un vero effetto di roll, guardiamo invece il rendimento implicito della stessa duration disponibile fra un anno.</p>' +
-                '<p class="mb-0">Qui il confronto e\' yield implicito ETF ' + formatPercent(tenYear.rollYield1Y) + ' contro spot 10Y ' + formatPercent(tenYear.spot) + ', con pickup di ' + formatBasisPoints(tenYear.rollPickup1Y) + '. Se estendiamo l\'orizzonte a 10 anni, il pickup implicito diventa ' + formatBasisPoints(tenYear.rollPickupSameHorizon) + '.</p>' +
+                '<h3>2. Confronto pratico oggi -> D</h3>' +
+                '<p>Per rispondere alla domanda pratica, qui simuliamo ETF comprato oggi e tenuto per D anni con roll annuale a duration costante.</p>' +
+                '<p class="mb-0">Sul 10Y: ETF annuo medio ' + formatPercent(tenYear.etfAnnualizedHold) + ' vs bond spot ' + formatPercent(tenYear.spot) + ', pickup annuo ' + formatBasisPoints(tenYear.pickupHoldAnnualized) + '.</p>' +
             '</article>',
             '<article class="insight-card">' +
-                '<h3>3. Parte lunga della curva</h3>' +
-                '<p>La distanza tra forward e spot sulla parte lunga aiuta a capire se il mercato sta prezzando una salita o una discesa dei tassi marginali futuri e quindi un maggiore o minore premio di roll per un ETF.</p>' +
-                '<p class="mb-0">A 15 anni il pickup implicito dell\'ETF e\' ' + formatBasisPoints(getReading(mode, 15).rollPickup1Y) + ' fra 1 anno e ' + formatBasisPoints(getReading(mode, 15).rollPickupSameHorizon) + ' su orizzonte 15 anni, mentre il gap forward-spot e\' ' + formatBasisPoints(getReading(mode, 15).forward - getReading(mode, 15).spot) + '.</p>' +
+                '<h3>3. Effetto cumulato</h3>' +
+                '<p>La colonna di differenza totale mostra il confronto dei montanti finali dopo D anni, non solo il gap annualizzato.</p>' +
+                '<p class="mb-0">A 15 anni: differenza totale ' + formatSignedPercent(fifteenYear.maturityExcessPct) + ' (' + formatSignedEuro(fifteenYear.maturityExcessOn100) + ' su base 100).</p>' +
             '</article>'
         ].join('');
     }
@@ -417,8 +417,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 '<td><strong>' + formatYears(maturity) + '</strong></td>' +
                 '<td>' + formatPercent(reading.spot) + '</td>' +
                 '<td>' + formatPercent(reading.forward) + '</td>' +
-                '<td>' + dualLineMetric('fra 1Y', formatPercent(reading.rollYield1Y), 'fra ' + formatYearsShort(maturity), formatPercent(reading.rollYieldSameHorizon)) + '</td>' +
-                '<td>' + dualLineMetricStyled('fra 1Y', formatBasisPoints(reading.rollPickup1Y), pickupStyle(reading.rollPickup1Y), 'fra ' + formatYearsShort(maturity), formatBasisPoints(reading.rollPickupSameHorizon), pickupStyle(reading.rollPickupSameHorizon)) + '</td>' +
+                '<td>' + dualLineMetric('fra 1Y', formatPercent(reading.rollYield1Y), 'oggi -> ' + formatYearsShort(maturity), formatPercent(reading.etfAnnualizedHold)) + '</td>' +
+                '<td>' + dualLineMetricStyled('fra 1Y', formatBasisPoints(reading.rollPickup1Y), pickupStyle(reading.rollPickup1Y), ' oggi -> ' + formatYearsShort(maturity), formatBasisPoints(reading.pickupHoldAnnualized), pickupStyle(reading.pickupHoldAnnualized)) + '</td>' +
                 '<td>' + maturityDiffMetric(reading) + '</td>' +
                 '<td>' + buildInterpretation(reading) + '</td>' +
                 '</tr>';
@@ -426,15 +426,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function renderExamples(mode) {
-        const maturities = [5, 10, 20];
+        const maturities = [5, 10, 15];
         examplesGrid.innerHTML = maturities.map(function (maturity) {
             const reading = getReading(mode, maturity);
             return '<article class="example-card">' +
                 '<h3>Esempio su ' + formatYears(maturity) + '</h3>' +
                 '<p><strong>Obbligazione zero-coupon acquistata oggi</strong>: rendimento bloccato pari a ' + formatPercent(reading.spot) + '.</p>' +
                 '<p><strong>Forward marginale</strong>: il tratto attorno a ' + formatYears(maturity) + ' prezza ' + formatPercent(reading.forward) + '.</p>' +
-                '<p><strong>Identita\' di curva</strong>: la media da 0 a ' + formatYears(maturity) + ' vale ' + formatPercent(reading.identityAverage) + ' ed e\' quasi uguale alla spot.</p>' +
-                '<p class="mb-0"><strong>ETF duration costante</strong>: rendimento implicito di roll disponibile fra un anno pari a ' + formatPercent(reading.rollYield1Y) + ' e su orizzonte ' + formatYearsShort(maturity) + ' pari a ' + formatPercent(reading.rollYieldSameHorizon) + '. ' + buildInterpretation(reading) + '</p>' +
+                '<p><strong>Identita di curva</strong>: la media da 0 a ' + formatYears(maturity) + ' vale ' + formatPercent(reading.identityAverage) + ' ed e quasi uguale alla spot.</p>' +
+                '<p class="mb-0"><strong>ETF duration costante</strong>: rendimento implicito fra 1 anno pari a ' + formatPercent(reading.rollYield1Y) + '; tenuto da oggi a ' + formatYearsShort(maturity) + ' ha annuo medio implicito ' + formatPercent(reading.etfAnnualizedHold) + ', differenza totale ' + formatSignedPercent(reading.maturityExcessPct) + ' (' + formatSignedEuro(reading.maturityExcessOn100) + ' su base 100). ' + buildInterpretation(reading) + '</p>' +
                 '</article>';
         }).join('');
     }
@@ -445,9 +445,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const forward = interpolate(curves.forward, maturity);
         const identityAverage = averageForwardUpTo(curves.forward, maturity);
         const rollYield1Y = averageForwardBetween(curves.forward, 1, 1 + maturity);
-        const rollYieldSameHorizon = averageForwardBetween(curves.forward, maturity, 2 * maturity);
+        const etfWealthAtMaturity = simulateEtfHoldWealth(curves.forward, maturity);
         const bondWealthAtMaturity = Math.pow(1 + (spot / 100), maturity);
-        const etfWealthAtMaturity = Math.pow(1 + (rollYieldSameHorizon / 100), maturity);
+        const etfAnnualizedHold = (Math.pow(etfWealthAtMaturity, 1 / maturity) - 1) * 100;
         const maturityExcessPct = ((etfWealthAtMaturity / bondWealthAtMaturity) - 1) * 100;
         const maturityExcessOn100 = (etfWealthAtMaturity - bondWealthAtMaturity) * 100;
         return {
@@ -457,11 +457,29 @@ document.addEventListener('DOMContentLoaded', function () {
             identityAverage: identityAverage,
             rollYield1Y: rollYield1Y,
             rollPickup1Y: rollYield1Y - spot,
-            rollYieldSameHorizon: rollYieldSameHorizon,
-            rollPickupSameHorizon: rollYieldSameHorizon - spot,
+            etfAnnualizedHold: etfAnnualizedHold,
+            pickupHoldAnnualized: etfAnnualizedHold - spot,
             maturityExcessPct: maturityExcessPct,
             maturityExcessOn100: maturityExcessOn100
         };
+    }
+
+    function simulateEtfHoldWealth(forwardCurve, maturity) {
+        let wealth = 1;
+        const wholeYears = Math.floor(maturity);
+        const fractionalYear = maturity - wholeYears;
+
+        for (let year = 0; year < wholeYears; year += 1) {
+            const rollYield = averageForwardBetween(forwardCurve, year, year + maturity);
+            wealth *= (1 + (rollYield / 100));
+        }
+
+        if (fractionalYear > 1e-9) {
+            const rollYield = averageForwardBetween(forwardCurve, wholeYears, wholeYears + maturity);
+            wealth *= Math.pow(1 + (rollYield / 100), fractionalYear);
+        }
+
+        return wealth;
     }
 
     function averageForwardUpTo(curve, maturity) {
@@ -568,21 +586,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function buildInterpretation(reading) {
         const diff = reading.forward - reading.spot;
-        const rollPickup = reading.rollPickupSameHorizon;
+        const holdPickup = reading.pickupHoldAnnualized;
 
-        if (rollPickup > 0.20) {
-            return 'Su un orizzonte pari alla durata, l\'ETF vede un roll yield sensibilmente superiore allo spot: la curva crescente offre un pickup rilevante.';
+        if (holdPickup > 0.20) {
+            return 'Su un confronto oggi fino a scadenza, l\'ETF mostra un vantaggio annuo medio sensibile rispetto al bond.';
         }
-        if (rollPickup > 0.08) {
-            return 'Su un orizzonte pari alla durata, l\'ETF vede un roll yield moderatamente superiore allo spot: la curva suggerisce reinvestimenti futuri piu\' ricchi.';
+        if (holdPickup > 0.08) {
+            return 'Su un confronto oggi fino a scadenza, l\'ETF mostra un vantaggio annuo medio moderato rispetto al bond.';
         }
-        if (rollPickup < -0.08) {
-            return 'L\'ETF vede un roll yield inferiore allo spot: mantenere duration costante sarebbe meno favorevole del lock-in oggi.';
+        if (holdPickup < -0.08) {
+            return 'Su un confronto oggi fino a scadenza, il bond risulta piu favorevole dell\'ETF a duration costante.';
         }
         if (diff < -0.12) {
-            return 'La forward e\' sotto la spot e il beneficio di roll si comprime: la parte lunga della curva e\' meno favorevole.';
+            return 'La forward e sotto la spot e il beneficio di roll si comprime: la parte lunga della curva e meno favorevole.';
         }
-        return 'Spot e roll yield sono vicini: il vantaggio atteso dell\'ETF rispetto al lock-in oggi appare contenuto.';
+        return 'Su orizzonte oggi fino a scadenza i due strumenti risultano vicini secondo il modello.';
     }
 
     function formatPercent(value) {
@@ -642,13 +660,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return sign + value.toFixed(2) + '%';
     }
 
-    function formatSignedNumber(value) {
-        const sign = value > 0 ? '+' : '';
-        return sign + value.toFixed(2);
-    }
-
     function formatSignedEuro(value) {
         const sign = value > 0 ? '+' : '';
-        return sign + value.toFixed(2) + '€';
+        return sign + value.toFixed(2) + '&euro;';
     }
 });

@@ -399,10 +399,11 @@
                         <div class="formula-box">\[
                             S(D) = \frac{1}{D}\int_0^D f(t)\,dt
                         \]</div>
-                        <p>Per visualizzare meglio l'effetto di <strong>roll</strong> di un ETF a duration costante, e' piu' utile guardare il rendimento implicito della stessa duration disponibile <strong>fra un anno</strong>:</p>
+                        <p>Per visualizzare meglio l'effetto di <strong>roll</strong> di un ETF a duration costante, guardiamo anche il rendimento implicito della stessa duration disponibile <strong>fra un anno</strong>:</p>
                         <div class="formula-box">\[
                             Y_{roll,1Y}(D) \approx \frac{1}{D}\int_1^{1+D} f(t)\,dt
                         \]</div>
+                        <p>Per il confronto operativo della tabella, invece, usiamo un holding period return su orizzonte <span class="math-inline">D</span>: ETF comprato oggi e tenuto per D anni, con roll annuale a duration costante.</p>
                         <p class="mb-0">
                             Il confronto con una singola obbligazione zero-coupon acquistata oggi resta:
                         </p>
@@ -419,7 +420,7 @@
                             Se la curva forward si appiattisce o scende, il vantaggio di roll si riduce oppure puo' invertirsi.
                         </p>
                         <p class="mb-0">
-                            La differenza economica interessante non e' quindi tra <span class="math-inline">\(\frac{1}{D}\int_0^D f(t)dt\)</span> e spot, che coincidono quasi per costruzione, ma tra <strong>spot bloccato oggi</strong> e <strong>yield implicito di roll disponibile fra un anno</strong>. Questo e' il numero che la tabella qui sotto mette a confronto.
+                            La differenza economica interessante non e' quindi tra <span class="math-inline">\(\frac{1}{D}\int_0^D f(t)dt\)</span> e spot, che coincidono quasi per costruzione, ma tra <strong>bond comprato oggi e tenuto fino a scadenza D</strong> e <strong>ETF comprato oggi e tenuto D anni con roll annuale</strong>. Questo e' il confronto della tabella qui sotto.
                         </p>
                     </article>
                 </div>
@@ -428,7 +429,7 @@
             <div class="mt-4">
                 <h3 class="mb-3">Confronto numerico per scadenze rappresentative</h3>
                 <p class="small-muted mb-3">
-                    La colonna <strong>Pickup ETF vs spot</strong> misura il maggiore rendimento atteso dell'ETF a duration costante rispetto a un'obbligazione zero-coupon acquistata oggi sulla stessa scadenza/duration. In ogni cella trovi due confronti: <strong>fra 1 anno</strong> e <strong>fra D anni</strong>, dove D coincide con la scadenza della riga. Se il valore e' positivo, il modello implica un vantaggio atteso per l'ETF; se e' negativo, favorisce l'obbligazione acquistata oggi.
+                    La colonna <strong>Pickup ETF vs spot</strong> misura il maggiore rendimento atteso dell'ETF a duration costante rispetto a un'obbligazione zero-coupon acquistata oggi sulla stessa scadenza/duration. In ogni cella trovi due confronti: <strong>fra 1 anno</strong> e <strong>oggi -> D anni</strong>, dove D coincide con la scadenza della riga. Se il valore e' positivo, il modello implica un vantaggio atteso per l'ETF; se e' negativo, favorisce l'obbligazione acquistata oggi.
                 </p>
                 <div class="table-responsive content-card p-0">
                     <table class="table comparison-table mb-0">
@@ -446,8 +447,8 @@
                                 <th class="small-muted font-weight-normal">Orizzonte confrontato</th>
                                 <th class="small-muted font-weight-normal">Rendimento bloccato oggi sul bond</th>
                                 <th class="small-muted font-weight-normal">Tasso marginale implicito alla scadenza D</th>
-                                <th class="small-muted font-weight-normal">Prima riga: fra 1 anno. Seconda riga: fra D anni</th>
-                                <th class="small-muted font-weight-normal">Prima riga: extra rendimento ETF meno bond. Seconda riga: stesso confronto su orizzonte D</th>
+                                <th class="small-muted font-weight-normal">Prima riga: fra 1 anno. Seconda riga: annuo medio ETF su orizzonte oggi fino a D</th>
+                                <th class="small-muted font-weight-normal">Prima riga: extra rendimento ETF meno bond. Seconda riga: extra annuo medio su oggi fino a D</th>
                                 <th class="small-muted font-weight-normal">Confronto montante ETF vs bond dopo D anni (base 100)</th>
                                 <th class="small-muted font-weight-normal">Sintesi del confronto</th>
                             </tr>
