@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curva dei rendimenti BCE: spot, forward ed ETF a duration costante</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/studio_etf_obbligazionari.js" defer></script>
+    <style>
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(5, 150, 105, 0.10), transparent 30%),
+                radial-gradient(circle at top right, rgba(14, 116, 144, 0.10), transparent 28%),
+                linear-gradient(180deg, #f5f7f2 0%, #eef3f7 100%);
+            color: #16324f;
+        }
+
+        .yield-page {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 18px 48px;
+        }
+
+        .hero-panel,
+        .content-card,
+        .formula-card,
+        .metric-card,
+        .insight-card,
+        .example-card,
+        .note-strip {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(22, 50, 79, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 16px 40px rgba(22, 50, 79, 0.08);
+        }
+
+        .hero-panel {
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #0f766e;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            line-height: 1.05;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.06rem;
+            line-height: 1.75;
+            color: #36506b;
+            max-width: 940px;
+        }
+
+        .data-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 18px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: #e8f7f2;
+            color: #0f766e;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 1.55rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .section-intro {
+            color: #4a6177;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .content-card,
+        .formula-card,
+        .note-strip {
+            padding: 22px;
+            height: 100%;
+        }
+
+        .formula-card {
+            background: linear-gradient(180deg, rgba(232, 247, 242, 0.85), rgba(255, 255, 255, 0.95));
+        }
+
+        .content-card h3,
+        .formula-card h3,
+        .insight-card h3,
+        .example-card h3 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .formula-box {
+            background: #16324f;
+            color: #f9fafb;
+            border-radius: 16px;
+            padding: 18px 16px;
+            margin: 16px 0;
+            overflow: hidden;
+        }
+
+        .chart-card {
+            padding: 24px;
+            margin-top: 24px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            box-shadow: 0 18px 40px rgba(22, 50, 79, 0.08);
+        }
+
+        .chart-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .chart-actions,
+        .chart-legend-note {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .toggle-btn {
+            border: 0;
+            border-radius: 999px;
+            padding: 10px 16px;
+            font-weight: 700;
+            color: #16324f;
+            background: #dde9f3;
+            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+
+        .toggle-btn:hover,
+        .toggle-btn:focus {
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        .toggle-btn.active {
+            background: #16324f;
+            color: #ffffff;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 62vh;
+            min-height: 420px;
+            margin: 0;
+        }
+
+        .metrics-grid,
+        .insight-grid,
+        .examples-grid {
+            display: grid;
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        .metrics-grid {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .insight-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .examples-grid {
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+
+        .metric-card,
+        .insight-card,
+        .example-card {
+            padding: 20px;
+        }
+
+        .metric-label {
+            color: #5d7387;
+            font-size: 0.92rem;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            line-height: 1.15;
+        }
+
+        .metric-detail {
+            margin-top: 8px;
+            color: #486175;
+            line-height: 1.6;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            vertical-align: middle;
+        }
+
+        .table thead th {
+            border-bottom-width: 1px;
+        }
+
+        .table td,
+        .table th {
+            border-top-color: rgba(22, 50, 79, 0.08);
+        }
+
+        .note-strip {
+            margin-top: 18px;
+            border-left: 6px solid #0f766e;
+        }
+
+        .pill-note {
+            display: inline-block;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #ebf5ff;
+            color: #1d4f91;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .math-inline {
+            font-weight: 600;
+            color: #0f3555;
+        }
+
+        .small-muted {
+            font-size: 0.92rem;
+            color: #60788d;
+        }
+
+        @media (max-width: 768px) {
+            .yield-page {
+                padding: 20px 10px 36px;
+            }
+
+            .hero-panel,
+            .content-card,
+            .formula-card,
+            .chart-card,
+            .metric-card,
+            .insight-card,
+            .example-card,
+            .note-strip {
+                border-radius: 18px;
+            }
+
+            .chart-toolbar {
+                align-items: flex-start;
+            }
+
+            .chart-wrapper {
+                height: 72vh;
+                min-height: 380px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="yield-page">
+        <section class="hero-panel">
+            <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
+                <a href="/FireSWR" class="home-button">Home</a>
+            </div>
+            <span class="eyebrow">Curva BCE con modello Svensson</span>
+            <h1 class="hero-title">Curva spot, curva forward istantanea ed effetto sul rendimento di un ETF obbligazionario a duration costante</h1>
+            <p class="hero-subtitle">
+                Questa pagina usa i dati BCE della curva zero-coupon in euro e mette a confronto due oggetti chiave della finanza obbligazionaria: la curva <strong>spot</strong> e la curva <strong>istantanea forward</strong>.
+                L'obiettivo non e' collegare i numeri al comportamento atteso di un ETF che mantiene la duration del portafoglio costante nel tempo. 
+            </p>
+            <div id="ecb-date" class="data-badge"></div>
+        </section>
+
+        <section class="mb-4">
+            <h2 class="section-title">Introduzione teorica</h2>
+            <p class="section-intro">
+                La BCE pubblica una curva dei rendimenti stimata con il modello di Svensson. Da quella stima possiamo leggere i tassi zero-coupon per ogni scadenza e i tassi forward impliciti lungo tutta la struttura a termine. Le due curve rispondono a domande diverse: <em>quanto rende un investimento fino alla scadenza t fatta oggi</em> e <em>quale tasso marginale e' implicito attorno a t</em>.
+            </p>
+            <div class="row">
+                <div class="col-lg-4 mb-3">
+                    <article class="content-card">
+                        <h3>Curva spot</h3>
+                        <p>
+                            Il tasso zero-coupon per ogni scadenza <span class="math-inline">t</span>, riflette il rendimento atteso di un titolo zero-coupon fino a quella scadenza.
+                            In altre parole, <strong>e' il rendimento annualizzato "oggi" per bloccare un investimento fino a t</strong> senza cedole intermedie.
+                        </p>
+                        <div class="formula-box">\[
+                            S(t)
+                        \]</div>
+                        <p class="small-muted mb-0">
+                            Se la curva spot sale con la maturita', il mercato richiede rendimenti piu' alti per immobilizzare il capitale piu' a lungo.
+                        </p>
+                    </article>
+                </div>
+                <div class="col-lg-4 mb-3">
+                    <article class="content-card">
+                        <h3>Curva istantanea forward</h3>
+                        <p>
+                            Il tasso marginale implicito per un periodo infinitesimale attorno a <span class="math-inline">t</span>.
+                            Il valore corrente del tasso forward istantaneo per una certa data futura costituisce il valore atteso del tasso spot per quella data, oltre ad altri termini che tipicamente includono uno specifico premio per il rischio.
+                        </p>
+                        <div class="formula-box">\[
+                            f(t) = S(t) + t \cdot \frac{dS(t)}{dt}
+                        \]</div>
+                        <p class="small-muted mb-0">
+                            Quando la forward e' sopra la spot, il mercato sta implicando tassi marginali futuri piu' elevati della media incorporata nel rendimento spot.
+                        </p>
+                    </article>
+                </div>
+                <div class="col-lg-4 mb-3">
+                    <article class="formula-card">
+                        <h3>Relazione tra le due curve</h3>
+                        <p>
+                            La curva spot e' la <strong>media continua</strong> dei tassi forward fino alla scadenza, mentre la curva forward e' il contributo marginale attorno a ciascun punto della curva.
+                        </p>
+                        <div class="formula-box">\[
+                            S(t) = \frac{1}{t} \int_0^t f(u)\,du
+                        \]</div>
+                        <p class="mb-0">
+                            Interpretazione: la spot a 10 anni riassume tutta la sequenza dei tassi forward dal tempo 0 al tempo 10. La forward, invece, evidenzia dove la struttura a termine accelera o si raffredda.
+                        </p>
+                    </article>
+                </div>
+            </div>
+            <div class="note-strip">
+                <span class="pill-note">Spot = rendimento medio fino a t</span>
+                <span class="pill-note">Forward = tasso marginale implicito attorno a t</span>
+                <span class="pill-note">Differenza spot-forward = lettura della pendenza economica della curva</span>
+                <p class="mb-0 mt-2">
+                    Se la curva forward e' crescente e sta sopra la spot nelle scadenze medio-lunghe, significa che il mercato sconta reinvestimenti futuri a tassi piu' alti della media gia' incorporata nei rendimenti spot. Se invece la forward scende sotto la spot, la parte finale della curva comunica aspettative di raffreddamento dei tassi marginali futuri.
+                </p>
+            </div>
+        </section>
+
+        <section class="chart-card">
+            <div class="chart-toolbar">
+                <div>
+                    <h2 class="section-title mb-1">Grafico interattivo</h2>
+                    <p class="section-intro mb-0">Curve stimate da 0 a 30 anni. Usa i pulsanti per passare da titoli <strong>AAA</strong> a <strong>All Ratings</strong>.</p>
+                </div>
+                <div class="chart-actions" id="curve-toggle-buttons">
+                    <button type="button" class="toggle-btn active" id="btnAAA">Mostra AAA</button>
+                    <button type="button" class="toggle-btn" id="btnAll">Mostra All Ratings</button>
+                </div>
+            </div>
+            <div class="chart-legend-note small-muted mb-3">
+                <span class="pill-note">Tooltip: spot, forward e yield implicito di roll ETF</span>
+                <span class="pill-note">Linea verticale: punto di massimo divario forward-spot</span>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="ecbYieldChart"></canvas>
+            </div>
+            <div class="metrics-grid" id="summary-metrics"></div>
+        </section>
+
+        <section class="mt-4">
+            <h2 class="section-title">ETF obbligazionario a duration costante</h2>
+            <p class="section-intro">
+                Un ETF a duration costante mantiene costante la duration del portafoglio, per esempio 10 anni, reinvestendo i titoli che si accorciano o vanno in scadenza in titoli nuovi piu' lunghi. In questo modo non si limita a "bloccare" oggi uno spot a 10 anni, ma continua a esporsi alla parte della curva coerente con la duration target, catturando nel tempo i <strong>forward rates futuri</strong> impliciti dalla curva.
+            </p>
+            <div class="row">
+                <div class="col-lg-6 mb-3">
+                    <article class="formula-card">
+                        <h3>Due formule da non confondere</h3>
+                        <p>La prima e' un'identita' di curva: la media dei forward da oggi fino a <span class="math-inline">D</span> ricostruisce semplicemente la spot alla stessa scadenza.</p>
+                        <div class="formula-box">\[
+                            S(D) = \frac{1}{D}\int_0^D f(t)\,dt
+                        \]</div>
+                        <p>Per visualizzare meglio l'effetto di <strong>roll</strong> di un ETF a duration costante, e' piu' utile guardare il rendimento implicito della stessa duration disponibile <strong>fra un anno</strong>:</p>
+                        <div class="formula-box">\[
+                            Y_{roll,1Y}(D) \approx \frac{1}{D}\int_1^{1+D} f(t)\,dt
+                        \]</div>
+                        <p class="mb-0">
+                            Il confronto con una singola obbligazione zero-coupon acquistata oggi resta:
+                        </p>
+                        <div class="formula-box">\[
+                            R_{bond,oggi} = S(D)
+                        \]</div>
+                    </article>
+                </div>
+                <div class="col-lg-6 mb-3">
+                    <article class="content-card">
+                        <h3>Lettura intuitiva</h3>
+                        <p>
+                            Se la curva forward e' crescente, un ETF duration costante puo' rollare il portafoglio su rendimenti impliciti futuri piu' alti del rendimento spot osservato oggi sulla stessa duration.
+                            Se la curva forward si appiattisce o scende, il vantaggio di roll si riduce oppure puo' invertirsi.
+                        </p>
+                        <p class="mb-0">
+                            La differenza economica interessante non e' quindi tra <span class="math-inline">\(\frac{1}{D}\int_0^D f(t)dt\)</span> e spot, che coincidono quasi per costruzione, ma tra <strong>spot bloccato oggi</strong> e <strong>yield implicito di roll disponibile fra un anno</strong>. Questo e' il numero che la tabella qui sotto mette a confronto.
+                        </p>
+                    </article>
+                </div>
+            </div>
+            <div class="insight-grid" id="etf-insights"></div>
+            <div class="mt-4">
+                <h3 class="mb-3">Confronto numerico per scadenze rappresentative</h3>
+                <p class="small-muted mb-3">
+                    La colonna <strong>Pickup ETF vs spot</strong> misura il maggiore rendimento atteso dell'ETF a duration costante rispetto a un'obbligazione zero-coupon acquistata oggi sulla stessa scadenza/duration. Se il valore e' positivo, il modello implica un vantaggio atteso per l'ETF; se e' negativo, favorisce l'obbligazione acquistata oggi.
+                </p>
+                <div class="table-responsive content-card p-0">
+                    <table class="table comparison-table mb-0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Duration / scadenza</th>
+                                <th>Spot S(D)</th>
+                                <th>Forward f(D)</th>
+                                <th>Yield implicito ETF \(\tfrac{1}{D}\int_1^{1+D} f(t)dt\)</th>
+                                <th>Pickup ETF vs spot</th>
+                                <th>Lettura intuitiva</th>
+                            </tr>
+                            <tr>
+                                <th class="small-muted font-weight-normal">Orizzonte confrontato</th>
+                                <th class="small-muted font-weight-normal">Rendimento bloccato oggi sul bond</th>
+                                <th class="small-muted font-weight-normal">Tasso marginale implicito alla scadenza D</th>
+                                <th class="small-muted font-weight-normal">Rendimento di roll teorico dell'ETF fra 1 anno</th>
+                                <th class="small-muted font-weight-normal" style="color: red;">Extra rendimento atteso ETF</th>
+                                <th class="small-muted font-weight-normal">Sintesi del confronto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparison-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="note-strip">
+                <span class="pill-note">Vantaggio di roll = forward implicito futuro - spot bloccato oggi</span>
+                <p class="mb-0 mt-2">
+                    Se la curva forward e' crescente, l'ETF a duration costante puo' rollare su rendimenti futuri piu' alti del rendimento spot osservato oggi sulla stessa duration, generando un vantaggio atteso. Se invece la curva forward si appiattisce o scende, il vantaggio di roll si riduce o puo' addirittura invertire, favorendo l'obbligazione acquistata oggi.
+                </p>
+                <p class="mb-0 mt-2 font-weight-bold">
+                    Nota: questo confronto e' teorico e non tiene conto di costi di gestione, bid-ask spread, o altri fattori reali che possono influenzare il rendimento effettivo di un ETF obbligazionario a duration costante. Inoltre non considera il mancato reinvestimento di cedole intermedie, che in un ETF reale potrebbero essere presenti e influenzare il rendimento complessivo.
+                </p>
+            </div>
+            <div class="examples-grid" id="examples-grid"></div>
+        </section>
+
+        <section class="mt-4" id="disclaimer-container"></section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(function (response) { return response.text(); })
+                .then(function (data) {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+</html>
