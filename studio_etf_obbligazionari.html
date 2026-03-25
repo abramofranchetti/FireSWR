@@ -428,7 +428,7 @@
             <div class="mt-4">
                 <h3 class="mb-3">Confronto numerico per scadenze rappresentative</h3>
                 <p class="small-muted mb-3">
-                    La colonna <strong>Pickup ETF vs spot</strong> misura il maggiore rendimento atteso dell'ETF a duration costante rispetto a un'obbligazione zero-coupon acquistata oggi sulla stessa scadenza/duration. Se il valore e' positivo, il modello implica un vantaggio atteso per l'ETF; se e' negativo, favorisce l'obbligazione acquistata oggi.
+                    La colonna <strong>Pickup ETF vs spot</strong> misura il maggiore rendimento atteso dell'ETF a duration costante rispetto a un'obbligazione zero-coupon acquistata oggi sulla stessa scadenza/duration. In ogni cella trovi due confronti: <strong>fra 1 anno</strong> e <strong>fra D anni</strong>, dove D coincide con la scadenza della riga. Se il valore e' positivo, il modello implica un vantaggio atteso per l'ETF; se e' negativo, favorisce l'obbligazione acquistata oggi.
                 </p>
                 <div class="table-responsive content-card p-0">
                     <table class="table comparison-table mb-0">
@@ -437,16 +437,18 @@
                                 <th>Duration / scadenza</th>
                                 <th>Spot S(D)</th>
                                 <th>Forward f(D)</th>
-                                <th>Yield implicito ETF \(\tfrac{1}{D}\int_1^{1+D} f(t)dt\)</th>
+                                <th>Yield implicito ETF</th>
                                 <th>Pickup ETF vs spot</th>
+                                <th>Differenza totale a scadenza</th>
                                 <th>Lettura intuitiva</th>
                             </tr>
                             <tr>
                                 <th class="small-muted font-weight-normal">Orizzonte confrontato</th>
                                 <th class="small-muted font-weight-normal">Rendimento bloccato oggi sul bond</th>
                                 <th class="small-muted font-weight-normal">Tasso marginale implicito alla scadenza D</th>
-                                <th class="small-muted font-weight-normal">Rendimento di roll teorico dell'ETF fra 1 anno</th>
-                                <th class="small-muted font-weight-normal" style="color: red;">Extra rendimento atteso ETF</th>
+                                <th class="small-muted font-weight-normal">Prima riga: fra 1 anno. Seconda riga: fra D anni</th>
+                                <th class="small-muted font-weight-normal">Prima riga: extra rendimento ETF meno bond. Seconda riga: stesso confronto su orizzonte D</th>
+                                <th class="small-muted font-weight-normal">Confronto montante ETF vs bond dopo D anni (base 100)</th>
                                 <th class="small-muted font-weight-normal">Sintesi del confronto</th>
                             </tr>
                         </thead>

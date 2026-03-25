@@ -281,7 +281,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 return [
                                     'Spot S(t): ' + formatPercent(reading.spot),
                                     'Forward f(t): ' + formatPercent(reading.forward),
-                                    'Yield implicito ETF fra 1Y: ' + formatPercent(reading.rollYield)
+                                    'Yield implicito ETF fra 1Y: ' + formatPercent(reading.rollYield1Y),
+                                    'Yield implicito ETF fra t anni: ' + formatPercent(reading.rollYieldSameHorizon)
                                 ];
                             },
                             label: function (context) {
@@ -295,7 +296,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 const reading = getReading(state.mode, maturity);
                                 return [
                                     'Gap forward-spot: ' + formatBasisPoints(reading.forward - reading.spot),
-                                    'Pickup ETF vs spot: ' + formatBasisPoints(reading.rollPickup),
+                                    'Pickup ETF vs spot fra 1Y: ' + formatBasisPoints(reading.rollPickup1Y),
+                                    'Pickup ETF vs spot fra t anni: ' + formatBasisPoints(reading.rollPickupSameHorizon),
                                     'Check identita\' spot=(1/t)∫f: ' + formatPercent(reading.identityAverage)
                                 ];
                             }
@@ -377,8 +379,8 @@ document.addEventListener('DOMContentLoaded', function () {
             metricCard('Massimo divario forward-spot', formatBasisPoints(stats.maxGap.forward - stats.maxGap.spot), 'Il massimo scarto si osserva attorno a ' + formatYears(stats.maxGap.x) + ': spot ' + formatPercent(stats.maxGap.spot) + ', forward ' + formatPercent(stats.maxGap.forward) + '.'),
             metricCard('Massimo spot', formatPercent(stats.maxSpot.y), 'Raggiunto a ' + formatYears(stats.maxSpot.x) + '.'),
             metricCard('Massimo forward', formatPercent(stats.maxForward.y), 'Raggiunto a ' + formatYears(stats.maxForward.x) + '.'),
-            metricCard('Pickup ETF a 10 anni', formatBasisPoints(tenYear.rollPickup), 'Spot 10Y ' + formatPercent(tenYear.spot) + ' contro yield implicito di roll ETF ' + formatPercent(tenYear.rollYield) + ' fra un anno.'),
-            metricCard('Pickup ETF a 20 anni', formatBasisPoints(twentyYear.rollPickup), 'Spot 20Y ' + formatPercent(twentyYear.spot) + ' contro yield implicito di roll ETF ' + formatPercent(twentyYear.rollYield) + ' fra un anno.')
+            metricCard('Pickup ETF a 10 anni', formatBasisPoints(tenYear.rollPickup1Y), 'Fra 1 anno il roll implicito e\' ' + formatPercent(tenYear.rollYield1Y) + '; su orizzonte 10 anni sale a ' + formatBasisPoints(tenYear.rollPickupSameHorizon) + '.'),
+            metricCard('Pickup ETF a 15 anni', formatBasisPoints(getReading(mode, 15).rollPickup1Y), 'Fra 1 anno il roll implicito e\' ' + formatPercent(getReading(mode, 15).rollYield1Y) + '; su orizzonte 15 anni sale a ' + formatBasisPoints(getReading(mode, 15).rollPickupSameHorizon) + '.')
         ].join('');
     }
 
@@ -397,26 +399,27 @@ document.addEventListener('DOMContentLoaded', function () {
             '<article class="insight-card">' +
                 '<h3>2. Cosa vede davvero un ETF a duration costante</h3>' +
                 '<p>La media forward da 0 a 10 anni ricostruisce quasi la spot 10Y. Per vedere un vero effetto di roll, guardiamo invece il rendimento implicito della stessa duration disponibile fra un anno.</p>' +
-                '<p class="mb-0">Qui il confronto e\' yield implicito ETF ' + formatPercent(tenYear.rollYield) + ' contro spot 10Y ' + formatPercent(tenYear.spot) + ', con pickup di ' + formatBasisPoints(tenYear.rollPickup) + '.</p>' +
+                '<p class="mb-0">Qui il confronto e\' yield implicito ETF ' + formatPercent(tenYear.rollYield1Y) + ' contro spot 10Y ' + formatPercent(tenYear.spot) + ', con pickup di ' + formatBasisPoints(tenYear.rollPickup1Y) + '. Se estendiamo l\'orizzonte a 10 anni, il pickup implicito diventa ' + formatBasisPoints(tenYear.rollPickupSameHorizon) + '.</p>' +
             '</article>',
             '<article class="insight-card">' +
                 '<h3>3. Parte lunga della curva</h3>' +
                 '<p>La distanza tra forward e spot sulla parte lunga aiuta a capire se il mercato sta prezzando una salita o una discesa dei tassi marginali futuri e quindi un maggiore o minore premio di roll per un ETF.</p>' +
-                '<p class="mb-0">A 20 anni il pickup implicito dell\'ETF e\' ' + formatBasisPoints(twentyYear.rollPickup) + ', mentre il gap forward-spot e\' ' + formatBasisPoints(twentyYear.forward - twentyYear.spot) + '.</p>' +
+                '<p class="mb-0">A 15 anni il pickup implicito dell\'ETF e\' ' + formatBasisPoints(getReading(mode, 15).rollPickup1Y) + ' fra 1 anno e ' + formatBasisPoints(getReading(mode, 15).rollPickupSameHorizon) + ' su orizzonte 15 anni, mentre il gap forward-spot e\' ' + formatBasisPoints(getReading(mode, 15).forward - getReading(mode, 15).spot) + '.</p>' +
             '</article>'
         ].join('');
     }
 
     function renderComparisonTable(mode) {
-        const maturities = [3, 5, 7, 10, 15, 20];
+        const maturities = [3, 5, 7, 10, 15];
         comparisonTableBody.innerHTML = maturities.map(function (maturity) {
             const reading = getReading(mode, maturity);
             return '<tr>' +
                 '<td><strong>' + formatYears(maturity) + '</strong></td>' +
                 '<td>' + formatPercent(reading.spot) + '</td>' +
                 '<td>' + formatPercent(reading.forward) + '</td>' +
-                '<td>' + formatPercent(reading.rollYield) + '</td>' +
-                '<td><span style="' + pickupStyle(reading.rollPickup) + '">' + formatBasisPoints(reading.rollPickup) + '</span></td>' +
+                '<td>' + dualLineMetric('fra 1Y', formatPercent(reading.rollYield1Y), 'fra ' + formatYearsShort(maturity), formatPercent(reading.rollYieldSameHorizon)) + '</td>' +
+                '<td>' + dualLineMetricStyled('fra 1Y', formatBasisPoints(reading.rollPickup1Y), pickupStyle(reading.rollPickup1Y), 'fra ' + formatYearsShort(maturity), formatBasisPoints(reading.rollPickupSameHorizon), pickupStyle(reading.rollPickupSameHorizon)) + '</td>' +
+                '<td>' + maturityDiffMetric(reading) + '</td>' +
                 '<td>' + buildInterpretation(reading) + '</td>' +
                 '</tr>';
         }).join('');
@@ -431,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 '<p><strong>Obbligazione zero-coupon acquistata oggi</strong>: rendimento bloccato pari a ' + formatPercent(reading.spot) + '.</p>' +
                 '<p><strong>Forward marginale</strong>: il tratto attorno a ' + formatYears(maturity) + ' prezza ' + formatPercent(reading.forward) + '.</p>' +
                 '<p><strong>Identita\' di curva</strong>: la media da 0 a ' + formatYears(maturity) + ' vale ' + formatPercent(reading.identityAverage) + ' ed e\' quasi uguale alla spot.</p>' +
-                '<p class="mb-0"><strong>ETF duration costante</strong>: rendimento implicito di roll disponibile fra un anno pari a ' + formatPercent(reading.rollYield) + '. ' + buildInterpretation(reading) + '</p>' +
+                '<p class="mb-0"><strong>ETF duration costante</strong>: rendimento implicito di roll disponibile fra un anno pari a ' + formatPercent(reading.rollYield1Y) + ' e su orizzonte ' + formatYearsShort(maturity) + ' pari a ' + formatPercent(reading.rollYieldSameHorizon) + '. ' + buildInterpretation(reading) + '</p>' +
                 '</article>';
         }).join('');
     }
@@ -441,14 +444,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const spot = interpolate(curves.spot, maturity);
         const forward = interpolate(curves.forward, maturity);
         const identityAverage = averageForwardUpTo(curves.forward, maturity);
-        const rollYield = averageForwardBetween(curves.forward, 1, 1 + maturity);
+        const rollYield1Y = averageForwardBetween(curves.forward, 1, 1 + maturity);
+        const rollYieldSameHorizon = averageForwardBetween(curves.forward, maturity, 2 * maturity);
+        const bondWealthAtMaturity = Math.pow(1 + (spot / 100), maturity);
+        const etfWealthAtMaturity = Math.pow(1 + (rollYieldSameHorizon / 100), maturity);
+        const maturityExcessPct = ((etfWealthAtMaturity / bondWealthAtMaturity) - 1) * 100;
+        const maturityExcessOn100 = (etfWealthAtMaturity - bondWealthAtMaturity) * 100;
         return {
             maturity: maturity,
             spot: spot,
             forward: forward,
             identityAverage: identityAverage,
-            rollYield: rollYield,
-            rollPickup: rollYield - spot
+            rollYield1Y: rollYield1Y,
+            rollPickup1Y: rollYield1Y - spot,
+            rollYieldSameHorizon: rollYieldSameHorizon,
+            rollPickupSameHorizon: rollYieldSameHorizon - spot,
+            maturityExcessPct: maturityExcessPct,
+            maturityExcessOn100: maturityExcessOn100
         };
     }
 
@@ -556,13 +568,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function buildInterpretation(reading) {
         const diff = reading.forward - reading.spot;
-        const rollPickup = reading.rollPickup;
+        const rollPickup = reading.rollPickupSameHorizon;
 
         if (rollPickup > 0.20) {
-            return 'L\'ETF vede un roll yield sensibilmente superiore allo spot: la curva crescente offre un pickup rilevante.';
+            return 'Su un orizzonte pari alla durata, l\'ETF vede un roll yield sensibilmente superiore allo spot: la curva crescente offre un pickup rilevante.';
         }
         if (rollPickup > 0.08) {
-            return 'L\'ETF vede un roll yield moderatamente superiore allo spot: la curva suggerisce reinvestimenti futuri piu\' ricchi.';
+            return 'Su un orizzonte pari alla durata, l\'ETF vede un roll yield moderatamente superiore allo spot: la curva suggerisce reinvestimenti futuri piu\' ricchi.';
         }
         if (rollPickup < -0.08) {
             return 'L\'ETF vede un roll yield inferiore allo spot: mantenere duration costante sarebbe meno favorevole del lock-in oggi.';
@@ -590,6 +602,31 @@ document.addEventListener('DOMContentLoaded', function () {
         return value.toFixed(1).replace('.', ',') + ' anni';
     }
 
+    function formatYearsShort(value) {
+        if (Math.abs(value - Math.round(value)) < 0.001) {
+            return Math.round(value) + 'Y';
+        }
+        return value.toFixed(1).replace('.', ',') + 'Y';
+    }
+
+    function dualLineMetric(labelOne, valueOne, labelTwo, valueTwo) {
+        return '<div><strong>' + labelOne + ':</strong> ' + valueOne + '</div>' +
+            '<div class="small-muted"><strong>' + labelTwo + ':</strong> ' + valueTwo + '</div>';
+    }
+
+    function dualLineMetricStyled(labelOne, valueOne, styleOne, labelTwo, valueTwo, styleTwo) {
+        return '<div><strong>' + labelOne + ':</strong> <span style="' + styleOne + '">' + valueOne + '</span></div>' +
+            '<div class="small-muted"><strong>' + labelTwo + ':</strong> <span style="' + styleTwo + '">' + valueTwo + '</span></div>';
+    }
+
+    function maturityDiffMetric(reading) {
+        const style = pickupStyle(reading.maturityExcessPct / 100);
+        const pct = formatSignedPercent(reading.maturityExcessPct);
+        const on100 = formatSignedEuro(reading.maturityExcessOn100);
+        return '<div><span style="' + style + '">' + pct + '</span></div>' +
+            '<div class="small-muted">su base 100: ' + on100 + '</div>';
+    }
+
     function pickupStyle(value) {
         if (value > 0.02) {
             return 'color:#0f766e;font-weight:700;';
@@ -598,5 +635,20 @@ document.addEventListener('DOMContentLoaded', function () {
             return 'color:#b91c1c;font-weight:700;';
         }
         return 'color:#6b7280;font-weight:700;';
+    }
+
+    function formatSignedPercent(value) {
+        const sign = value > 0 ? '+' : '';
+        return sign + value.toFixed(2) + '%';
+    }
+
+    function formatSignedNumber(value) {
+        const sign = value > 0 ? '+' : '';
+        return sign + value.toFixed(2);
+    }
+
+    function formatSignedEuro(value) {
+        const sign = value > 0 ? '+' : '';
+        return sign + value.toFixed(2) + '€';
     }
 });
