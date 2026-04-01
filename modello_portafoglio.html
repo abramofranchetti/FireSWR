@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore Lifecycle Portfolio - James Choi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e67e22;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--primary-color);
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            padding: 40px 0;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 30px;
+        }
+
+        .header-inner {
+            position: relative;
+        }
+
+        .home-link {
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            transition: all 0.2s ease;
+        }
+
+        .home-link:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.22);
+            text-decoration: none;
+        }
+
+        @media (max-width: 767px) {
+            .home-link {
+                position: static;
+                display: inline-block;
+                margin-bottom: 16px;
+            }
+        }
+
+        .btn-calculate {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: bold;
+            padding: 12px 30px;
+            border-radius: 30px;
+            transition: all 0.3s;
+        }
+
+        .btn-calculate:hover {
+            background-color: #d35400;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .result-box {
+            background-color: #fff;
+            border-left: 5px solid var(--accent-color);
+            padding: 20px;
+        }
+
+        .input-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .scroll-table {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .disclaimer {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>    
+    <div class="header-section">
+        <div class="container header-inner text-center">
+            <a href="/FireSWR" class="home-link">Home</a>
+            <h1>Calcolatore di Finanza Pratica</h1>
+            <p class="lead">Soluzione approssimata per le scelte di portafoglio nel ciclo di vita (James J. Choi et al.)</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <!-- Colonna Input Parametri -->
+            <div class="col-lg-5">
+                <div class="card p-4">
+                    <h4 class="mb-4">1. Parametri di Base</h4>
+
+                    <div class="mb-3">
+                        <label class="input-label">Esperimento Mentale: Avversione al Rischio</label>
+                        <p class="small text-muted">Immagina una scommessa: 50% di probabilità di vivere con 60.000€
+                            l'anno prossimo e 50% con 30.000€. Quale cifra sicura (X) ti renderebbe indifferente?</p>
+                        <select id="riskAversion" class="form-select">
+                            <option value="1">42.426 € (RRA 1)</option>
+                            <option value="2">40.000 € (RRA 2)</option>
+                            <option value="3">37.948 € (RRA 3)</option>
+                            <option value="4">36.343 € (RRA 4)</option>
+                            <option value="5">35.140 € (RRA 5)</option>
+                            <option value="6">34.250 € (RRA 6)</option>
+                            <option value="7" selected>33.587 € (RRA 7)</option>
+                            <option value="8">33.086 € (RRA 8)</option>
+                            <option value="9">32.699 € (RRA 9)</option>
+                            <option value="10">32.395 € (RRA 10)</option>
+                        </select>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="input-label">Età Adulto 1</label>
+                            <input type="number" id="age1" class="form-control" value="40" min="20" max="99">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="input-label">Età Adulto 2 (0 se solo)</label>
+                            <input type="number" id="age2" class="form-control" value="40" min="0" max="99">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="input-label">Patrimonio Netto Investibile (€)</label>
+                        <input type="number" id="netWorth" class="form-control" value="173000">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="input-label">Rendimento Reale Azioni Atteso (%)</label>
+                        <input type="number" id="stockReturn" class="form-control" value="4" step="0.1">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="input-label">Tasso Reale Risk-Free (%)</label>
+                        <input type="number" id="riskFree" class="form-control" value="0.1" step="0.1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonna Forecast Reddito -->
+            <div class="col-lg-7">
+                <div class="card p-4">
+                    <h4 class="mb-4">2. Previsione Redditi Annuali (Full Inputs)</h4>
+                    <p class="small text-muted">Inserisci lo stipendio netto annuo (fino a 66 anni) e la pensione netta
+                        (dai 67 ai 100). Valori costanti in euro odierni.</p>
+                    <div class="scroll-table">
+                        <table class="table table-sm table-hover" id="incomeTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Età</th>
+                                    <th>Reddito Adulto 1 (€)</th>
+                                    <th>Reddito Adulto 2 (€)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="incomeBody">
+                                <!-- Popolato via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sezione Risultati -->
+        <div class="row mt-4">
+            <div class="col-12 text-center mb-5">
+                <button class="btn btn-calculate" onclick="calculatePortfolio()">CALCOLA RACCOMANDAZIONE</button>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card result-box">
+                    <h6>Quota Azionaria Suggerita</h6>
+                    <h2 id="outEquity" class="text-primary">-- %</h2>
+                    <p class="small text-muted">Percentuale del portafoglio finanziario da investire in borsa [7].</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card result-box">
+                    <h6>Valore Capitale Umano</h6>
+                    <h2 id="outHuman" class="text-success">-- €</h2>
+                    <p class="small text-muted">Valore attuale scontato dei tuoi stipendi e pensioni future [7].</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card result-box" style="border-left-color: #95a5a6;">
+                    <h6>Quota Merton (senza reddito)</h6>
+                    <h2 id="outMerton" style="color: #7f8c8d;">-- %</h2>
+                    <p class="small text-muted">La quota ottimale se non avessi alcun reddito futuro [8].</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12 text-center disclaimer">
+                <p>Esclusione di responsabilità: Questa pagina ha scopo puramente educativo e di ricerca. Non
+                    costituisce consulenza finanziaria o legale. I risultati dipendono dagli input dell'utente e dalle
+                    assunzioni del modello.</p>
+            </div>
+        </div>
+        <!-- Disclaimer -->
+        <div id="disclaimer-container"></div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                fetch('html/disclaimer.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('disclaimer-container').innerHTML = data;
+                    });
+            });
+        </script>
+    </div>
+
+    <script>
+        // Costanti del modello di Choi et al. (per laureati)
+        const SIGMA_S = 0.185; // Volatilità mercato azionario [11]
+        const SIGMA_V2 = 0.0169; // Varianza shock permanente (0.130^2) [12, 13]
+        const SIGMA_E2 = 0.0586; // Varianza shock temporaneo (0.242^2) [13, 14]
+        const LAMBDA = 0.40;   // Tasso sostituzione pensione di default [15, 16]
+        const MAX_AGE = 100;
+
+        function buildIncomeTable() {
+            const body = document.getElementById('incomeBody');
+            const currentAge = parseInt(document.getElementById('age1').value, 10) || 40;
+            body.innerHTML = '';
+
+            for (let age = currentAge + 1; age <= MAX_AGE; age++) {
+                let defIncome1 = (age <= 66) ? 23000 : 12000;
+                let defIncome2 = (age <= 66) ? 18000 : 6000;
+                body.innerHTML += `
+                <tr>
+                    <td>${age}</td>
+                    <td><input type="number" class="form-control form-control-sm inc1" data-age="${age}" value="${defIncome1}"></td>
+                    <td><input type="number" class="form-control form-control-sm inc2" data-age="${age}" value="${defIncome2}"></td>
+                </tr>
+            `;
+            }
+        }
+
+        // Popolamento tabella redditi al caricamento
+        window.onload = function () {
+            buildIncomeTable();
+            document.getElementById('age1').addEventListener('change', buildIncomeTable);
+        };
+
+        function calculatePortfolio() {
+            const gamma = parseFloat(document.getElementById('riskAversion').value);
+            const age1 = parseInt(document.getElementById('age1').value);
+            const w = parseFloat(document.getElementById('netWorth').value);
+            const stockReturn = parseFloat(document.getElementById('stockReturn').value) / 100;
+            const riskFree = parseFloat(document.getElementById('riskFree').value) / 100;
+            const equityPremium = stockReturn - riskFree;
+
+            if (!Number.isFinite(w) || w <= 0) {
+                alert("Inserisci un patrimonio netto investibile maggiore di zero.");
+                return;
+            }
+
+            if (!Number.isFinite(equityPremium) || equityPremium <= -1 || !Number.isFinite(riskFree) || riskFree <= -1) {
+                alert("Controlla i rendimenti inseriti: devono essere maggiori di -100%.");
+                return;
+            }
+
+            if (equityPremium <= 0) {
+                alert("L'equity premium deve essere positivo per applicare il modello.");
+                return;
+            }
+
+            // Regressori in forma logaritmica (log(1+r))
+            const logRp = Math.log(1 + equityPremium);
+            const logRf = Math.log(1 + riskFree);
+
+            // 1. Calcolo Alpha Star (Merton) [18]
+            // Formula: equity premium / (gamma * sigma^2)
+            let alphaStar = equityPremium / (gamma * Math.pow(SIGMA_S, 2));
+            let merton = Math.max(0, Math.min(1, alphaStar));
+
+            // 2. Calcolo Valore Capitale Umano (H) [19-21]
+            let hValue = 0;
+            let cumulativeDiscount1 = 1;
+            let currentAge = age1;
+
+            const incInputs1 = document.querySelectorAll('.inc1');
+            const incInputs2 = document.querySelectorAll('.inc2');
+
+            for (let i = 0; i < incInputs1.length; i++) {
+                let t = parseInt(incInputs1[i].getAttribute('data-age'));
+                if (t <= currentAge) continue;
+
+                let incomeTotal = parseFloat(incInputs1[i].value) + parseFloat(incInputs2[i].value);
+
+                // Calcolo tasso di sconto ad-hoc per l'età (Table 1 o Table 2) [13, 22]
+                let r_y;
+                let ageNorm = t / 100;
+
+                if (t <= 66) { // Lavoro (Table 1, Col 3)
+                    r_y = -0.020
+                        + 0.087 * (gamma / 10)
+                        - 0.267 * logRp
+                        + 1.132 * logRf
+                        + 4.332 * SIGMA_V2
+                        + 0.028 * SIGMA_E2
+                        + 0.010 * LAMBDA
+                        - 0.149 * ageNorm
+                        + 0.142 * Math.pow(ageNorm, 2);
+                } else { // Pensione (Table 2, Col 3)
+                    r_y = -0.166
+                        + 0.0003 * (gamma / 10)
+                        - 0.217 * logRp
+                        + 0.893 * logRf
+                        + 0.476 * ageNorm
+                        - 0.295 * Math.pow(ageNorm, 2);
+                }
+
+                cumulativeDiscount1 *= (1 + r_y);
+                hValue += incomeTotal / cumulativeDiscount1;
+            }
+
+            // 3. Calcolo Quota Azionaria Finale [19, 23]
+            // Formula: alpha_t = alphaStar * (1 + H/W)
+            let finalEquity = merton * (1 + (hValue / w));
+            finalEquity = Math.max(0, Math.min(1, finalEquity));
+
+            // Output
+            document.getElementById('outEquity').innerText = (finalEquity * 100).toFixed(0) + " %";
+            document.getElementById('outHuman').innerText = hValue.toLocaleString('it-IT', { maximumFractionDigits: 0 }) + " €";
+            document.getElementById('outMerton').innerText = (merton * 100).toFixed(0) + " %";
+        }
+    </script>
+
+</body>
+
+</html>
