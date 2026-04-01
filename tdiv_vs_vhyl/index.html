@@ -63,7 +63,9 @@
         <h2>Confronto tra VanEck Morningstar Developed Markets Dividend Leaders e Vanguard FTSE All-World High Dividend
             Yield considerando prezzo secco e reinvestimento dividendi netti italiani</h2>
         <h2>Prezzo secco + reinvestimento dividendi netti italiani</h2>
-        <p class="small-note">Tassi tasse: VHYL 26%, TDIV 26% + 15% (41%).</p>
+        <p class="small-note">Tassi tasse: VHYL 26%, TDIV 15% + 26%. Nota: il calcolo corretto sarebbe applicare prima
+            il 15% e poi il 26% (circa il 39%) ma dato che la normativa è interpretabile alcune banche applicano la
+            tassazione del 26% alla somma iniziale arrivando al 41%</p>
 
         <div class="row"
             style="display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; margin-bottom:14px;">
@@ -154,7 +156,7 @@
 
     <script>
         const config = {
-            TDIV: { json: 'TDIV.AS.json', txt: 'TDIV.AS_DISTRIBUTION.txt', tax: 0.41, label: 'TDIV' },
+            TDIV: { json: 'TDIV.AS.json', txt: 'TDIV.AS_DISTRIBUTION.txt', tax: 0.39, label: 'TDIV' },
             VHYL: { json: 'VHYL.AS.json', txt: 'VHYL.AS_DISTRIBUTION.txt', tax: 0.26, label: 'VHYL' }
         };
 
@@ -435,9 +437,9 @@
                         datasets: [
                             { label: 'TDIV prezzo secco', data: tdivCloseForLabels, borderColor: 'rgba(192,20,35,1)', backgroundColor: 'rgba(192,20,35,0.12)', fill: false, tension: 0.2, pointRadius: 0 },
                             { label: 'VHYL prezzo secco', data: vhylCloseForLabels, borderColor: 'rgba(20,98,220,1)', backgroundColor: 'rgba(20,98,220,0.12)', fill: false, tension: 0.2, pointRadius: 0 },
-                            { label: 'TDIV reinvest. netto 41%', data: tdivAccumForLabels, borderColor: 'rgba(255,120,120,1)', backgroundColor: 'rgba(255,120,120,0.1)', fill: false, tension: 0.2, pointRadius: 0 },
+                            { label: 'TDIV reinvest. netto 39%', data: tdivAccumForLabels, borderColor: 'rgba(255,120,120,1)', backgroundColor: 'rgba(255,120,120,0.1)', fill: false, tension: 0.2, pointRadius: 0 },
                             { label: 'VHYL reinvest. netto 26%', data: vhylAccumForLabels, borderColor: 'rgba(100,160,255,1)', backgroundColor: 'rgba(100,160,255,0.1)', fill: false, tension: 0.2, pointRadius: 0 },
-                            { label: 'TDIV reinvest. lordo', data: tdivAdjForLabels, borderColor: 'rgba(205, 89, 90,1)', backgroundColor: 'rgba(205,89,90,0.05)', fill: false, tension: 0.2, pointRadius: 0, hidden: true },                                                        
+                            { label: 'TDIV reinvest. lordo', data: tdivAdjForLabels, borderColor: 'rgba(205, 89, 90,1)', backgroundColor: 'rgba(205,89,90,0.05)', fill: false, tension: 0.2, pointRadius: 0, hidden: true },
                             { label: 'VHYL reinvest. lordo', data: vhylAdjForLabels, borderColor: 'rgba(95, 144, 220,1)', backgroundColor: 'rgba(95,144,220,0.05)', fill: false, tension: 0.2, pointRadius: 0, hidden: true }
                         ]
                     },
