@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDIV vs VHYL - Prezzo secco e reinvestimento dividendi netti IT</title>
+    <link href="../css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .metrics {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .metric {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px 14px;
+            min-width: 180px;
+            background: #fafafa;
+        }
+
+        #chartContainer {
+            height: 520px;
+            margin-top: 20px;
+        }
+
+        .small-note {
+            font-size: 0.9rem;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="/FireSWR" class="home-button">🏠 Home</a>
+        <h1>TDIV vs VHYL</h1>
+        <h2>Confronto tra VanEck Morningstar Developed Markets Dividend Leaders e Vanguard FTSE All-World High Dividend
+            Yield considerando prezzo secco e reinvestimento dividendi netti italiani</h2>
+        <h2>Prezzo secco + reinvestimento dividendi netti italiani</h2>
+        <p class="small-note">Tassi tasse: VHYL 26%, TDIV 26% + 15% (41%).</p>
+
+        <div class="row"
+            style="display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; margin-bottom:14px;">
+            <div>
+                <label>Data inizio</label><br>
+                <input id="startDate" type="date" style="padding:6px;border:1px solid #ccd; border-radius:4px;" />
+            </div>
+            <div>
+                <label>Data fine</label><br>
+                <input id="endDate" type="date" style="padding:6px;border:1px solid #ccd; border-radius:4px;" />
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <input id="rawEuro" type="checkbox" />
+                <label for="rawEuro">Mostra valori assoluti (€) (senza normalizzazione)</label>
+            </div>
+        </div>
+
+        <div class="metrics">
+            <div class="metric"><strong>TDIV prezzo secco</strong>
+                <div id="metric-tdiv-close">n/a</div>
+            </div>
+            <div class="metric"><strong>TDIV accumulo netto</strong>
+                <div id="metric-tdiv-net">n/a</div>
+            </div>
+            <div class="metric"><strong>VHYL prezzo secco</strong>
+                <div id="metric-vhyl-close">n/a</div>
+            </div>
+            <div class="metric"><strong>VHYL accumulo netto</strong>
+                <div id="metric-vhyl-net">n/a</div>
+            </div>
+        </div>
+
+        <div class="metrics" id="metricsPerformance" style="margin-top: 8px; gap: 6px; justify-content: space-evenly;">
+            <div class="metric" style="min-width:240px;"><strong>Rendimento annuale TDIV (CAGR)</strong>
+                <div id="metric-tdiv-cagr">n/a</div>
+            </div>
+            <div class="metric" style="min-width:240px;"><strong>Rendimento annuale VHYL (CAGR)</strong>
+                <div id="metric-vhyl-cagr">n/a</div>
+            </div>
+            <div class="metric" style="min-width:240px;"><strong>% Crescita TDIV net</strong>
+                <div id="metric-tdiv-growth">n/a</div>
+            </div>
+            <div class="metric" style="min-width:240px;"><strong>% Crescita VHYL net</strong>
+                <div id="metric-vhyl-growth">n/a</div>
+            </div>
+            <div class="metric" style="min-width:240px;"><strong>Rendimento annuale TDIV lordo (AdjClose)</strong>
+                <div id="metric-tdiv-adj-cagr">n/a</div>
+            </div>
+            <div class="metric" style="min-width:240px;"><strong>Rendimento annuale VHYL lordo (AdjClose)</strong>
+                <div id="metric-vhyl-adj-cagr">n/a</div>
+            </div>
+            <div class="metric" style="min-width:240px;"><strong>% Crescita TDIV lordo</strong>
+                <div id="metric-tdiv-adj-growth">n/a</div>
+            </div>
+            <div class="metric" style="min-width:240px;"><strong>% Crescita VHYL lordo</strong>
+                <div id="metric-vhyl-adj-growth">n/a</div>
+            </div>
+        </div>
+
+        <div id="chartContainer"><canvas id="tdivVhylChart"></canvas></div>
+
+        <h3 style="margin-top:22px;">Distribuzioni</h3>
+        <div style="overflow:auto; max-height:320px; margin-top:8px; border:1px solid #ddd; border-radius:6px;">
+            <table id="distTable" style="width:100%; border-collapse:collapse; font-size:0.92rem;">
+                <thead style="background:#f2f5f8;">
+                    <tr>
+                        <th style="padding:8px; border:1px solid #e1e7ef;">Data</th>
+                        <th style="padding:8px; border:1px solid #e1e7ef;">TDIV Lordo</th>
+                        <th style="padding:8px; border:1px solid #e1e7ef;">TDIV Netto</th>
+                        <th style="padding:8px; border:1px solid #e1e7ef;">VHYL Lordo</th>
+                        <th style="padding:8px; border:1px solid #e1e7ef;">VHYL Netto</th>
+                    </tr>
+                </thead>
+                <tbody id="distTableBody"></tbody>
+            </table>
+        </div>
+
+        <div style="margin-top:22px;">
+            <h4>Andamento dividendi netti (% del prezzo)</h4>
+            <div id="divYieldChartContainer" style="height:300px;">
+                <canvas id="divYieldChart"></canvas>
+            </div>
+        </div>
+
+        <p class="small-note">Nota: la curva "reinves. netti" fa partenza a 100 e reinveste i dividendi netti nel prezzo
+            Close del giorno di pagamento.</p>
+    </div>
+
+    <script>
+        const config = {
+            TDIV: { json: 'TDIV.AS.json', txt: 'TDIV.AS_DISTRIBUTION.txt', tax: 0.41, label: 'TDIV' },
+            VHYL: { json: 'VHYL.AS.json', txt: 'VHYL.AS_DISTRIBUTION.txt', tax: 0.26, label: 'VHYL' }
+        };
+
+        const parseDistribuzioni = (text) => {
+            const map = new Map();
+            text.split(/\r?\n/).forEach(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
+                const sep = trimmed.split(/\s+/);
+                if (sep.length < 2) return;
+                const dateRaw = sep[0].trim();
+                let amountRaw = sep[1].replace('€', '').replace('EUR', '').replace(/\s/g, '').replace(',', '.');
+                const amount = parseFloat(amountRaw);
+                if (isNaN(amount)) return;
+                const [d, m, y] = dateRaw.split('-');
+                if (!d || !m || !y) return;
+                const iso = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+                map.set(iso, amount);
+            });
+            return map;
+        };
+
+        const computeReinvest = (priceData, distribMap, taxRate) => {
+            const sorted = [...priceData].sort((a, b) => new Date(a.Date) - new Date(b.Date));
+            if (!sorted.length) return [];
+
+            const distEntries = [...distribMap.entries()].sort((a, b) => new Date(a[0]) - new Date(b[0]));
+            let distIdx = 0;
+            let shares = 1;
+            let cash = 0;
+            const firstClose = Number(sorted[0].Close);
+
+            return sorted.map(item => {
+                const date = item.Date;
+                const close = Number(item.Close);
+                if (isNaN(close) || close <= 0) return { date, close: null, accum: null };
+
+                // Applica eventuali dividendi con data <= seduta corrente:
+                // se la data distribuzione non ha quotazione, reinveste alla prima seduta utile successiva.
+                while (distIdx < distEntries.length && distEntries[distIdx][0] <= date) {
+                    const gross = Number(distEntries[distIdx][1]);
+                    if (Number.isFinite(gross) && gross > 0) {
+                        const netPerShare = gross * (1 - taxRate);
+                        cash += netPerShare * shares;
+                    }
+                    distIdx += 1;
+                }
+
+                if (cash > 0) {
+                    const purchased = cash / close;
+                    shares += purchased;
+                    cash = 0;
+                }
+
+                const portfolioValue = shares * close;
+                const standardIndex = firstClose > 0 ? (portfolioValue / firstClose) * 100 : null;
+                return { date, close, accum: standardIndex };
+            });
+        };
+
+        const normalizeSeries = (series, firstClose) => series.map(item => item && item.close != null && firstClose > 0 ? (item.close / firstClose * 100) : null);
+
+        const formatNumber = v => (v == null || isNaN(v)) ? 'n/a' : Number(v).toFixed(2);
+
+        const clampDate = (date, min, max) => {
+            if (!date) return null;
+            if (min && date < min) return min;
+            if (max && date > max) return max;
+            return date;
+        };
+
+        const computeCAGR = (startValue, endValue, years) => {
+            if (startValue <= 0 || endValue <= 0 || years <= 0) return NaN;
+            return Math.pow(endValue / startValue, 1 / years) - 1;
+        };
+
+        const rebaseTo100 = (serie) => {
+            const firstValue = serie.find(v => v != null && v !== 0);
+            if (firstValue == null || firstValue === 0) return serie;
+            return serie.map(v => v != null ? (v / firstValue) * 100 : null);
+        };
+
+        const getLastValid = (arr) => {
+            for (let i = arr.length - 1; i >= 0; i--) {
+                if (arr[i] != null && Number.isFinite(arr[i])) return arr[i];
+            }
+            return null;
+        };
+
+        const getFirstAndLastValidByDate = (labels, values) => {
+            let first = null;
+            let last = null;
+            for (let i = 0; i < labels.length; i++) {
+                const v = values[i];
+                if (v != null && Number.isFinite(v)) {
+                    if (!first) first = { date: labels[i], value: v };
+                    last = { date: labels[i], value: v };
+                }
+            }
+            return { first, last };
+        };
+
+        const getCloseOnOrAfter = (sortedPrices, targetDate) => {
+            for (let i = 0; i < sortedPrices.length; i++) {
+                if (sortedPrices[i].Date >= targetDate) return Number(sortedPrices[i].Close);
+            }
+            return null;
+        };
+
+        const computeDividendYieldSeries = (sortedPrices, distribMap, taxRate, startDate, endDate) => {
+            const distEntries = [...distribMap.entries()]
+                .filter(([d]) => d >= startDate && d <= endDate)
+                .sort((a, b) => new Date(a[0]) - new Date(b[0]));
+
+            const labels = [];
+            const yieldNetSingle = [];
+
+            for (let i = 0; i < distEntries.length; i++) {
+                const [date, grossDist] = distEntries[i];
+                const singleNet = Number(grossDist || 0) * (1 - taxRate);
+
+                const close = getCloseOnOrAfter(sortedPrices, date);
+                const ySingle = (Number.isFinite(close) && close > 0 && singleNet > 0) ? (singleNet / close) * 100 : null;
+                labels.push(date);
+                yieldNetSingle.push(ySingle);
+            }
+
+            return { labels, yieldNetSingle };
+        };
+
+        async function loadAndPlot() {
+            try {
+                const requests = await Promise.all(Object.values(config).flatMap(s => [fetch(s.json), fetch(s.txt)]));
+                const allOk = requests.every(r => r.ok);
+                if (!allOk) throw new Error('Errore caricamento file dati.');
+
+                const jsonData = await Promise.all(Object.values(config).map(s => fetch(s.json).then(r => r.json())));
+                const txtData = await Promise.all(Object.values(config).map(s => fetch(s.txt).then(r => r.text())));
+
+                const assets = Object.keys(config);
+                const parsed = {};
+                const allDates = new Set();
+
+                assets.forEach((asset, i) => {
+                    const prices = jsonData[i].filter(p => p && p.Date && p.Close != null);
+                    parsed[asset] = { items: prices, distrib: parseDistribuzioni(txtData[i]), tax: config[asset].tax };
+                    prices.forEach(p => allDates.add(p.Date));
+                });
+
+                const labels = [...allDates].sort((a, b) => new Date(a) - new Date(b));
+
+                const tdivSeries = computeReinvest(parsed.TDIV.items, parsed.TDIV.distrib, parsed.TDIV.tax);
+                const vhylSeries = computeReinvest(parsed.VHYL.items, parsed.VHYL.distrib, parsed.VHYL.tax);
+
+                const tdivSorted = [...parsed.TDIV.items].sort((a, b) => new Date(a.Date) - new Date(b.Date));
+                const vhylSorted = [...parsed.VHYL.items].sort((a, b) => new Date(a.Date) - new Date(b.Date));
+                const tdivFirstClose = tdivSorted.length ? Number(tdivSorted[0].Close) : null;
+                const vhylFirstClose = vhylSorted.length ? Number(vhylSorted[0].Close) : null;
+                const tdivPriceMap = new Map(tdivSorted.map(i => [i.Date, i]));
+                const vhylPriceMap = new Map(vhylSorted.map(i => [i.Date, i]));
+                const tdivAccumMap = new Map(tdivSeries.map(i => [i.date, i.accum]));
+                const vhylAccumMap = new Map(vhylSeries.map(i => [i.date, i.accum]));
+
+                const minDate = labels[0];
+                const maxDate = labels[labels.length - 1];
+                const startDateInput = document.getElementById('startDate');
+                const endDateInput = document.getElementById('endDate');
+                const rawEuro = document.getElementById('rawEuro');
+
+                if (!startDateInput.value) startDateInput.value = minDate;
+                if (!endDateInput.value) endDateInput.value = maxDate;
+
+                const startDate = clampDate(startDateInput.value, minDate, maxDate);
+                const endDate = clampDate(endDateInput.value, startDate, maxDate);
+                const filteredLabels = labels.filter(d => d >= startDate && d <= endDate);
+
+                let tdivCloseForLabels = filteredLabels.map(date => {
+                    const found = tdivPriceMap.get(date);
+                    if (!found) return null;
+                    return Number(found.Close);
+                });
+                let vhylCloseForLabels = filteredLabels.map(date => {
+                    const found = vhylPriceMap.get(date);
+                    if (!found) return null;
+                    return Number(found.Close);
+                });
+
+                let tdivAdjForLabels = filteredLabels.map(date => {
+                    const found = tdivPriceMap.get(date);
+                    if (!found || found.AdjClose == null) return null;
+                    return Number(found.AdjClose);
+                });
+                let vhylAdjForLabels = filteredLabels.map(date => {
+                    const found = vhylPriceMap.get(date);
+                    if (!found || found.AdjClose == null) return null;
+                    return Number(found.AdjClose);
+                });
+
+                let tdivAccumForLabels = filteredLabels.map(date => tdivAccumMap.get(date) ?? null);
+                let vhylAccumForLabels = filteredLabels.map(date => vhylAccumMap.get(date) ?? null);
+
+                if (!rawEuro.checked) {
+                    tdivCloseForLabels = rebaseTo100(tdivCloseForLabels);
+                    vhylCloseForLabels = rebaseTo100(vhylCloseForLabels);
+                    tdivAdjForLabels = rebaseTo100(tdivAdjForLabels);
+                    vhylAdjForLabels = rebaseTo100(vhylAdjForLabels);
+                    tdivAccumForLabels = rebaseTo100(tdivAccumForLabels);
+                    vhylAccumForLabels = rebaseTo100(vhylAccumForLabels);
+                }
+
+
+                const distKeys = [...new Set([...parsed.TDIV.distrib.keys(), ...parsed.VHYL.distrib.keys()])].sort((a, b) => new Date(a) - new Date(b));
+
+                const distBody = document.getElementById('distTableBody');
+                distBody.innerHTML = '';
+                distKeys.forEach(date => {
+                    if (date < startDate || date > endDate) return;
+                    const tdivGross = parsed.TDIV.distrib.get(date) ?? null;
+                    const tdivNet = tdivGross != null ? tdivGross * (1 - parsed.TDIV.tax) : null;
+                    const vhylGross = parsed.VHYL.distrib.get(date) ?? null;
+                    const vhylNet = vhylGross != null ? vhylGross * (1 - parsed.VHYL.tax) : null;
+
+                    const row = `<tr>
+                        <td style="padding:6px;border:1px solid #e1e7ef;">${date}</td>
+                        <td style="padding:6px;border:1px solid #e1e7ef;">${tdivGross != null ? tdivGross.toFixed(2) : '-'}</td>
+                        <td style="padding:6px;border:1px solid #e1e7ef;">${tdivNet != null ? tdivNet.toFixed(2) : '-'}</td>
+                        <td style="padding:6px;border:1px solid #e1e7ef;">${vhylGross != null ? vhylGross.toFixed(2) : '-'}</td>
+                        <td style="padding:6px;border:1px solid #e1e7ef;">${vhylNet != null ? vhylNet.toFixed(2) : '-'}</td>
+                    </tr>`;
+                    distBody.insertAdjacentHTML('beforeend', row);
+                });
+
+                const tdivNetBounds = getFirstAndLastValidByDate(filteredLabels, tdivAccumForLabels);
+                const vhylNetBounds = getFirstAndLastValidByDate(filteredLabels, vhylAccumForLabels);
+                const tdivAdjBounds = getFirstAndLastValidByDate(filteredLabels, tdivAdjForLabels);
+                const vhylAdjBounds = getFirstAndLastValidByDate(filteredLabels, vhylAdjForLabels);
+
+                const tdivYears = (tdivNetBounds.first && tdivNetBounds.last)
+                    ? ((new Date(tdivNetBounds.last.date) - new Date(tdivNetBounds.first.date)) / (1000 * 3600 * 24)) / 365.25
+                    : NaN;
+                const vhylYears = (vhylNetBounds.first && vhylNetBounds.last)
+                    ? ((new Date(vhylNetBounds.last.date) - new Date(vhylNetBounds.first.date)) / (1000 * 3600 * 24)) / 365.25
+                    : NaN;
+                const tdivAdjYears = (tdivAdjBounds.first && tdivAdjBounds.last)
+                    ? ((new Date(tdivAdjBounds.last.date) - new Date(tdivAdjBounds.first.date)) / (1000 * 3600 * 24)) / 365.25
+                    : NaN;
+                const vhylAdjYears = (vhylAdjBounds.first && vhylAdjBounds.last)
+                    ? ((new Date(vhylAdjBounds.last.date) - new Date(vhylAdjBounds.first.date)) / (1000 * 3600 * 24)) / 365.25
+                    : NaN;
+
+                const tdivCAGR = computeCAGR(tdivNetBounds.first?.value, tdivNetBounds.last?.value, tdivYears);
+                const vhylCAGR = computeCAGR(vhylNetBounds.first?.value, vhylNetBounds.last?.value, vhylYears);
+                const tdivGrowth = (tdivNetBounds.first?.value > 0 && tdivNetBounds.last?.value > 0) ? (tdivNetBounds.last.value / tdivNetBounds.first.value - 1) * 100 : NaN;
+                const vhylGrowth = (vhylNetBounds.first?.value > 0 && vhylNetBounds.last?.value > 0) ? (vhylNetBounds.last.value / vhylNetBounds.first.value - 1) * 100 : NaN;
+
+                const tdivAdjCAGR = computeCAGR(tdivAdjBounds.first?.value, tdivAdjBounds.last?.value, tdivAdjYears);
+                const vhylAdjCAGR = computeCAGR(vhylAdjBounds.first?.value, vhylAdjBounds.last?.value, vhylAdjYears);
+                const tdivAdjGrowth = (tdivAdjBounds.first?.value > 0 && tdivAdjBounds.last?.value > 0) ? (tdivAdjBounds.last.value / tdivAdjBounds.first.value - 1) * 100 : NaN;
+                const vhylAdjGrowth = (vhylAdjBounds.first?.value > 0 && vhylAdjBounds.last?.value > 0) ? (vhylAdjBounds.last.value / vhylAdjBounds.first.value - 1) * 100 : NaN;
+
+                document.getElementById('metric-tdiv-cagr').innerText = `${formatNumber(tdivCAGR * 100)} %`;
+                document.getElementById('metric-vhyl-cagr').innerText = `${formatNumber(vhylCAGR * 100)} %`;
+                document.getElementById('metric-tdiv-growth').innerText = `${formatNumber(tdivGrowth)} %`;
+                document.getElementById('metric-vhyl-growth').innerText = `${formatNumber(vhylGrowth)} %`;
+
+                document.getElementById('metric-tdiv-adj-cagr').innerText = `${formatNumber(tdivAdjCAGR * 100)} %`;
+                document.getElementById('metric-vhyl-adj-cagr').innerText = `${formatNumber(vhylAdjCAGR * 100)} %`;
+                document.getElementById('metric-tdiv-adj-growth').innerText = `${formatNumber(tdivAdjGrowth)} %`;
+                document.getElementById('metric-vhyl-adj-growth').innerText = `${formatNumber(vhylAdjGrowth)} %`;
+                const yAxisLabel = rawEuro.checked ? 'Valore (€)' : 'Indice (base 100)';
+                const ctx = document.getElementById('tdivVhylChart').getContext('2d');
+
+                if (window._tdivVhylChart) window._tdivVhylChart.destroy();
+                window._tdivVhylChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: filteredLabels,
+                        datasets: [
+                            { label: 'TDIV prezzo secco', data: tdivCloseForLabels, borderColor: 'rgba(192,20,35,1)', backgroundColor: 'rgba(192,20,35,0.12)', fill: false, tension: 0.2, pointRadius: 0 },
+                            { label: 'VHYL prezzo secco', data: vhylCloseForLabels, borderColor: 'rgba(20,98,220,1)', backgroundColor: 'rgba(20,98,220,0.12)', fill: false, tension: 0.2, pointRadius: 0 },
+                            { label: 'TDIV reinvest. netto 41%', data: tdivAccumForLabels, borderColor: 'rgba(255,120,120,1)', backgroundColor: 'rgba(255,120,120,0.1)', fill: false, tension: 0.2, pointRadius: 0 },
+                            { label: 'VHYL reinvest. netto 26%', data: vhylAccumForLabels, borderColor: 'rgba(100,160,255,1)', backgroundColor: 'rgba(100,160,255,0.1)', fill: false, tension: 0.2, pointRadius: 0 },
+                            { label: 'TDIV reinvest. lordo', data: tdivAdjForLabels, borderColor: 'rgba(205, 89, 90,1)', backgroundColor: 'rgba(205,89,90,0.05)', fill: false, tension: 0.2, pointRadius: 0, hidden: true },                                                        
+                            { label: 'VHYL reinvest. lordo', data: vhylAdjForLabels, borderColor: 'rgba(95, 144, 220,1)', backgroundColor: 'rgba(95,144,220,0.05)', fill: false, tension: 0.2, pointRadius: 0, hidden: true }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { x: { display: true, title: { display: true, text: 'Data' } }, y: { display: true, title: { display: true, text: yAxisLabel } } },
+                        plugins: { tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw != null ? Number(ctx.raw).toFixed(2) : 'n/a'}` } } }
+                    }
+                });
+
+                const ctxY = document.getElementById('divYieldChart').getContext('2d');
+                const tdivDivYield = computeDividendYieldSeries(tdivSorted, parsed.TDIV.distrib, parsed.TDIV.tax, startDate, endDate);
+                const vhylDivYield = computeDividendYieldSeries(vhylSorted, parsed.VHYL.distrib, parsed.VHYL.tax, startDate, endDate);
+                const divYieldLabels = [...new Set([...tdivDivYield.labels, ...vhylDivYield.labels])].sort((a, b) => new Date(a) - new Date(b));
+                const tdivSingleMap = new Map(tdivDivYield.labels.map((d, i) => [d, tdivDivYield.yieldNetSingle[i]]));
+                const vhylSingleMap = new Map(vhylDivYield.labels.map((d, i) => [d, vhylDivYield.yieldNetSingle[i]]));
+
+                const tdivYieldSingleSeries = divYieldLabels.map(d => tdivSingleMap.get(d) ?? null);
+                const vhylYieldSingleSeries = divYieldLabels.map(d => vhylSingleMap.get(d) ?? null);
+
+                if (window._divYieldChart) window._divYieldChart.destroy();
+                window._divYieldChart = new Chart(ctxY, {
+                    type: 'bar',
+                    data: {
+                        labels: divYieldLabels,
+                        datasets: [
+                            { label: 'TDIV yield netto singola cedola', data: tdivYieldSingleSeries, borderColor: 'rgba(192,20,35,0.95)', backgroundColor: 'rgba(192,20,35,0.55)', borderWidth: 1 },
+                            { label: 'VHYL yield netto singola cedola', data: vhylYieldSingleSeries, borderColor: 'rgba(20,98,220,0.95)', backgroundColor: 'rgba(20,98,220,0.55)', borderWidth: 1 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { display: true, title: { display: true, text: 'Data distribuzione' } },
+                            y: {
+                                display: true,
+                                title: { display: true, text: 'Dividendo netto (% del prezzo)' },
+                                ticks: { callback: (v) => `${Number(v).toFixed(2)}%` }
+                            }
+                        },
+                        plugins: { tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw != null ? Number(ctx.raw).toFixed(2) : 'n/a'}%` } } }
+                    }
+                });
+
+                document.getElementById('metric-tdiv-close').innerText = `Ultimo: ${formatNumber(getLastValid(tdivCloseForLabels))}`;
+                document.getElementById('metric-vhyl-close').innerText = `Ultimo: ${formatNumber(getLastValid(vhylCloseForLabels))}`;
+                document.getElementById('metric-tdiv-net').innerText = `Ultimo: ${formatNumber(getLastValid(tdivAccumForLabels))}`;
+                document.getElementById('metric-vhyl-net').innerText = `Ultimo: ${formatNumber(getLastValid(vhylAccumForLabels))}`;
+
+            } catch (err) {
+                console.error(err);
+                const container = document.querySelector('.container');
+                const alert = document.createElement('div');
+                alert.style.color = 'red';
+                alert.style.marginTop = '15px';
+                alert.innerText = 'Errore caricamento dati. Controllare console browser.';
+                container.appendChild(alert);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAndPlot();
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            const rawEuro = document.getElementById('rawEuro');
+
+            if (startDateInput) startDateInput.addEventListener('change', loadAndPlot);
+            if (endDateInput) endDateInput.addEventListener('change', loadAndPlot);
+            if (rawEuro) rawEuro.addEventListener('change', loadAndPlot);
+        });
+    </script>
+</body>
+
+</html>
