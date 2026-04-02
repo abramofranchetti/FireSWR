@@ -29,19 +29,30 @@
         }
 
         .metrics {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
             margin: 12px 0;
+            align-items: stretch;
         }
 
         .metric {
             border: 1px solid #ddd;
             border-radius: 6px;
             padding: 12px 14px;
-            min-width: 180px;
+            min-width: 0;
             background: #fafafa;
+        }
+
+        .metric strong {
+            display: block;
+            margin-bottom: 4px;
+            line-height: 1.25;
+        }
+
+        #metricsPerformance {
+            margin-top: 8px;
+            gap: 8px;
         }
 
         #chartContainer {
@@ -77,10 +88,6 @@
                 <label>Data fine</label><br>
                 <input id="endDate" type="date" style="padding:6px;border:1px solid #ccd; border-radius:4px;" />
             </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <input id="rawEuro" type="checkbox" />
-                <label for="rawEuro">Mostra valori assoluti (€) (senza normalizzazione)</label>
-            </div>
         </div>
 
         <div class="metrics">
@@ -98,29 +105,29 @@
             </div>
         </div>
 
-        <div class="metrics" id="metricsPerformance" style="margin-top: 8px; gap: 6px; justify-content: space-evenly;">
-            <div class="metric" style="min-width:240px;"><strong>Rendimento annuale TDIV (CAGR)</strong>
+        <div class="metrics" id="metricsPerformance">
+            <div class="metric"><strong>Rendimento annuale TDIV (CAGR)</strong>
                 <div id="metric-tdiv-cagr">n/a</div>
             </div>
-            <div class="metric" style="min-width:240px;"><strong>Rendimento annuale VHYL (CAGR)</strong>
+            <div class="metric"><strong>Rendimento annuale VHYL (CAGR)</strong>
                 <div id="metric-vhyl-cagr">n/a</div>
             </div>
-            <div class="metric" style="min-width:240px;"><strong>% Crescita TDIV net</strong>
+            <div class="metric"><strong>% Crescita TDIV net</strong>
                 <div id="metric-tdiv-growth">n/a</div>
             </div>
-            <div class="metric" style="min-width:240px;"><strong>% Crescita VHYL net</strong>
+            <div class="metric"><strong>% Crescita VHYL net</strong>
                 <div id="metric-vhyl-growth">n/a</div>
             </div>
-            <div class="metric" style="min-width:240px;"><strong>Rendimento annuale TDIV lordo (AdjClose)</strong>
+            <div class="metric"><strong>Rendimento annuale TDIV lordo (AdjClose)</strong>
                 <div id="metric-tdiv-adj-cagr">n/a</div>
             </div>
-            <div class="metric" style="min-width:240px;"><strong>Rendimento annuale VHYL lordo (AdjClose)</strong>
+            <div class="metric"><strong>Rendimento annuale VHYL lordo (AdjClose)</strong>
                 <div id="metric-vhyl-adj-cagr">n/a</div>
             </div>
-            <div class="metric" style="min-width:240px;"><strong>% Crescita TDIV lordo</strong>
+            <div class="metric"><strong>% Crescita TDIV lordo</strong>
                 <div id="metric-tdiv-adj-growth">n/a</div>
             </div>
-            <div class="metric" style="min-width:240px;"><strong>% Crescita VHYL lordo</strong>
+            <div class="metric"><strong>% Crescita VHYL lordo</strong>
                 <div id="metric-vhyl-adj-growth">n/a</div>
             </div>
         </div>
@@ -337,7 +344,6 @@
                 const maxDate = labels[labels.length - 1];
                 const startDateInput = document.getElementById('startDate');
                 const endDateInput = document.getElementById('endDate');
-                const rawEuro = document.getElementById('rawEuro');
 
                 if (!startDateInput.value) startDateInput.value = minDate;
                 if (!endDateInput.value) endDateInput.value = maxDate;
@@ -371,14 +377,12 @@
                 let tdivAccumForLabels = filteredLabels.map(date => tdivAccumMap.get(date) ?? null);
                 let vhylAccumForLabels = filteredLabels.map(date => vhylAccumMap.get(date) ?? null);
 
-                if (!rawEuro.checked) {
-                    tdivCloseForLabels = rebaseTo100(tdivCloseForLabels);
-                    vhylCloseForLabels = rebaseTo100(vhylCloseForLabels);
-                    tdivAdjForLabels = rebaseTo100(tdivAdjForLabels);
-                    vhylAdjForLabels = rebaseTo100(vhylAdjForLabels);
-                    tdivAccumForLabels = rebaseTo100(tdivAccumForLabels);
-                    vhylAccumForLabels = rebaseTo100(vhylAccumForLabels);
-                }
+                tdivCloseForLabels = rebaseTo100(tdivCloseForLabels);
+                vhylCloseForLabels = rebaseTo100(vhylCloseForLabels);
+                tdivAdjForLabels = rebaseTo100(tdivAdjForLabels);
+                vhylAdjForLabels = rebaseTo100(vhylAdjForLabels);
+                tdivAccumForLabels = rebaseTo100(tdivAccumForLabels);
+                vhylAccumForLabels = rebaseTo100(vhylAccumForLabels);
 
 
                 const distKeys = [...new Set([...parsed.TDIV.distrib.keys(), ...parsed.VHYL.distrib.keys()])].sort((a, b) => new Date(a) - new Date(b));
@@ -439,7 +443,7 @@
                 document.getElementById('metric-vhyl-adj-cagr').innerText = `${formatNumber(vhylAdjCAGR * 100)} %`;
                 document.getElementById('metric-tdiv-adj-growth').innerText = `${formatNumber(tdivAdjGrowth)} %`;
                 document.getElementById('metric-vhyl-adj-growth').innerText = `${formatNumber(vhylAdjGrowth)} %`;
-                const yAxisLabel = rawEuro.checked ? 'Valore (€)' : 'Indice (base 100)';
+                const yAxisLabel = 'Indice (base 100)';
                 const ctx = document.getElementById('tdivVhylChart').getContext('2d');
 
                 if (window._tdivVhylChart) window._tdivVhylChart.destroy();
@@ -519,11 +523,9 @@
             loadAndPlot();
             const startDateInput = document.getElementById('startDate');
             const endDateInput = document.getElementById('endDate');
-            const rawEuro = document.getElementById('rawEuro');
 
             if (startDateInput) startDateInput.addEventListener('change', loadAndPlot);
             if (endDateInput) endDateInput.addEventListener('change', loadAndPlot);
-            if (rawEuro) rawEuro.addEventListener('change', loadAndPlot);
         });
     </script>
 </body>
