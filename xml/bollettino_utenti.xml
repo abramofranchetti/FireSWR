@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <previsioni>
 <data_emissione date="06/04/2026 alle 13:00" />
-<data_aggiornamento date="06/04 alle 16.00" />
+<data_aggiornamento date="07/04 alle 09.00" />
 <meteogrammi>
 <meteogramma zoneid="1" name="Dolomiti Nord-Est">
 				<scadenza data="lun  6 aprile pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura 2000m" type="text" value="max 10 C" />
-          <previsione title="Temperatura 3000m" type="text" value="max 1 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 11 C" />
+          <previsione title="Temperatura 3000m" type="text" value="max 2 C" />
           <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -76,8 +76,8 @@
 				<scadenza data="lun  6 aprile pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
          <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
-          <previsione title="Temperatura 2000m" type="text" value="max 10 C" />
-          <previsione title="Temperatura 3000m" type="text" value="max 1 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 11 C" />
+          <previsione title="Temperatura 3000m" type="text" value="max 2 C" />
           <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -755,7 +755,7 @@
 				</scadenza>
 				<scadenza data="mar  7 aprile mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
+         <previsione title="Cielo" type="text" value="Sereno con foschie/nebbie nelle ore pi&#249; fredde" />
           <previsione title="Temperatura" type="text" value="min 9/11 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
@@ -823,7 +823,7 @@
 				</scadenza>
 				<scadenza data="mar  7 aprile mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a1.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
+         <previsione title="Cielo" type="text" value="Sereno con foschie/nebbie nelle ore pi&#249; fredde" />
           <previsione title="Temperatura" type="text" value="min 8/10 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
@@ -1229,7 +1229,7 @@
 					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_1.png.jpg" caption=" 7 aprile mattina" />
 					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_2.png.jpg" caption=" 7 aprile pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Tempo stabile con cielo sereno, salvo transitori innocui tratti di nuvolosit&agrave;.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>Pressoch&eacute; stazionarie o in locale rialzo nei valori minimi e in quota le massime.<br /><b>Venti: </b>In quota, da moderati a tesi da nord-ovest; altrove, variabili con brezze nelle valli, sulla fascia pedemontana e lungo la costa.<br /><b>Mare: </b>Calmo o quasi calmo.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Tempo stabile con cielo sereno, salvo iniziali locali nebbie sulla pianura meridionale e sulla costa centro-meridionale, in rapido dissolvimento.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>Minime in lieve rialzo in pianura, stazionarie altrove; massime senza notevoli variazioni.<br /><b>Venti: </b>In quota, da moderati a tesi da nord-ovest; altrove, variabili con brezze nelle valli, sulla fascia pedemontana e lungo la costa.<br /><b>Mare: </b>Calmo o quasi calmo.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data=" 8 aprile">
@@ -1268,7 +1268,7 @@ Temperature diurne stazionarie. Su Prealpi a 1500 m max 15&deg;C, a 2000 m max 1
 					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_2.png.jpg" caption=" 7 aprile pomeriggio" />
 					<text>
                         <![CDATA[<b>Tempo atteso: </b>Cielo sereno o a tratti poco nuvoloso per passaggio di nuvolosit&agrave; alta e sottile e qualche modesto addensamento diurno. <br /><b>Precipitazioni: </b>Assenti (0%).<br /><b>Temperature: </b>Valori termici primaverili: minime in lieve aumento; massime senza notevoli variazioni nelle valli, in lieve aumento in quota, con raggiungimento dell'apice della mitezza. 
-Su Prealpi a 1500 m min 9&deg;C max 16&deg;C, a 2000 m min 6&deg;C max 12&deg;C. Su Dolomiti a 2000 m min 5&deg;C max 13&deg;C, a 3000 m min 0&deg;C max 2&deg;C.<br /><b>Venti: </b>Nelle valli deboli a regime di brezza; in quota moderati, a tratti tesi al pomeriggio/sera in alta quota, nord-occidentali, a 10-20 km/h a 2000 m e 25-50 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+Su Prealpi a 1500 m min 8&deg;C max 16&deg;C, a 2000 m min 6&deg;C max 12&deg;C. Su Dolomiti a 2000 m min 5&deg;C max 13&deg;C, a 3000 m min 0&deg;C max 2&deg;C.<br /><b>Venti: </b>Nelle valli deboli a regime di brezza; in quota moderati, a tratti tesi al pomeriggio/sera in alta quota, nord-occidentali, a 10-20 km/h a 2000 m e 25-50 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data=" 8 aprile">
@@ -1381,7 +1381,7 @@ C.B.<br /><b>Attendibilit&agrave;: </b>Scarsa<br />]]>
 					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_1.png.jpg" caption=" 7 aprile mattina" />
 					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_2.png.jpg" caption=" 7 aprile pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Tempo stabile con cielo sereno, salvo transitori innocui tratti di nuvolosit&agrave;.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>Pressoch&eacute; stazionarie o in locale rialzo nei valori minimi.<br /><b>Venti: </b>Variabili, con brezze sulla fascia pedemontana e lungo la costa.<br /><b>Mare: </b>Calmo o quasi calmo.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Tempo stabile con cielo sereno, salvo iniziali locali nebbie sulla pianura meridionale e sulla costa centro-meridionale, in rapido dissolvimento.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>Minime in lieve rialzo; massime senza notevoli variazioni.<br /><b>Venti: </b>Variabili, con brezze sulla fascia pedemontana e lungo la costa.<br /><b>Mare: </b>Calmo o quasi calmo.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data=" 8 aprile">
