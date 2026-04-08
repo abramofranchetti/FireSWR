@@ -1,0 +1,598 @@
+﻿<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PAC Standard vs PAC Adattivo - Dati Giornalieri</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+</head>
+
+<body class="min-h-screen bg-slate-100 text-slate-900">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <header class="mb-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">PAC Standard vs PAC Adattivo (Dati
+                Giornalieri)</h1>
+            <p class="mt-2 text-sm text-slate-600">Caricamento dati come in <code>pac.html/pac.js</code> da
+                <code>json/&lt;indice&gt;.json</code>, con selezione indice e range date dinamico.</p>
+        </header>
+
+        <section
+            class="grid gap-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200 md:grid-cols-2 xl:grid-cols-4">
+            <label class="block text-sm font-medium">
+                Indice
+                <select id="indexSelect" class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+                    <option value="acwi">ACWI (All Country World Index)</option>
+                    <option value="sp500">SP500 TR</option>
+                    <option value="aapl">Apple</option>
+                    <option value="brk-b">Berkshire Hathaway (Warren Buffett)</option>
+                    <option value="GC=F">Oro</option>
+                    <option value="btc-usd">Bitcoin</option>
+                </select>
+            </label>
+
+            <label class="block text-sm font-medium">
+                Quota mensile (€)
+                <input id="monthlyContribution" type="number" min="0" step="1" value="100"
+                    class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+            </label>
+
+            <label class="block text-sm font-medium">
+                Tasso annuo liquidità (%)
+                <input id="cashYield" type="number" step="0.1" value="3"
+                    class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+            </label>
+
+            <label class="block text-sm font-medium">
+                Finestra rolling (mesi)
+                <input id="rollingMonths" type="number" min="12" step="1" value="120"
+                    class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+            </label>
+
+            <label class="block text-sm font-medium">
+                Data inizio
+                <input id="startDate" type="date"
+                    class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+            </label>
+
+            <label class="block text-sm font-medium">
+                Data fine
+                <input id="endDate" type="date"
+                    class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+            </label>
+
+            <label class="block text-sm font-medium">
+                Giorni media mobile
+                <input id="maDays" type="number" min="20" step="1" value="200"
+                    class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+            </label>
+
+            <div class="flex items-end gap-2">
+                <button id="runBtn"
+                    class="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Calcola
+                    simulazione</button>
+            </div>
+
+            <div class="md:col-span-2 xl:col-span-4">
+                <span id="status" class="text-sm text-slate-600"></span>
+            </div>
+        </section>
+
+        <section class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" id="summaryCards"></section>
+        <section class="mt-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold">Diagnostica Strategia</h2>
+                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">Cash drag e
+                    regimi</span>
+            </div>
+            <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" id="diagnosticCards"></div>
+            <div class="mt-4 overflow-x-auto">
+                <table class="min-w-full border-separate border-spacing-y-2 text-sm">
+                    <thead>
+                        <tr class="text-left text-slate-500">
+                            <th class="px-3 py-1">Regime</th>
+                            <th class="px-3 py-1">Soglia vs MA</th>
+                            <th class="px-3 py-1">Peso temporale</th>
+                            <th class="px-3 py-1">Investito medio / quota</th>
+                            <th class="px-3 py-1">Flusso buffer medio</th>
+                        </tr>
+                    </thead>
+                    <tbody id="diagnosticRegimeBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="mt-6 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
+            <h2 class="text-lg font-semibold">Andamento portafoglio e MA</h2>
+            <p class="mt-1 text-xs text-slate-500">Asse sinistro: portafogli e buffer. Asse destro: prezzo indice e
+                media mobile.</p>
+            <div class="mt-4 h-[460px]"><canvas id="mainChart"></canvas></div>
+        </section>
+
+        <section class="mt-6 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
+            <h2 class="text-lg font-semibold">Analisi rolling</h2>
+            <div class="mt-3 overflow-x-auto">
+                <table class="min-w-full border-collapse text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-left">
+                            <th class="px-3 py-2">Strategia</th>
+                            <th class="px-3 py-2">N finestre</th>
+                            <th class="px-3 py-2">Valore finale medio</th>
+                            <th class="px-3 py-2">CAGR medio</th>
+                            <th class="px-3 py-2">Max DD medio</th>
+                            <th class="px-3 py-2">Rendimento totale medio</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rollingTableBody"></tbody>
+                </table>
+            </div>
+            <p id="efficiencyText" class="mt-3 text-sm text-slate-700"></p>
+        </section>
+
+        <section class="mt-6 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
+            <h2 class="text-lg font-semibold">Regole PAC Adattivo</h2>
+            <p class="mt-1 text-sm text-slate-600">Remunerazione buffer mensile composta:
+                <code>r_m = (1+r_annuo)^(1/12)-1</code>. Vincolo: non investe mai più della liquidità disponibile.</p>
+            <div class="mt-3 overflow-x-auto">
+                <table class="min-w-full border-collapse text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-left">
+                            <th class="px-3 py-2">Regime</th>
+                            <th class="px-3 py-2">Soglia vs MA</th>
+                            <th class="px-3 py-2">Mesi</th>
+                            <th class="px-3 py-2">Investito medio / quota</th>
+                            <th class="px-3 py-2">Acc. buffer medio</th>
+                            <th class="px-3 py-2">Dec. buffer medio</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adaptiveRulesBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <div id="disclaimer-container"></div>
+    </div>
+
+    <script>
+        const state = {
+            dailySeries: [],
+            monthlySeries: [],
+            monthlyMA: [],
+            chart: null,
+            minDate: null,
+            maxDate: null
+        };
+
+        const regimeRules = {
+            euforia: { name: 'Euforia', investPct: 0.5, extraBufferPct: 0 },
+            alto: { name: 'Alto', investPct: 0.75, extraBufferPct: 0 },
+            moderato: { name: 'Moderato', investPct: 0.9, extraBufferPct: 0 },
+            neutro: { name: 'Neutro', investPct: 1, extraBufferPct: 0 },
+            debole: { name: 'Debole', investPct: 1, extraBufferPct: 0.25 },
+            stress: { name: 'Stress', investPct: 1, extraBufferPct: 0.5 },
+            crash: { name: 'Crash', investPct: 1, extraBufferPct: Infinity }
+        };
+
+        function setStatus(msg, isError = false) {
+            const el = document.getElementById('status');
+            el.textContent = msg;
+            el.className = isError ? 'text-sm text-red-600' : 'text-sm text-slate-600';
+        }
+
+        function movingAverage(values, period) {
+            const out = new Array(values.length).fill(0);
+            let sum = 0;
+            for (let i = 0; i < values.length; i++) {
+                sum += values[i];
+                if (i >= period) sum -= values[i - period];
+                const n = Math.min(i + 1, period);
+                out[i] = sum / n;
+            }
+            return out;
+        }
+
+        function toMonthlyFromDaily(daily, maDaily) {
+            if (!daily.length) return [];
+            const out = [];
+            let y = daily[0].date.getUTCFullYear();
+            let m = daily[0].date.getUTCMonth();
+            let last = { ...daily[0], ma: maDaily[0] };
+
+            for (let i = 1; i < daily.length; i++) {
+                const d = daily[i].date;
+                const yy = d.getUTCFullYear();
+                const mm = d.getUTCMonth();
+                if (yy !== y || mm !== m) {
+                    out.push(last);
+                    y = yy;
+                    m = mm;
+                }
+                last = { ...daily[i], ma: maDaily[i] };
+            }
+            out.push(last);
+            return out;
+        }
+
+        function getRegime(devPct) {
+            if (devPct > 15) return regimeRules.euforia;
+            if (devPct > 10) return regimeRules.alto;
+            if (devPct > 5) return regimeRules.moderato;
+            if (devPct >= -5) return regimeRules.neutro;
+            if (devPct >= -10) return regimeRules.debole;
+            if (devPct >= -20) return regimeRules.stress;
+            return regimeRules.crash;
+        }
+
+        function maxDrawdown(values) {
+            let peak = -Infinity;
+            let mdd = 0;
+            for (const v of values) {
+                if (v > peak) peak = v;
+                const dd = peak > 0 ? (v - peak) / peak : 0;
+                if (dd < mdd) mdd = dd;
+            }
+            return mdd;
+        }
+
+        function computeStats(path, invested, startDate, endDate) {
+            const finalValue = path[path.length - 1] ?? 0;
+            const years = Math.max((endDate - startDate) / (1000 * 60 * 60 * 24 * 365.25), 1 / 12);
+            return {
+                finalValue,
+                cagr: invested > 0 ? Math.pow(finalValue / invested, 1 / years) - 1 : 0,
+                maxDD: maxDrawdown(path),
+                totalReturn: invested > 0 ? finalValue / invested - 1 : 0
+            };
+        }
+
+        function simulateStrategies(series, maSeries, monthlyContribution, annualCashYield) {
+            const monthlyCashRate = Math.pow(1 + annualCashYield, 1 / 12) - 1;
+            let stdShares = 0;
+            let adaShares = 0;
+            let adaBuffer = 0;
+            let adaDryShares = 0;
+            let adaDryBuffer = 0;
+
+            const timeline = [];
+
+            for (let i = 0; i < series.length; i++) {
+                const p = series[i].price;
+                const ma = maSeries[i];
+
+                stdShares += monthlyContribution / p;
+
+                adaBuffer *= (1 + monthlyCashRate);
+                const available = adaBuffer + monthlyContribution;
+                const availableDry = adaDryBuffer + monthlyContribution;
+
+                let adaptiveInvest = monthlyContribution;
+                let adaptiveInvestDry = monthlyContribution;
+                let regimeName = 'Neutro';
+
+                if (ma > 0) {
+                    const dev = ((p - ma) / ma) * 100;
+                    const rule = getRegime(dev);
+                    regimeName = rule.name;
+                    if (rule.extraBufferPct === Infinity) {
+                        adaptiveInvest = available;
+                        adaptiveInvestDry = availableDry;
+                    } else {
+                        adaptiveInvest = monthlyContribution * rule.investPct + monthlyContribution * rule.extraBufferPct;
+                        adaptiveInvestDry = monthlyContribution * rule.investPct + monthlyContribution * rule.extraBufferPct;
+                        if (adaptiveInvest > available) adaptiveInvest = available;
+                        if (adaptiveInvestDry > availableDry) adaptiveInvestDry = availableDry;
+                    }
+                }
+
+                adaShares += adaptiveInvest / p;
+                adaBuffer = available - adaptiveInvest;
+
+                adaDryShares += adaptiveInvestDry / p;
+                adaDryBuffer = availableDry - adaptiveInvestDry;
+
+                const standardValue = stdShares * p;
+                const adaptiveValue = adaShares * p + adaBuffer;
+                const adaptiveDryValue = adaDryShares * p + adaDryBuffer;
+
+                timeline.push({
+                    date: series[i].date,
+                    price: p,
+                    ma,
+                    regimeName,
+                    standardValue,
+                    adaptiveValue,
+                    adaptiveDryValue,
+                    adaptiveBuffer: adaBuffer,
+                    adaptiveInvest,
+                    savedToBuffer: Math.max(0, monthlyContribution - adaptiveInvest),
+                    usedFromBuffer: Math.max(0, adaptiveInvest - monthlyContribution)
+                });
+            }
+
+            const invested = monthlyContribution * series.length;
+            return {
+                timeline,
+                stdStats: computeStats(timeline.map(t => t.standardValue), invested, timeline[0].date, timeline[timeline.length - 1].date),
+                adaStats: computeStats(timeline.map(t => t.adaptiveValue), invested, timeline[0].date, timeline[timeline.length - 1].date),
+                adaDryStats: computeStats(timeline.map(t => t.adaptiveDryValue), invested, timeline[0].date, timeline[timeline.length - 1].date)
+            };
+        }
+
+        function simulateRolling(series, maSeries, rollingMonths, monthlyContribution, annualCashYield) {
+            const windows = [];
+            for (let i = 0; i + rollingMonths <= series.length; i++) {
+                const sl = series.slice(i, i + rollingMonths);
+                const ma = maSeries.slice(i, i + rollingMonths);
+                const sim = simulateStrategies(sl, ma, monthlyContribution, annualCashYield);
+                windows.push({ std: sim.stdStats, ada: sim.adaStats });
+            }
+            return windows;
+        }
+
+        function mean(arr) {
+            return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+        }
+
+        function aggregateRolling(windows, key) {
+            return {
+                count: windows.length,
+                avgFinal: mean(windows.map(w => w[key].finalValue)),
+                avgCagr: mean(windows.map(w => w[key].cagr)),
+                avgMdd: mean(windows.map(w => w[key].maxDD)),
+                avgTotal: mean(windows.map(w => w[key].totalReturn))
+            };
+        }
+
+        function fmtCurrency(v) {
+            return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v);
+        }
+
+        function fmtPct(v) {
+            return `${(v * 100).toFixed(2)}%`;
+        }
+
+        function toDateInputValue(d) {
+            return d.toISOString().slice(0, 10);
+        }
+
+        function renderSummary(sim, rollingStd, rollingAda, windows) {
+            const cards = [
+                { t: 'Valore finale PAC Standard', v: fmtCurrency(sim.stdStats.finalValue) },
+                { t: 'Valore finale PAC Adattivo', v: fmtCurrency(sim.adaStats.finalValue) },
+                { t: 'Valore finale Adattivo secco', v: fmtCurrency(sim.adaDryStats.finalValue) },
+                { t: 'CAGR PAC Standard', v: fmtPct(sim.stdStats.cagr) },
+                { t: 'CAGR PAC Adattivo', v: fmtPct(sim.adaStats.cagr) },
+                { t: 'Max DD PAC Standard', v: fmtPct(sim.stdStats.maxDD) },
+                { t: 'Max DD PAC Adattivo', v: fmtPct(sim.adaStats.maxDD) },
+                { t: 'Rolling CAGR medio Adattivo', v: fmtPct(rollingAda.avgCagr) }
+            ];
+
+            document.getElementById('summaryCards').innerHTML = cards.map(c => `
+        <article class="rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <h3 class="text-xs uppercase tracking-wide text-slate-500">${c.t}</h3>
+          <p class="mt-2 text-xl font-semibold text-slate-900">${c.v}</p>
+        </article>
+      `).join('');
+
+            document.getElementById('rollingTableBody').innerHTML = `
+        <tr class="border-b border-slate-100">
+          <td class="px-3 py-2 font-medium">PAC Standard</td><td class="px-3 py-2">${rollingStd.count}</td><td class="px-3 py-2">${fmtCurrency(rollingStd.avgFinal)}</td><td class="px-3 py-2">${fmtPct(rollingStd.avgCagr)}</td><td class="px-3 py-2">${fmtPct(rollingStd.avgMdd)}</td><td class="px-3 py-2">${fmtPct(rollingStd.avgTotal)}</td>
+        </tr>
+        <tr>
+          <td class="px-3 py-2 font-medium">PAC Adattivo</td><td class="px-3 py-2">${rollingAda.count}</td><td class="px-3 py-2">${fmtCurrency(rollingAda.avgFinal)}</td><td class="px-3 py-2">${fmtPct(rollingAda.avgCagr)}</td><td class="px-3 py-2">${fmtPct(rollingAda.avgMdd)}</td><td class="px-3 py-2">${fmtPct(rollingAda.avgTotal)}</td>
+        </tr>
+      `;
+
+            const better = rollingAda.avgCagr > rollingStd.avgCagr ? 'PAC Adattivo' : 'PAC Standard';
+            const winsAdaptive = windows.filter(w => w.ada.finalValue > w.std.finalValue).length;
+            const winRate = windows.length ? winsAdaptive / windows.length : 0;
+            document.getElementById('efficiencyText').textContent = `Strategia mediamente più efficiente sul campione rolling: ${better}.` +
+                `Win rate PAC Adattivo su valore finale: ${(winRate * 100).toFixed(1)}% (${winsAdaptive}/${windows.length} finestre).`;
+        }
+
+        function renderRules(timeline, monthlyContribution) {
+            const order = ['Euforia', 'Alto', 'Moderato', 'Neutro', 'Debole', 'Stress', 'Crash'];
+            const labels = { Euforia: '> +15%', Alto: '(+10%, +15%]', Moderato: '(+5%, +10%]', Neutro: '[-5%, +5%]', Debole: '[-10%, -5%)', Stress: '[-20%, -10%)', Crash: '< -20%' };
+            const map = new Map(order.map(k => [k, { c: 0, inv: 0, s: 0, u: 0 }]));
+
+            for (const r of timeline) {
+                const x = map.get(r.regimeName) || map.get('Neutro');
+                x.c += 1;
+                x.inv += monthlyContribution > 0 ? r.adaptiveInvest / monthlyContribution : 0;
+                x.s += r.savedToBuffer;
+                x.u += r.usedFromBuffer;
+            }
+
+            document.getElementById('adaptiveRulesBody').innerHTML = order.map(k => {
+                const r = map.get(k);
+                return `<tr class="border-b border-slate-100"><td class="px-3 py-2 font-medium">${k}</td><td class="px-3 py-2">${labels[k]}</td><td class="px-3 py-2">${r.c}</td><td class="px-3 py-2">${r.c ? (r.inv / r.c * 100).toFixed(1) : '0.0'}%</td><td class="px-3 py-2">${fmtCurrency(r.c ? r.s / r.c : 0)}</td><td class="px-3 py-2">${fmtCurrency(r.c ? r.u / r.c : 0)}</td></tr>`;
+            }).join('');
+        }
+
+        function renderDiagnostics(timeline, monthlyContribution, stdStats, adaStats, adaDryStats) {
+            const totalMonths = timeline.length || 1;
+            const totalContrib = monthlyContribution * totalMonths;
+            const avgBuffer = mean(timeline.map(t => t.adaptiveBuffer));
+            const avgInvestPct = mean(timeline.map(t => monthlyContribution > 0 ? t.adaptiveInvest / monthlyContribution : 0));
+            const cashDrag = stdStats.finalValue > 0 ? (stdStats.finalValue - adaDryStats.finalValue) / stdStats.finalValue : 0;
+            const cashYieldBenefit = adaStats.finalValue - adaDryStats.finalValue;
+
+            const cards = [
+                { t: 'Buffer medio / contributi', v: totalContrib > 0 ? fmtPct(avgBuffer / totalContrib) : '0.00%', tone: 'bg-sky-50 text-sky-700 ring-sky-200' },
+                { t: 'Investimento medio adattivo', v: `${(avgInvestPct * 100).toFixed(1)}% quota`, tone: 'bg-indigo-50 text-indigo-700 ring-indigo-200' },
+                { t: 'Cash drag vs standard', v: fmtPct(cashDrag), tone: 'bg-amber-50 text-amber-700 ring-amber-200' },
+                { t: 'Beneficio rendimento liquidità', v: fmtCurrency(cashYieldBenefit), tone: 'bg-emerald-50 text-emerald-700 ring-emerald-200' }
+            ];
+
+            document.getElementById('diagnosticCards').innerHTML = cards.map(c => `
+        <article class="rounded-xl p-4 ring-1 ${c.tone}">
+          <h3 class="text-xs uppercase tracking-wide opacity-75">${c.t}</h3>
+          <p class="mt-2 text-xl font-semibold">${c.v}</p>
+        </article>
+      `).join('');
+
+            const order = ['Euforia', 'Alto', 'Moderato', 'Neutro', 'Debole', 'Stress', 'Crash'];
+            const labels = { Euforia: '> +15%', Alto: '(+10%, +15%]', Moderato: '(+5%, +10%]', Neutro: '[-5%, +5%]', Debole: '[-10%, -5%)', Stress: '[-20%, -10%)', Crash: '< -20%' };
+            const counters = new Map(order.map(k => [k, { c: 0, inv: 0, net: 0 }]));
+
+            for (const row of timeline) {
+                const slot = counters.get(row.regimeName) || counters.get('Neutro');
+                slot.c += 1;
+                slot.inv += monthlyContribution > 0 ? row.adaptiveInvest / monthlyContribution : 0;
+                slot.net += row.savedToBuffer - row.usedFromBuffer;
+            }
+
+            document.getElementById('diagnosticRegimeBody').innerHTML = order.map(name => {
+                const s = counters.get(name);
+                const share = (s.c / totalMonths) * 100;
+                const inv = s.c ? (s.inv / s.c) * 100 : 0;
+                const net = s.c ? s.net / s.c : 0;
+                const flowTone = net >= 0 ? 'text-emerald-700' : 'text-rose-700';
+                const flowTxt = net >= 0 ? `+${fmtCurrency(net)}` : fmtCurrency(net);
+                return `
+          <tr class="rounded-lg bg-slate-50 ring-1 ring-slate-200">
+            <td class="px-3 py-2 font-medium text-slate-800">${name}</td>
+            <td class="px-3 py-2 text-slate-600">${labels[name]}</td>
+            <td class="px-3 py-2">
+              <div class="w-44 rounded-full bg-slate-200">
+                <div class="h-2 rounded-full bg-slate-700" style="width:${Math.max(0, Math.min(100, share)).toFixed(1)}%"></div>
+              </div>
+              <span class="mt-1 inline-block text-xs text-slate-600">${share.toFixed(1)}%</span>
+            </td>
+            <td class="px-3 py-2 font-medium text-slate-700">${inv.toFixed(1)}%</td>
+            <td class="px-3 py-2 font-medium ${flowTone}">${flowTxt}</td>
+          </tr>
+        `;
+            }).join('');
+        }
+
+        function renderChart(timeline, maDays) {
+            const ctx = document.getElementById('mainChart');
+            if (state.chart) state.chart.destroy();
+            state.chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        { label: 'Valore PAC Standard', data: timeline.map(t => ({ x: t.date, y: t.standardValue })), borderColor: '#0f172a', yAxisID: 'yPortfolio', pointRadius: 0, borderWidth: 2 },
+                        { label: 'Valore PAC Adattivo', data: timeline.map(t => ({ x: t.date, y: t.adaptiveValue })), borderColor: '#0ea5e9', yAxisID: 'yPortfolio', pointRadius: 0, borderWidth: 2 },
+                        { label: 'PAC Adattivo secco', data: timeline.map(t => ({ x: t.date, y: t.adaptiveDryValue })), borderColor: '#a855f7', yAxisID: 'yPortfolio', pointRadius: 0, borderWidth: 1.5, borderDash: [8, 4] },
+                        { label: 'Buffer liquidità', data: timeline.map(t => ({ x: t.date, y: t.adaptiveBuffer })), borderColor: '#16a34a', yAxisID: 'yPortfolio', pointRadius: 0, borderWidth: 1.5 },
+                        { label: 'Prezzo indice', data: timeline.map(t => ({ x: t.date, y: t.price })), borderColor: '#64748b', yAxisID: 'yPrice', pointRadius: 0, borderWidth: 1, borderDash: [4, 3] },
+                        { label: `MA${maDays} daily`, data: timeline.map(t => ({ x: t.date, y: t.ma })), borderColor: '#f97316', yAxisID: 'yPrice', pointRadius: 0, borderWidth: 1.5 }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: { type: 'time', time: { unit: 'year' } },
+                        yPortfolio: { position: 'left', title: { display: true, text: 'Portafoglio (€)' } },
+                        yPrice: { position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Indice/MA' } }
+                    }
+                }
+            });
+        }
+
+        async function loadDatasetForIndex(indexName) {
+            const path = `../json/${indexName}.json`;
+            const response = await fetch(path);
+            if (!response.ok) throw new Error(`Impossibile caricare ${path}`);
+            const data = await response.json();
+            const rows = data
+                .map(x => ({ date: new Date(`${x.Date}T00:00:00Z`), price: Number(x.Close) }))
+                .filter(x => Number.isFinite(x.date.getTime()) && Number.isFinite(x.price))
+                .sort((a, b) => a.date - b.date);
+            if (!rows.length) throw new Error(`Dataset vuoto per ${indexName}`);
+            return rows;
+        }
+
+        function applyDateBounds(dailyRows) {
+            state.minDate = dailyRows[0].date;
+            state.maxDate = dailyRows[dailyRows.length - 1].date;
+
+            const startInput = document.getElementById('startDate');
+            const endInput = document.getElementById('endDate');
+            startInput.min = toDateInputValue(state.minDate);
+            startInput.max = toDateInputValue(state.maxDate);
+            endInput.min = toDateInputValue(state.minDate);
+            endInput.max = toDateInputValue(state.maxDate);
+
+            const requestedStart = new Date('2000-01-01T00:00:00Z');
+            const requestedEnd = new Date('2025-12-31T00:00:00Z');
+            const effectiveStart = requestedStart < state.minDate ? state.minDate : requestedStart;
+            const effectiveEnd = requestedEnd > state.maxDate ? state.maxDate : requestedEnd;
+            startInput.value = toDateInputValue(effectiveStart);
+            endInput.value = toDateInputValue(effectiveEnd);
+        }
+
+        function runSimulation() {
+            try {
+                if (!state.dailySeries.length) throw new Error('Dataset non caricato.');
+
+                const monthlyContribution = Number(document.getElementById('monthlyContribution').value);
+                const annualCashYield = Number(document.getElementById('cashYield').value) / 100;
+                const rollingMonths = Number(document.getElementById('rollingMonths').value);
+                const maDays = Number(document.getElementById('maDays').value);
+                const startDate = new Date(`${document.getElementById('startDate').value}T00:00:00Z`);
+                const endDate = new Date(`${document.getElementById('endDate').value}T00:00:00Z`);
+
+                if (!Number.isFinite(monthlyContribution) || monthlyContribution < 0) throw new Error('Quota mensile non valida.');
+                if (!Number.isFinite(annualCashYield)) throw new Error('Tasso liquidità non valido.');
+                if (!Number.isFinite(rollingMonths) || rollingMonths < 12) throw new Error('Finestra rolling non valida.');
+                if (!Number.isFinite(maDays) || maDays < 20) throw new Error('Giorni media mobile non validi (min 20).');
+                if (startDate > endDate) throw new Error('Intervallo date non valido.');
+
+                const selectedDaily = state.dailySeries.filter(r => r.date >= startDate && r.date <= endDate);
+                if (selectedDaily.length < maDays + 20) throw new Error(`Servono più dati giornalieri nel range selezionato (almeno ${maDays + 20}).`);
+
+                const maDaily = movingAverage(selectedDaily.map(d => d.price), maDays);
+                const monthly = toMonthlyFromDaily(selectedDaily, maDaily);
+                if (monthly.length < rollingMonths + 1) throw new Error('Intervallo troppo corto rispetto alla finestra rolling.');
+
+                const maMonthly = monthly.map(m => m.ma);
+                const sim = simulateStrategies(monthly, maMonthly, monthlyContribution, annualCashYield);
+                const rolling = simulateRolling(monthly, maMonthly, rollingMonths, monthlyContribution, annualCashYield);
+                const rollingStd = aggregateRolling(rolling, 'std');
+                const rollingAda = aggregateRolling(rolling, 'ada');
+
+                renderSummary(sim, rollingStd, rollingAda, rolling);
+                renderRules(sim.timeline, monthlyContribution);
+                renderDiagnostics(sim.timeline, monthlyContribution, sim.stdStats, sim.adaStats, sim.adaDryStats);
+                renderChart(sim.timeline, maDays);
+
+                setStatus(`OK: indice=${document.getElementById('indexSelect').value}, daily=${selectedDaily.length}, mesi simulati=${monthly.length}, MA=${maDays} giorni, rolling=${rolling.length}.`);
+            } catch (err) {
+                setStatus(err.message || 'Errore simulazione.', true);
+            }
+        }
+
+        async function loadAndRun(indexName) {
+            try {
+                setStatus('Caricamento dataset in corso...');
+                state.dailySeries = await loadDatasetForIndex(indexName);
+                applyDateBounds(state.dailySeries);
+                runSimulation();
+            } catch (err) {
+                setStatus(err.message || 'Errore caricamento dataset.', true);
+            }
+        }
+
+        document.getElementById('indexSelect').addEventListener('change', async (e) => {
+            await loadAndRun(e.target.value);
+        });
+        document.getElementById('runBtn').addEventListener('click', runSimulation);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            fetch('../html/disclaimer.html')
+                .then(r => r.text())
+                .then(html => { document.getElementById('disclaimer-container').innerHTML = html; })
+                .catch(() => { });
+
+            await loadAndRun(document.getElementById('indexSelect').value);
+        });
+    </script>
+</body>
+
+</html>
