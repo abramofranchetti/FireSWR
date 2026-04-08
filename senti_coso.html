@@ -238,6 +238,11 @@ const reels = [
 ];
 const resultDiv = document.getElementById("result");
 const spinBtn = document.getElementById("spinBtn");
+const moodByValue = {
+    SI: ["spingi", "cuore", "coraggio", "zero-sbatti"],
+    NO: ["pazienza", "autocontrollo", "zen", "protezione"],
+    FORSE: ["drama", "suspense", "mistero", "vibrazioni"]
+};
 
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
@@ -254,6 +259,10 @@ resizeCanvas();
 
 function randomValue() {
     return values[Math.floor(Math.random() * values.length)];
+}
+
+function pickRandom(list) {
+    return list[Math.floor(Math.random() * list.length)];
 }
 
 function spin() {
@@ -288,20 +297,59 @@ function spin() {
 
 function evaluate(results) {
     const [a, b, c] = results;
+    const countSi = results.filter((v) => v === "SI").length;
+    const countNo = results.filter((v) => v === "NO").length;
+    const countForse = results.filter((v) => v === "FORSE").length;
+    const vibe = pickRandom([
+        ...moodByValue[a],
+        ...moodByValue[b],
+        ...moodByValue[c]
+    ]);
+
     resultDiv.classList.add("flash");
 
     if (a === "SI" && b === "SI" && c === "SI") {
-        resultDiv.textContent = "JACKPOT! SENTI COSO!";
+        resultDiv.textContent = pickRandom([
+            "JACKPOT! Chiama subito quella persona!",
+            "Triplo SI: telefono in mano e vai!",
+            "Universo allineato: chiamata approvata al 100%!"
+        ]);
         resultDiv.className = "result jackpot";
         celebrateWin();
     } else if (a === "NO" && b === "NO" && c === "NO") {
-        resultDiv.textContent = "JACKPOT NEGATIVO! Oggi no.";
+        resultDiv.textContent = pickRandom([
+            "Triplo NO: oggi meglio non chiamare.",
+            "JACKPOT NEGATIVO! Lascia il telefono in pace.",
+            "Semaforo rosso totale: rimanda la chiamata."
+        ]);
         resultDiv.className = "result nope";
-    } else if (results.includes("FORSE") && results.includes("SI")) {
-        resultDiv.textContent = "FORSE... ma molto tendente al SI!";
+    } else if (countSi === 2) {
+        resultDiv.textContent = pickRandom([
+            `Due SI e un dubbio: chiama quella persona, mood ${vibe}.`,
+            "Maggioranza SI: una chiamata ci sta tutta.",
+            "Il destino dice SI... con un pizzico di drama."
+        ]);
+        resultDiv.className = "result maybe";
+    } else if (countNo === 2) {
+        resultDiv.textContent = pickRandom([
+            `Due NO: forse oggi tieni il profilo ${vibe}.`,
+            "Maggioranza NO: meglio scrivere domani (forse).",
+            "Chiamata rimandata: proteggi la pace mentale."
+        ]);
+        resultDiv.className = "result nope";
+    } else if (countForse >= 2) {
+        resultDiv.textContent = pickRandom([
+            "Troppo FORSE: l'oracolo vuole suspense.",
+            `Doppio FORSE: decidi tu, energia ${vibe}.`,
+            "La sorte fa la vaga: prova tra poco."
+        ]);
         resultDiv.className = "result maybe";
     } else {
-        resultDiv.textContent = "Riprova, il destino e' capriccioso.";
+        resultDiv.textContent = pickRandom([
+            `Esito misto: senti come ti gira (${vibe}).`,
+            "Situazione caotica ma interessante: valuta e chiama se te la senti.",
+            "Il destino e' capriccioso, ma il pollice decide."
+        ]);
         resultDiv.className = "result";
     }
 }
