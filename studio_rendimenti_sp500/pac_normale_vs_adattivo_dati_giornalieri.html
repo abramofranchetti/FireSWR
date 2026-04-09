@@ -40,7 +40,7 @@
             </label>
 
             <label class="block text-sm font-medium">
-                Liquidità iniziale (€)
+                liquidità iniziale (€)
                 <input id="initialLiquidity" type="number" min="0" step="1" value="0"
                     class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
             </label>
@@ -63,6 +63,14 @@
                 Finestra rolling (mesi)
                 <input id="rollingMonths" type="number" min="12" step="1" value="120"
                     class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+            </label>
+
+            <label class="block text-sm font-medium">
+                Rolling su
+                <select id="rollingScope" class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+                    <option value="full_history">Tutto lo storico</option>
+                    <option value="range_selected">Solo range selezionato</option>
+                </select>
             </label>
 
             <label class="block text-sm font-medium">
@@ -144,6 +152,46 @@
                 </table>
             </div>
             <p id="efficiencyText" class="mt-3 text-sm text-slate-700"></p>
+        </section>
+
+        <section class="mt-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
+            <h2 class="text-lg font-semibold">5 Casi Peggiori PAC Adattivo (Rolling)</h2>
+            <p class="mt-1 text-sm text-slate-600">Finestre in cui il valore finale dell'adattivo è più distante (in peggio) rispetto allo standard.</p>
+            <div class="mt-3 overflow-x-auto">
+                <table class="min-w-full border-collapse text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-left">
+                            <th class="px-3 py-2">#</th>
+                            <th class="px-3 py-2">Inizio finestra</th>
+                            <th class="px-3 py-2">Fine finestra</th>
+                            <th class="px-3 py-2">Finale Standard</th>
+                            <th class="px-3 py-2">Finale Adattivo</th>
+                            <th class="px-3 py-2">Gap Adattivo-Standard</th>
+                        </tr>
+                    </thead>
+                    <tbody id="worstRollingBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="mt-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
+            <h2 class="text-lg font-semibold">5 Casi Migliori PAC Adattivo (Rolling)</h2>
+            <p class="mt-1 text-sm text-slate-600">Finestre in cui il valore finale dell'adattivo è più distante (in meglio) rispetto allo standard.</p>
+            <div class="mt-3 overflow-x-auto">
+                <table class="min-w-full border-collapse text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-left">
+                            <th class="px-3 py-2">#</th>
+                            <th class="px-3 py-2">Inizio finestra</th>
+                            <th class="px-3 py-2">Fine finestra</th>
+                            <th class="px-3 py-2">Finale Standard</th>
+                            <th class="px-3 py-2">Finale Adattivo</th>
+                            <th class="px-3 py-2">Gap Adattivo-Standard</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bestRollingBody"></tbody>
+                </table>
+            </div>
         </section>
 
         <section class="mt-6 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
@@ -396,7 +444,12 @@
                 const sl = series.slice(i, i + rollingMonths);
                 const ma = maSeries.slice(i, i + rollingMonths);
                 const sim = simulateStrategies(sl, ma, monthlyContribution, annualCashYield, initialLiquidity, standardInitialMode);
-                windows.push({ std: sim.stdStats, ada: sim.adaStats });
+                windows.push({
+                    start: sl[0].date,
+                    end: sl[sl.length - 1].date,
+                    std: sim.stdStats,
+                    ada: sim.adaStats
+                });
             }
             return windows;
         }
@@ -427,8 +480,68 @@
             return new Intl.DateTimeFormat('it-IT', { month: '2-digit', year: 'numeric' }).format(d);
         }
 
+        function fmtDateDay(d) {
+            return new Intl.DateTimeFormat('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(d);
+        }
+
         function toDateInputValue(d) {
             return d.toISOString().slice(0, 10);
+        }
+
+        function renderWorstRollingCases(windows) {
+            const worst = windows
+                .map(w => ({
+                    ...w,
+                    gap: (w.ada?.finalValue ?? 0) - (w.std?.finalValue ?? 0)
+                }))
+                .filter(w => Number.isFinite(w.gap) && w.gap < 0)
+                .sort((a, b) => a.gap - b.gap)
+                .slice(0, 5);
+
+            const body = document.getElementById('worstRollingBody');
+            if (!worst.length) {
+                body.innerHTML = `<tr><td colspan="6" class="px-3 py-2 text-slate-500">Nessun caso con PAC Adattivo peggiore del PAC Standard.</td></tr>`;
+                return;
+            }
+
+            body.innerHTML = worst.map((w, i) => `
+        <tr class="border-b border-slate-100">
+          <td class="px-3 py-2">${i + 1}</td>
+          <td class="px-3 py-2">${fmtDateDay(w.start)}</td>
+          <td class="px-3 py-2">${fmtDateDay(w.end)}</td>
+          <td class="px-3 py-2">${fmtCurrency(w.std.finalValue)}</td>
+          <td class="px-3 py-2">${fmtCurrency(w.ada.finalValue)}</td>
+          <td class="px-3 py-2 font-medium text-rose-700">${fmtCurrency(w.gap)}</td>
+        </tr>
+      `).join('');
+        }
+
+        function renderBestRollingCases(windows) {
+            const best = windows
+                .map(w => ({
+                    ...w,
+                    gap: (w.ada?.finalValue ?? 0) - (w.std?.finalValue ?? 0)
+                }))
+                .filter(w => Number.isFinite(w.gap) && w.gap > 0)
+                .sort((a, b) => b.gap - a.gap)
+                .slice(0, 5);
+
+            const body = document.getElementById('bestRollingBody');
+            if (!best.length) {
+                body.innerHTML = `<tr><td colspan="6" class="px-3 py-2 text-slate-500">Nessun caso con PAC Adattivo migliore del PAC Standard.</td></tr>`;
+                return;
+            }
+
+            body.innerHTML = best.map((w, i) => `
+        <tr class="border-b border-slate-100">
+          <td class="px-3 py-2">${i + 1}</td>
+          <td class="px-3 py-2">${fmtDateDay(w.start)}</td>
+          <td class="px-3 py-2">${fmtDateDay(w.end)}</td>
+          <td class="px-3 py-2">${fmtCurrency(w.std.finalValue)}</td>
+          <td class="px-3 py-2">${fmtCurrency(w.ada.finalValue)}</td>
+          <td class="px-3 py-2 font-medium text-emerald-700">${fmtCurrency(w.gap)}</td>
+        </tr>
+      `).join('');
         }
 
         function renderSummary(sim, rollingStd, rollingAda, windows) {
@@ -464,6 +577,8 @@
             const winRate = windows.length ? winsAdaptive / windows.length : 0;
             document.getElementById('efficiencyText').textContent = `Strategia mediamente più efficiente sul campione rolling: ${better}.` +
                 `Win rate PAC Adattivo su valore finale: ${(winRate * 100).toFixed(1)}% (${winsAdaptive}/${windows.length} finestre).`;
+            renderWorstRollingCases(windows);
+            renderBestRollingCases(windows);
         }
 
         function renderRules(timeline, monthlyContribution) {
@@ -634,16 +749,18 @@
                 const standardInitialMode = document.getElementById('standardInitialMode').value;
                 const annualCashYield = Number(document.getElementById('cashYield').value) / 100;
                 const rollingMonths = Number(document.getElementById('rollingMonths').value);
+                const rollingScope = document.getElementById('rollingScope').value;
                 const maDays = Number(document.getElementById('maDays').value);
                 const startDate = new Date(`${document.getElementById('startDate').value}T00:00:00Z`);
                 const endDate = new Date(`${document.getElementById('endDate').value}T00:00:00Z`);
 
                 if (!Number.isFinite(monthlyContribution) || monthlyContribution < 0) throw new Error('Quota mensile non valida.');
-                if (!Number.isFinite(initialLiquidity) || initialLiquidity < 0) throw new Error('Liquidità iniziale non valida.');
-                if (!['lump_sum', 'spread_monthly'].includes(standardInitialMode)) throw new Error('Modalità liquidità iniziale PAC Standard non valida.');
+                if (!Number.isFinite(initialLiquidity) || initialLiquidity < 0) throw new Error('liquidità iniziale non valida.');
+                if (!['lump_sum', 'spread_monthly'].includes(standardInitialMode)) throw new Error('modalità liquidità iniziale PAC Standard non valida.');
                 if (!Number.isFinite(annualCashYield)) throw new Error('Tasso liquidità non valido.');
                 if (annualCashYield <= -1) throw new Error('Tasso liquidità non valido: deve essere maggiore di -100%.');
                 if (!Number.isFinite(rollingMonths) || rollingMonths < 12) throw new Error('Finestra rolling non valida.');
+                if (!['full_history', 'range_selected'].includes(rollingScope)) throw new Error('Ambito rolling non valido.');
                 if (!Number.isFinite(maDays) || maDays < 20) throw new Error('Giorni media mobile non validi (min 20).');
                 if (startDate > endDate) throw new Error('Intervallo date non valido.');
 
@@ -652,11 +769,17 @@
 
                 const maDaily = movingAverage(selectedDaily.map(d => d.price), maDays);
                 const monthly = toMonthlyFromDaily(selectedDaily, maDaily);
-                if (monthly.length < rollingMonths + 1) throw new Error('Intervallo troppo corto rispetto alla finestra rolling.');
+
+                const rollingDaily = rollingScope === 'full_history' ? state.dailySeries : selectedDaily;
+                if (rollingDaily.length < maDays + 20) throw new Error(`Dati insufficienti per la rolling nel perimetro scelto (almeno ${maDays + 20} osservazioni giornaliere).`);
+                const maDailyRolling = movingAverage(rollingDaily.map(d => d.price), maDays);
+                const monthlyRolling = toMonthlyFromDaily(rollingDaily, maDailyRolling);
+                if (monthlyRolling.length < rollingMonths + 1) throw new Error('Perimetro rolling troppo corto rispetto alla finestra rolling.');
 
                 const maMonthly = monthly.map(m => m.ma);
+                const maMonthlyRolling = monthlyRolling.map(m => m.ma);
                 const sim = simulateStrategies(monthly, maMonthly, monthlyContribution, annualCashYield, initialLiquidity, standardInitialMode);
-                const rolling = simulateRolling(monthly, maMonthly, rollingMonths, monthlyContribution, annualCashYield, initialLiquidity, standardInitialMode);
+                const rolling = simulateRolling(monthlyRolling, maMonthlyRolling, rollingMonths, monthlyContribution, annualCashYield, initialLiquidity, standardInitialMode);
                 const rollingStd = aggregateRolling(rolling, 'std');
                 const rollingAda = aggregateRolling(rolling, 'ada');
 
@@ -675,10 +798,13 @@
                 document.getElementById('standardContributionInfo').textContent =
                     `PAC Standard: rata effettiva ${fmtCurrency(standardEffective)} (${modeLabel}).`;
 
-                setStatus(`OK: indice=${document.getElementById('indexSelect').value}, daily=${selectedDaily.length}, mesi simulati=${monthly.length}, MA=${maDays} giorni, rolling=${rolling.length}.`);
+                const rollingScopeLabel = rollingScope === 'full_history' ? 'tutto storico' : 'range selezionato';
+                setStatus(`OK: indice=${document.getElementById('indexSelect').value}, daily=${selectedDaily.length}, mesi simulati=${monthly.length}, MA=${maDays} giorni, rolling=${rolling.length} (${rollingScopeLabel}).`);
             } catch (err) {
                 document.getElementById('standardContributionInfo').textContent = '';
                 document.getElementById('monthlyDetailsBody').innerHTML = '';
+                document.getElementById('worstRollingBody').innerHTML = '';
+                document.getElementById('bestRollingBody').innerHTML = '';
                 setStatus(err.message || 'Errore simulazione.', true);
             }
         }
