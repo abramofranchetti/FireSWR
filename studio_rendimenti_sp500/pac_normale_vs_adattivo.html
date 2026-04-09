@@ -41,7 +41,8 @@
 
             <label class="block text-sm font-medium">
                 Uso liquidità iniziale (PAC Standard)
-                <select id="standardInitialMode" class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+                <select id="standardInitialMode"
+                    class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
                     <option value="lump_sum">Investi tutta all'inizio</option>
                     <option value="spread_monthly">Spalma su tutte le rate</option>
                 </select>
@@ -61,7 +62,8 @@
 
             <label class="block text-sm font-medium">
                 Rolling su
-                <select id="rollingScope" class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+                <select id="rollingScope"
+                    class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
                     <option value="full_history">Tutto lo storico</option>
                     <option value="range_selected">Solo range selezionato</option>
                 </select>
@@ -106,7 +108,8 @@
         <section class="mt-6 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-semibold">Diagnostica Strategia</h2>
-                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">Focus su cash drag e regimi MA</span>
+                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">Focus su cash drag
+                    e regimi MA</span>
             </div>
             <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" id="diagnosticCards"></div>
             <div class="mt-5 overflow-x-auto">
@@ -127,7 +130,8 @@
 
         <section class="mt-6 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
             <h2 class="text-lg font-semibold">Andamento portafoglio e MA</h2>
-            <p class="mt-1 text-xs text-slate-500">Asse sinistro: portafogli e buffer. Asse destro: prezzo indice e media
+            <p class="mt-1 text-xs text-slate-500">Asse sinistro: portafogli e buffer. Asse destro: prezzo indice e
+                media
                 mobile.</p>
             <div class="mt-4 h-[440px]"><canvas id="mainChart"></canvas></div>
         </section>
@@ -158,7 +162,8 @@
 
         <section class="mt-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
             <h2 class="text-lg font-semibold">5 Casi Peggiori PAC Adattivo (Rolling)</h2>
-            <p class="mt-1 text-sm text-slate-600">Finestre in cui il valore finale dell'adattivo è più distante (in peggio) rispetto allo standard.</p>
+            <p class="mt-1 text-sm text-slate-600">Finestre in cui il valore finale dell'adattivo è più distante (in
+                peggio) rispetto allo standard.</p>
             <div class="mt-3 overflow-x-auto">
                 <table class="min-w-full border-collapse text-sm">
                     <thead>
@@ -178,7 +183,8 @@
 
         <section class="mt-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
             <h2 class="text-lg font-semibold">5 Casi Migliori PAC Adattivo (Rolling)</h2>
-            <p class="mt-1 text-sm text-slate-600">Finestre in cui il valore finale dell'adattivo è più distante (in meglio) rispetto allo standard.</p>
+            <p class="mt-1 text-sm text-slate-600">Finestre in cui il valore finale dell'adattivo è più distante (in
+                meglio) rispetto allo standard.</p>
             <div class="mt-3 overflow-x-auto">
                 <table class="min-w-full border-collapse text-sm">
                     <thead>
@@ -233,7 +239,8 @@
 
         <section class="mt-6 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
             <h2 class="text-lg font-semibold">Dettaglio Mensile Versamenti e Andamento</h2>
-            <p class="mt-1 text-sm text-slate-600">Storico mese per mese di versamenti, buffer e valori delle due strategie.</p>
+            <p class="mt-1 text-sm text-slate-600">Storico mese per mese di versamenti, buffer e valori delle due
+                strategie.</p>
             <div class="mt-3 max-h-[560px] overflow-auto">
                 <table class="min-w-full border-collapse text-sm">
                     <thead class="sticky top-0 z-10 bg-white">
@@ -261,17 +268,17 @@
             </div>
         </section>
         <!-- Disclaimer -->
-     <div id="disclaimer-container"></div>
+        <div id="disclaimer-container"></div>
 
-     <script>
-         document.addEventListener('DOMContentLoaded', function () {
-             fetch('../html/disclaimer.html')
-                 .then(response => response.text())
-                 .then(data => {
-                     document.getElementById('disclaimer-container').innerHTML = data;
-                 });
-         });
-     </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                fetch('../html/disclaimer.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('disclaimer-container').innerHTML = data;
+                    });
+            });
+        </script>
     </div>
 
     <script>
@@ -375,18 +382,18 @@
             return avg <= 10 ? 'daily' : 'monthly';
         }
 
-    function movingAverage(values, period) {
-      const out = new Array(values.length).fill(0);
-      if (period <= 1) return values.slice();
-      let sum = 0;
-      for (let i = 0; i < values.length; i++) {
-        sum += values[i];
-        if (i >= period) sum -= values[i - period];
-        const windowSize = Math.min(i + 1, period);
-        out[i] = sum / windowSize;
-      }
-      return out;
-    }
+        function movingAverage(values, period) {
+            const out = new Array(values.length).fill(0);
+            if (period <= 1) return values.slice();
+            let sum = 0;
+            for (let i = 0; i < values.length; i++) {
+                sum += values[i];
+                if (i >= period) sum -= values[i - period];
+                const windowSize = Math.min(i + 1, period);
+                out[i] = sum / windowSize;
+            }
+            return out;
+        }
 
         function maxDrawdownFromSeries(vals) {
             let peak = -Infinity;
@@ -464,107 +471,107 @@
             };
         }
 
-    function simulateStrategies(series, maSeries, monthlyContribution, annualCashYield, initialLiquidity, standardInitialMode) {
-      const monthlyCashRate = Math.pow(1 + annualCashYield, 1 / 12) - 1;
-      const stdMonthlyExtra = (standardInitialMode === 'spread_monthly' && series.length > 0)
-        ? initialLiquidity / series.length
-        : 0;
-      const spreadStandard = standardInitialMode === 'spread_monthly';
+        function simulateStrategies(series, maSeries, monthlyContribution, annualCashYield, initialLiquidity, standardInitialMode) {
+            const monthlyCashRate = Math.pow(1 + annualCashYield, 1 / 12) - 1;
+            const stdMonthlyExtra = (standardInitialMode === 'spread_monthly' && series.length > 0)
+                ? initialLiquidity / series.length
+                : 0;
+            const spreadStandard = standardInitialMode === 'spread_monthly';
 
-      let stdShares = spreadStandard ? 0 : (series.length > 0 ? initialLiquidity / series[0].price : 0);
-      let stdBuffer = spreadStandard ? initialLiquidity : 0;
-      let adaShares = 0;
-      let adaBuffer = initialLiquidity;
-      let adaDryShares = 0;
-      let adaDryBuffer = initialLiquidity;
-      let stdCumulativeContributed = series.length > 0 ? initialLiquidity : 0;
-      let adaCumulativeContributed = series.length > 0 ? initialLiquidity : 0;
+            let stdShares = spreadStandard ? 0 : (series.length > 0 ? initialLiquidity / series[0].price : 0);
+            let stdBuffer = spreadStandard ? initialLiquidity : 0;
+            let adaShares = 0;
+            let adaBuffer = initialLiquidity;
+            let adaDryShares = 0;
+            let adaDryBuffer = initialLiquidity;
+            let stdCumulativeContributed = series.length > 0 ? initialLiquidity : 0;
+            let adaCumulativeContributed = series.length > 0 ? initialLiquidity : 0;
 
-      const timeline = [];
+            const timeline = [];
 
-      for (let i = 0; i < series.length; i++) {
-        const p = series[i].price;
-        const ma = maSeries[i];
+            for (let i = 0; i < series.length; i++) {
+                const p = series[i].price;
+                const ma = maSeries[i];
 
-        if (spreadStandard) {
-          stdBuffer *= (1 + monthlyCashRate);
+                if (spreadStandard) {
+                    stdBuffer *= (1 + monthlyCashRate);
+                }
+                const standardExtraContribution = spreadStandard
+                    ? Math.min(stdMonthlyExtra, Math.max(0, stdBuffer))
+                    : 0;
+                stdBuffer -= standardExtraContribution;
+                const standardContribution = monthlyContribution + standardExtraContribution;
+                stdShares += standardContribution / p;
+
+                adaBuffer *= (1 + monthlyCashRate);
+                const available = adaBuffer + monthlyContribution;
+                const availableDry = adaDryBuffer + monthlyContribution;
+
+                let adaptiveInvest = monthlyContribution;
+                let adaptiveInvestDry = monthlyContribution;
+                let regimeName = 'Neutro';
+
+                if (ma != null && ma > 0) {
+                    const dev = ((p - ma) / ma) * 100;
+                    const rule = getRegime(dev);
+                    regimeName = rule.name;
+
+                    if (rule.extraBufferPct === Infinity) {
+                        adaptiveInvest = available;
+                        adaptiveInvestDry = availableDry;
+                    } else {
+                        adaptiveInvest = monthlyContribution * rule.investPct + monthlyContribution * rule.extraBufferPct;
+                        adaptiveInvestDry = monthlyContribution * rule.investPct + monthlyContribution * rule.extraBufferPct;
+                        if (adaptiveInvest > available) adaptiveInvest = available;
+                        if (adaptiveInvestDry > availableDry) adaptiveInvestDry = availableDry;
+                    }
+                }
+
+                if (adaptiveInvest < 0) adaptiveInvest = 0;
+                if (adaptiveInvestDry < 0) adaptiveInvestDry = 0;
+
+                adaShares += adaptiveInvest / p;
+                adaBuffer = available - adaptiveInvest;
+                adaDryShares += adaptiveInvestDry / p;
+                adaDryBuffer = availableDry - adaptiveInvestDry;
+
+                stdCumulativeContributed += monthlyContribution;
+                adaCumulativeContributed += monthlyContribution;
+
+                const stdValue = stdShares * p + stdBuffer;
+                const adaValue = adaShares * p + adaBuffer;
+                const adaDryValue = adaDryShares * p + adaDryBuffer;
+
+                timeline.push({
+                    date: series[i].date,
+                    price: p,
+                    ma,
+                    maDeviationPct: ma != null && ma > 0 ? ((p - ma) / ma) * 100 : null,
+                    regimeName,
+                    standardCumulativeContributed: stdCumulativeContributed,
+                    adaptiveCumulativeContributed: adaCumulativeContributed,
+                    standardBaseContribution: monthlyContribution,
+                    standardExtraContribution,
+                    standardContribution,
+                    standardBuffer: stdBuffer,
+                    standardValue: stdValue,
+                    adaptiveValue: adaValue,
+                    adaptiveDryValue: adaDryValue,
+                    adaptiveBuffer: adaBuffer,
+                    adaptiveInvest,
+                    savedToBuffer: Math.max(0, monthlyContribution - adaptiveInvest),
+                    usedFromBuffer: Math.max(0, adaptiveInvest - monthlyContribution)
+                });
+            }
+
+            const totalInvested = monthlyContribution * series.length + initialLiquidity;
+            return {
+                timeline,
+                stdStats: computeStatsFromPath(timeline.map(t => t.standardValue), totalInvested, timeline[0].date, timeline[timeline.length - 1].date),
+                adaStats: computeStatsFromPath(timeline.map(t => t.adaptiveValue), totalInvested, timeline[0].date, timeline[timeline.length - 1].date),
+                adaDryStats: computeStatsFromPath(timeline.map(t => t.adaptiveDryValue), totalInvested, timeline[0].date, timeline[timeline.length - 1].date)
+            };
         }
-        const standardExtraContribution = spreadStandard
-          ? Math.min(stdMonthlyExtra, Math.max(0, stdBuffer))
-          : 0;
-        stdBuffer -= standardExtraContribution;
-        const standardContribution = monthlyContribution + standardExtraContribution;
-        stdShares += standardContribution / p;
-
-        adaBuffer *= (1 + monthlyCashRate);
-        const available = adaBuffer + monthlyContribution;
-        const availableDry = adaDryBuffer + monthlyContribution;
-
-        let adaptiveInvest = monthlyContribution;
-        let adaptiveInvestDry = monthlyContribution;
-        let regimeName = 'Neutro';
-
-        if (ma != null && ma > 0) {
-          const dev = ((p - ma) / ma) * 100;
-          const rule = getRegime(dev);
-          regimeName = rule.name;
-
-          if (rule.extraBufferPct === Infinity) {
-            adaptiveInvest = available;
-            adaptiveInvestDry = availableDry;
-          } else {
-            adaptiveInvest = monthlyContribution * rule.investPct + monthlyContribution * rule.extraBufferPct;
-            adaptiveInvestDry = monthlyContribution * rule.investPct + monthlyContribution * rule.extraBufferPct;
-            if (adaptiveInvest > available) adaptiveInvest = available;
-            if (adaptiveInvestDry > availableDry) adaptiveInvestDry = availableDry;
-          }
-        }
-
-        if (adaptiveInvest < 0) adaptiveInvest = 0;
-        if (adaptiveInvestDry < 0) adaptiveInvestDry = 0;
-
-        adaShares += adaptiveInvest / p;
-        adaBuffer = available - adaptiveInvest;
-        adaDryShares += adaptiveInvestDry / p;
-        adaDryBuffer = availableDry - adaptiveInvestDry;
-
-        stdCumulativeContributed += monthlyContribution;
-        adaCumulativeContributed += monthlyContribution;
-
-        const stdValue = stdShares * p + stdBuffer;
-        const adaValue = adaShares * p + adaBuffer;
-        const adaDryValue = adaDryShares * p + adaDryBuffer;
-
-        timeline.push({
-          date: series[i].date,
-          price: p,
-          ma,
-          maDeviationPct: ma != null && ma > 0 ? ((p - ma) / ma) * 100 : null,
-          regimeName,
-          standardCumulativeContributed: stdCumulativeContributed,
-          adaptiveCumulativeContributed: adaCumulativeContributed,
-          standardBaseContribution: monthlyContribution,
-          standardExtraContribution,
-          standardContribution,
-          standardBuffer: stdBuffer,
-          standardValue: stdValue,
-          adaptiveValue: adaValue,
-          adaptiveDryValue: adaDryValue,
-          adaptiveBuffer: adaBuffer,
-          adaptiveInvest,
-          savedToBuffer: Math.max(0, monthlyContribution - adaptiveInvest),
-          usedFromBuffer: Math.max(0, adaptiveInvest - monthlyContribution)
-        });
-      }
-
-      const totalInvested = monthlyContribution * series.length + initialLiquidity;
-      return {
-        timeline,
-        stdStats: computeStatsFromPath(timeline.map(t => t.standardValue), totalInvested, timeline[0].date, timeline[timeline.length - 1].date),
-        adaStats: computeStatsFromPath(timeline.map(t => t.adaptiveValue), totalInvested, timeline[0].date, timeline[timeline.length - 1].date),
-        adaDryStats: computeStatsFromPath(timeline.map(t => t.adaptiveDryValue), totalInvested, timeline[0].date, timeline[timeline.length - 1].date)
-      };
-    }
 
         function simulateRolling(series, maSeries, rollingMonths, monthlyContribution, annualCashYield, initialLiquidity, standardInitialMode) {
             const windows = [];
@@ -933,43 +940,43 @@
                             pointRadius: 0,
                             borderWidth: 2
                         },
-            {
-              label: 'Valore PAC Adattivo',
-              data: timeline.map(t => ({ x: t.date, y: t.adaptiveValue })),
-              borderColor: '#0ea5e9',
+                        {
+                            label: 'Valore PAC Adattivo',
+                            data: timeline.map(t => ({ x: t.date, y: t.adaptiveValue })),
+                            borderColor: '#0ea5e9',
                             backgroundColor: '#0ea5e9',
                             yAxisID: 'yPortfolio',
-              pointRadius: 0,
-              borderWidth: 2
-            },
-            {
-              label: 'PAC Adattivo secco (no rendimento liquidità)',
-              data: timeline.map(t => ({ x: t.date, y: t.adaptiveDryValue })),
-              borderColor: '#a855f7',
-              backgroundColor: '#a855f7',
-              yAxisID: 'yPortfolio',
-              pointRadius: 0,
-              borderWidth: 1.75,
-              borderDash: [8, 4]
-            },
-            {
-              label: 'Buffer standard',
-              data: timeline.map(t => ({ x: t.date, y: t.standardBuffer })),
-              borderColor: '#16a34a',
-              backgroundColor: '#16a34a',
-              yAxisID: 'yPortfolio',
-              pointRadius: 0,
-              borderWidth: 1.5
-            },
-            {
-              label: 'Buffer adattivo',
-              data: timeline.map(t => ({ x: t.date, y: t.adaptiveBuffer })),
-              borderColor: '#0284c7',
-              backgroundColor: '#0284c7',
+                            pointRadius: 0,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'PAC Adattivo secco (no rendimento liquidità)',
+                            data: timeline.map(t => ({ x: t.date, y: t.adaptiveDryValue })),
+                            borderColor: '#a855f7',
+                            backgroundColor: '#a855f7',
                             yAxisID: 'yPortfolio',
                             pointRadius: 0,
-              borderWidth: 1.5,
-              borderDash: [6, 3]
+                            borderWidth: 1.75,
+                            borderDash: [8, 4]
+                        },
+                        {
+                            label: 'Buffer standard',
+                            data: timeline.map(t => ({ x: t.date, y: t.standardBuffer })),
+                            borderColor: '#16a34a',
+                            backgroundColor: '#16a34a',
+                            yAxisID: 'yPortfolio',
+                            pointRadius: 0,
+                            borderWidth: 1.5
+                        },
+                        {
+                            label: 'Buffer adattivo',
+                            data: timeline.map(t => ({ x: t.date, y: t.adaptiveBuffer })),
+                            borderColor: '#0284c7',
+                            backgroundColor: '#0284c7',
+                            yAxisID: 'yPortfolio',
+                            pointRadius: 0,
+                            borderWidth: 1.5,
+                            borderDash: [6, 3]
                         },
                         {
                             label: 'Prezzo indice',
