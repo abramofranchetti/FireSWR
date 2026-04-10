@@ -1,266 +1,449 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mutuo versus Cash</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
-    <!--<script src="js/ytm.js" defer></script>    -->
-    <style>
-    :root{--bg:#f7f7f8;--card:#fff;--accent:#2b7be4;--mutuo:#d9534f;--cash:#5cb85c}
-    body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:18px; background:var(--bg); color:#222}
-    h1{font-size:20px;margin:0 0 8px}
-    .grid{display:grid;grid-template-columns:340px 1fr;gap:16px}
-    .panel{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(20,20,40,0.06)}
-    label{display:block;font-size:13px;margin:8px 0 4px}
-    input[type="number"], input[type="range"], select{width:100%;padding:6px;border-radius:6px;border:1px solid #e2e6ef}
-    .small{font-size:12px;color:#666}
-    .row{display:flex;gap:8px}
-    .row > *{flex:1}
-    canvas{background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3));border-radius:6px;max-height:400px;display:block}
-    .stats{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
-    .stat{background:#f3f6fb;padding:8px;border-radius:8px;min-width:150px}
-    .mutuo-dot{width:12px;height:12px;background:var(--mutuo);border-radius:50%;display:inline-block;margin-right:6px}
-    .cash-dot{width:12px;height:12px;background:var(--cash);border-radius:50%;display:inline-block;margin-right:6px}
-    footer{margin-top:12px;font-size:12px;color:#666}
-    .controls-title{font-weight:600;margin-top:6px}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mutuo vs Cash</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --panel-soft: #f7faff;
+      --text: #1f2937;
+      --mutuo: #1f9d55;
+      --cash: #d94848;
+      --line: #1e63d6;
+      --border: #dbe4f1;
+      --shadow: 0 14px 36px rgba(18, 38, 63, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background: radial-gradient(circle at top left, #eaf2ff, #f4f7fb 50%, #f9fbff);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 20px 14px 28px;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #1e63d6;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      margin: 0 0 8px;
+      font-size: clamp(1.35rem, 3.2vw, 2rem);
+    }
+
+    .subtitle {
+      margin: 0 0 18px;
+      color: #4b5563;
+      font-size: 0.95rem;
+      max-width: 900px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.03rem;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid #cdd9ea;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      background: #fff;
+    }
+
+    .note {
+      margin-top: 8px;
+      padding: 10px;
+      background: var(--panel-soft);
+      border-radius: 10px;
+      font-size: 0.82rem;
+      color: #4b5563;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      flex: 0 0 11px;
+    }
+
+    .dot-mutuo {
+      background: var(--mutuo);
+    }
+
+    .dot-cash {
+      background: var(--cash);
+    }
+
+    .chart-wrap {
+      background: linear-gradient(180deg, #ffffff, #f9fbff);
+      border-radius: 12px;
+      border: 1px solid #e5edf8;
+      height: 430px;
+      padding: 10px;
+    }
+
+    .stats {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stat {
+      background: #f7faff;
+      border: 1px solid #dce7f8;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: #4b5563;
+    }
+
+    .stat-value {
+      margin-top: 4px;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    footer {
+      margin-top: 14px;
+      font-size: 0.78rem;
+      color: #6b7280;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 14px 10px 20px;
+      }
+
+      .panel {
+        padding: 13px;
+      }
+
+      .chart-wrap {
+        height: 300px;
+        padding: 8px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
+<body>
+  <main class="page">
+    <a href="/FireSWR" class="home-link">Home</a>
+    <h1 class="title">Mutuo vs Cash - Simulatore dinamico</h1>
+    <p class="subtitle">
+      Confronto tra due scenari: acquisto con mutuo (capitale investito) e acquisto cash (rata investita ogni mese).
+      Il mutuo usa ammortamento alla francese; la detrazione fiscale segue il limite annuo di interessi detraibili.
+    </p>
 
-<body class="bg-light">
-    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
-        <div class="text-center mb-4">
-            <a href="/FireSWR" class="home-button">🏠 Home</a>
+    <section class="layout">
+      <aside class="panel">
+        <h2>Parametri</h2>
+
+        <div class="field">
+          <label for="principal">Prezzo casa / capitale (EUR)</label>
+          <input id="principal" type="number" min="0" step="1000" value="200000">
         </div>
-        <br>
-          <h1>Mutuo vs Cash — Simulatore dinamico</h1>
-  <p class="small">Differenza tra scenario con mutuo ventennale al 4% e senza mutuo al variare del rendimento. Modifica il tasso del mutuo o la durata per vedere come si modifica il risultato .</p>
-  <p class="small">Si tiene conto della detrazione fiscale e del bollo. Inoltre l'ammortamento è calcolato "alla francese".</p>
 
-  <div class="grid">
-    <div class="panel">
-      <div class="controls-title">Parametri base</div>
-      <label>Prezzo casa / capitale (&#8364;)</label>
-      <input id="principal" type="number" value="200000" min="0" step="1000">
+        <div class="field">
+          <label for="mortgageRate">Tasso mutuo annuo nominale (%)</label>
+          <input id="mortgageRate" type="number" min="0" step="0.01" value="4.00">
+        </div>
 
-      <label>Tasso mutuo annuo nominale (%)</label>
-      <input id="mortgageRate" type="number" value="4.0" step="0.01" min="0">
+        <div class="field">
+          <label for="years">Durata mutuo (anni)</label>
+          <input id="years" type="number" min="1" step="1" value="20">
+        </div>
 
-      <label>Durata mutuo (anni)</label>
-      <input id="years" type="number" value="20" min="1">
+        <div class="note">
+          <div class="legend-item"><span class="dot dot-mutuo"></span><span>Valori sopra lo zero: conviene il mutuo</span></div>
+          <div class="legend-item"><span class="dot dot-cash"></span><span>Valori sotto lo zero: conviene il cash</span></div>
+        </div>
+      </aside>
 
-      <div style="margin-top:20px" class="small"><strong>Legenda:</strong><br>Verde = Conviene il mutuo<br>Rosso = Conviene pagare in cash</div>
-    </div>
+      <section class="panel">
+        <div class="chart-wrap">
+          <canvas id="chart"></canvas>
+        </div>
 
-    <div class="panel">
-      <canvas id="chart" height="360"></canvas>
-    </div>
-  </div>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">Rata mensile mutuo</div>
+            <div class="stat-value" id="statMonthlyPay">-</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Pareggio (rendimento lordo)</div>
+            <div class="stat-value" id="statBreakEven">-</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Differenza a 5.0% lordo</div>
+            <div class="stat-value" id="statAtFive">-</div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <div id="disclaimer-container"></div>
+    <footer>Nota: stima semplificata a fini educativi, non consulenza finanziaria.</footer>
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script>
-    // Funzioni finanziarie
-    function monthlyMortgagePayment(principal, annualRatePct, years){
-      const r = annualRatePct/100/12;
-      const n = years*12;
-      if(r === 0) return principal / n;
-      return principal * r / (1 - Math.pow(1+r, -n));
+    const euroFmt = new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+    const euroFmtCompact = new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", notation: "compact", maximumFractionDigits: 1 });
+
+    function monthlyMortgagePayment(principal, annualRatePct, years) {
+      const n = years * 12;
+      if (n <= 0) return 0;
+      const r = annualRatePct / 100 / 12;
+      if (r === 0) return principal / n;
+      return principal * r / (1 - Math.pow(1 + r, -n));
     }
 
-    // calcola valore futuro di un versamento periodico (in testa o in coda), e di un capitale iniziale
-    // returns array evoluzione mensile
-    function simulate(principal, monthlyContribution, initialLump, monthlyRate, months){
-      const arr = [];
-      let balance = initialLump;
-      for(let m=0;m<=months;m++){
-        arr.push(balance);
-        // apply monthly return
-        balance = balance * (1+monthlyRate);
-        // contribution at end of period
-        balance += monthlyContribution;
+    function annualNetToMonthly(annualRateDecimal) {
+      return Math.pow(1 + annualRateDecimal, 1 / 12) - 1;
+    }
+
+    function computeYearlyMortgageInterests(principal, annualRatePct, years) {
+      const r = annualRatePct / 100 / 12;
+      const monthlyPay = monthlyMortgagePayment(principal, annualRatePct, years);
+      let balance = principal;
+      const yearlyInterests = [];
+
+      for (let y = 0; y < years; y++) {
+        let totalInterestYear = 0;
+        for (let m = 0; m < 12; m++) {
+          const interest = balance * r;
+          const principalQuota = monthlyPay - interest;
+          totalInterestYear += interest;
+          balance = Math.max(0, balance - principalQuota);
+        }
+        yearlyInterests.push(totalInterestYear);
       }
-      return arr;
+
+      return yearlyInterests;
     }
 
-    // helper convert annual net rate to monthly
-    function annualNetToMonthly(annualPct){
-      return Math.pow(1+annualPct, 1/12)-1;
+    function formatSignedEuro(value) {
+      if (!Number.isFinite(value)) return "-";
+      const prefix = value >= 0 ? "+" : "";
+      return prefix + euroFmt.format(value);
     }
 
-    const ctx = document.getElementById('chart').getContext('2d');
+    function findBreakEvenRate(rates, diffs) {
+      for (let i = 1; i < rates.length; i++) {
+        const prev = diffs[i - 1];
+        const curr = diffs[i];
+        if (prev === 0) return rates[i - 1];
+        if ((prev < 0 && curr > 0) || (prev > 0 && curr < 0)) {
+          const ratio = Math.abs(prev) / (Math.abs(prev) + Math.abs(curr));
+          return rates[i - 1] + ratio * (rates[i] - rates[i - 1]);
+        }
+      }
+      return null;
+    }
+
+    const ctx = document.getElementById("chart").getContext("2d");
     let chart;
 
-    function runSimulation(){
-      const principal = parseFloat(document.getElementById('principal').value);
-      const mortgageRate = parseFloat(document.getElementById('mortgageRate').value);
-      const years = parseInt(document.getElementById('years').value,10);
+    function runSimulation() {
+      const principal = Math.max(0, Number(document.getElementById("principal").value));
+      const mortgageRate = Math.max(0, Number(document.getElementById("mortgageRate").value));
+      const years = Math.max(1, Math.floor(Number(document.getElementById("years").value)));
+
       const taxRate = 0.26;
       const bollo = 0.002;
       const deductionPct = 0.19;
-      const deductionCap = 4000;
+      const deductionInterestCap = 4000;
 
-      // monthly mortgage payment
+      const months = years * 12;
       const monthlyPay = monthlyMortgagePayment(principal, mortgageRate, years);
-      const months = years*12;
+      const yearlyInterests = computeYearlyMortgageInterests(principal, mortgageRate, years);
 
-      // stima semplificata della detrazione: calcola interessi annui pagati e applica detrazione fino al cap
-      function computeYearlyMortgageInterestsRemainingBalance(principal, annualRate, years){
-        const r = annualRate/100/12;
-        const n = years*12;
-        let bal = principal;
-        const monthly = monthlyMortgagePayment(principal, annualRate, years);
-        const yearlyInterests = [];
-        for(let y=0;y<years;y++){
-          let yearInterest = 0;
-          for(let m=0;m<12;m++){
-            const interest = bal * r;
-            yearInterest += interest;
-            const principalPay = monthly - interest;
-            bal -= principalPay;
-          }
-          yearlyInterests.push(yearInterest);
-        }
-        return yearlyInterests;
-      }
+      function finalBalance(grossAnnualRateDecimal, scenarioMutuo) {
+        const netAnnual = grossAnnualRateDecimal * (1 - taxRate) - bollo;
+        const monthlyNetRate = annualNetToMonthly(Math.max(netAnnual, -0.999999));
 
-      const yearlyInterests = computeYearlyMortgageInterestsRemainingBalance(principal, mortgageRate, years);
-
-      // Helper function to calculate final balance for a given gross investment rate
-      function calculateFinalBalance(investRateGross, isMutuo){
-        const netAnnual = investRateGross * (1 - taxRate) - bollo;
-        const monthlyNetRate = annualNetToMonthly(Math.max(netAnnual, -0.9999999));
-
-        if(isMutuo){
-          // MUTUO scenario: initial lump = principal
-          let mutuoBal = principal;
-          for(let m=0;m<=months;m++){
-            mutuoBal = mutuoBal * (1+monthlyNetRate);
-            if(m>0 && m%12===0){
-              const yearIndex = (m/12)-1;
-              const interestThisYear = yearlyInterests[yearIndex] || 0;
-              const deduction = Math.min(interestThisYear * deductionPct, deductionCap);
-              mutuoBal += deduction;
+        if (scenarioMutuo) {
+          let balance = principal;
+          for (let m = 1; m <= months; m++) {
+            balance *= 1 + monthlyNetRate;
+            if (m % 12 === 0) {
+              const yIdx = (m / 12) - 1;
+              const interestYear = yearlyInterests[yIdx] || 0;
+              const deductibleInterests = Math.min(interestYear, deductionInterestCap);
+              const deduction = deductibleInterests * deductionPct;
+              balance += deduction;
             }
           }
-          return mutuoBal;
-        } else {
-          // CASH scenario: invest monthly payment
-          let cashBal = 0;
-          for(let m=0;m<=months;m++){
-            cashBal = cashBal * (1+monthlyNetRate);
-            cashBal += monthlyPay;
-          }
-          return cashBal;
+          return balance;
         }
+
+        let balance = 0;
+        for (let m = 1; m <= months; m++) {
+          balance *= 1 + monthlyNetRate;
+          balance += monthlyPay;
+        }
+        return balance;
       }
 
-      // Generate data points: vary investment rate from -5% to 10%
       const minRate = -5;
-      const maxRate = 10;
-      const steps = 31; // 0.5% step
-      const investRates = [];
-      const diffValues = [];
+      const maxRate = 12;
+      const steps = 69;
+      const rates = [];
+      const labels = [];
+      const diffs = [];
 
-      for(let i=0;i<steps;i++){
-        const rate = minRate + (i / (steps-1)) * (maxRate - minRate);
-        const cashFinal = calculateFinalBalance(rate/100, false);
-        const mutFinal = calculateFinalBalance(rate/100, true);
-        const diff = mutFinal - cashFinal;
+      for (let i = 0; i < steps; i++) {
+        const rate = minRate + (i / (steps - 1)) * (maxRate - minRate);
+        const rateDec = rate / 100;
+        const mutuoFinal = finalBalance(rateDec, true);
+        const cashFinal = finalBalance(rateDec, false);
+        const diff = mutuoFinal - cashFinal;
 
-        investRates.push(rate.toFixed(1));
-        diffValues.push(diff);
+        rates.push(rate);
+        labels.push(rate.toFixed(2));
+        diffs.push(diff);
       }
 
-      // create fill colors: green where diff > 0, red where diff < 0
-      const backgroundColors = diffValues.map(d => d >= 0 ? 'rgba(92,184,92,0.15)' : 'rgba(217,83,79,0.15)');
+      const breakEven = findBreakEvenRate(rates, diffs);
+      const closestToFiveIdx = rates.reduce((best, val, idx, arr) =>
+        Math.abs(val - 5) < Math.abs(arr[best] - 5) ? idx : best, 0);
 
-      // draw chart with difference
-      const datasets = [
-        {
-          label: 'Differenza (Mutuo - Cash)',
-          data: diffValues,
-          borderColor: '#1f77b4',
-          borderWidth: 2.5,
-          backgroundColor: backgroundColors,
-          segment: {
-            backgroundColor: (ctx) => {
-              const value = ctx.p1DataIndex !== undefined ? diffValues[ctx.p1DataIndex] : diffValues[ctx.p0DataIndex];
-              return value >= 0 ? 'rgba(92,184,92,0.15)' : 'rgba(217,83,79,0.15)';
-            }
-          },
-          tension: 0.25,
-          fill: true,
-          pointRadius: 2,
-          pointBackgroundColor: '#1f77b4',
-          pointBorderColor: '#fff',
-          pointBorderWidth: 1
-        }
-      ];
+      document.getElementById("statMonthlyPay").textContent = euroFmt.format(monthlyPay);
+      document.getElementById("statBreakEven").textContent = breakEven === null ? "Non trovato" : breakEven.toFixed(2) + "%";
+      document.getElementById("statAtFive").textContent = formatSignedEuro(diffs[closestToFiveIdx]);
 
-      if(chart){
-        chart.data.labels = investRates;
-        chart.data.datasets = datasets;
-        chart.update();
-      }
-      else{
-        chart = new Chart(ctx, {
-          type:'line',
-          data:{labels:investRates, datasets:datasets},
-          options:{
-            responsive:true,
-            maintainAspectRatio:true,
-            plugins:{
-              legend:{position:'top'},
-              filler:{propagate:true}
-            },
-            scales:{
-              y:{
-                ticks:{callback: v => '€' + (v/1000).toFixed(0) + 'k'},
-                grid:{drawBorder:true}
-              },
-              x:{
-                type:'category',
-                title:{display:true, text:'Rendimento lordo annuo dell\'investimento (%)'}
-              }
+      const dataset = {
+        label: "Differenza finale (Mutuo - Cash)",
+        data: diffs,
+        borderColor: "#1e63d6",
+        borderWidth: 2.5,
+        tension: 0.25,
+        pointRadius: 0,
+        fill: { target: "origin", above: "rgba(31,157,85,0.18)", below: "rgba(217,72,72,0.17)" }
+      };
+
+      const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: "index" },
+        plugins: {
+          legend: { display: true, labels: { boxWidth: 18 } },
+          tooltip: {
+            callbacks: {
+              title: items => "Rendimento lordo: " + items[0].label + "%",
+              label: item => "Differenza: " + euroFmt.format(item.parsed.y)
             }
           }
-        });
-      }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: "Rendimento lordo annuo investimento (%)" },
+            ticks: { maxTicksLimit: 11 }
+          },
+          y: {
+            title: { display: true, text: "Mutuo - Cash" },
+            ticks: { callback: value => euroFmtCompact.format(value) },
+            grid: { color: ctx => (ctx.tick.value === 0 ? "#8aa3cc" : "#e7eef9"), lineWidth: ctx => (ctx.tick.value === 0 ? 1.4 : 1) }
+          }
+        }
+      };
 
+      if (chart) {
+        chart.data.labels = labels;
+        chart.data.datasets = [dataset];
+        chart.options = options;
+        chart.update();
+      } else {
+        chart = new Chart(ctx, { type: "line", data: { labels, datasets: [dataset] }, options });
+      }
     }
 
-    // run initially
+    ["principal", "mortgageRate", "years"].forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener("input", runSimulation);
+      el.addEventListener("change", runSimulation);
+    });
+
     runSimulation();
 
-    // Add event listeners to all inputs
-    document.getElementById('principal').addEventListener('change', runSimulation);
-    document.getElementById('principal').addEventListener('input', runSimulation);
-    document.getElementById('mortgageRate').addEventListener('change', runSimulation);
-    document.getElementById('mortgageRate').addEventListener('input', runSimulation);
-    document.getElementById('years').addEventListener('change', runSimulation);
-    document.getElementById('years').addEventListener('input', runSimulation);
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch("html/disclaimer.html")
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("disclaimer-container").innerHTML = data;
+        })
+        .catch(() => {
+          document.getElementById("disclaimer-container").innerHTML = "";
+        });
+    });
   </script>
-     <!-- Disclaimer -->
-     <div id="disclaimer-container"></div>
-
-     <script>
-         document.addEventListener('DOMContentLoaded', function () {
-             fetch('html/disclaimer.html')
-                 .then(response => response.text())
-                 .then(data => {
-                     document.getElementById('disclaimer-container').innerHTML = data;
-                 });
-         });
-     </script>
 </body>
-
 </html>
