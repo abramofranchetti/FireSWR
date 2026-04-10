@@ -18,6 +18,17 @@
             --text-light: #666;
             --border-radius: 12px;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --color-pianificazione: #ff6f61;
+            --color-investimenti: #4a90e2;
+            --color-pac: #7ed321;
+            --color-obbligazioni: #f5a623;
+            --color-mercati: #ff9500;
+            --color-materie-prime: #d4af37;
+            --color-rendimenti-storici: #bd10e0;
+            --color-inflazione: #ff69b4;
+            --color-covered-call: #8b4513;
+            --color-utilita: #808080;
+            --color-download: #000000;
         }
 
         * {
@@ -84,6 +95,83 @@
             margin-bottom: 50px;
         }
 
+        #pianificazione {
+            background: linear-gradient(135deg, rgba(255, 111, 97, 0.05), rgba(255, 111, 97, 0.02));
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+        }
+
+        #investimenti {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.05), rgba(74, 144, 226, 0.02));
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+        }
+
+        #pac {
+            background: linear-gradient(135deg, rgba(126, 211, 33, 0.05), rgba(126, 211, 33, 0.02));
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+        }
+
+        #obbligazioni {
+            background: linear-gradient(135deg, rgba(245, 166, 35, 0.05), rgba(245, 166, 35, 0.02));
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+        }
+
+        #mercati {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.05), rgba(255, 149, 0, 0.02));
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+        }
+
+        #materie-prime {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.02));
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+        }
+
+        #rendimenti_storici {
+            background: linear-gradient(135deg, rgba(189, 16, 224, 0.05), rgba(189, 16, 224, 0.02));
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+        }
+
+        #inflazione {
+            background: linear-gradient(135deg, rgba(255, 105, 180, 0.05), rgba(255, 105, 180, 0.02));
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+        }
+
+        #covered-call {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.05), rgba(139, 69, 19, 0.02));
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+        }
+
+        #utilita {
+            background: linear-gradient(135deg, rgba(128, 128, 128, 0.05), rgba(128, 128, 128, 0.02));
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+        }
+
+        #download {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.02));
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+        }
+
         /* Navigation */
         .category-nav {
             display: flex;
@@ -116,6 +204,50 @@
             padding-bottom: 15px;
             border-bottom: 3px solid var(--color-primary);
             text-align: left;
+        }
+
+        #pianificazione .section-title {
+            border-color: var(--color-pianificazione);
+        }
+
+        #investimenti .section-title {
+            border-color: var(--color-investimenti);
+        }
+
+        #pac .section-title {
+            border-color: var(--color-pac);
+        }
+
+        #obbligazioni .section-title {
+            border-color: var(--color-obbligazioni);
+        }
+
+        #mercati .section-title {
+            border-color: var(--color-mercati);
+        }
+
+        #materie-prime .section-title {
+            border-color: var(--color-materie-prime);
+        }
+
+        #rendimenti_storici .section-title {
+            border-color: var(--color-rendimenti-storici);
+        }
+
+        #inflazione .section-title {
+            border-color: var(--color-inflazione);
+        }
+
+        #covered-call .section-title {
+            border-color: var(--color-covered-call);
+        }
+
+        #utilita .section-title {
+            border-color: var(--color-utilita);
+        }
+
+        #download .section-title {
+            border-color: var(--color-download);
         }
 
         .section-title a.section-link {
@@ -191,6 +323,51 @@
             color: var(--color-accent);
         }
 
+        /* Colori icone per sezione */
+        #pianificazione .button-card .button-icon {
+            color: var(--color-pianificazione);
+        }
+
+        #investimenti .button-card .button-icon {
+            color: var(--color-investimenti);
+        }
+
+        #pac .button-card .button-icon {
+            color: var(--color-pac);
+        }
+
+        #obbligazioni .button-card .button-icon {
+            color: var(--color-obbligazioni);
+        }
+
+        #mercati .button-card .button-icon {
+            color: var(--color-mercati);
+        }
+
+        #materie-prime .button-card .button-icon {
+            color: var(--color-materie-prime);
+        }
+
+        #rendimenti_storici .button-card .button-icon {
+            color: var(--color-rendimenti-storici);
+        }
+
+        #inflazione .button-card .button-icon {
+            color: var(--color-inflazione);
+        }
+
+        #covered-call .button-card .button-icon {
+            color: var(--color-covered-call);
+        }
+
+        #utilita .button-card .button-icon {
+            color: var(--color-utilita);
+        }
+
+        #download .button-card .button-icon {
+            color: var(--color-download);
+        }
+
         .button-title {
             font-size: 1.1rem;
             font-weight: 600;
@@ -232,6 +409,62 @@
             color: var(--color-accent);
         }
 
+        /* Label per sezione */
+        #pianificazione .button-card .button-label {
+            background-color: rgba(255, 111, 97, 0.1);
+            color: var(--color-pianificazione);
+        }
+
+        #investimenti .button-card .button-label {
+            background-color: rgba(74, 144, 226, 0.1);
+            color: var(--color-investimenti);
+        }
+
+        #pac .button-card .button-label {
+            background-color: rgba(126, 211, 33, 0.1);
+            color: var(--color-pac);
+        }
+
+        #obbligazioni .button-card .button-label {
+            background-color: rgba(245, 166, 35, 0.1);
+            color: var(--color-obbligazioni);
+        }
+
+        #mercati .button-card .button-label {
+            background-color: rgba(255, 149, 0, 0.1);
+            color: var(--color-mercati);
+        }
+
+        #materie-prime .button-card .button-label {
+            background-color: rgba(212, 175, 55, 0.1);
+            color: var(--color-materie-prime);
+        }
+
+        #rendimenti_storici .button-card .button-label {
+            background-color: rgba(189, 16, 224, 0.1);
+            color: var(--color-rendimenti-storici);
+        }
+
+        #inflazione .button-card .button-label {
+            background-color: rgba(255, 105, 180, 0.1);
+            color: var(--color-inflazione);
+        }
+
+        #covered-call .button-card .button-label {
+            background-color: rgba(139, 69, 19, 0.1);
+            color: var(--color-covered-call);
+        }
+
+        #utilita .button-card .button-label {
+            background-color: rgba(128, 128, 128, 0.1);
+            color: var(--color-utilita);
+        }
+
+        #download .button-card .button-label {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: var(--color-download);
+        }
+
         .button-card.calculator:hover {
             background: linear-gradient(135deg, rgba(255, 111, 97, 0.05), rgba(255, 111, 97, 0.02));
         }
@@ -242,6 +475,51 @@
 
         .button-card.utility:hover {
             background: linear-gradient(135deg, rgba(82, 183, 136, 0.05), rgba(82, 183, 136, 0.02));
+        }
+
+        /* Hover sfondi per sezione */
+        #pianificazione .button-card:hover {
+            background: linear-gradient(135deg, rgba(255, 111, 97, 0.1), rgba(255, 111, 97, 0.05));
+        }
+
+        #investimenti .button-card:hover {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.1), rgba(74, 144, 226, 0.05));
+        }
+
+        #pac .button-card:hover {
+            background: linear-gradient(135deg, rgba(126, 211, 33, 0.1), rgba(126, 211, 33, 0.05));
+        }
+
+        #obbligazioni .button-card:hover {
+            background: linear-gradient(135deg, rgba(245, 166, 35, 0.1), rgba(245, 166, 35, 0.05));
+        }
+
+        #mercati .button-card:hover {
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1), rgba(255, 149, 0, 0.05));
+        }
+
+        #materie-prime .button-card:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
+        }
+
+        #rendimenti_storici .button-card:hover {
+            background: linear-gradient(135deg, rgba(189, 16, 224, 0.1), rgba(189, 16, 224, 0.05));
+        }
+
+        #inflazione .button-card:hover {
+            background: linear-gradient(135deg, rgba(255, 105, 180, 0.1), rgba(255, 105, 180, 0.05));
+        }
+
+        #covered-call .button-card:hover {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.1), rgba(139, 69, 19, 0.05));
+        }
+
+        #utilita .button-card:hover {
+            background: linear-gradient(135deg, rgba(128, 128, 128, 0.1), rgba(128, 128, 128, 0.05));
+        }
+
+        #download .button-card:hover {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05));
         }
 
         footer {
@@ -463,13 +741,6 @@
                     Investimenti</a><button class="copy-link" data-target="investimenti"
                     aria-label="Copia link sezione">🔗</button></h2>
             <div class="button-grid">
-                <a href="/FireSWR/pac.html" class="button-card calculator">
-                    <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
-                    <div class="button-title">PAC Storico Simulator</div>
-                    <div class="button-description">Simula i risultati di un Piano di Accumulo del Capitale con dati
-                        storici reali dello SP500.</div>
-                    <span class="button-label">Investimenti</span>
-                </a>
                 <a href="/FireSWR/iwmyr.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
                     <div class="button-title">Non diventerai ricco investendo</div>
@@ -528,15 +799,6 @@
                         storici reali dell'S&P500.</div>
                     <span class="button-label">Investimenti</span>
                 </a>
-                <a href="/FireSWR/pac_vs_risparmio.html" class="button-card calculator">
-                    <div class="button-icon"><i class="fas fa-chart-area"></i></div>
-                    <div class="button-title">Conta di più risparmiare o investire a un tasso maggiore? -
-                        Simulazione con gestione di volatilità</div>
-                    <div class="button-description">Simulazione che confronta tre scenari di risparmio con diversi tassi
-                        di rendimento e volatilità, mostrando come un tasso di risparmio e investimento diverso
-                        influiscono sul valore finale dell'investimento.</div>
-                    <span class="button-label">Investimenti</span>
-                </a>
                 <a href="/FireSWR/coexceedance.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-area"></i></div>
                     <div class="button-title">Correlazione tra asset e co-exceedance</div>
@@ -578,6 +840,80 @@
             </div>
         </section>
 
+        <!-- Sezione: Simulazioni PAC -->
+        <section id="pac" class="section">
+            <h2 class="section-title"><a class="section-link" href="#pac">Simulazioni PAC</a><button class="copy-link"
+                    data-target="pac" aria-label="Copia link sezione">&#128279;</button></h2>
+            <div class="button-grid">
+                <a href="/FireSWR/pac.html" class="button-card calculator">
+                    <div class="button-icon"><i class="fas fa-chart-bar"></i></div>
+                    <div class="button-title">PAC Storico Simulator</div>
+                    <div class="button-description">Simula i risultati di un Piano di Accumulo del Capitale con dati
+                        storici reali dello SP500.</div>
+                    <span class="button-label">PAC</span>
+                </a>
+                <a href="/FireSWR/pac_vs_risparmio.html" class="button-card calculator">
+                    <div class="button-icon"><i class="fas fa-chart-area"></i></div>
+                    <div class="button-title">Conta di più risparmiare o investire a un tasso maggiore? -
+                        Simulazione con gestione di volatilità</div>
+                    <div class="button-description">Simulazione che confronta tre scenari di risparmio con diversi tassi
+                        di rendimento e volatilità, mostrando come un tasso di risparmio e investimento diverso
+                        influiscono sul valore finale dell'investimento.</div>
+                    <span class="button-label">PAC</span>
+                </a>
+                <a href="/FireSWR/simulazione_pac_monte_carlo.html" class="button-card calculator">
+                    <div class="button-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="button-title">PAC vs PIC. Simulazione PAC con metodo montecarlo</div>
+                    <div class="button-description">Mostra come il risultato di un PAC è altamente sensibile alle
+                        variazioni del rendimento atteso e della volatilità. Il percorso di investimento influenza il
+                        risultato finale.</div>
+                    <span class="button-label">PAC</span>
+                </a>
+                <a href="/FireSWR/studio_rendimenti_sp500/pac_pic_forbice.html" class="button-card calculator">
+                    <div class="button-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="button-title">PAC vs PIC su S&P 500 Studio su dati storici </div>
+                    <div class="button-description">Analizza i rendimenti medi dello S&P 500 Net Total Return (dividendi
+                        tassati e reinvestiti) storico con dati di
+                        Shiller. Mostra come con analisi rolling se il PAC (Piano di Accumulo) supera il PIC (Piano di
+                        Investimento) nel lungo periodo e se è vero che quasi sempre i rendimenti del migliore e del
+                        peggiore PAC si inseriscono all'interno della forbice del migliore e del peggior PIC calcolati
+                        sullo stesso periodo storico. </div>
+                    <span class="button-label">PAC</span>
+                </a>
+                <a href="/FireSWR/studio_rendimenti_sp500/studio_rendimenti_medi_sp500_net_tr_storico_pac.html"
+                    class="button-card calculator">
+                    <div class="button-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="button-title">Studio rendimenti medi di un PAC su S&P 500 Net Total Return storico</div>
+                    <div class="button-description">Analizza i rendimenti medi di un PAC su S&P 500 Net Total Return
+                        (dividendi
+                        tassati e reinvestiti) storico con dati di
+                        Shiller. Mostra come con analisi rolling che anche se i rendimenti medi sono positivi, la
+                        volatilità è alta e i rendimenti non sono costanti.
+                        Anzi più passano gli anni più la volatilità dei rendimenti aumenta e questo dipende dal timing
+                        di ingresso e uscita dal mercato.</div>
+                    <span class="button-label">PAC</span>
+                </a>
+                <a href="/FireSWR/studio_rendimenti_sp500/pac_normale_vs_adattivo.html" class="button-card calculator">
+                    <div class="button-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="button-title">Simulazione di un PAC Standard vs PAC Adattivo</div>
+                    <div class="button-description">
+                        Confronta le performance di un PAC standard con un PAC adattivo che regola l'investimento in
+                        base alla deviazione del prezzo dalla media mobile investendo di più quando il prezzo è più basso e di meno quando è più alto.
+                    </div>
+                    <span class="button-label">PAC</span>
+                </a>
+                <a href="/FireSWR/studio_rendimenti_sp500/pac_normale_vs_adattivo_dati_giornalieri.html" class="button-card calculator">
+                    <div class="button-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="button-title">Simulazione di un PAC Standard vs PAC Adattivo (Dati Giornalieri)</div>
+                    <div class="button-description">
+                        Confronta le performance di un PAC standard con un PAC adattivo che regola l'investimento in
+                        base alla deviazione del prezzo dalla media mobile investendo di più quando il prezzo è più basso e di meno quando è più alto.
+                        Dati giornalieri su più indici (S&P 500, ACWI, Oro ecc)
+                    </div>
+                    <span class="button-label">PAC</span>
+                </a>
+            </div>
+        </section>
         <!-- Sezione: Obbligazioni e Reddito Fisso -->
         <section id="obbligazioni" class="section">
             <h2 class="section-title"><a class="section-link" href="#obbligazioni">💰 Obbligazioni e Reddito
@@ -676,14 +1012,6 @@
                         migliore analisi.</div>
                     <span class="button-label">Mercati</span>
                 </a>
-                <a href="/FireSWR/simulazione_pac_monte_carlo.html" class="button-card calculator">
-                    <div class="button-icon"><i class="fas fa-chart-line"></i></div>
-                    <div class="button-title">PAC vs PIC. Simulazione PAC con metodo montecarlo</div>
-                    <div class="button-description">Mostra come il risultato di un PAC è altamente sensibile alle
-                        variazioni del rendimento atteso e della volatilità. Il percorso di investimento influenza il
-                        risultato finale.</div>
-                    <span class="button-label">Mercati</span>
-                </a>
                 <a href="/FireSWR/simulazione_decumulo_monte_carlo.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">Decumulo con metodo montecarlo</div>
@@ -742,17 +1070,6 @@
                         volatilità è alta e i rendimenti non sono costanti.
                         Anzi più passano gli anni più la volatilità dei rendimenti aumenta e questo dipende dal timing
                         di ingresso e uscita dal mercato.</div>
-                    <span class="button-label">Mercati</span>
-                </a>
-                <a href="/FireSWR/studio_rendimenti_sp500/pac_pic_forbice.html" class="button-card calculator">
-                    <div class="button-icon"><i class="fas fa-chart-line"></i></div>
-                    <div class="button-title">PAC vs PIC su S&P 500 Studio su dati storici </div>
-                    <div class="button-description">Analizza i rendimenti medi dello S&P 500 Net Total Return (dividendi
-                        tassati e reinvestiti) storico con dati di
-                        Shiller. Mostra come con analisi rolling se il PAC (Piano di Accumulo) supera il PIC (Piano di
-                        Investimento) nel lungo periodo e se è vero che quasi sempre i rendimenti del migliore e del
-                        peggiore PAC si inseriscono all'interno della forbice del migliore e del peggior PIC calcolati
-                        sullo stesso periodo storico. </div>
                     <span class="button-label">Mercati</span>
                 </a>
                 <a href="/FireSWR/studio_rendimenti_sp500/market_timing_sp500.html" class="button-card calculator">
@@ -847,44 +1164,12 @@
                         di ingresso e uscita dal mercato.</div>
                     <span class="button-label">Mercati</span>
                 </a>
-                <a href="/FireSWR/studio_rendimenti_sp500/studio_rendimenti_medi_sp500_net_tr_storico_pac.html"
-                    class="button-card calculator">
-                    <div class="button-icon"><i class="fas fa-chart-line"></i></div>
-                    <div class="button-title">Studio rendimenti medi di un PAC su S&P 500 Net Total Return storico</div>
-                    <div class="button-description">Analizza i rendimenti medi di un PAC su S&P 500 Net Total Return
-                        (dividendi
-                        tassati e reinvestiti) storico con dati di
-                        Shiller. Mostra come con analisi rolling che anche se i rendimenti medi sono positivi, la
-                        volatilità è alta e i rendimenti non sono costanti.
-                        Anzi più passano gli anni più la volatilità dei rendimenti aumenta e questo dipende dal timing
-                        di ingresso e uscita dal mercato.</div>
-                    <span class="button-label">Mercati</span>
-                </a>
                 <a href="/FireSWR/studio_rendimenti_sp500/studio_rendimenti_medi_sp500_storico_riepilogo.html"
                     class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="button-title">Riepilogo degli Studi sui rendimenti medi S&P 500</div>
                     <div class="button-description">
                         Riassume i risultati dei tre studi precedenti in un'unica pagina per facilitare il confronto.
-                    </div>
-                    <span class="button-label">Mercati</span>
-                </a>
-                <a href="/FireSWR/studio_rendimenti_sp500/pac_normale_vs_adattivo.html" class="button-card calculator">
-                    <div class="button-icon"><i class="fas fa-chart-line"></i></div>
-                    <div class="button-title">Simulazione di un PAC Standard vs PAC Adattivo</div>
-                    <div class="button-description">
-                        Confronta le performance di un PAC standard con un PAC adattivo che regola l'investimento in
-                        base alla deviazione del prezzo dalla media mobile investendo di più quando il prezzo è più basso e di meno quando è più alto.
-                    </div>
-                    <span class="button-label">Mercati</span>
-                </a>
-                <a href="/FireSWR/studio_rendimenti_sp500/pac_normale_vs_adattivo_dati_giornalieri.html" class="button-card calculator">
-                    <div class="button-icon"><i class="fas fa-chart-line"></i></div>
-                    <div class="button-title">Simulazione di un PAC Standard vs PAC Adattivo (Dati Giornalieri)</div>
-                    <div class="button-description">
-                        Confronta le performance di un PAC standard con un PAC adattivo che regola l'investimento in
-                        base alla deviazione del prezzo dalla media mobile investendo di più quando il prezzo è più basso e di meno quando è più alto.
-                        Dati giornalieri su più indici (S&P 500, ACWI, Oro ecc)
                     </div>
                     <span class="button-label">Mercati</span>
                 </a>
