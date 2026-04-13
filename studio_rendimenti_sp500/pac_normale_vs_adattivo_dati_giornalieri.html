@@ -163,7 +163,7 @@
         </section>
 
         <section class="mt-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
-            <h2 class="text-lg font-semibold">5 Casi Peggiori PAC Adattivo (Rolling)</h2>
+            <h2 class="text-lg font-semibold">Casi Peggiori PAC Adattivo (Rolling)</h2>
             <p class="mt-1 text-sm text-slate-600">Finestre in cui il valore finale dell'adattivo è più distante (in
                 peggio) rispetto allo standard.</p>
             <div class="mt-3 overflow-x-auto">
@@ -184,7 +184,7 @@
         </section>
 
         <section class="mt-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
-            <h2 class="text-lg font-semibold">5 Casi Migliori PAC Adattivo (Rolling)</h2>
+            <h2 class="text-lg font-semibold">Casi Migliori PAC Adattivo (Rolling)</h2>
             <p class="mt-1 text-sm text-slate-600">Finestre in cui il valore finale dell'adattivo è più distante (in
                 meglio) rispetto allo standard.</p>
             <div class="mt-3 overflow-x-auto">
@@ -508,7 +508,7 @@
                 }))
                 .filter(w => Number.isFinite(w.gap) && w.gap < 0)
                 .sort((a, b) => a.gap - b.gap)
-                .slice(0, 5);
+                .slice(0, 10);
 
             const body = document.getElementById('worstRollingBody');
             if (!worst.length) {
@@ -536,7 +536,7 @@
                 }))
                 .filter(w => Number.isFinite(w.gap) && w.gap > 0)
                 .sort((a, b) => b.gap - a.gap)
-                .slice(0, 5);
+                .slice(0, 10);
 
             const body = document.getElementById('bestRollingBody');
             if (!best.length) {
