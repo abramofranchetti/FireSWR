@@ -23,6 +23,9 @@
                 accumulato nei mesi precedenti. I risultati includono il valore finale, il CAGR, il max drawdown e
                 un'analisi rolling su finestre mobili.
             </p>
+            <p class="mt-2 text-sm text-slate-600">
+                <strong>Nota sulla tassazione:</strong> Quando si prelevano fondi dal buffer monetario nel PAC Adattivo o nel PAC Standard (quando si sceglie di distribuire la liquidità iniziale mensilmente), viene applicata una tassazione del 12.5% solo sulla plusvalenza generata dalla rendita del fondo monetario, non sull'intero montante prelevato.
+            </p>
         </header>
 
         <section
@@ -360,8 +363,10 @@
             const spreadStandard = standardInitialMode === 'spread_monthly';
             let stdShares = spreadStandard ? 0 : (series.length > 0 ? initialLiquidity / series[0].price : 0);
             let stdBuffer = spreadStandard ? initialLiquidity : 0;
+            let stdBufferCapital = spreadStandard ? initialLiquidity : 0;
             let adaShares = 0;
             let adaBuffer = initialLiquidity;
+            let adaBufferCapital = initialLiquidity;
             let adaDryShares = 0;
             let adaDryBuffer = initialLiquidity;
             let stdCumulativeContributed = series.length > 0 ? initialLiquidity : 0;
@@ -379,6 +384,16 @@
                 const standardExtraContribution = spreadStandard
                     ? Math.min(stdMonthlyExtra, Math.max(0, stdBuffer))
                     : 0;
+
+                // Applica tassazione 12.5% solo sulla plusvalenza del prelievo dal buffer
+                if (spreadStandard && standardExtraContribution > 0) {
+                    const gainProportion = stdBuffer > 0 ? (stdBuffer - stdBufferCapital) / stdBuffer : 0;
+                    const gainInUsed = gainProportion * standardExtraContribution;
+                    const tax = gainInUsed * 0.125;
+                    stdBuffer -= tax;
+                    stdBufferCapital -= (standardExtraContribution - gainInUsed);
+                }
+
                 stdBuffer -= standardExtraContribution;
                 const standardContribution = monthlyContribution + standardExtraContribution;
 
@@ -407,8 +422,21 @@
                     }
                 }
 
+                // Applica tassazione 12.5% solo sulla plusvalenza del prelievo dal buffer
+                if (adaptiveInvest > monthlyContribution) {
+                    const used = adaptiveInvest - monthlyContribution;
+                    const gainProportion = adaBuffer > 0 ? (adaBuffer - adaBufferCapital) / adaBuffer : 0;
+                    const gainInUsed = gainProportion * used;
+                    const tax = gainInUsed * 0.125;
+                    adaBuffer -= tax;
+                    adaBufferCapital -= (used - gainInUsed);
+                }
+
                 adaShares += adaptiveInvest / p;
                 adaBuffer = available - adaptiveInvest;
+
+                // Aggiorna capitale se surplus aggiunto al buffer
+                adaBufferCapital += Math.max(0, monthlyContribution - adaptiveInvest);
 
                 adaDryShares += adaptiveInvestDry / p;
                 adaDryBuffer = availableDry - adaptiveInvestDry;
