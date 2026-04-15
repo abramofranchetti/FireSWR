@@ -9,6 +9,7 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link href="css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -49,15 +50,173 @@
         <div class="mt-3">
             <h3 id="result"></h3>
         </div>
+
+        <div class="mt-5 p-4 border rounded bg-light">
+            <h4>Studio dell'Errore di Calcolo</h4>
+            <p><small>Il grafico sottostante mostra come varia l'errore tra il <strong>metodo semplice</strong> (Tasso Nominale - Tasso di Inflazione) e la <strong>formula corretta</strong> al variare del tasso di inflazione, mantenendo fisso il tasso nominale scelto.</small></p>
+            <div style="max-width: 100%; height: 400px;">
+                <canvas id="errorChart"></canvas>
+            </div>
+        </div>
     </div>
 
     <script>
+        let chart = null;
+
+        function generateErrorChart(nominalRate) {
+            const nominalPercent = nominalRate * 100;
+            const i = nominalRate; // tasso nominale in decimale
+            
+            // Generiamo punti da 0% a 30% di inflazione
+            const inflationRates = [];
+            const formulaCorretta = [];
+            const metodoSemplice = [];
+            const errore = [];
+            
+            for (let t = 0; t <= 30; t += 0.5) {
+                const tDecimal = t / 100;
+                inflationRates.push(t);
+                
+                // Formula corretta: ((1+i)/(1+t)-1)*100
+                const realCorrect = ((1 + i) / (1 + tDecimal) - 1) * 100;
+                formulaCorretta.push(realCorrect);
+                
+                // Metodo semplice: (i-t)*100
+                const realSimple = (i - tDecimal) * 100;
+                metodoSemplice.push(realSimple);
+                
+                // Errore: differenza tra i due metodi
+                const error = realSimple - realCorrect;
+                errore.push(error);
+            }
+            
+            const ctx = document.getElementById('errorChart').getContext('2d');
+            
+            if (chart) {
+                chart.destroy();
+            }
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: inflationRates.map(t => t.toFixed(1) + '%'),
+                    datasets: [
+                        {
+                            label: 'Formula Corretta',
+                            data: formulaCorretta,
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            borderWidth: 2.5,
+                            pointRadius: 0,
+                            tension: 0.4,
+                            fill: false,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Metodo Semplice (i - t)',
+                            data: metodoSemplice,
+                            borderColor: '#ffc107',
+                            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.4,
+                            fill: false,
+                            borderDash: [5, 5],
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Errore (Differenza)',
+                            data: errore,
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220, 53, 69, 0.15)',
+                            borderWidth: 2.5,
+                            pointRadius: 0,
+                            tension: 0.4,
+                            fill: true,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: { size: 12 },
+                                padding: 15
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: `Tasso Nominale: ${nominalPercent.toFixed(2)}% - Evoluzione dell'errore al variare dell'inflazione`,
+                            font: { size: 14, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Tasso Reale (%)',
+                                font: { weight: 'bold' }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Errore (%)',
+                                font: { weight: 'bold' }
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tasso di Inflazione',
+                                font: { weight: 'bold' }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         document.getElementById('interestForm').addEventListener('submit', function (event) {
             event.preventDefault();
             const nominalRate = parseFloat(document.getElementById('nominalRate').value) / 100;
             const inflationRate = parseFloat(document.getElementById('inflationRate').value) / 100;
             const realRate = ((1 + nominalRate) / (1 + inflationRate) - 1) * 100;
-            document.getElementById('result').innerText = `Tasso di Interesse Reale: ${realRate.toFixed(2)}%`;
+            const simpleRate = (nominalRate - inflationRate) * 100;
+            const error = Math.abs(realRate - simpleRate);
+            
+            document.getElementById('result').innerHTML = `
+                <div class="alert alert-info">
+                    <strong>Tasso di Interesse Reale (Formula Corretta):</strong> ${realRate.toFixed(4)}%<br>
+                    <strong>Tasso di Interesse Reale (Metodo Semplice):</strong> ${simpleRate.toFixed(4)}%<br>
+                    <strong>Errore di approssimazione:</strong> ${error.toFixed(4)}%
+                </div>
+            `;
+            
+            // Genera il grafico con il tasso nominale inserito
+            generateErrorChart(nominalRate);
+        });
+
+        // Carica il grafico di default al caricamento della pagina
+        window.addEventListener('load', function() {
+            generateErrorChart(0.05); // Valore di default: 5%
         });
     </script>
 
