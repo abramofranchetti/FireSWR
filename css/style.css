@@ -172,3 +172,8 @@
         height: 80vh;  /* Ancora più alto per schermi molto piccoli */
     }
 }
+@media (max-width: 768px) {
+    #category-nav {
+        display: none;
+    }
+}

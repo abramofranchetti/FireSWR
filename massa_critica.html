@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Massa critica negli investimenti</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/ytm.js" defer></script>    
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Massa critica negli investimenti</h1>
+        <p class="text-center">Simula come il tuo portafoglio raggiunga la massa critica, dove i rendimenti superano i nuovi risparmi annuali.</p>
+
+        <div class="alert alert-secondary">
+            <p>Il concetto di massa critica negli investimenti si riferisce al momento in cui il rendimento annuale del tuo portafoglio supera l'importo che risparmi ogni anno. Da quel punto, il patrimonio cresce principalmente grazie ai rendimenti degli investimenti piuttosto che ai nuovi contributi. Usa i controlli sottostanti per simulare con i tuoi parametri.</p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label for="risparmio">Risparmio annuale (€)</label>
+                <input type="range" class="form-control-range" id="risparmio-slider" min="1000" max="50000" step="1000" value="10000">
+                <input type="number" class="form-control mt-2" id="risparmio-input" value="10000" min="1000" max="50000" step="1000">
+            </div>
+            <div class="col-md-4">
+                <label for="rendimento">Rendimento annuale (%)</label>
+                <input type="range" class="form-control-range" id="rendimento-slider" min="1" max="15" step="0.5" value="7">
+                <input type="number" class="form-control mt-2" id="rendimento-input" value="7" min="1" max="15" step="0.5">
+            </div>
+            <div class="col-md-4">
+                <label for="anni">Anni di simulazione</label>
+                <input type="range" class="form-control-range" id="anni-slider" min="10" max="50" step="1" value="30">
+                <input type="number" class="form-control mt-2" id="anni-input" value="30" min="10" max="50" step="1">
+            </div>
+        </div>
+
+        <div class="result alert alert-info text-center mb-4">
+            <h5>Punto di massa critica</h5>
+            <p id="critica-text">Calcolando...</p>
+        </div>
+
+        <canvas id="chart" width="400" height="200"></canvas>
+    </div>
+
+     <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+
+             // Funzione di calcolo
+             function calcola() {
+                 let risparmio = parseFloat(document.getElementById('risparmio-input').value);
+                 let rendimento = parseFloat(document.getElementById('rendimento-input').value) / 100;
+                 let anni = parseInt(document.getElementById('anni-input').value);
+
+                 let patrimonio = 0;
+                 let contributiCumulati = 0;
+                 let labels = [];
+                 let patrimonioData = [];
+                 let contributiData = [];
+                 let criticaAnno = null;
+
+                 for (let anno = 1; anno <= anni; anno++) {
+                     contributiCumulati += risparmio;
+                     patrimonio += risparmio;
+                     patrimonio *= (1 + rendimento);
+
+                     labels.push(anno);
+                     patrimonioData.push(patrimonio);
+                     contributiData.push(contributiCumulati);
+
+                     if (!criticaAnno && patrimonio * rendimento > risparmio) {
+                         criticaAnno = anno;
+                     }
+                 }
+
+                 // Aggiorna testo
+                 if (criticaAnno) {
+                     document.getElementById('critica-text').innerHTML = `La massa critica è raggiunta al ${criticaAnno}° anno, con un patrimonio di €${patrimonioData[criticaAnno-1].toFixed(2)}`;
+                 } else {
+                     document.getElementById('critica-text').innerHTML = `La massa critica non è raggiunta nei ${anni} anni simulati.`;
+                 }
+
+                 // Grafico
+                 const ctx = document.getElementById('chart').getContext('2d');
+                 if (window.myChart) {
+                     window.myChart.destroy();
+                 }
+                 window.myChart = new Chart(ctx, {
+                     type: 'line',
+                     data: {
+                         labels: labels,
+                         datasets: [{
+                             label: 'Patrimonio totale',
+                             data: patrimonioData,
+                             borderColor: 'rgba(75, 192, 192, 1)',
+                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                             fill: false
+                         }, {
+                             label: 'Contributi cumulati',
+                             data: contributiData,
+                             borderColor: 'rgba(255, 99, 132, 1)',
+                             backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                             fill: false
+                         }]
+                     },
+                     options: {
+                         responsive: true,
+                         plugins: {
+                             annotation: criticaAnno ? {
+                                 annotations: {
+                                     critica: {
+                                         type: 'line',
+                                         mode: 'vertical',
+                                         scaleID: 'x',
+                                         value: criticaAnno,
+                                         borderColor: 'red',
+                                         borderWidth: 2,
+                                         label: {
+                                             content: 'Massa critica',
+                                             enabled: true,
+                                             position: 'top'
+                                         }
+                                     }
+                                 }
+                             } : {}
+                         }
+                     }
+                 });
+             }
+
+             // Event listeners
+             document.getElementById('risparmio-slider').addEventListener('input', function() {
+                 document.getElementById('risparmio-input').value = this.value;
+                 calcola();
+             });
+             document.getElementById('risparmio-input').addEventListener('input', function() {
+                 document.getElementById('risparmio-slider').value = this.value;
+                 calcola();
+             });
+
+             document.getElementById('rendimento-slider').addEventListener('input', function() {
+                 document.getElementById('rendimento-input').value = this.value;
+                 calcola();
+             });
+             document.getElementById('rendimento-input').addEventListener('input', function() {
+                 document.getElementById('rendimento-slider').value = this.value;
+                 calcola();
+             });
+
+             document.getElementById('anni-slider').addEventListener('input', function() {
+                 document.getElementById('anni-input').value = this.value;
+                 calcola();
+             });
+             document.getElementById('anni-input').addEventListener('input', function() {
+                 document.getElementById('anni-slider').value = this.value;
+                 calcola();
+             });
+
+             // Calcola iniziale
+             calcola();
+         });
+     </script>
+</body>
+
+</html>
