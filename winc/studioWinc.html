@@ -136,7 +136,42 @@
         <!-- Grafico Dividendi -->
         <div class="chart-container mt-3" style="height:320px;">
             <canvas id="taxComparisonChart"></canvas>
-        </div>        
+        </div>
+        <div class="chart-container mt-3" style="height:340px;">
+            <canvas id="netAvailabilityChart"></canvas>
+        </div>
+        <div class="table-responsive mt-2">
+            <table class="table table-sm table-bordered" id="netBreakdownTable">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Componente</th>
+                        <th>WINC (€)</th>
+                        <th>ACWE (€)</th>
+                        <th>Differenza ACWE - WINC (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Flussi netti cumulati (no reinvestimento)</td>
+                        <td id="nb-flow-winc">-</td>
+                        <td id="nb-flow-acwe">-</td>
+                        <td id="nb-flow-diff">-</td>
+                    </tr>
+                    <tr>
+                        <td>Capitale netto liquidabile</td>
+                        <td id="nb-cap-winc">-</td>
+                        <td id="nb-cap-acwe">-</td>
+                        <td id="nb-cap-diff">-</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Totale netto disponibile</strong></td>
+                        <td id="nb-tot-winc"><strong>-</strong></td>
+                        <td id="nb-tot-acwe"><strong>-</strong></td>
+                        <td id="nb-tot-diff"><strong>-</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <div class="mt-4" id="metricsContainer">
             <h4 class="text-center mb-3">Metriche Serie</h4>
             <div class="row g-2">
@@ -173,9 +208,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="chart-container mt-3" style="height:340px;">
-            <canvas id="netAvailabilityChart"></canvas>
         </div>
         <div class="container mt-4">
             <h3 class="text-center">Tabella Dividendi</h3>
@@ -652,6 +684,10 @@
 
                 const wincNetAvailabilitySeries = [];
                 const acweNetAvailabilitySeries = [];
+                const wincNetCapitalSeries = [];
+                const acweNetCapitalSeries = [];
+                const wincNetFlowsSeries = [];
+                const acweNetFlowsSeries = [];
                 let wincNetDistribCumulati = 0;
                 let acweNetDistribCumulati = 0;
 
@@ -675,8 +711,12 @@
                         const wincLordoLiquidabile = xyleShares * xyleClose;
                         const wincTaxLiquidazione = calcTaxOnGain(xyleClose, xyleCloseInitialPrice, xyleShares);
                         const wincNettoLiquidabile = wincTaxLiquidazione == null ? null : (wincLordoLiquidabile - wincTaxLiquidazione);
+                        wincNetCapitalSeries.push(wincNettoLiquidabile == null ? null : Number(wincNettoLiquidabile.toFixed(2)));
+                        wincNetFlowsSeries.push(Number(wincNetDistribCumulati.toFixed(2)));
                         wincNetAvailabilitySeries.push(wincNettoLiquidabile == null ? null : Number((wincNettoLiquidabile + wincNetDistribCumulati).toFixed(2)));
                     } else {
+                        wincNetCapitalSeries.push(null);
+                        wincNetFlowsSeries.push(Number(wincNetDistribCumulati.toFixed(2)));
                         wincNetAvailabilitySeries.push(null);
                     }
 
@@ -684,8 +724,12 @@
                         const acweLordoLiquidabile = acweSharesNow * csspxAdj;
                         const acweTaxLiquidazione = calcTaxOnGain(csspxAdj, csspxInitialPrice, acweSharesNow);
                         const acweNettoLiquidabile = acweTaxLiquidazione == null ? null : (acweLordoLiquidabile - acweTaxLiquidazione);
+                        acweNetCapitalSeries.push(acweNettoLiquidabile == null ? null : Number(acweNettoLiquidabile.toFixed(2)));
+                        acweNetFlowsSeries.push(Number(acweNetDistribCumulati.toFixed(2)));
                         acweNetAvailabilitySeries.push(acweNettoLiquidabile == null ? null : Number((acweNettoLiquidabile + acweNetDistribCumulati).toFixed(2)));
                     } else {
+                        acweNetCapitalSeries.push(null);
+                        acweNetFlowsSeries.push(Number(acweNetDistribCumulati.toFixed(2)));
                         acweNetAvailabilitySeries.push(null);
                     }
                 });
@@ -719,6 +763,14 @@
 
                 populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali);
                 renderNetAvailabilityChart(labels, wincNetAvailabilitySeries, acweNetAvailabilitySeries);
+                updateNetBreakdownTable(
+                    wincNetFlowsSeries,
+                    acweNetFlowsSeries,
+                    wincNetCapitalSeries,
+                    acweNetCapitalSeries,
+                    wincNetAvailabilitySeries,
+                    acweNetAvailabilitySeries
+                );
 
 
 
@@ -1031,6 +1083,41 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                     }
                 }
             });
+        }
+
+        function updateNetBreakdownTable(wincFlows, acweFlows, wincCapital, acweCapital, wincTotal, acweTotal) {
+            const lastValid = (arr) => {
+                for (let i = arr.length - 1; i >= 0; i--) {
+                    if (arr[i] != null && !isNaN(arr[i])) return Number(arr[i]);
+                }
+                return null;
+            };
+            const fmtEuro = (v) => v == null
+                ? 'n/a'
+                : v.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const setText = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = value;
+            };
+
+            const wFlow = lastValid(wincFlows);
+            const aFlow = lastValid(acweFlows);
+            const wCap = lastValid(wincCapital);
+            const aCap = lastValid(acweCapital);
+            const wTot = lastValid(wincTotal);
+            const aTot = lastValid(acweTotal);
+
+            setText('nb-flow-winc', fmtEuro(wFlow));
+            setText('nb-flow-acwe', fmtEuro(aFlow));
+            setText('nb-flow-diff', fmtEuro((aFlow == null || wFlow == null) ? null : (aFlow - wFlow)));
+
+            setText('nb-cap-winc', fmtEuro(wCap));
+            setText('nb-cap-acwe', fmtEuro(aCap));
+            setText('nb-cap-diff', fmtEuro((aCap == null || wCap == null) ? null : (aCap - wCap)));
+
+            setText('nb-tot-winc', fmtEuro(wTot));
+            setText('nb-tot-acwe', fmtEuro(aTot));
+            setText('nb-tot-diff', fmtEuro((aTot == null || wTot == null) ? null : (aTot - wTot)));
         }
 
         function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali) {
