@@ -136,7 +136,7 @@
         <!-- Grafico Dividendi -->
         <div class="chart-container mt-3" style="height:320px;">
             <canvas id="taxComparisonChart"></canvas>
-        </div>
+        </div>        
         <div class="mt-4" id="metricsContainer">
             <h4 class="text-center mb-3">Metriche Serie</h4>
             <div class="row g-2">
@@ -173,6 +173,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="chart-container mt-3" style="height:340px;">
+            <canvas id="netAvailabilityChart"></canvas>
         </div>
         <div class="container mt-4">
             <h3 class="text-center">Tabella Dividendi</h3>
@@ -566,7 +569,8 @@
                 const csspxCumulative = [];
                 const xyleAdjCumulative = [];
                 const xyleCloseCumulative = [];
-                const distribuzioniCSSPXVirtuali = []
+                const distribuzioniCSSPXVirtuali = [];
+                const csspxSharesSeries = [];
 
                 // Nuova serie CSSPX con vendite
                 const csspxAdjustedCumulative = [];
@@ -624,7 +628,66 @@
                         distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: saleValue, xyle_value: xyleClose, commission: commissionPerSale }); // Valore vendite
                     }
 
+                    csspxSharesSeries.push(csspxShares);
                     csspxAdjustedCumulative.push(csspxAdj != null ? csspxShares * csspxAdj : null);
+                });
+
+                // Andamento "totale netto disponibile":
+                // capitale liquidabile netto tasse su plusvalenza + flussi netti distribuiti non reinvestiti.
+                const wincNetDistribByDate = new Map();
+                const acweNetDistribByDate = new Map();
+                for (const dist of distribuzioni) {
+                    const lordoWinc = dist.amount * xyleShares;
+                    const nettoWinc = lordoWinc * 0.74;
+                    wincNetDistribByDate.set(dist.date, nettoWinc);
+                }
+                for (const distAcwe of distribuzioniCSSPXVirtuali) {
+                    const plusvalenzaPerQuota = distAcwe.csspxValueAtDate - csspxInitialPrice;
+                    const totalePlusvalenza = plusvalenzaPerQuota > 0 ? plusvalenzaPerQuota * distAcwe.num_stock_selled : 0;
+                    const taxableGain = Math.max(0, totalePlusvalenza - (distAcwe.commission || 0));
+                    const tassePagate = taxableGain * 0.26;
+                    const nettoAcwe = distAcwe.amount - tassePagate - (distAcwe.commission || 0);
+                    acweNetDistribByDate.set(distAcwe.date, nettoAcwe);
+                }
+
+                const wincNetAvailabilitySeries = [];
+                const acweNetAvailabilitySeries = [];
+                let wincNetDistribCumulati = 0;
+                let acweNetDistribCumulati = 0;
+
+                const calcTaxOnGain = (priceNow, priceLoad, sharesNow) => {
+                    if (priceNow == null || priceLoad == null || sharesNow == null) return null;
+                    const gain = (priceNow - priceLoad) * sharesNow;
+                    return Math.max(0, gain) * 0.26;
+                };
+
+                labels.forEach((d, idx) => {
+                    const c = mapCSSPX.get(d);
+                    const x = mapXYLE.get(d);
+                    const csspxAdj = c ? Number(c.adj) : null;
+                    const xyleClose = x ? Number(x.close) : null;
+                    const acweSharesNow = csspxSharesSeries[idx];
+
+                    wincNetDistribCumulati += (wincNetDistribByDate.get(d) || 0);
+                    acweNetDistribCumulati += (acweNetDistribByDate.get(d) || 0);
+
+                    if (xyleClose != null) {
+                        const wincLordoLiquidabile = xyleShares * xyleClose;
+                        const wincTaxLiquidazione = calcTaxOnGain(xyleClose, xyleCloseInitialPrice, xyleShares);
+                        const wincNettoLiquidabile = wincTaxLiquidazione == null ? null : (wincLordoLiquidabile - wincTaxLiquidazione);
+                        wincNetAvailabilitySeries.push(wincNettoLiquidabile == null ? null : Number((wincNettoLiquidabile + wincNetDistribCumulati).toFixed(2)));
+                    } else {
+                        wincNetAvailabilitySeries.push(null);
+                    }
+
+                    if (csspxAdj != null && acweSharesNow != null) {
+                        const acweLordoLiquidabile = acweSharesNow * csspxAdj;
+                        const acweTaxLiquidazione = calcTaxOnGain(csspxAdj, csspxInitialPrice, acweSharesNow);
+                        const acweNettoLiquidabile = acweTaxLiquidazione == null ? null : (acweLordoLiquidabile - acweTaxLiquidazione);
+                        acweNetAvailabilitySeries.push(acweNettoLiquidabile == null ? null : Number((acweNettoLiquidabile + acweNetDistribCumulati).toFixed(2)));
+                    } else {
+                        acweNetAvailabilitySeries.push(null);
+                    }
                 });
 
                 const annotations = distribuzioni.map(dist => ({
@@ -655,6 +718,7 @@
 
 
                 populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali);
+                renderNetAvailabilityChart(labels, wincNetAvailabilitySeries, acweNetAvailabilitySeries);
 
 
 
@@ -900,6 +964,73 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                 msg.innerHTML = '<strong>Attenzione:</strong> impossibile caricare i file JSON</strong>';
                 container.appendChild(msg);
             }
+        }
+
+        function renderNetAvailabilityChart(labels, wincSeries, acweSeries) {
+            const canvas = document.getElementById('netAvailabilityChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (window._netAvailabilityChart) {
+                window._netAvailabilityChart.destroy();
+            }
+            window._netAvailabilityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'WINC netto disponibile (capitale netto + dividendi netti nominali)',
+                            data: wincSeries,
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            backgroundColor: 'rgba(255, 159, 64, 0.12)',
+                            spanGaps: true,
+                            tension: 0.2,
+                            borderWidth: 2,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'ACWE netto disponibile (capitale netto + distribuzioni nette nominali)',
+                            data: acweSeries,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.12)',
+                            spanGaps: true,
+                            tension: 0.2,
+                            borderWidth: 2,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Andamento del totale netto disponibile (senza reinvestimento)'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const v = context.raw;
+                                    return context.dataset.label + ': ' + (v == null ? 'n/a' : v.toFixed(2) + ' $');
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Date' },
+                            ticks: { maxRotation: 90, autoSkip: true, maxTicksLimit: 12 },
+                            grid: { display: false }
+                        },
+                        y: {
+                            title: { display: true, text: 'Valore netto disponibile ($)' },
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
         }
 
         function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali) {
