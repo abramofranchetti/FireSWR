@@ -42,6 +42,16 @@
             display: block;
             margin-bottom: 6px;
         }
+
+        #netBreakdownTable th,
+        #netBreakdownTable td {
+            vertical-align: middle;
+        }
+
+        #netBreakdownTable td:nth-child(n+2) {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
     </style>
 </head>
 
@@ -144,21 +154,21 @@
             <table class="table table-sm table-bordered" id="netBreakdownTable">
                 <thead class="thead-light">
                     <tr>
-                        <th>Componente</th>
-                        <th>WINC (€)</th>
-                        <th>ACWE (€)</th>
-                        <th>Differenza ACWE - WINC (€)</th>
+                        <th>Voce</th>
+                        <th>WINC netto (EUR)</th>
+                        <th>ACWE netto (EUR)</th>
+                        <th>Delta ACWE - WINC (EUR)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Flussi netti cumulati (no reinvestimento)</td>
+                        <td>Flussi netti incassati (nominali, no reinvest.)</td>
                         <td id="nb-flow-winc">-</td>
                         <td id="nb-flow-acwe">-</td>
                         <td id="nb-flow-diff">-</td>
                     </tr>
                     <tr>
-                        <td>Capitale netto liquidabile</td>
+                        <td>Capitale liquidabile netto (tassa plusvalenza)</td>
                         <td id="nb-cap-winc">-</td>
                         <td id="nb-cap-acwe">-</td>
                         <td id="nb-cap-diff">-</td>
@@ -171,6 +181,7 @@
                     </tr>
                 </tbody>
             </table>
+            <small class="text-muted">Valori finali alla data piu recente del dataset selezionato.</small>
         </div>
         <div class="mt-4" id="metricsContainer">
             <h4 class="text-center mb-3">Metriche Serie</h4>
@@ -1031,7 +1042,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                     labels: labels,
                     datasets: [
                         {
-                            label: 'WINC netto disponibile (capitale netto + dividendi netti nominali)',
+                            label: 'WINC: capitale netto + dividendi netti',
                             data: wincSeries,
                             borderColor: 'rgba(255, 159, 64, 1)',
                             backgroundColor: 'rgba(255, 159, 64, 0.12)',
@@ -1041,7 +1052,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                             pointRadius: 0
                         },
                         {
-                            label: 'ACWE netto disponibile (capitale netto + distribuzioni nette nominali)',
+                            label: 'ACWE: capitale netto + distribuzioni nette',
                             data: acweSeries,
                             borderColor: 'rgba(54, 162, 235, 1)',
                             backgroundColor: 'rgba(54, 162, 235, 0.12)',
@@ -1059,7 +1070,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Andamento del totale netto disponibile (senza reinvestimento)'
+                            text: 'Totale netto disponibile (senza reinvestimento)'
                         },
                         tooltip: {
                             callbacks: {
@@ -1077,7 +1088,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                             grid: { display: false }
                         },
                         y: {
-                            title: { display: true, text: 'Valore netto disponibile ($)' },
+                            title: { display: true, text: 'Valore netto disponibile (EUR)' },
                             beginAtZero: false
                         }
                     }
@@ -1095,6 +1106,11 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
             const fmtEuro = (v) => v == null
                 ? 'n/a'
                 : v.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const fmtDelta = (v) => {
+                if (v == null) return 'n/a';
+                const sign = v > 0 ? '+' : '';
+                return sign + fmtEuro(v);
+            };
             const setText = (id, value) => {
                 const el = document.getElementById(id);
                 if (el) el.innerText = value;
@@ -1109,15 +1125,15 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
 
             setText('nb-flow-winc', fmtEuro(wFlow));
             setText('nb-flow-acwe', fmtEuro(aFlow));
-            setText('nb-flow-diff', fmtEuro((aFlow == null || wFlow == null) ? null : (aFlow - wFlow)));
+            setText('nb-flow-diff', fmtDelta((aFlow == null || wFlow == null) ? null : (aFlow - wFlow)));
 
             setText('nb-cap-winc', fmtEuro(wCap));
             setText('nb-cap-acwe', fmtEuro(aCap));
-            setText('nb-cap-diff', fmtEuro((aCap == null || wCap == null) ? null : (aCap - wCap)));
+            setText('nb-cap-diff', fmtDelta((aCap == null || wCap == null) ? null : (aCap - wCap)));
 
             setText('nb-tot-winc', fmtEuro(wTot));
             setText('nb-tot-acwe', fmtEuro(aTot));
-            setText('nb-tot-diff', fmtEuro((aTot == null || wTot == null) ? null : (aTot - wTot)));
+            setText('nb-tot-diff', fmtDelta((aTot == null || wTot == null) ? null : (aTot - wTot)));
         }
 
         function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali) {
