@@ -138,13 +138,17 @@
                     <!-- Selezione avversione al rischio spostata nella sezione dedicata -->
 
                     <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="input-label">Età Adulto 1</label>
+                        <div class="col-md-4">
+                            <label class="input-label">Età Adulto 1 (obbligatorio)</label>
                             <input type="number" id="age1" class="form-control" value="40" min="20" max="99">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="input-label">Età Adulto 2 (0 se solo)</label>
                             <input type="number" id="age2" class="form-control" value="40" min="0" max="99">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="input-label">Aspettativa di vita (obbligatorio)</label>
+                            <input type="number" id="lifeExpectancy" class="form-control" value="85" min="25" max="120">
                         </div>
                     </div>
 
@@ -170,7 +174,7 @@
                 <div class="card p-4">
                     <h4 class="mb-4">2. Previsione Redditi Annuali (Full Inputs)</h4>
                     <p class="small text-muted">Inserisci lo stipendio netto annuo (fino a 66 anni) e la pensione netta
-                        (dai 67 ai 100). Valori costanti in euro odierni.</p>
+                        (dai 67 anni fino all'età massima impostata). Valori costanti in euro odierni.</p>
                     <div class="scroll-table">
                         <table class="table table-sm table-hover" id="incomeTable">
                             <thead class="table-light">
@@ -301,7 +305,7 @@
         const SIGMA_V2 = 0.0169; // Varianza shock permanente (0.130^2) [12, 13]
         const SIGMA_E2 = 0.0586; // Varianza shock temporaneo (0.242^2) [13, 14]
         const LAMBDA = 0.40;   // Tasso sostituzione pensione di default [15, 16]
-        const MAX_AGE = 100;
+        const MAX_AGE_LIMIT = 120;
         const REFERENCE_LOW_ANNUAL = 30000;
         const BASE_CERTAINTY_EQUIVALENTS = {
             1: 42426,
@@ -376,9 +380,13 @@
         function buildIncomeTable() {
             const body = document.getElementById('incomeBody');
             const currentAge = parseInt(document.getElementById('age1').value, 10) || 40;
+            const lifeExpectancyInput = parseInt(document.getElementById('lifeExpectancy').value, 10);
+            const projectionMaxAge = Number.isFinite(lifeExpectancyInput)
+                ? Math.max(currentAge, Math.min(MAX_AGE_LIMIT, lifeExpectancyInput))
+                : 100;
             body.innerHTML = '';
 
-            for (let age = currentAge + 1; age <= MAX_AGE; age++) {
+            for (let age = currentAge + 1; age <= projectionMaxAge; age++) {
                 let defIncome1 = (age <= 66) ? 23000 : 12000;
                 let defIncome2 = (age <= 66) ? 18000 : 6000;
                 body.innerHTML += `
@@ -389,6 +397,14 @@
                 </tr>
             `;
             }
+
+            if (currentAge >= projectionMaxAge) {
+                body.innerHTML = `
+                <tr>
+                    <td colspan="3" class="text-muted small">Nessun anno futuro da compilare: aumenta l'aspettativa di vita per estendere la tabella.</td>
+                </tr>
+            `;
+            }
         }
 
         // Popolamento tabella redditi al caricamento
@@ -396,6 +412,7 @@
             buildIncomeTable();
             buildRiskAversionTable();
             document.getElementById('age1').addEventListener('change', buildIncomeTable);
+            document.getElementById('lifeExpectancy').addEventListener('input', buildIncomeTable);
             document.getElementById('monthlySalary').addEventListener('input', buildRiskAversionTable);
             document.getElementById('riskAversion').addEventListener('change', buildRiskAversionTable);
             document.getElementById('riskTableBody').addEventListener('click', function (event) {
