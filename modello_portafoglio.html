@@ -101,6 +101,14 @@
             color: #7f8c8d;
             font-style: italic;
         }
+
+        .risk-row {
+            cursor: pointer;
+        }
+
+        .risk-row.table-active td {
+            font-weight: 600;
+        }
     </style>
 </head>
 
@@ -127,23 +135,7 @@
                 <div class="card p-4">
                     <h4 class="mb-4">1. Parametri di Base</h4>
 
-                    <div class="mb-3">
-                        <label class="input-label">Esperimento Mentale: Avversione al Rischio</label>
-                        <p class="small text-muted">Immagina una scommessa: 50% di probabilità di vivere con 60.000€
-                            l'anno prossimo e 50% con 30.000€. Quale cifra sicura (X) ti renderebbe indifferente?</p>
-                        <select id="riskAversion" class="form-select">
-                            <option value="1">42.426 € (RRA 1)</option>
-                            <option value="2">40.000 € (RRA 2)</option>
-                            <option value="3">37.948 € (RRA 3)</option>
-                            <option value="4">36.343 € (RRA 4)</option>
-                            <option value="5">35.140 € (RRA 5)</option>
-                            <option value="6">34.250 € (RRA 6)</option>
-                            <option value="7" selected>33.587 € (RRA 7)</option>
-                            <option value="8">33.086 € (RRA 8)</option>
-                            <option value="9">32.699 € (RRA 9)</option>
-                            <option value="10">32.395 € (RRA 10)</option>
-                        </select>
-                    </div>
+                    <!-- Selezione avversione al rischio spostata nella sezione dedicata -->
 
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -193,6 +185,62 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card p-4">
+                    <h4 class="mb-3">3. Calcolatore Avversione al Rischio (Parametrizzato sullo Stipendio)</h4>                    
+                    <h5 class="mb-3">Esperimento Mentale: Immagina una scommessa: 50% di probabilità di vivere con il doppio del
+                        tuo stipendio
+                        l'anno prossimo e 50% con il tuo stipendio attuale. Quale cifra sicura (X) ti renderebbe
+                        indifferente?</h5>
+                    <h5 class="mb-3">Seleziona nella tabella la riga che rappresenta la cifra che ti renderebbe
+                        indifferente</h5>
+                    <p class="small text-muted mb-3">
+                        Inserisci lo stipendio mensile netto. Il calcolatore scala il caso base 30.000€ / 60.000€
+                        alla tua situazione (es. 1.500€/mese -> 18.000€ e 36.000€ annui).
+                    </p>
+
+                    <div class="row g-3 align-items-end mb-3">
+                        <div class="col-md-4">
+                            <label class="input-label">Stipendio Mensile Netto (€)</label>
+                            <input type="number" id="monthlySalary" class="form-control" value="1500" min="1" step="50">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="small text-muted">
+                                Scenario 50/50: da <strong id="riskScenarioLow">--</strong> a
+                                <strong id="riskScenarioHigh">--</strong> al mese. Annuale:
+                                <strong id="riskScenarioAnnualLow">--</strong> /
+                                <strong id="riskScenarioAnnualHigh">--</strong>.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="input-label">RRA selezionata per il modello di portafoglio</label>
+                        <select id="riskAversion" class="form-select"></select>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>RRA</th>
+                                    <th>Equivalente certo annuo</th>
+                                    <th>Equivalente certo mensile</th>
+                                    <th>Aumento mensile indifferente</th>
+                                </tr>
+                            </thead>
+                            <tbody id="riskTableBody"></tbody>
+                        </table>
+                    </div>
+                    <p class="small text-muted mb-0">
+                        "Aumento mensile indifferente" = equivalente certo mensile - stipendio mensile base
+                        (esempio: da 1.500€ verso 3.000€ al mese).
+                    </p>
                 </div>
             </div>
         </div>
@@ -254,6 +302,76 @@
         const SIGMA_E2 = 0.0586; // Varianza shock temporaneo (0.242^2) [13, 14]
         const LAMBDA = 0.40;   // Tasso sostituzione pensione di default [15, 16]
         const MAX_AGE = 100;
+        const REFERENCE_LOW_ANNUAL = 30000;
+        const BASE_CERTAINTY_EQUIVALENTS = {
+            1: 42426,
+            2: 40000,
+            3: 37948,
+            4: 36343,
+            5: 35140,
+            6: 34250,
+            7: 33587,
+            8: 33086,
+            9: 32699,
+            10: 32395
+        };
+
+        function formatEuro(value, decimals = 0) {
+            return value.toLocaleString('it-IT', {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            }) + " €";
+        }
+
+        function buildRiskAversionTable() {
+            const salaryInput = document.getElementById('monthlySalary');
+            const riskSelect = document.getElementById('riskAversion');
+            const tableBody = document.getElementById('riskTableBody');
+
+            const monthlySalary = parseFloat(salaryInput.value);
+            if (!Number.isFinite(monthlySalary) || monthlySalary <= 0) {
+                tableBody.innerHTML = '';
+                return;
+            }
+
+            const selectedGamma = parseInt(riskSelect.value, 10) || 7;
+            const annualLow = monthlySalary * 12;
+            const monthlyHigh = monthlySalary * 2;
+            const annualHigh = annualLow * 2;
+            const scale = annualLow / REFERENCE_LOW_ANNUAL;
+
+            document.getElementById('riskScenarioLow').innerText = formatEuro(monthlySalary, 0);
+            document.getElementById('riskScenarioHigh').innerText = formatEuro(monthlyHigh, 0);
+            document.getElementById('riskScenarioAnnualLow').innerText = formatEuro(annualLow, 0);
+            document.getElementById('riskScenarioAnnualHigh').innerText = formatEuro(annualHigh, 0);
+
+            riskSelect.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            Object.entries(BASE_CERTAINTY_EQUIVALENTS).forEach(([gammaStr, baseAnnualCe]) => {
+                const gamma = parseInt(gammaStr, 10);
+                const annualCe = baseAnnualCe * scale;
+                const monthlyCe = annualCe / 12;
+                const monthlyIncrease = monthlyCe - monthlySalary;
+
+                const option = document.createElement('option');
+                option.value = String(gamma);
+                option.selected = gamma === selectedGamma;
+                option.textContent = `RRA ${gamma} - ${formatEuro(annualCe, 0)} annui (${formatEuro(monthlyCe, 0)}/mese)`;
+                riskSelect.appendChild(option);
+
+                const row = document.createElement('tr');
+                row.className = gamma === selectedGamma ? 'risk-row table-active' : 'risk-row';
+                row.dataset.gamma = String(gamma);
+                row.innerHTML = `
+                    <td>${gamma}</td>
+                    <td>${formatEuro(annualCe, 0)}</td>
+                    <td>${formatEuro(monthlyCe, 0)}</td>
+                    <td>${formatEuro(monthlyIncrease, 0)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
 
         function buildIncomeTable() {
             const body = document.getElementById('incomeBody');
@@ -276,7 +394,16 @@
         // Popolamento tabella redditi al caricamento
         window.onload = function () {
             buildIncomeTable();
+            buildRiskAversionTable();
             document.getElementById('age1').addEventListener('change', buildIncomeTable);
+            document.getElementById('monthlySalary').addEventListener('input', buildRiskAversionTable);
+            document.getElementById('riskAversion').addEventListener('change', buildRiskAversionTable);
+            document.getElementById('riskTableBody').addEventListener('click', function (event) {
+                const row = event.target.closest('tr[data-gamma]');
+                if (!row) return;
+                document.getElementById('riskAversion').value = row.dataset.gamma;
+                buildRiskAversionTable();
+            });
         };
 
         function calculatePortfolio() {
