@@ -28,6 +28,29 @@
             height: 500px;
             width: 100%;
         }
+
+        .metric-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 10px;
+            min-height: 88px;
+        }
+
+        .metric-card strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        #netBreakdownTable th,
+        #netBreakdownTable td {
+            vertical-align: middle;
+        }
+
+        #netBreakdownTable td:nth-child(n+2) {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
     </style>
 </head>
 
@@ -45,7 +68,7 @@
         <p>Il grafico mostra come andrebbe una strategia che vende quote di ACWE per ottenere mensilmente lo stesso dividendo lordo staccato dall'ETF covered call.</p>
         <form>
             <div class="form-group mt-4">
-                <label for="montante">Capitale inizale $:</label>
+                <label for="montante">Capitale inizale €:</label>
                 <input type="number" class="form-control" id="montante" value="100000" step="1000">
             </div>
             <div class="form-group mt-4">
@@ -60,6 +83,11 @@
             <div class="form-group mt-4">
                 <label for="startDate">Data di inizio analisi:</label>
                 <input type="date" class="form-control" id="startDate">
+            </div>
+            <div class="form-group mt-2">
+                <label for="riskFree">Risk-free (%) (per calcolo Sharpe)</label>
+                <input type="number" class="form-control" id="riskFree" value="0.5" step="0.01">
+                <small class="form-text text-muted">Tasso risk-free annuo (es. 0.5 = 0.5%)</small>
             </div>
         </form>
         <!-- Grafico -->
@@ -76,6 +104,86 @@
                 con la riga arancione).</li>
         </ul>
         </p>
+        <div class="chart-container mt-3" style="height:320px;">
+            <canvas id="taxComparisonChart"></canvas>
+        </div>
+        <div class="chart-container mt-3" style="height:340px;">
+            <canvas id="netAvailabilityChart"></canvas>
+        </div>
+        <div class="table-responsive mt-2">
+            <table class="table table-sm table-bordered" id="netBreakdownTable">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Voce</th>
+                        <th>JEPG netto (EUR)</th>
+                        <th>ACWE netto (EUR)</th>
+                        <th>Delta ACWE - JEPG (EUR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Flussi netti incassati (nominali, no reinvest.)</td>
+                        <td id="nb-flow-jepg">-</td>
+                        <td id="nb-flow-acwe">-</td>
+                        <td id="nb-flow-diff">-</td>
+                    </tr>
+                    <tr>
+                        <td>Capitale liquidabile netto (tassa plusvalenza)</td>
+                        <td id="nb-cap-jepg">-</td>
+                        <td id="nb-cap-acwe">-</td>
+                        <td id="nb-cap-diff">-</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Totale netto disponibile</strong></td>
+                        <td id="nb-tot-jepg"><strong>-</strong></td>
+                        <td id="nb-tot-acwe"><strong>-</strong></td>
+                        <td id="nb-tot-diff"><strong>-</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            <small class="text-muted">Valori finali alla data piu recente del dataset selezionato.</small>
+        </div>
+        <div class="mt-4" id="metricsContainer">
+            <h4 class="text-center mb-3">Metriche Serie</h4>
+            <div class="row g-2">
+                <div class="col-md-6 col-lg-3 pb-1">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
+                        <strong style="color: #3693eb; font-size: 0.95rem;">ACWE - Accumulo</strong>
+                        <div id="metrics-acwe" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 pb-1">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(40,167,69,0.1) 0%, rgba(40,167,69,0.05) 100%); border-left: 4px solid rgba(40,167,69,0.8);">
+                        <strong style="color: #28a745; font-size: 0.95rem;">JEPG - Total Return</strong>
+                        <div id="metrics-jepg" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 pb-1">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(75,192,192,0.1) 0%, rgba(75,192,192,0.05) 100%); border-left: 4px solid rgba(75,192,192,0.8);">
+                        <strong style="color: #20b2aa; font-size: 0.95rem;">ACWE - Con Vendite</strong>
+                        <div id="metrics-acwe-sold" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card"
+                        style="background: linear-gradient(135deg, rgba(255,159,64,0.1) 0%, rgba(255,159,64,0.05) 100%); border-left: 4px solid rgba(255,159,64,0.8);">
+                        <strong style="color: #ff9f40; font-size: 0.95rem;">JEPG - Net (senza dividendi)</strong>
+                        <div id="metrics-jepg-netto" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                            Calcolo in corso...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="container mt-4">
     <h3 class="text-center">Tabella Dividendi</h3>
 
@@ -117,21 +225,20 @@
         async function loadAndPlot() {            
             const initialCapital = parseFloat(document.getElementById('montante').value);             
             const modalita = parseFloat(modalitaSelect.value);
+            const riskFreeAnnual = (parseFloat(document.getElementById('riskFree').value) || 0) / 100;
             try {
-                const [xyleResp, csspxResp, distribuzioniResp,cambioEurUsdResp] = await Promise.all([
+                const [xyleResp, csspxResp, distribuzioniResp] = await Promise.all([
                     fetch('JEPG.MI.json'),
                     fetch('ACWE.MI.json'),
-                    fetch('Distribuzioni_JEPG.txt'),
-                    fetch('cambio_eur_usd.json')
+                    fetch('Distribuzioni_JEPG.txt')
                 ]);
 
-                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok || !cambioEurUsdResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');                
+                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');                
 
-                let [xyleRaw, csspxRaw, distribuzioniRaw, cambioEurUsdRaw] = await Promise.all([
+                let [xyleRaw, csspxRaw, distribuzioniRaw] = await Promise.all([
                     xyleResp.json(),
                     csspxResp.json(),
-                    distribuzioniResp.text(),
-                    cambioEurUsdResp.json()
+                    distribuzioniResp.text()
                 ]);
 
                 const startDateInput = document.getElementById('startDate');
@@ -183,12 +290,6 @@
                     mapCSSPX.set(item.Date, { adj: item.AdjClose ?? null });
                 });
 
-                const mapCambio = new Map();
-                cambioEurUsdRaw.forEach(item => {
-                    if(!item.Date) return;
-                    mapCambio.set(item.Date, {cambio: item.Close ?? null});
-                });
-
                 // unione delle date
                 const dateSet = new Set([...mapXYLE.keys(), ...mapCSSPX.keys()]);
                 const labels = Array.from(dateSet).sort((a, b) => new Date(a) - new Date(b));
@@ -205,7 +306,10 @@
                 const csspxCumulative = [];
                 const xyleAdjCumulative = [];
                 const xyleCloseCumulative = [];
-                const distribuzioniCSSPXVirtuali = []
+                const distribuzioniCSSPXVirtuali = [];
+                const csspxSharesSeries = [];
+                const jepgNetDistribByDate = new Map();
+                const acweNetDistribByDate = new Map();
 
                 // Nuova serie CSSPX con vendite
                 const csspxAdjustedCumulative = [];
@@ -245,12 +349,73 @@
                     const distribuzione = distribuzioni.find(dist => dist.date === d);
                     if (distribuzione && csspxAdj != null) {
                         const totalDividend = distribuzione.amount * xyleShares; // Dividendo totale
+                        const nettoJepg = totalDividend * 0.74; // Tassazione 26%
                         const sharesToSell = modalita>0?(totalDividend / csspxAdj): Math.ceil(totalDividend / csspxAdj);
                         csspxShares -= sharesToSell; // Aggiorna il numero di quote di CSSPX
-                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: sharesToSell * csspxAdj, xyle_value:  xyleClose}); // Valore vendite
+                        const lordoVenduto = sharesToSell * csspxAdj;
+                        const plusvalenza = csspxAdj > csspxInitialPrice ? csspxAdj - csspxInitialPrice : 0;
+                        const tassePagate = plusvalenza * sharesToSell * 0.26;
+                        const nettoAcwe = lordoVenduto - tassePagate;
+
+                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: lordoVenduto, xyle_value: xyleClose }); // Valore vendite
+                        jepgNetDistribByDate.set(d, nettoJepg);
+                        acweNetDistribByDate.set(d, nettoAcwe);
                     }
 
+                    csspxSharesSeries.push(csspxShares);
                     csspxAdjustedCumulative.push(csspxAdj != null ? csspxShares * csspxAdj : null);
+                });
+
+                const jepgNetCapitalSeries = [];
+                const acweNetCapitalSeries = [];
+                const jepgNetAvailabilitySeries = [];
+                const acweNetAvailabilitySeries = [];
+                const jepgNetFlowsSeries = [];
+                const acweNetFlowsSeries = [];
+                let jepgNetDistribCumulati = 0;
+                let acweNetDistribCumulati = 0;
+
+                const calcTaxOnGain = (priceNow, priceLoad, sharesNow) => {
+                    if (priceNow == null || priceLoad == null || sharesNow == null) return null;
+                    const gain = (priceNow - priceLoad) * sharesNow;
+                    return Math.max(0, gain) * 0.26;
+                };
+
+                labels.forEach((d, idx) => {
+                    const c = mapCSSPX.get(d);
+                    const x = mapXYLE.get(d);
+                    const csspxAdj = c ? Number(c.adj) : null;
+                    const xyleClose = x ? Number(x.close) : null;
+                    const acweSharesNow = csspxSharesSeries[idx];
+
+                    jepgNetDistribCumulati += (jepgNetDistribByDate.get(d) || 0);
+                    acweNetDistribCumulati += (acweNetDistribByDate.get(d) || 0);
+
+                    if (xyleClose != null) {
+                        const jepgLordoLiquidabile = xyleShares * xyleClose;
+                        const jepgTaxLiquidazione = calcTaxOnGain(xyleClose, xyleCloseInitialPrice, xyleShares);
+                        const jepgNettoLiquidabile = jepgTaxLiquidazione == null ? null : (jepgLordoLiquidabile - jepgTaxLiquidazione);
+                        jepgNetCapitalSeries.push(jepgNettoLiquidabile == null ? null : Number(jepgNettoLiquidabile.toFixed(2)));
+                        jepgNetFlowsSeries.push(Number(jepgNetDistribCumulati.toFixed(2)));
+                        jepgNetAvailabilitySeries.push(jepgNettoLiquidabile == null ? null : Number((jepgNettoLiquidabile + jepgNetDistribCumulati).toFixed(2)));
+                    } else {
+                        jepgNetCapitalSeries.push(null);
+                        jepgNetFlowsSeries.push(Number(jepgNetDistribCumulati.toFixed(2)));
+                        jepgNetAvailabilitySeries.push(null);
+                    }
+
+                    if (csspxAdj != null && acweSharesNow != null) {
+                        const acweLordoLiquidabile = acweSharesNow * csspxAdj;
+                        const acweTaxLiquidazione = calcTaxOnGain(csspxAdj, csspxInitialPrice, acweSharesNow);
+                        const acweNettoLiquidabile = acweTaxLiquidazione == null ? null : (acweLordoLiquidabile - acweTaxLiquidazione);
+                        acweNetCapitalSeries.push(acweNettoLiquidabile == null ? null : Number(acweNettoLiquidabile.toFixed(2)));
+                        acweNetFlowsSeries.push(Number(acweNetDistribCumulati.toFixed(2)));
+                        acweNetAvailabilitySeries.push(acweNettoLiquidabile == null ? null : Number((acweNettoLiquidabile + acweNetDistribCumulati).toFixed(2)));
+                    } else {
+                        acweNetCapitalSeries.push(null);
+                        acweNetFlowsSeries.push(Number(acweNetDistribCumulati.toFixed(2)));
+                        acweNetAvailabilitySeries.push(null);
+                    }
                 });
 
                 const annotations = distribuzioni.map(dist => ({
@@ -280,7 +445,16 @@
                 });
 
 
-                populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali, mapCambio);
+                populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali);
+                renderNetAvailabilityChart(labels, jepgNetAvailabilitySeries, acweNetAvailabilitySeries);
+                updateNetBreakdownTable(
+                    jepgNetFlowsSeries,
+                    acweNetFlowsSeries,
+                    jepgNetCapitalSeries,
+                    acweNetCapitalSeries,
+                    jepgNetAvailabilitySeries,
+                    acweNetAvailabilitySeries
+                );
 
 
 
@@ -353,7 +527,7 @@
                                 callbacks: {
                                     label: function (context) {
                                         const v = context.raw;
-                                        return context.dataset.label + ': ' + (v == null ? 'n/a' : v.toFixed(2) + ' $');
+                                        return context.dataset.label + ': ' + (v == null ? 'n/a' : v.toFixed(2) + ' €');
                                     }
                                 }
                             },
@@ -374,12 +548,139 @@
                                 }
                             },
                             y: {
-                                title: { display: true, text: 'Valore ($)' },
+                                title: { display: true, text: 'Valore (EUR)' },
                                 beginAtZero: false
                             }
                         }
                     }
                 });
+
+                // Calcola metriche (deviazione standard, Sharpe e Sortino, tutti annualizzati)
+                // rfAnnual = risk-free annualizzato in decimale (es. 0.01 = 1%)
+                function computeMetrics(series, labels, rfAnnual = 0) {
+                    const returns = [];
+                    const days = [];
+                    let lastVal = null;
+                    let lastDate = null;
+
+                    for (let i = 0; i < labels.length; i++) {
+                        const v = series[i];
+                        const d = labels[i];
+                        if (v == null || lastVal == null) {
+                            lastVal = v;
+                            lastDate = d;
+                            continue;
+                        }
+                        if (lastVal === 0) {
+                            lastVal = v;
+                            lastDate = d;
+                            continue;
+                        }
+                        const r = v / lastVal - 1;
+                        returns.push(r);
+
+                        const dayDiff = (new Date(d) - new Date(lastDate)) / (1000 * 3600 * 24);
+                        days.push(dayDiff);
+
+                        lastVal = v;
+                        lastDate = d;
+                    }
+
+                    if (returns.length === 0) {
+                        return {
+                            stdAnn: NaN,
+                            sharpe: NaN,
+                            sortino: NaN,
+                            periodsPerYear: NaN
+                        };
+                    }
+
+                    const n = returns.length;
+                    const mean = returns.reduce((a, b) => a + b, 0) / n;
+
+                    let variance = 0;
+                    if (n > 1) {
+                        variance = returns
+                            .map(r => (r - mean) ** 2)
+                            .reduce((a, b) => a + b, 0) / (n - 1);
+                    }
+                    const std = Math.sqrt(variance);
+
+                    const MAR = 0;
+                    const downsideValues = returns.map(r => Math.min(0, r - MAR));
+                    const downsideVariance =
+                        downsideValues
+                            .map(x => x * x)
+                            .reduce((a, b) => a + b, 0) / n;
+                    const downsideDev = Math.sqrt(downsideVariance);
+
+                    const avgDays = days.length
+                        ? days.reduce((a, b) => a + b, 0) / days.length
+                        : 365;
+                    const periodsPerYear = avgDays > 0 ? 365 / avgDays : 1;
+
+                    const meanAnn = mean * periodsPerYear;
+                    const stdAnn = std * Math.sqrt(periodsPerYear);
+                    const downsideDevAnn = downsideDev * Math.sqrt(periodsPerYear);
+
+                    const rfAnn = rfAnnual;
+                    const rfPeriod = rfAnn / periodsPerYear;
+
+                    const sharpe = stdAnn > 0 ? (meanAnn - rfAnn) / stdAnn : NaN;
+                    const periodSharpe = std > 0 ? (mean - rfPeriod) / std : NaN;
+
+                    const sortino = downsideDevAnn > 0 ? (meanAnn - rfAnn) / downsideDevAnn : NaN;
+                    const periodSortino = downsideDev > 0 ? (mean - rfPeriod) / downsideDev : NaN;
+
+                    return {
+                        stdAnn,
+                        sharpe,
+                        sortino,
+                        periodsPerYear,
+                        periodSharpe,
+                        periodSortino,
+                        downsideDevAnn,
+                        downsideDev
+                    };
+                }
+
+                function fmt(x) {
+                    if (isNaN(x) || x === null) return 'n/a';
+                    return (x * 100).toFixed(2) + '%';
+                }
+
+                const mAcwe = computeMetrics(csspxCumulative, labels, riskFreeAnnual);
+                const mAcweSold = computeMetrics(csspxAdjustedCumulative, labels, riskFreeAnnual);
+                const mJepg = computeMetrics(xyleAdjCumulative, labels, riskFreeAnnual);
+                const mJepgNetto = computeMetrics(xyleCloseCumulative, labels, riskFreeAnnual);
+
+                document.getElementById('metrics-acwe').innerText =
+                    `Dev.std (ann): ${fmt(mAcwe.stdAnn)}
+Sharpe (ann): ${isNaN(mAcwe.sharpe) ? 'n/a' : mAcwe.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mAcwe.periodSharpe) ? 'n/a' : mAcwe.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mAcwe.sortino) ? 'n/a' : mAcwe.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mAcwe.periodSortino) ? 'n/a' : mAcwe.periodSortino.toFixed(3)}`;
+
+                document.getElementById('metrics-acwe-sold').innerText =
+                    `Dev.std (ann): ${fmt(mAcweSold.stdAnn)}
+Sharpe (ann): ${isNaN(mAcweSold.sharpe) ? 'n/a' : mAcweSold.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mAcweSold.periodSharpe) ? 'n/a' : mAcweSold.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mAcweSold.sortino) ? 'n/a' : mAcweSold.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mAcweSold.periodSortino) ? 'n/a' : mAcweSold.periodSortino.toFixed(3)}`;
+
+                document.getElementById('metrics-jepg').innerText =
+                    `Dev.std (ann): ${fmt(mJepg.stdAnn)}
+Sharpe (ann): ${isNaN(mJepg.sharpe) ? 'n/a' : mJepg.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mJepg.periodSharpe) ? 'n/a' : mJepg.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mJepg.sortino) ? 'n/a' : mJepg.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mJepg.periodSortino) ? 'n/a' : mJepg.periodSortino.toFixed(3)}`;
+
+                document.getElementById('metrics-jepg-netto').innerText =
+                    `Dev.std (ann): ${fmt(mJepgNetto.stdAnn)}
+Sharpe (ann): ${isNaN(mJepgNetto.sharpe) ? 'n/a' : mJepgNetto.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mJepgNetto.periodSharpe) ? 'n/a' : mJepgNetto.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mJepgNetto.sortino) ? 'n/a' : mJepgNetto.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mJepgNetto.periodSortino) ? 'n/a' : mJepgNetto.periodSortino.toFixed(3)}`;
 
             } catch (err) {
                 console.error(err);
@@ -391,28 +692,140 @@
             }
         }
 
-        function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali, mapCambio) {
+        function renderNetAvailabilityChart(labels, jepgSeries, acweSeries) {
+            const canvas = document.getElementById('netAvailabilityChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (window._netAvailabilityChart) {
+                window._netAvailabilityChart.destroy();
+            }
+            window._netAvailabilityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'JEPG: capitale netto + dividendi netti',
+                            data: jepgSeries,
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            backgroundColor: 'rgba(255, 159, 64, 0.12)',
+                            spanGaps: true,
+                            tension: 0.2,
+                            borderWidth: 2,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'ACWE: capitale netto + distribuzioni nette',
+                            data: acweSeries,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.12)',
+                            spanGaps: true,
+                            tension: 0.2,
+                            borderWidth: 2,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Totale netto disponibile (senza reinvestimento)'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const v = context.raw;
+                                    return context.dataset.label + ': ' + (v == null ? 'n/a' : v.toFixed(2) + ' €');
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Date' },
+                            ticks: { maxRotation: 90, autoSkip: true, maxTicksLimit: 12 },
+                            grid: { display: false }
+                        },
+                        y: {
+                            title: { display: true, text: 'Valore netto disponibile (EUR)' },
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateNetBreakdownTable(jepgFlows, acweFlows, jepgCapital, acweCapital, jepgTotal, acweTotal) {
+            const lastValid = (arr) => {
+                for (let i = arr.length - 1; i >= 0; i--) {
+                    if (arr[i] != null && !isNaN(arr[i])) return Number(arr[i]);
+                }
+                return null;
+            };
+            const fmtEuro = (v) => v == null
+                ? 'n/a'
+                : v.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const fmtDelta = (v) => {
+                if (v == null) return 'n/a';
+                const sign = v > 0 ? '+' : '';
+                return sign + fmtEuro(v);
+            };
+            const setText = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = value;
+            };
+
+            const jFlow = lastValid(jepgFlows);
+            const aFlow = lastValid(acweFlows);
+            const jCap = lastValid(jepgCapital);
+            const aCap = lastValid(acweCapital);
+            const jTot = lastValid(jepgTotal);
+            const aTot = lastValid(acweTotal);
+
+            setText('nb-flow-jepg', fmtEuro(jFlow));
+            setText('nb-flow-acwe', fmtEuro(aFlow));
+            setText('nb-flow-diff', fmtDelta((aFlow == null || jFlow == null) ? null : (aFlow - jFlow)));
+
+            setText('nb-cap-jepg', fmtEuro(jCap));
+            setText('nb-cap-acwe', fmtEuro(aCap));
+            setText('nb-cap-diff', fmtDelta((aCap == null || jCap == null) ? null : (aCap - jCap)));
+
+            setText('nb-tot-jepg', fmtEuro(jTot));
+            setText('nb-tot-acwe', fmtEuro(aTot));
+            setText('nb-tot-diff', fmtDelta((aTot == null || jTot == null) ? null : (aTot - jTot)));
+        }
+
+        function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali) {
             const tableBody = document.getElementById('dividendiTableBody');
             tableBody.innerHTML = '';
             let sommaNettiXyle=0;
             let sommaNettiSp500=0;
             let sommaLordiSp500=0;
             let sommaDifferenza=0;
+            const chartLabels = [];
+            const nettoJepgSeries = [];
+            const nettoAcweSeries = [];
 
             distribuzioni.forEach(dist => {
                 const { date, amount } = dist;
-                const cambioAlGiorno = mapCambio.get(dist.date).cambio;
                 const distribuzioneCSSPX = distribuzioniCSSPXVirtuali.find(d => d.date === date);
                 // Calcolo dividendi XYLE
                 const lordoXYLE = amount * xyleShares;                
                 const nettoXYLE = lordoXYLE * 0.74; // Tassazione 26%
-                const percentualeDist = ((nettoXYLE / xyleShares / (distribuzioneCSSPX.xyle_value/cambioAlGiorno)) * 100);                
+                const percentualeDist = ((nettoXYLE / xyleShares / distribuzioneCSSPX.xyle_value) * 100);                
                 const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
                 const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
                 const plusvalenza = distribuzioneCSSPX.csspxValueAtDate > csspxInitialPrice ? distribuzioneCSSPX.csspxValueAtDate - csspxInitialPrice : 0;
                 const tassePagate = plusvalenza * distribuzioneCSSPX.num_stock_selled * 0.26;
                 const nettoSp500 = lordoVenduto - tassePagate;
                 const percentualeTasse = lordoVenduto > 0 ? (tassePagate / lordoVenduto) * 100 : 0;
+                chartLabels.push(date);
+                nettoJepgSeries.push(Number(nettoXYLE.toFixed(2)));
+                nettoAcweSeries.push(Number(nettoSp500.toFixed(2)));
                 
                 // Crea riga tabella
                 const row = document.createElement('tr');
@@ -445,6 +858,38 @@
                         <td>${sommaDifferenza.toFixed(2)} (${(((sommaNettiSp500 - sommaNettiXyle) / sommaNettiXyle) * 100).toFixed(2)}%)</td>
                     `;
             tableFoot.appendChild(row);
+
+            const ctxEl = document.getElementById('taxComparisonChart');
+            if (ctxEl) {
+                const ctx2 = ctxEl.getContext('2d');
+                if (window._taxComparisonChart) {
+                    window._taxComparisonChart.data.labels = chartLabels;
+                    window._taxComparisonChart.data.datasets[0].data = nettoJepgSeries;
+                    window._taxComparisonChart.data.datasets[1].data = nettoAcweSeries;
+                    window._taxComparisonChart.update();
+                } else {
+                    window._taxComparisonChart = new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [
+                                { label: 'Dividendi netti JEPG (€)', data: nettoJepgSeries, backgroundColor: 'rgba(40,167,69,0.8)' },
+                                { label: 'Vendite ACWE - netto (€)', data: nettoAcweSeries, backgroundColor: 'rgba(54,162,235,0.8)' }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: { mode: 'index', intersect: false },
+                            scales: {
+                                x: { title: { display: true, text: 'Date' }, ticks: { maxRotation: 90, autoSkip: true, maxTicksLimit: 12 } },
+                                y: { beginAtZero: true, title: { display: true, text: '€' } }
+                            },
+                            plugins: { legend: { position: 'top' } }
+                        }
+                    });
+                }
+            }
         }
         
         document.querySelectorAll('input').forEach(input => {
