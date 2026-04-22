@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulatore BTP Italia - Rendimento Reale</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg-soft: #131a2f;
+      --card: #1a2340;
+      --card-2: #1d294a;
+      --text: #e6ecff;
+      --muted: #97a3c7;
+      --accent: #45d0ff;
+      --accent-2: #3f8cff;
+      --ok: #37d67a;
+      --bad: #ff6b6b;
+      --border: rgba(255, 255, 255, 0.12);
+      --shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(69, 208, 255, 0.16), transparent 30%),
+        radial-gradient(circle at 80% 90%, rgba(63, 140, 255, 0.15), transparent 30%),
+        linear-gradient(165deg, #070b17 0%, #0b1020 35%, #0f1730 100%);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .app {
+      width: min(1100px, 100%);
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(5px);
+    }
+
+    .header {
+      padding: 26px 28px 8px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(69, 208, 255, 0.08), rgba(63, 140, 255, 0.04));
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2.1vw, 1.9rem);
+      letter-spacing: 0.2px;
+    }
+
+    .header p {
+      margin: 10px 0 14px;
+      color: var(--muted);
+      font-size: 0.96rem;
+      line-height: 1.45;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 20px;
+      padding: 22px;
+    }
+
+    .panel,
+    .results,
+    .chart-wrap {
+      background: linear-gradient(170deg, var(--card), var(--card-2));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.94rem;
+    }
+
+    .value-chip {
+      font-size: 0.83rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent-2);
+      cursor: pointer;
+    }
+
+    .num-input {
+      width: 100%;
+      margin-top: 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(8, 12, 24, 0.95);
+      color: var(--text);
+      padding: 9px 10px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .num-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(69, 208, 255, 0.2);
+    }
+
+    .right {
+      display: grid;
+      grid-template-rows: auto auto;
+      gap: 16px;
+    }
+
+    .results {
+      padding: 16px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .card {
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card .k {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 6px;
+    }
+
+    .card .v {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .status {
+      margin-top: 12px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      text-align: center;
+    }
+
+    .status.ok {
+      color: #d9ffe8;
+      background: rgba(55, 214, 122, 0.2);
+      border-color: rgba(55, 214, 122, 0.5);
+    }
+
+    .status.bad {
+      color: #ffe4e4;
+      background: rgba(255, 107, 107, 0.2);
+      border-color: rgba(255, 107, 107, 0.5);
+    }
+
+    .chart-wrap {
+      padding: 14px;
+    }
+
+    .chart-title {
+      margin: 0 0 8px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    canvas {
+      width: 100%;
+      height: 255px;
+      display: block;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    .hint {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 940px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+    <a href="/FireSWR" class="home-button">🏠 Home</a>
+  <main class="app">
+    <section class="header">
+      <h1>Simulatore rendimento reale BTP Italia</h1>
+      <p>
+        Simulazione semplificata con tassazione del 12.5% su cedola+rivalutazione e contributo annualizzato del prezzo di acquisto.
+      </p>
+    </section>
+
+    <section class="grid">
+      <section class="panel">
+        <div class="field">
+          <div class="label-row">
+            <label for="cedolaRange">Cedola annua (%)</label>
+            <span class="value-chip" id="cedolaVal"></span>
+          </div>
+          <input id="cedolaRange" type="range" min="0" max="6" step="0.05" value="1.85" oninput="syncRangeInput('cedola')" />
+          <input id="cedolaInput" class="num-input" type="number" min="0" max="20" step="0.05" value="1.85" oninput="syncInputRange('cedola')" />
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label for="inflazioneRange">Inflazione annua simulata (%)</label>
+            <span class="value-chip" id="inflazioneVal"></span>
+          </div>
+          <input id="inflazioneRange" type="range" min="-2" max="12" step="0.1" value="2.2" oninput="syncRangeInput('inflazione')" />
+          <input id="inflazioneInput" class="num-input" type="number" min="-10" max="30" step="0.1" value="2.2" oninput="syncInputRange('inflazione')" />
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label for="prezzoRange">Prezzo di acquisto (centesimi)</label>
+            <span class="value-chip" id="prezzoVal"></span>
+          </div>
+          <input id="prezzoRange" type="range" min="80" max="120" step="0.1" value="100" oninput="syncRangeInput('prezzo')" />
+          <input id="prezzoInput" class="num-input" type="number" min="50" max="150" step="0.1" value="100" oninput="syncInputRange('prezzo')" />
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label for="scadenzaInput">Anno di scadenza BTP Italia</label>
+            <span class="value-chip" id="anniResiduiVal"></span>
+          </div>
+          <input id="scadenzaInput" class="num-input" type="number" min="2026" max="2100" step="1" value="2032" oninput="updateAll()" />
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label for="annoInput">Anno attuale</label>
+            <span class="value-chip" id="annoSistemaVal"></span>
+          </div>
+          <input id="annoInput" class="num-input" type="number" min="2000" max="2100" step="1" oninput="updateAll()" />
+        </div>
+      </section>
+
+      <section class="right">
+        <section class="results">
+          <div class="cards">
+            <div class="card">
+              <div class="k">Rendimento netto reale annuo</div>
+              <div class="v" id="nettoReale"></div>
+            </div>
+            <div class="card">
+              <div class="k">Effetto prezzo annualizzato</div>
+              <div class="v" id="effettoPrezzo"></div>
+            </div>
+            <div class="card">
+              <div class="k">Rendimento totale reale finale</div>
+              <div class="v" id="totaleFinale"></div>
+            </div>
+            <div class="card">
+              <div class="k">Break-even inflazione</div>
+              <div class="v" id="breakEven"></div>
+            </div>
+          </div>
+          <div class="status" id="statusMsg"></div>
+        </section>
+
+        <section class="chart-wrap">
+          <p class="chart-title">Relazione inflazione simulata - rendimento reale finale</p>
+          <canvas id="yieldChart" width="700" height="255"></canvas>
+          <div class="hint">Linea verticale: inflazione selezionata. Linea orizzontale: rendimento reale 0%.</div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const TAX_FACTOR = 0.875;
+
+    const ids = {
+      cedola: { range: "cedolaRange", input: "cedolaInput", val: "cedolaVal", unit: "%" },
+      inflazione: { range: "inflazioneRange", input: "inflazioneInput", val: "inflazioneVal", unit: "%" },
+      prezzo: { range: "prezzoRange", input: "prezzoInput", val: "prezzoVal", unit: "" }
+    };
+
+    const els = {
+      annoInput: document.getElementById("annoInput"),
+      scadenzaInput: document.getElementById("scadenzaInput"),
+      anniResiduiVal: document.getElementById("anniResiduiVal"),
+      annoSistemaVal: document.getElementById("annoSistemaVal"),
+      nettoReale: document.getElementById("nettoReale"),
+      effettoPrezzo: document.getElementById("effettoPrezzo"),
+      totaleFinale: document.getElementById("totaleFinale"),
+      breakEven: document.getElementById("breakEven"),
+      statusMsg: document.getElementById("statusMsg"),
+      chart: document.getElementById("yieldChart")
+    };
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function getNum(id) {
+      return parseFloat(document.getElementById(id).value) || 0;
+    }
+
+    function formatPct(v) {
+      const sign = v > 0 ? "+" : "";
+      return `${sign}${v.toFixed(3)}%`;
+    }
+
+    function syncRangeInput(name) {
+      const m = ids[name];
+      document.getElementById(m.input).value = document.getElementById(m.range).value;
+      updateAll();
+    }
+
+    function syncInputRange(name) {
+      const m = ids[name];
+      const rangeEl = document.getElementById(m.range);
+      const inputEl = document.getElementById(m.input);
+      const val = clamp(parseFloat(inputEl.value) || 0, parseFloat(rangeEl.min), parseFloat(rangeEl.max));
+      rangeEl.value = val;
+      inputEl.value = val;
+      updateAll();
+    }
+
+    // Rendimento reale finale in funzione dell'inflazione, mantenendo fissi gli altri input.
+    function totalRealForInflation(infl, cedola, prezzo, anniResidui) {
+      const nettoReale = (cedola + infl) * TAX_FACTOR - infl;
+      const effettoPrezzo = (100 - prezzo) / anniResidui;
+      return nettoReale + effettoPrezzo;
+    }
+
+    function drawChart(currentInfl, cedola, prezzo, anniResidui) {
+      const ctx = els.chart.getContext("2d");
+      const w = els.chart.width;
+      const h = els.chart.height;
+
+      const padding = { l: 52, r: 20, t: 14, b: 34 };
+      const xMin = -2;
+      const xMax = 12;
+      const step = 0.2;
+
+      const points = [];
+      for (let x = xMin; x <= xMax + 1e-9; x += step) {
+        points.push({ x, y: totalRealForInflation(x, cedola, prezzo, anniResidui) });
+      }
+
+      const yValues = points.map(p => p.y).concat([0]);
+      let yMin = Math.min(...yValues);
+      let yMax = Math.max(...yValues);
+      const pad = Math.max(0.6, (yMax - yMin) * 0.18);
+      yMin -= pad;
+      yMax += pad;
+
+      const plotW = w - padding.l - padding.r;
+      const plotH = h - padding.t - padding.b;
+
+      const toX = v => padding.l + ((v - xMin) / (xMax - xMin)) * plotW;
+      const toY = v => padding.t + (1 - (v - yMin) / (yMax - yMin)) * plotH;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Background.
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "rgba(69,208,255,0.08)");
+      grad.addColorStop(1, "rgba(63,140,255,0.02)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Grid.
+      ctx.strokeStyle = "rgba(255,255,255,0.08)";
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 7; i++) {
+        const x = padding.l + (i / 7) * plotW;
+        ctx.beginPath();
+        ctx.moveTo(x, padding.t);
+        ctx.lineTo(x, padding.t + plotH);
+        ctx.stroke();
+      }
+      for (let i = 0; i <= 5; i++) {
+        const y = padding.t + (i / 5) * plotH;
+        ctx.beginPath();
+        ctx.moveTo(padding.l, y);
+        ctx.lineTo(padding.l + plotW, y);
+        ctx.stroke();
+      }
+
+      // Axis zero line.
+      const yZero = toY(0);
+      ctx.strokeStyle = "rgba(255,107,107,0.8)";
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ctx.moveTo(padding.l, yZero);
+      ctx.lineTo(padding.l + plotW, yZero);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Curve.
+      ctx.strokeStyle = "#45d0ff";
+      ctx.lineWidth = 2.3;
+      ctx.beginPath();
+      points.forEach((p, i) => {
+        const x = toX(p.x);
+        const y = toY(p.y);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Current inflation marker.
+      const currentY = totalRealForInflation(currentInfl, cedola, prezzo, anniResidui);
+      const mx = toX(currentInfl);
+      const my = toY(currentY);
+
+      ctx.strokeStyle = "rgba(55,214,122,0.9)";
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(mx, padding.t);
+      ctx.lineTo(mx, padding.t + plotH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "#37d67a";
+      ctx.beginPath();
+      ctx.arc(mx, my, 4.3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Labels.
+      ctx.fillStyle = "#97a3c7";
+      ctx.font = "12px Segoe UI";
+      ctx.textAlign = "center";
+      for (let i = 0; i <= 7; i++) {
+        const v = xMin + (i / 7) * (xMax - xMin);
+        ctx.fillText(`${v.toFixed(1)}%`, padding.l + (i / 7) * plotW, h - 11);
+      }
+
+      ctx.textAlign = "right";
+      for (let i = 0; i <= 5; i++) {
+        const v = yMax - (i / 5) * (yMax - yMin);
+        ctx.fillText(`${v.toFixed(1)}%`, padding.l - 8, padding.t + (i / 5) * plotH + 4);
+      }
+    }
+
+    function updateAll() {
+      const cedola = getNum(ids.cedola.input);
+      const inflazione = getNum(ids.inflazione.input);
+      const prezzo = getNum(ids.prezzo.input);
+      const scadenza = Math.round(getNum("scadenzaInput"));
+      const anno = Math.round(getNum("annoInput"));
+
+      const anniResidui = Math.max(1, scadenza - anno);
+
+      const rendimentoNominale = cedola + inflazione;
+      const rendimentoNettoNominale = rendimentoNominale * TAX_FACTOR;
+      const rendimentoNettoReale = rendimentoNettoNominale - inflazione;
+
+      // Contributo annualizzato del prezzo in punti percentuali.
+      const effettoPrezzo = (100 - prezzo) / anniResidui;
+      const totaleFinale = rendimentoNettoReale + effettoPrezzo;
+
+      // Break-even inflazione: risolve totaleFinale = 0.
+      // 0 = (cedola + i)*0.875 - i + effettoPrezzo => i = (cedola*0.875 + effettoPrezzo)/0.125
+      const breakEven = (cedola * TAX_FACTOR + effettoPrezzo) / (1 - TAX_FACTOR);
+
+      document.getElementById(ids.cedola.val).textContent = `${cedola.toFixed(2)}%`;
+      document.getElementById(ids.inflazione.val).textContent = `${inflazione.toFixed(2)}%`;
+      document.getElementById(ids.prezzo.val).textContent = `${prezzo.toFixed(2)}`;
+      els.anniResiduiVal.textContent = `${anniResidui} anni residui`;
+
+      els.nettoReale.textContent = formatPct(rendimentoNettoReale);
+      els.effettoPrezzo.textContent = formatPct(effettoPrezzo);
+      els.totaleFinale.textContent = formatPct(totaleFinale);
+      els.breakEven.textContent = `${breakEven.toFixed(3)}%`;
+
+      if (totaleFinale >= 0) {
+        els.statusMsg.className = "status ok";
+        els.statusMsg.textContent = "Rendimento reale netto positivo: il potere d'acquisto stimato cresce.";
+      } else {
+        els.statusMsg.className = "status bad";
+        els.statusMsg.textContent = "Rendimento reale netto negativo: il potere d'acquisto stimato si riduce.";
+      }
+
+      drawChart(inflazione, cedola, prezzo, anniResidui);
+    }
+
+    function init() {
+      const systemYear = new Date().getFullYear();
+      els.annoInput.value = systemYear;
+      els.annoSistemaVal.textContent = `default sistema: ${systemYear}`;
+
+      // Allineamento iniziale di range/input e primo calcolo.
+      Object.keys(ids).forEach(name => {
+        const m = ids[name];
+        document.getElementById(m.input).value = document.getElementById(m.range).value;
+      });
+
+      updateAll();
+    }
+
+    init();
+  </script>
+</body>
+</html>
