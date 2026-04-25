@@ -18,7 +18,7 @@
 
     <style>
         /* Stile per il grafico */
-        #xyleChart {
+        #wincChart {
             max-height: 500px;
             width: 100%;
         }
@@ -126,7 +126,7 @@
         </form>
         <!-- Grafico WINC vs SP500 -->
         <div class="chart-container">
-            <canvas id="xyleChart"></canvas>
+            <canvas id="wincChart"></canvas>
         </div>
         <p class="small text-muted mt-2 mb-0">Legenda:
         <ul style="list-style-type: none; padding-left: 0; line-height: 1;">
@@ -190,7 +190,7 @@
                     <div class="metric-card"
                         style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
                         <strong style="color: #3693eb; font-size: 0.95rem;">SWDA - Accumulo</strong>
-                        <div id="metrics-acwe" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                        <div id="metrics-swda" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
                             Calcolo in corso...</div>
                     </div>
                 </div>
@@ -206,7 +206,7 @@
                     <div class="metric-card"
                         style="background: linear-gradient(135deg, rgba(75,192,192,0.1) 0%, rgba(75,192,192,0.05) 100%); border-left: 4px solid rgba(75,192,192,0.8);">
                         <strong style="color: #20b2aa; font-size: 0.95rem;">SWDA - Con Vendite</strong>
-                        <div id="metrics-acwe-sold" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
+                        <div id="metrics-swda-sold" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
                             Calcolo in corso...</div>
                     </div>
                 </div>
@@ -267,15 +267,15 @@
                         style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
                         <strong style="color: #3693eb;">SWDA (con vendite) - Tax Metrics</strong>
                         <div class="metric-value" style="font-size: 0.9rem;">
-                            <div>Tax Drag: <span id="acweTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span>
+                            <div>Tax Drag: <span id="swdaTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span>
                             </div>
-                            <div>Tax Efficiency: <span id="acweTaxEff"
+                            <div>Tax Efficiency: <span id="swdaTaxEff"
                                     style="font-weight: bold; color: #28a745;">n/a</span></div>
                             <hr style="margin: 6px 0;">
-                            <div>Lordo: <span id="acweLordoTot" style="font-weight: bold;">0.00</span> €</div>
-                            <div>Netto: <span id="acweNettoTot" style="font-weight: bold; color: #3693eb;">0.00</span> €
+                            <div>Lordo: <span id="swdaLordoTot" style="font-weight: bold;">0.00</span> €</div>
+                            <div>Netto: <span id="swdaNettoTot" style="font-weight: bold; color: #3693eb;">0.00</span> €
                             </div>
-                            <div>Comm: <span id="acweCommissioniTot" style="font-weight: bold;">0.00</span>€</div>
+                            <div>Comm: <span id="swdaCommissioniTot" style="font-weight: bold;">0.00</span>€</div>
                         </div>
                     </div>
                 </div>
@@ -531,33 +531,33 @@
             const riskFreePercent = parseFloat(document.getElementById('riskFree').value);
             const riskFreeAnnual = !isNaN(riskFreePercent) ? (riskFreePercent / 100) : 0.005; // default 0.5% se non valido
             try {
-                const [xyleResp, csspxResp, distribuzioniResp] = await Promise.all([
+                const [wincResp, swdaResp, distribuzioniResp] = await Promise.all([
                     fetch('WINC.DE.json'),
                     fetch('SWDA.MI.json'),
                     fetch('Distribuzioni_WINC.txt')
                 ]);
 
-                if (!xyleResp.ok || !csspxResp.ok || !distribuzioniResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');
+                if (!wincResp.ok || !swdaResp.ok || !distribuzioniResp.ok) throw new Error('Impossibile caricare i file JSON o il file delle distribuzioni.');
 
-                let [xyleRaw, csspxRaw, distribuzioniRaw] = await Promise.all([
-                    xyleResp.json(),
-                    csspxResp.json(),
+                let [wincRaw, swdaRaw, distribuzioniRaw] = await Promise.all([
+                    wincResp.json(),
+                    swdaResp.json(),
                     distribuzioniResp.text()
                 ]);
 
                 const startDateInput = document.getElementById('startDate');
                 var startDateValue = startDateInput.value;
                 if (!startDateValue) {
-                    startDateInput.value = xyleRaw[0].Date;
+                    startDateInput.value = wincRaw[0].Date;
                 }
                 const startDate = startDateInput.value;
-                if (startDate > xyleRaw[xyleRaw.length - 1].Date) {
+                if (startDate > wincRaw[wincRaw.length - 1].Date) {
                     return;
                 }
 
                 // Filtra i dati in base alla data di inizio selezionata
-                xyleRaw = xyleRaw.filter(item => new Date(item.Date) >= new Date(startDate));
-                csspxRaw = csspxRaw.filter(item => new Date(item.Date) >= new Date(startDate));
+                wincRaw = wincRaw.filter(item => new Date(item.Date) >= new Date(startDate));
+                swdaRaw = swdaRaw.filter(item => new Date(item.Date) >= new Date(startDate));
 
                 let distribuzioni = [];
                 // Parsing distribuzioni
@@ -582,81 +582,80 @@
                     .filter(dist => new Date(dist.date) >= new Date(startDate)); // Rimuove eventuali null
 
                 // mappa data->valori
-                const mapXYLE = new Map();
-                xyleRaw.forEach(item => {
+                const mapWINC = new Map();
+                wincRaw.forEach(item => {
                     if (!item.Date) return;
-                    mapXYLE.set(item.Date, { adj: item.AdjClose ?? null, close: item.Close ?? null });
+                    mapWINC.set(item.Date, { adj: item.AdjClose ?? null, close: item.Close ?? null });
                 });
 
-                const mapCSSPX = new Map();
-                csspxRaw.forEach(item => {
+                const mapSWDA = new Map();
+                swdaRaw.forEach(item => {
                     if (!item.Date) return;
-                    mapCSSPX.set(item.Date, { adj: item.AdjClose ?? null });
+                    mapSWDA.set(item.Date, { adj: item.AdjClose ?? null });
                 });
 
 
 
                 // unione delle date
-                const dateSet = new Set([...mapXYLE.keys(), ...mapCSSPX.keys()]);
+                const dateSet = new Set([...mapWINC.keys(), ...mapSWDA.keys()]);
                 const labels = Array.from(dateSet).sort((a, b) => new Date(a) - new Date(b));
 
-                const csspxAdjSeries = [];
-                const xyleAdjSeries = [];
-                const xyleCloseSeries = [];
+                const wincAdjSeries = [];
+                const wincCloseSeries = [];
 
                 // Calcolo valore cumulativo
-                let csspxInitialPrice = mapCSSPX.size ? mapCSSPX.get([...mapCSSPX.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
-                let xyleAdjInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
-                let xyleCloseInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
+                let swdaInitialPrice = mapSWDA.size ? mapSWDA.get([...mapSWDA.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let wincAdjInitialPrice = mapWINC.size ? mapWINC.get([...mapWINC.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let wincCloseInitialPrice = mapWINC.size ? mapWINC.get([...mapWINC.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
 
-                const csspxCumulative = [];
-                const xyleAdjCumulative = [];
-                const xyleCloseCumulative = [];
-                const distribuzioniCSSPXVirtuali = [];
-                const csspxSharesSeries = [];
+                const swdaCumulative = [];
+                const wincAdjCumulative = [];
+                const wincCloseCumulative = [];
+                const distribuzioniSWDAVirtuali = [];
+                const swdaSharesSeries = [];
 
-                // Nuova serie CSSPX con vendite
-                const csspxAdjustedCumulative = [];
-                let csspxShares = modalita > 0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Calcola il numero iniziale di quote di CSSPX
-                const xyleShares = modalita > 0 ? initialCapital / xyleCloseInitialPrice : Math.floor(initialCapital / xyleCloseInitialPrice); // Calcola il numero iniziale di quote di XYLE
+                // Nuova serie SWDA con vendite
+                const swdaAdjustedCumulative = [];
+                let swdaShares = modalita > 0 ? initialCapital / swdaInitialPrice : Math.floor(initialCapital / swdaInitialPrice); // Calcola il numero iniziale di quote di SWDA
+                const wincShares = modalita > 0 ? initialCapital / wincCloseInitialPrice : Math.floor(initialCapital / wincCloseInitialPrice); // Calcola il numero iniziale di quote di WINC
 
                 labels.forEach(d => {
-                    const c = mapCSSPX.get(d);
-                    const x = mapXYLE.get(d);
+                    const c = mapSWDA.get(d);
+                    const x = mapWINC.get(d);
 
-                    const csspxAdj = c ? Number(c.adj) : null;
-                    const xyleAdj = x ? Number(x.adj) : null;
-                    const xyleClose = x ? Number(x.close) : null;
+                    const swdaAdj = c ? Number(c.adj) : null;
+                    const wincAdj = x ? Number(x.adj) : null;
+                    const wincClose = x ? Number(x.close) : null;
 
                     // Imposta i prezzi iniziali
-                    if (csspxAdj != null && csspxInitialPrice == null) csspxInitialPrice = csspxAdj;
-                    if (xyleAdj != null && xyleAdjInitialPrice == null) xyleAdjInitialPrice = xyleAdj;
-                    if (xyleClose != null && xyleCloseInitialPrice == null) xyleCloseInitialPrice = xyleClose;
+                    if (swdaAdj != null && swdaInitialPrice == null) swdaInitialPrice = swdaAdj;
+                    if (wincAdj != null && wincAdjInitialPrice == null) wincAdjInitialPrice = wincAdj;
+                    if (wincClose != null && wincCloseInitialPrice == null) wincCloseInitialPrice = wincClose;
 
                     // Calcola valore cumulativo
-                    csspxCumulative.push(csspxInitialPrice != null && csspxAdj != null ? (initialCapital / csspxInitialPrice) * csspxAdj : null);
-                    xyleAdjCumulative.push(xyleAdjInitialPrice != null && xyleAdj != null ? (initialCapital / xyleAdjInitialPrice) * xyleAdj : null);
-                    xyleCloseCumulative.push(xyleCloseInitialPrice != null && xyleClose != null ? (initialCapital / xyleCloseInitialPrice) * xyleClose : null);
+                    swdaCumulative.push(swdaInitialPrice != null && swdaAdj != null ? (initialCapital / swdaInitialPrice) * swdaAdj : null);
+                    wincAdjCumulative.push(wincAdjInitialPrice != null && wincAdj != null ? (initialCapital / wincAdjInitialPrice) * wincAdj : null);
+                    wincCloseCumulative.push(wincCloseInitialPrice != null && wincClose != null ? (initialCapital / wincCloseInitialPrice) * wincClose : null);
                 });
 
-                // Calcolo serie con vendite CSSPX
-                csspxShares = modalita > 0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Reset numero quote CSSPX
+                // Calcolo serie con vendite SWDA
+                swdaShares = modalita > 0 ? initialCapital / swdaInitialPrice : Math.floor(initialCapital / swdaInitialPrice); // Reset numero quote SWDA
                 labels.forEach(d => {
-                    const c = mapCSSPX.get(d);
-                    const x = mapXYLE.get(d);
+                    const c = mapSWDA.get(d);
+                    const x = mapWINC.get(d);
 
-                    const csspxAdj = c ? Number(c.adj) : null;
-                    const xyleAdj = x ? Number(x.adj) : null;
-                    const xyleClose = x ? Number(x.close) : null;
+                    const swdaAdj = c ? Number(c.adj) : null;
+                    const wincAdj = x ? Number(x.adj) : null;
+                    const wincClose = x ? Number(x.close) : null;
 
-                    // Calcola dividendo totale di XYLE in questa data
+                    // Calcola dividendo totale di WINC in questa data
                     const distribuzione = distribuzioni.find(dist => dist.date === d);
-                    if (distribuzione && csspxAdj != null) {
-                        const totalDividend = distribuzione.amount * xyleShares; // Dividendo totale
-                        const sharesToSell = modalita > 0 ? (totalDividend / csspxAdj) : Math.ceil(totalDividend / csspxAdj);
-                        csspxShares -= sharesToSell; // Aggiorna il numero di quote di CSSPX
+                    if (distribuzione && swdaAdj != null) {
+                        const totalDividend = distribuzione.amount * wincShares; // Dividendo totale
+                        const sharesToSell = modalita > 0 ? (totalDividend / swdaAdj) : Math.ceil(totalDividend / swdaAdj);
+                        swdaShares -= sharesToSell; // Aggiorna il numero di quote di SWDA
                         // Calcola commissione in euro: o flat per operazione, o percentuale sul valore della vendita
-                        const saleValue = sharesToSell * csspxAdj;
+                        const saleValue = sharesToSell * swdaAdj;
                         let commissionPerSale = 0;
                         if (sellCommissionType === 'percent') {
                             commissionPerSale = (sellCommissionPercent / 100) * saleValue;
@@ -668,39 +667,39 @@
                         } else {
                             commissionPerSale = sellCommission;
                         }
-                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: saleValue, xyle_value: xyleClose, commission: commissionPerSale }); // Valore vendite
+                        distribuzioniSWDAVirtuali.push({ date: d, num_stock_selled: sharesToSell, swdaValueAtDate: swdaAdj, amount: saleValue, winc_value: wincClose, commission: commissionPerSale }); // Valore vendite
                     }
 
-                    csspxSharesSeries.push(csspxShares);
-                    csspxAdjustedCumulative.push(csspxAdj != null ? csspxShares * csspxAdj : null);
+                    swdaSharesSeries.push(swdaShares);
+                    swdaAdjustedCumulative.push(swdaAdj != null ? swdaShares * swdaAdj : null);
                 });
 
                 // Andamento "totale netto disponibile":
                 // capitale liquidabile netto tasse su plusvalenza + flussi netti distribuiti non reinvestiti.
                 const wincNetDistribByDate = new Map();
-                const acweNetDistribByDate = new Map();
+                const swdaSoldNetDistribByDate = new Map();
                 for (const dist of distribuzioni) {
-                    const lordoWinc = dist.amount * xyleShares;
-                    const nettoWinc = lordoWinc * 0.74;
-                    wincNetDistribByDate.set(dist.date, nettoWinc);
+                    const lordoWINC = dist.amount * wincShares;
+                    const nettoWINC = lordoWINC * 0.74;
+                    wincNetDistribByDate.set(dist.date, nettoWINC);
                 }
-                for (const distAcwe of distribuzioniCSSPXVirtuali) {
-                    const plusvalenzaPerQuota = distAcwe.csspxValueAtDate - csspxInitialPrice;
-                    const totalePlusvalenza = plusvalenzaPerQuota > 0 ? plusvalenzaPerQuota * distAcwe.num_stock_selled : 0;
-                    const taxableGain = Math.max(0, totalePlusvalenza - (distAcwe.commission || 0));
+                for (const distSwdaSold of distribuzioniSWDAVirtuali) {
+                    const plusvalenzaPerQuota = distSwdaSold.swdaValueAtDate - swdaInitialPrice;
+                    const totalePlusvalenza = plusvalenzaPerQuota > 0 ? plusvalenzaPerQuota * distSwdaSold.num_stock_selled : 0;
+                    const taxableGain = Math.max(0, totalePlusvalenza - (distSwdaSold.commission || 0));
                     const tassePagate = taxableGain * 0.26;
-                    const nettoAcwe = distAcwe.amount - tassePagate - (distAcwe.commission || 0);
-                    acweNetDistribByDate.set(distAcwe.date, nettoAcwe);
+                    const nettoSwdaSold = distSwdaSold.amount - tassePagate - (distSwdaSold.commission || 0);
+                    swdaSoldNetDistribByDate.set(distSwdaSold.date, nettoSwdaSold);
                 }
 
                 const wincNetAvailabilitySeries = [];
-                const acweNetAvailabilitySeries = [];
+                const swdaSoldNetAvailabilitySeries = [];
                 const wincNetCapitalSeries = [];
-                const acweNetCapitalSeries = [];
+                const swdaSoldNetCapitalSeries = [];
                 const wincNetFlowsSeries = [];
-                const acweNetFlowsSeries = [];
+                const swdaSoldNetFlowsSeries = [];
                 let wincNetDistribCumulati = 0;
-                let acweNetDistribCumulati = 0;
+                let swdaSoldNetDistribCumulati = 0;
 
                 const calcTaxOnGain = (priceNow, priceLoad, sharesNow) => {
                     if (priceNow == null || priceLoad == null || sharesNow == null) return null;
@@ -709,18 +708,18 @@
                 };
 
                 labels.forEach((d, idx) => {
-                    const c = mapCSSPX.get(d);
-                    const x = mapXYLE.get(d);
-                    const csspxAdj = c ? Number(c.adj) : null;
-                    const xyleClose = x ? Number(x.close) : null;
-                    const acweSharesNow = csspxSharesSeries[idx];
+                    const c = mapSWDA.get(d);
+                    const x = mapWINC.get(d);
+                    const swdaAdj = c ? Number(c.adj) : null;
+                    const wincClose = x ? Number(x.close) : null;
+                    const swdaSoldSharesNow = swdaSharesSeries[idx];
 
                     wincNetDistribCumulati += (wincNetDistribByDate.get(d) || 0);
-                    acweNetDistribCumulati += (acweNetDistribByDate.get(d) || 0);
+                    swdaSoldNetDistribCumulati += (swdaSoldNetDistribByDate.get(d) || 0);
 
-                    if (xyleClose != null) {
-                        const wincLordoLiquidabile = xyleShares * xyleClose;
-                        const wincTaxLiquidazione = calcTaxOnGain(xyleClose, xyleCloseInitialPrice, xyleShares);
+                    if (wincClose != null) {
+                        const wincLordoLiquidabile = wincShares * wincClose;
+                        const wincTaxLiquidazione = calcTaxOnGain(wincClose, wincCloseInitialPrice, wincShares);
                         const wincNettoLiquidabile = wincTaxLiquidazione == null ? null : (wincLordoLiquidabile - wincTaxLiquidazione);
                         wincNetCapitalSeries.push(wincNettoLiquidabile == null ? null : Number(wincNettoLiquidabile.toFixed(2)));
                         wincNetFlowsSeries.push(Number(wincNetDistribCumulati.toFixed(2)));
@@ -731,17 +730,17 @@
                         wincNetAvailabilitySeries.push(null);
                     }
 
-                    if (csspxAdj != null && acweSharesNow != null) {
-                        const acweLordoLiquidabile = acweSharesNow * csspxAdj;
-                        const acweTaxLiquidazione = calcTaxOnGain(csspxAdj, csspxInitialPrice, acweSharesNow);
-                        const acweNettoLiquidabile = acweTaxLiquidazione == null ? null : (acweLordoLiquidabile - acweTaxLiquidazione);
-                        acweNetCapitalSeries.push(acweNettoLiquidabile == null ? null : Number(acweNettoLiquidabile.toFixed(2)));
-                        acweNetFlowsSeries.push(Number(acweNetDistribCumulati.toFixed(2)));
-                        acweNetAvailabilitySeries.push(acweNettoLiquidabile == null ? null : Number((acweNettoLiquidabile + acweNetDistribCumulati).toFixed(2)));
+                    if (swdaAdj != null && swdaSoldSharesNow != null) {
+                        const swdaSoldLordoLiquidabile = swdaSoldSharesNow * swdaAdj;
+                        const swdaSoldTaxLiquidazione = calcTaxOnGain(swdaAdj, swdaInitialPrice, swdaSoldSharesNow);
+                        const swdaSoldNettoLiquidabile = swdaSoldTaxLiquidazione == null ? null : (swdaSoldLordoLiquidabile - swdaSoldTaxLiquidazione);
+                        swdaSoldNetCapitalSeries.push(swdaSoldNettoLiquidabile == null ? null : Number(swdaSoldNettoLiquidabile.toFixed(2)));
+                        swdaSoldNetFlowsSeries.push(Number(swdaSoldNetDistribCumulati.toFixed(2)));
+                        swdaSoldNetAvailabilitySeries.push(swdaSoldNettoLiquidabile == null ? null : Number((swdaSoldNettoLiquidabile + swdaSoldNetDistribCumulati).toFixed(2)));
                     } else {
-                        acweNetCapitalSeries.push(null);
-                        acweNetFlowsSeries.push(Number(acweNetDistribCumulati.toFixed(2)));
-                        acweNetAvailabilitySeries.push(null);
+                        swdaSoldNetCapitalSeries.push(null);
+                        swdaSoldNetFlowsSeries.push(Number(swdaSoldNetDistribCumulati.toFixed(2)));
+                        swdaSoldNetAvailabilitySeries.push(null);
                     }
                 });
 
@@ -772,33 +771,33 @@
                 });
 
 
-                populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali);
-                renderNetAvailabilityChart(labels, wincNetAvailabilitySeries, acweNetAvailabilitySeries);
+                populateDividendiTable(distribuzioni, wincShares, swdaShares, swdaInitialPrice, mapSWDA, distribuzioniSWDAVirtuali);
+                renderNetAvailabilityChart(labels, wincNetAvailabilitySeries, swdaSoldNetAvailabilitySeries);
                 updateNetBreakdownTable(
                     wincNetFlowsSeries,
-                    acweNetFlowsSeries,
+                    swdaSoldNetFlowsSeries,
                     wincNetCapitalSeries,
-                    acweNetCapitalSeries,
+                    swdaSoldNetCapitalSeries,
                     wincNetAvailabilitySeries,
-                    acweNetAvailabilitySeries
+                    swdaSoldNetAvailabilitySeries
                 );
 
 
 
-                const ctx = document.getElementById('xyleChart').getContext('2d');
+                const ctx = document.getElementById('wincChart').getContext('2d');
                 // distrugge eventuale chart precedente
-                if (window._xyleChart) {
-                    window._xyleChart.destroy();
+                if (window._wincChart) {
+                    window._wincChart.destroy();
                 }
 
-                window._xyleChart = new Chart(ctx, {
+                window._wincChart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: labels,
                         datasets: [
                             {
                                 label: '(SWDA) - Accumulo',
-                                data: csspxCumulative,
+                                data: swdaCumulative,
                                 borderColor: 'rgba(54, 162, 235, 1)',
                                 backgroundColor: 'rgba(54, 162, 235, 0.1)',
                                 spanGaps: true,
@@ -808,7 +807,7 @@
                             },
                             {
                                 label: 'WINC - Accumulo (reinvestimento dividendi lordi)',
-                                data: xyleAdjCumulative,
+                                data: wincAdjCumulative,
                                 borderColor: 'rgba(40, 167, 69, 1)',
                                 backgroundColor: 'rgba(40, 167, 69, 0.1)',
                                 spanGaps: true,
@@ -818,7 +817,7 @@
                             },
                             {
                                 label: 'WINC - Distribuzione (senza reinvestimento dividendi)',
-                                data: xyleCloseCumulative,
+                                data: wincCloseCumulative,
                                 borderColor: 'rgba(255, 159, 64, 1)',
                                 backgroundColor: 'rgba(255, 159, 64, 0.08)',
                                 spanGaps: true,
@@ -828,7 +827,7 @@
                             },
                             {
                                 label: 'SWDA (con vendite equivalenti ai dividendi WINC)',
-                                data: csspxAdjustedCumulative,
+                                data: swdaAdjustedCumulative,
                                 borderColor: 'rgba(75, 192, 192, 1)',
                                 backgroundColor: 'rgba(75, 192, 192, 0.1)',
                                 spanGaps: true,
@@ -986,24 +985,24 @@
                     return (x * 100).toFixed(2) + '%';
                 }
 
-                const mAcwe = computeMetrics(csspxCumulative, labels, riskFreeAnnual);
-                const mAcweSold = computeMetrics(csspxAdjustedCumulative, labels, riskFreeAnnual);
-                const mWinc = computeMetrics(xyleAdjCumulative, labels, riskFreeAnnual);
-                const mWincNetto = computeMetrics(xyleCloseCumulative, labels, riskFreeAnnual);
+                const mSwda = computeMetrics(swdaCumulative, labels, riskFreeAnnual);
+                const mSwdaSold = computeMetrics(swdaAdjustedCumulative, labels, riskFreeAnnual);
+                const mWinc = computeMetrics(wincAdjCumulative, labels, riskFreeAnnual);
+                const mWincNetto = computeMetrics(wincCloseCumulative, labels, riskFreeAnnual);
 
-                document.getElementById('metrics-acwe').innerText =
-                    `Dev.std (ann): ${fmt(mAcwe.stdAnn)}
-Sharpe (ann): ${isNaN(mAcwe.sharpe) ? 'n/a' : mAcwe.sharpe.toFixed(3)}
-Sharpe (periodale): ${isNaN(mAcwe.periodSharpe) ? 'n/a' : mAcwe.periodSharpe.toFixed(3)}
-Sortino (ann): ${isNaN(mAcwe.sortino) ? 'n/a' : mAcwe.sortino.toFixed(3)}
-Sortino (periodale): ${isNaN(mAcwe.periodSortino) ? 'n/a' : mAcwe.periodSortino.toFixed(3)}`;
+                document.getElementById('metrics-swda').innerText =
+                    `Dev.std (ann): ${fmt(mSwda.stdAnn)}
+Sharpe (ann): ${isNaN(mSwda.sharpe) ? 'n/a' : mSwda.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mSwda.periodSharpe) ? 'n/a' : mSwda.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mSwda.sortino) ? 'n/a' : mSwda.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mSwda.periodSortino) ? 'n/a' : mSwda.periodSortino.toFixed(3)}`;
 
-                document.getElementById('metrics-acwe-sold').innerText =
-                    `Dev.std (ann): ${fmt(mAcweSold.stdAnn)}
-Sharpe (ann): ${isNaN(mAcweSold.sharpe) ? 'n/a' : mAcweSold.sharpe.toFixed(3)}
-Sharpe (periodale): ${isNaN(mAcweSold.periodSharpe) ? 'n/a' : mAcweSold.periodSharpe.toFixed(3)}
-Sortino (ann): ${isNaN(mAcweSold.sortino) ? 'n/a' : mAcweSold.sortino.toFixed(3)}
-Sortino (periodale): ${isNaN(mAcweSold.periodSortino) ? 'n/a' : mAcweSold.periodSortino.toFixed(3)}`;
+                document.getElementById('metrics-swda-sold').innerText =
+                    `Dev.std (ann): ${fmt(mSwdaSold.stdAnn)}
+Sharpe (ann): ${isNaN(mSwdaSold.sharpe) ? 'n/a' : mSwdaSold.sharpe.toFixed(3)}
+Sharpe (periodale): ${isNaN(mSwdaSold.periodSharpe) ? 'n/a' : mSwdaSold.periodSharpe.toFixed(3)}
+Sortino (ann): ${isNaN(mSwdaSold.sortino) ? 'n/a' : mSwdaSold.sortino.toFixed(3)}
+Sortino (periodale): ${isNaN(mSwdaSold.periodSortino) ? 'n/a' : mSwdaSold.periodSortino.toFixed(3)}`;
 
                 document.getElementById('metrics-winc').innerText =
                     `Dev.std (ann): ${fmt(mWinc.stdAnn)}
@@ -1029,7 +1028,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
             }
         }
 
-        function renderNetAvailabilityChart(labels, wincSeries, acweSeries) {
+        function renderNetAvailabilityChart(labels, wincSeries, swdaSoldSeries) {
             const canvas = document.getElementById('netAvailabilityChart');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
@@ -1053,7 +1052,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                         },
                         {
                             label: 'SWDA: capitale netto + distribuzioni nette',
-                            data: acweSeries,
+                            data: swdaSoldSeries,
                             borderColor: 'rgba(54, 162, 235, 1)',
                             backgroundColor: 'rgba(54, 162, 235, 0.12)',
                             spanGaps: true,
@@ -1096,7 +1095,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
             });
         }
 
-        function updateNetBreakdownTable(wincFlows, acweFlows, wincCapital, acweCapital, wincTotal, acweTotal) {
+        function updateNetBreakdownTable(wincFlows, swdaSoldFlows, wincCapital, swdaSoldCapital, wincTotal, swdaSoldTotal) {
             const lastValid = (arr) => {
                 for (let i = arr.length - 1; i >= 0; i--) {
                     if (arr[i] != null && !isNaN(arr[i])) return Number(arr[i]);
@@ -1117,30 +1116,30 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
             };
 
             const wFlow = lastValid(wincFlows);
-            const aFlow = lastValid(acweFlows);
+            const sFlow = lastValid(swdaSoldFlows);
             const wCap = lastValid(wincCapital);
-            const aCap = lastValid(acweCapital);
+            const sCap = lastValid(swdaSoldCapital);
             const wTot = lastValid(wincTotal);
-            const aTot = lastValid(acweTotal);
+            const sTot = lastValid(swdaSoldTotal);
 
             setText('nb-flow-winc', fmtEuro(wFlow));
-            setText('nb-flow-acwe', fmtEuro(aFlow));
-            setText('nb-flow-diff', fmtDelta((aFlow == null || wFlow == null) ? null : (aFlow - wFlow)));
+            setText('nb-flow-swda-sold', fmtEuro(sFlow));
+            setText('nb-flow-diff', fmtDelta((sFlow == null || wFlow == null) ? null : (sFlow - wFlow)));
 
             setText('nb-cap-winc', fmtEuro(wCap));
-            setText('nb-cap-acwe', fmtEuro(aCap));
-            setText('nb-cap-diff', fmtDelta((aCap == null || wCap == null) ? null : (aCap - wCap)));
+            setText('nb-cap-swda-sold', fmtEuro(sCap));
+            setText('nb-cap-diff', fmtDelta((sCap == null || wCap == null) ? null : (sCap - wCap)));
 
             setText('nb-tot-winc', fmtEuro(wTot));
-            setText('nb-tot-acwe', fmtEuro(aTot));
-            setText('nb-tot-diff', fmtDelta((aTot == null || wTot == null) ? null : (aTot - wTot)));
+            setText('nb-tot-swda-sold', fmtEuro(sTot));
+            setText('nb-tot-diff', fmtDelta((sTot == null || wTot == null) ? null : (sTot - wTot)));
         }
 
-        function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali) {
+        function populateDividendiTable(distribuzioni, wincShares, swdaShares, swdaInitialPrice, mapSWDA, distribuzioniSWDAVirtuali) {
             const tableBody = document.getElementById('dividendiTableBody');
             tableBody.innerHTML = '';
-            let sommaNettiXyle = 0;
-            let sommaLordoXyle = 0;
+            let sommaNettiWinc = 0;
+            let sommaLordoWinc = 0;
             let sommaNettiSp500 = 0;
             let sommaLordiSp500 = 0;
             let sommaDifferenza = 0;
@@ -1153,22 +1152,22 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
 
             distribuzioni.forEach(dist => {
                 const { date, amount } = dist;
-                const distribuzioneCSSPX = distribuzioniCSSPXVirtuali.find(d => d.date === date);
-                // Calcolo dividendi XYLE
-                const lordoXYLE = amount * xyleShares;
-                const nettoXYLE = lordoXYLE * 0.74; // Tassazione 26%
-                sommaLordoXyle += lordoXYLE;
+                const distribuzioneSwdaSold = distribuzioniSWDAVirtuali.find(d => d.date === date);
+                // Calcolo dividendi WINC
+                const lordoWINC = amount * wincShares;
+                const nettoWINC = lordoWINC * 0.74; // Tassazione 26%
+                sommaLordoWinc += lordoWINC;
                 // push per grafico
                 chartLabels.push(date);
-                nettoWincSeries.push(Number(nettoXYLE.toFixed(2)));
+                nettoWincSeries.push(Number(nettoWINC.toFixed(2)));
                 // percentuale basata sul valore dell'ETF directly (dati già in euro)
-                const percentualeDist = (nettoXYLE / xyleShares / distribuzioneCSSPX.xyle_value) * 100;
-                const quoteSp500Vendute = distribuzioneCSSPX ? distribuzioneCSSPX.num_stock_selled : 0;
-                const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
-                const commission = distribuzioneCSSPX ? (distribuzioneCSSPX.commission || 0) : 0;
+                const percentualeDist = (nettoWINC / wincShares / distribuzioneSwdaSold.winc_value) * 100;
+                const quoteSwdaVendute = distribuzioneSwdaSold ? distribuzioneSwdaSold.num_stock_selled : 0;
+                const lordoVenduto = distribuzioneSwdaSold ? distribuzioneSwdaSold.amount : 0;
+                const commission = distribuzioneSwdaSold ? (distribuzioneSwdaSold.commission || 0) : 0;
                 // Calcolo plusvalenza tassabile: (prezzo vendita - prezzo carico) * n_quote - commissioni
-                const plusvalenzaPerQuota = distribuzioneCSSPX ? (distribuzioneCSSPX.csspxValueAtDate - csspxInitialPrice) : 0;
-                const totalePlusvalenza = (plusvalenzaPerQuota > 0 && distribuzioneCSSPX) ? plusvalenzaPerQuota * distribuzioneCSSPX.num_stock_selled : 0;
+                const plusvalenzaPerQuota = distribuzioneSwdaSold ? (distribuzioneSwdaSold.swdaValueAtDate - swdaInitialPrice) : 0;
+                const totalePlusvalenza = (plusvalenzaPerQuota > 0 && distribuzioneSwdaSold) ? plusvalenzaPerQuota * distribuzioneSwdaSold.num_stock_selled : 0;
                 const taxableGain = Math.max(0, totalePlusvalenza - commission);
                 const tassePagate = taxableGain * 0.26;
                 const nettoSp500 = lordoVenduto - tassePagate - commission;
@@ -1179,18 +1178,18 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                 const row = document.createElement('tr');
                 row.innerHTML = `
                         <td>${date}</td>
-                        <td>${lordoXYLE.toFixed(2)}</td>                        
-                        <td>${nettoXYLE.toFixed(2)} Tasse: 26% (=${percentualeDist.toFixed(2)}%)</td>                        
-                        <td>${quoteSp500Vendute}</td>
+                        <td>${lordoWINC.toFixed(2)}</td>                        
+                        <td>${nettoWINC.toFixed(2)} Tasse: 26% (=${percentualeDist.toFixed(2)}%)</td>                        
+                        <td>${quoteSwdaVendute}</td>
                         <td>${lordoVenduto.toFixed(2)}</td>
                         <td>${nettoSp500.toFixed(2)} Tasse: ${percentualeTasse.toFixed(2)}% Comm: ${commission.toFixed(2)}€</td>
-                        <td>${(nettoSp500 - nettoXYLE).toFixed(2)}  (${(((nettoSp500 - nettoXYLE) / nettoXYLE) * 100).toFixed(2)}%)</td>
+                        <td>${(nettoSp500 - nettoWINC).toFixed(2)}  (${(((nettoSp500 - nettoWINC) / nettoWINC) * 100).toFixed(2)}%)</td>
                     `;
                 tableBody.appendChild(row);
-                sommaDifferenza += nettoSp500 - nettoXYLE;
+                sommaDifferenza += nettoSp500 - nettoWINC;
                 sommaNettiSp500 += nettoSp500;
                 sommaLordiSp500 += lordoVenduto;
-                sommaNettiXyle += nettoXYLE;
+                sommaNettiWinc += nettoWINC;
                 sommaCommissioni += commission;
             });
 
@@ -1198,32 +1197,32 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
             tableFoot.innerHTML = '';
             const row = document.createElement('tr');
             // Calcola Tax Drag e Tax Efficiency per le due strategie
-            const taxDragWinc = sommaLordoXyle > 0 ? (sommaLordoXyle - sommaNettiXyle) / sommaLordoXyle : NaN;
-            const taxEffWinc = sommaLordoXyle > 0 ? sommaNettiXyle / sommaLordoXyle : NaN;
+            const taxDragWinc = sommaLordoWinc > 0 ? (sommaLordoWinc - sommaNettiWinc) / sommaLordoWinc : NaN;
+            const taxEffWinc = sommaLordoWinc > 0 ? sommaNettiWinc / sommaLordoWinc : NaN;
 
-            const taxDragAcwe = sommaLordiSp500 > 0 ? (sommaLordiSp500 - sommaNettiSp500) / sommaLordiSp500 : NaN;
-            const taxEffAcwe = sommaLordiSp500 > 0 ? sommaNettiSp500 / sommaLordiSp500 : NaN;
+            const taxDragSwdaSold = sommaLordiSp500 > 0 ? (sommaLordiSp500 - sommaNettiSp500) / sommaLordiSp500 : NaN;
+            const taxEffSwdaSold = sommaLordiSp500 > 0 ? sommaNettiSp500 / sommaLordiSp500 : NaN;
 
             // Aggiorna i campi delle card statiche (non ricrearle dinamicamente)
             const setText = (id, text) => { const el = document.getElementById(id); if (el) el.innerText = text; };
             setText('wincTaxDrag', isNaN(taxDragWinc) ? 'n/a' : (taxDragWinc * 100).toFixed(2) + '%');
             setText('wincTaxEff', isNaN(taxEffWinc) ? 'n/a' : (taxEffWinc * 100).toFixed(2) + '%');
-            setText('wincLordoTot', sommaLordoXyle.toFixed(2));
-            setText('wincNettoTot', sommaNettiXyle.toFixed(2));
+            setText('wincLordoTot', sommaLordoWinc.toFixed(2));
+            setText('wincNettoTot', sommaNettiWinc.toFixed(2));
 
-            setText('acweTaxDrag', isNaN(taxDragAcwe) ? 'n/a' : (taxDragAcwe * 100).toFixed(2) + '%');
-            setText('acweTaxEff', isNaN(taxEffAcwe) ? 'n/a' : (taxEffAcwe * 100).toFixed(2) + '%');
-            setText('acweLordoTot', sommaLordiSp500.toFixed(2));
-            setText('acweNettoTot', sommaNettiSp500.toFixed(2));
-            setText('acweCommissioniTot', sommaCommissioni.toFixed(2));
+            setText('swdaTaxDrag', isNaN(taxDragSwdaSold) ? 'n/a' : (taxDragSwdaSold * 100).toFixed(2) + '%');
+            setText('swdaTaxEff', isNaN(taxEffSwdaSold) ? 'n/a' : (taxEffSwdaSold * 100).toFixed(2) + '%');
+            setText('swdaLordoTot', sommaLordiSp500.toFixed(2));
+            setText('swdaNettoTot', sommaNettiSp500.toFixed(2));
+            setText('swdaCommissioniTot', sommaCommissioni.toFixed(2));
             row.innerHTML = `
                         <td>Tot:</td>
                         <td></td>                        
-                        <td>${sommaNettiXyle.toFixed(2)} Tasse: 26%</td>                        
+                        <td>${sommaNettiWinc.toFixed(2)} Tasse: 26%</td>                        
                         <td></td>
                         <td></td>
                         <td>${sommaNettiSp500.toFixed(2)} Tasse: ${sommaLordiSp500 > 0 ? ((sommaLordiSp500 - sommaNettiSp500) / sommaLordiSp500 * 100).toFixed(2) : '0.00'}% (Commissioni Tot: ${sommaCommissioni.toFixed(2)}€)</td>
-                        <td>${sommaDifferenza.toFixed(2)} (${(((sommaNettiSp500 - sommaNettiXyle) / sommaNettiXyle) * 100).toFixed(2)}%)</td>
+                        <td>${sommaDifferenza.toFixed(2)} (${(((sommaNettiSp500 - sommaNettiWinc) / sommaNettiWinc) * 100).toFixed(2)}%)</td>
                     `;
             tableFoot.appendChild(row);
 
