@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Studio Rendimento WINC vs ACWE</title>
+    <title>Studio Rendimento WINC vs SWDA</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -61,13 +61,13 @@
             <a href="/FireSWR" class="home-button">🏠 Home</a>
         </div>
         <br>
-        <h1 class="text-center">Studio Rendimento WINC vs Decumulo equivalente da ACWE</h1>
+        <h1 class="text-center">Studio Rendimento WINC vs Decumulo equivalente da SWDA</h1>
         <h5 class="text-center">
             Studio comparativo di strategia covered call iShares World Equity High Income Active UCITS ETF USD Inc
             (WINC.DE) e il suo sottostante.
-            Ho usato l'etf ACWE (SPDR All Country World UCITS Accumulating) come benchmark.
+            Ho usato l'etf SWDA (iShares Core MSCI World) come benchmark.
         </h5>
-        <p class="text-center">Il grafico mostra come andrebbe una strategia che vende quote di ACWE per ottenere
+        <p class="text-center">Il grafico mostra come andrebbe una strategia che vende quote di SWDA per ottenere
             mensilmente lo stesso
             dividendo lordo staccato dall'ETF covered call.</p>
         <form>
@@ -132,13 +132,13 @@
         <ul style="list-style-type: none; padding-left: 0; line-height: 1;">
             <li class="pl-2 small text-muted mt-2"><strong>Rige verdi verticali</strong> = Date di stacco dividendi WINC
             </li>
-            <li class="pl-2 small text-muted mt-2"><strong>ACWE Accumulo</strong> = ACWE (con aggiustamento dividendi),
+            <li class="pl-2 small text-muted mt-2"><strong>SWDA Accumulo</strong> = SWDA (con aggiustamento dividendi),
             </li>
             <li class="pl-2 small text-muted mt-2"><strong>WINC Accumulo</strong> = WINC con reinvestimento dividendi,
             </li>
             <li class="pl-2 small text-muted mt-2"><strong>WINC Distribuzione</strong> = WINC senza reinvestimento dei
                 dividendi.</li>
-            <li class="pl-2 small text-muted mt-2"><strong>ACWE con vendite</strong> = ACWE con vendite per coprire i
+            <li class="pl-2 small text-muted mt-2"><strong>SWDA con vendite</strong> = SWDA con vendite per coprire i
                 dividendi di WINC (va confrontato
                 con la riga arancione).</li>
         </ul>
@@ -156,8 +156,8 @@
                     <tr>
                         <th>Voce</th>
                         <th>WINC netto (EUR)</th>
-                        <th>ACWE netto (EUR)</th>
-                        <th>Delta ACWE - WINC (EUR)</th>
+                        <th>SWDA netto (EUR)</th>
+                        <th>Delta SWDA - WINC (EUR)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -189,7 +189,7 @@
                 <div class="col-md-6 col-lg-3 pb-1">
                     <div class="metric-card"
                         style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
-                        <strong style="color: #3693eb; font-size: 0.95rem;">ACWE - Accumulo</strong>
+                        <strong style="color: #3693eb; font-size: 0.95rem;">SWDA - Accumulo</strong>
                         <div id="metrics-acwe" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
                             Calcolo in corso...</div>
                     </div>
@@ -205,7 +205,7 @@
                 <div class="col-md-6 col-lg-3 pb-1">
                     <div class="metric-card"
                         style="background: linear-gradient(135deg, rgba(75,192,192,0.1) 0%, rgba(75,192,192,0.05) 100%); border-left: 4px solid rgba(75,192,192,0.8);">
-                        <strong style="color: #20b2aa; font-size: 0.95rem;">ACWE - Con Vendite</strong>
+                        <strong style="color: #20b2aa; font-size: 0.95rem;">SWDA - Con Vendite</strong>
                         <div id="metrics-acwe-sold" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
                             Calcolo in corso...</div>
                     </div>
@@ -229,9 +229,9 @@
                             <th>Data di Stacco</th>
                             <th>Dividendo Lordo WINC (€)</th>
                             <th>Dividendo Netto WINC (€)</th>
-                            <th>Quote ACWE Vendute</th>
-                            <th>Dividendo Lordo ACWE (da vendita) (€)</th>
-                            <th>Dividendo Netto ACWE (da vendita) (€)</th>
+                            <th>Quote SWDA Vendute</th>
+                            <th>Dividendo Lordo SWDA (da vendita) (€)</th>
+                            <th>Dividendo Netto SWDA (da vendita) (€)</th>
                             <th>Differenza tra i netti</th>
                         </tr>
                     </thead>
@@ -265,7 +265,7 @@
                 <div class="col-md-6">
                     <div class="metric-card"
                         style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
-                        <strong style="color: #3693eb;">ACWE (con vendite) - Tax Metrics</strong>
+                        <strong style="color: #3693eb;">SWDA (con vendite) - Tax Metrics</strong>
                         <div class="metric-value" style="font-size: 0.9rem;">
                             <div>Tax Drag: <span id="acweTaxDrag" style="font-weight: bold; color: #dc3545;">n/a</span>
                             </div>
@@ -533,7 +533,7 @@
             try {
                 const [xyleResp, csspxResp, distribuzioniResp] = await Promise.all([
                     fetch('WINC.DE.json'),
-                    fetch('ACWE.MI.json'),
+                    fetch('SWDA.MI.json'),
                     fetch('Distribuzioni_WINC.txt')
                 ]);
 
@@ -797,7 +797,7 @@
                         labels: labels,
                         datasets: [
                             {
-                                label: '(ACWE) - Accumulo',
+                                label: '(SWDA) - Accumulo',
                                 data: csspxCumulative,
                                 borderColor: 'rgba(54, 162, 235, 1)',
                                 backgroundColor: 'rgba(54, 162, 235, 0.1)',
@@ -827,7 +827,7 @@
                                 pointRadius: 0
                             },
                             {
-                                label: 'ACWE (con vendite equivalenti ai dividendi WINC)',
+                                label: 'SWDA (con vendite equivalenti ai dividendi WINC)',
                                 data: csspxAdjustedCumulative,
                                 borderColor: 'rgba(75, 192, 192, 1)',
                                 backgroundColor: 'rgba(75, 192, 192, 0.1)',
@@ -848,7 +848,7 @@
                         plugins: {
                             title: {
                                 display: true,
-                                text: 'WINC vs ACWE'
+                                text: 'WINC vs SWDA'
                             },
                             tooltip: {
                                 callbacks: {
@@ -1052,7 +1052,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                             pointRadius: 0
                         },
                         {
-                            label: 'ACWE: capitale netto + distribuzioni nette',
+                            label: 'SWDA: capitale netto + distribuzioni nette',
                             data: acweSeries,
                             borderColor: 'rgba(54, 162, 235, 1)',
                             backgroundColor: 'rgba(54, 162, 235, 0.12)',
@@ -1243,7 +1243,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                             labels: chartLabels,
                             datasets: [
                                 { label: 'Dividendi netti WINC (€)', data: nettoWincSeries, backgroundColor: 'rgba(40,167,69,0.8)' },
-                                { label: 'Vendite ACWE - netto (€)', data: nettoAcweSeries, backgroundColor: 'rgba(54,162,235,0.8)' }
+                                { label: 'Vendite SWDA - netto (€)', data: nettoAcweSeries, backgroundColor: 'rgba(54,162,235,0.8)' }
                             ]
                         },
                         options: {
