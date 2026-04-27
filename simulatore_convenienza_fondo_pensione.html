@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparazione Fondo Pensione vs ETF</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #f0f4f8;
+            --card: #ffffff;
+            --card-border: #e2e8f0;
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --header-bg: #0f172a;
+            --header-text: #f8fafc;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --label: #334155;
+            --fp-pensione: #059669;
+            --fp-anticipato: #7c3aed;
+            --etf: #ea580c;
+            --error: #dc2626;
+            --error-bg: #fef2f2;
+            --success-bg: #f0fdf4;
+            --highlight: #eff6ff;
+            --radius: 10px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--header-bg);
+            color: var(--header-text);
+            padding: 1.5rem 2rem;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        header p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .container {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+        }
+        .card + .card { margin-top: 1rem; }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .input-group {
+            margin-bottom: 0.75rem;
+        }
+        .input-group label {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--label);
+            margin-bottom: 0.2rem;
+        }
+        .input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .input-wrap input[type="number"] {
+            flex: 1;
+            padding: 0.45rem 0.6rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--text);
+            background: #fff;
+            transition: border-color 0.15s;
+        }
+        .input-wrap input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+        }
+        .input-wrap.input-error input[type="number"] {
+            border-color: var(--error);
+            background: #fff5f5;
+            box-shadow: 0 0 0 2px rgba(220,38,38,0.15);
+        }
+        .input-wrap.input-error input[type="number"]:focus {
+            border-color: var(--error);
+            box-shadow: 0 0 0 3px rgba(220,38,38,0.25);
+        }
+        .input-group.input-group-error > label {
+            color: var(--error);
+        }
+        .limit-warning {
+            display: none;
+            margin-top: 0.75rem;
+            background: #f0f9ff;
+            border: 1.5px solid #7dd3fc;
+            border-left: 4px solid #0ea5e9;
+            border-radius: 6px;
+            padding: 0.75rem 0.875rem;
+            font-size: 0.8rem;
+            color: #075985;
+            line-height: 1.6;
+            text-align: justify;
+        }
+        .limit-warning.visible { display: block; }
+        .limit-warning strong { font-weight: 700; color: #0c4a6e; }
+        .limit-warning::before {
+            content: '⚡ ';
+            font-weight: bold;
+            color: #0ea5e9;
+            margin-right: 0.25rem;
+        }
+        .input-suffix {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            min-width: 1.2rem;
+        }
+
+        .results-grid {
+            display: grid;
+            gap: 0.4rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.72rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            padding: 0.35rem 0.5rem;
+            border-radius: 6px;
+            margin-top: 0.25rem;
+        }
+        .section-header.fp {
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #86efac;
+        }
+        .section-header.etf {
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #fdba74;
+        }
+        .section-header.delta {
+            background: var(--highlight);
+            color: var(--primary);
+            border: 1px solid #bfdbfe;
+        }
+
+
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 0.25rem;
+        }
+        .scenario-block {
+            border-radius: 8px;
+            border: 1px solid;
+        }
+        .scenario-block.fp {
+            background: #e0e7ff;
+            border-color: #a5b4fc;
+        }
+        .scenario-block.etf {
+            background: #fef3e6;
+            border-color: #f59e0b;
+        }
+        .scenario-block-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            padding: 0.35rem 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            border-radius: 7px 7px 0 0;
+        }
+        .scenario-block.fp .scenario-block-title {
+            background: #c7d2fe;
+            color: #3730a3;
+        }
+        .scenario-block.etf .scenario-block-title {
+            background: #fed7a2;
+            color: #92400e;
+        }
+        .scenario-block.delta {
+            background: #ecfdf5;
+            border-color: #6ee7b7;
+        }
+        .scenario-block.delta .scenario-block-title {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .scenario-block .result-row {
+            font-size: 0.82rem;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        .scenario-block .result-row:last-child {
+            border-bottom: none;
+        }
+        .scenario-block .result-row:nth-child(odd) { background: transparent; }
+        @media (max-width: 600px) {
+            .scenarios-grid { grid-template-columns: 1fr; }
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.35rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
+        }
+        .result-row:nth-child(odd) { background: #f8fafc; }
+        .result-row .result-label {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--label);
+            font-weight: 500;
+            flex: 1;
+            padding-right: 0.5rem;
+        }
+        .result-row .result-value {
+            font-weight: 700;
+            color: var(--text);
+            text-align: right;
+            white-space: nowrap;
+        }
+        .result-row.highlight {
+            background: var(--highlight);
+            border: 1px solid #bfdbfe;
+        }
+        .result-row.highlight .result-value { color: var(--primary); }
+        .result-row.success { background: var(--success-bg); border: 1px solid #bbf7d0; }
+        .result-row.success .result-value { color: var(--fp-pensione); }
+        .result-row.error-row { background: var(--error-bg); border: 1px solid #fecaca; }
+        .result-row.error-row .result-value { color: var(--error); }
+
+        .error-msg {
+            display: none;
+            background: var(--error-bg);
+            color: var(--error);
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        .error-msg.visible { display: block; }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+        }
+        .chart-wrapper canvas { width: 100% !important; }
+
+        .separator {
+            border: none;
+            border-top: 1px dashed #e2e8f0;
+            margin: 0.5rem 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            line-height: 1.7;
+            max-width: 800px;
+            margin: 1.5rem auto 0;
+        }
+        footer .credit {
+            font-weight: 700;
+            color: var(--label);
+            margin-bottom: 0.5rem;
+        }
+        footer .note {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            text-align: left;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .legend-inline {
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+        .legend-inline span {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .inputs-col, .results-col {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .inputs-col .card:nth-child(2),
+        .inputs-col .card:nth-child(3),
+        .results-col .card:nth-child(2),
+        .results-col .card:nth-child(3) {
+            margin-top: auto;
+        }
+
+        #creditsCard {
+            margin-top: 1.5rem;
+            background: #eaf6ff;
+            border: 1px solid #7dd3fc;
+            border-left: 6px solid #0ea5e9;
+            box-shadow: none;
+        }
+
+        #creditsCard .card-title {
+            color: #075985;
+            border-bottom-color: #38bdf8;
+        }
+
+        #creditsCard .credits-content {
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: #0c4a6e;
+        }
+
+        #creditsCard .credits-content p {
+            margin-bottom: 0.75rem;
+        }
+
+        #creditsCard .credits-content p:first-child {
+            text-align: justify;
+        }
+
+        #creditsCard .credits-content p:last-child {
+            margin-bottom: 0;
+            font-weight: 700;
+            color: #075985;
+        }
+
+        #creditsCard a {
+            color: #0369a1;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            header h1 { font-size: 1.2rem; }
+        }
+
+        /* Info tooltip */
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            font-style: normal;
+            cursor: help;
+            position: relative;
+            vertical-align: middle;
+            margin-left: 0.3rem;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .info-icon .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: #f1f5f9;
+            font-size: 0.75rem;
+            font-weight: 400;
+            font-style: normal;
+            line-height: 1.45;
+            border-radius: 6px;
+            padding: 0.45rem 0.6rem;
+            width: 220px;
+            white-space: normal;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            transition: opacity 0.15s ease;
+            z-index: 10;
+        }
+        .info-icon .tooltip-text::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #1e293b;
+        }
+        .info-icon:hover .tooltip-text,
+        .info-icon:focus .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Comparazione Fondo Pensione di categoria vs ETF</h1>
+    <p>Simulazione dell'evoluzione del montante netto su un orizzonte di 50 anni</p>
+</header>
+
+<div class="container">
+    <div class="layout">
+
+        <!-- INPUTS PANEL -->
+        <div class="inputs-col">
+            <div class="card">
+                <div class="card-title">Dati fiscali e contributivi</div>
+
+                <div class="input-group">
+                    <label for="ral">RAL (Retribuzione Annua Lorda)</label>
+                    <div class="input-wrap">
+                        <input type="number" id="ral" value="32000" min="0" step="100">
+                        <span class="input-suffix">€</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="addRegionale">Addizionale regionale
+                        <i class="info-icon" tabindex="0">i
+                            <span class="tooltip-text">Varia in base alla regione di residenza e al reddito. Verificare l'aliquota sul sito del MEF (finanze.gov.it).</span>
+                        </i>
+                    </label>
+                    <div class="input-wrap">
+                        <input type="number" id="addRegionale" value="1.63" min="0" step="0.01">
+                        <span class="input-suffix">%</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="addComunale">Addizionale comunale
+                        <i class="info-icon" tabindex="0">i
+                            <span class="tooltip-text">Varia in base al comune di residenza. Verificare l'aliquota sul sito del MEF (finanze.gov.it).</span>
+                        </i>
+                    </label>
+                    <div class="input-wrap">
+                        <input type="number" id="addComunale" value="0.80" min="0" step="0.01">
+                        <span class="input-suffix">%</span>
+                    </div>
+                </div>
+
+                <hr class="separator">
+
+                <div class="input-group">
+                    <label for="contrBusta">Contributo lavoratore via busta paga
+                        <i class="info-icon" tabindex="0">i
+                            <span class="tooltip-text">Importo annuo trattenuto in busta paga e versato al fondo dal datore di lavoro.</span>
+                        </i>
+                    </label>
+                    <div class="input-wrap">
+                        <input type="number" id="contrBusta" value="950" min="0" step="10">
+                        <span class="input-suffix">€</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="contrBonifico">Contributo lavoratore via bonifico autonomo
+                        <i class="info-icon" tabindex="0">i
+                            <span class="tooltip-text">Versamento autonomo effettuato dal lavoratore direttamente al fondo (fuori busta paga).</span>
+                        </i>
+                    </label>
+                    <div class="input-wrap">
+                        <input type="number" id="contrBonifico" value="100" min="0" step="10">
+                        <span class="input-suffix">€</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="contrDatore">Contributo datore di lavoro
+                        <i class="info-icon" tabindex="0">i
+                            <span class="tooltip-text">Somma aggiuntiva versata dall’azienda nel fondo pensione, prevista solo se il lavoratore versa almeno la quota minima stabilita dal proprio contratto collettivo.</span>
+                        </i>
+                    </label>
+                    <div class="input-wrap">
+                        <input type="number" id="contrDatore" value="650" min="0" step="10">
+                        <span class="input-suffix">€</span>
+                    </div>
+                </div>
+                <div id="limitWarning" class="limit-warning">
+                    <strong>Attenzione! Limite di deducibilità superato.</strong><br>
+                    Il totale versato al fondo è <strong id="limitTotal">—</strong>, ma la soglia deducibile è
+                    <strong>5.300 €/anno</strong>. Riduci uno o più dei contributi evidenziati.
+                </div>            </div>
+
+            <div class="card">
+                <div class="card-title">Parametri di investimento</div>
+
+                <div class="input-group">
+                    <label for="rendETF">Rendimento lordo ETF
+                        <i class="info-icon" tabindex="0">i
+                            <span class="tooltip-text">Inserisci il rendimento atteso considerando i costi di gestione del fondo (TER). Ad esempio, un ETF con rendimento atteso del 7,2% e TER dello 0,2% ha un rendimento lordo del 7%.</span>
+                        </i>
+                    </label>
+                    <div class="input-wrap">
+                        <input type="number" id="rendETF" value="7" min="0" step="0.1">
+                        <span class="input-suffix">%</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="rendFP">Rendimento netto fondo pensione
+                        <i class="info-icon" tabindex="0">i
+                            <span class="tooltip-text">Rendimento già al netto della fiscalità interna del fondo. Fonte consigliata: sito COVIP (covip.it) -> sezione "Elenco dei rendimenti dei fondi pensione".</span>
+                        </i>
+                    </label>
+                    <div class="input-wrap">
+                        <input type="number" id="rendFP" value="3" min="0" step="0.1">
+                        <span class="input-suffix">%</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="aliqBollo">Aliquota bollo conto titoli
+                        <i class="info-icon" tabindex="0">i
+                            <span class="tooltip-text">Imposta di bollo applicata annualmente al valore del dossier titoli.</span>
+                        </i>
+                    </label>
+                    <div class="input-wrap">
+                        <input type="number" id="aliqBollo" value="0.20" min="0" step="0.01">
+                        <span class="input-suffix">%</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="aliqETF">Aliquota plusvalenza ETF
+                        <i class="info-icon" tabindex="0">i
+                            <span class="tooltip-text">Aliquota applicata alle plusvalenze al momento del disinvestimento.</span>
+                        </i>
+                    </label>
+                    <div class="input-wrap">
+                        <input type="number" id="aliqETF" value="26" min="0" step="1">
+                        <span class="input-suffix">%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS PANEL -->
+        <div class="results-col">
+            <div class="card">
+                <div class="card-title">Riepilogo fiscale</div>
+                <div class="results-grid">
+                    <div class="result-row">
+                        <span class="result-label">Imponibile pre versamento
+                            <i class="info-icon" tabindex="0">i
+                                <span class="tooltip-text">Reddito imponibile prima di qualsiasi versamento al fondo pensione. Tipicamente si ottiene sottraendo dalla RAL il 9,49% relativo ai contributi previdenziali INPS a carico del lavoratore.</span>
+                            </i>
+                        </span>
+                        <span class="result-value" id="outImponibile">—</span>
+                    </div>
+                    <div class="result-row highlight">
+                        <span class="result-label">Totale versato al fondo
+                            <i class="info-icon" tabindex="0">i
+                                <span class="tooltip-text">Somma annua complessiva versata al fondo pensione: contributo del lavoratore + contributo del datore di lavoro.</span>
+                            </i>
+                        </span>
+                        <span class="result-value" id="outTotaleFondo">—</span>
+                    </div>
+                    <div class="result-row" id="rowRAdd">
+                        <span class="result-label">Reddito ai fini addizionali e detrazioni
+                            <i class="info-icon" tabindex="0">i
+                                <span class="tooltip-text">Imponibile al netto del contributo versato via busta paga. È la base su cui si calcolano le addizionali regionale e comunale e le detrazioni da lavoro dipendente.</span>
+                            </i>
+                        </span>
+                        <span class="result-value" id="outRAdd">—</span>
+                    </div>
+                    <div class="result-row" id="rowRIrpef">
+                        <span class="result-label">Reddito ai fini IRPEF
+                            <i class="info-icon" tabindex="0">i
+                                <span class="tooltip-text">Imponibile al netto sia del contributo via busta paga che del contributo via bonifico autonomo. È la base su cui si calcola l'IRPEF.</span>
+                            </i>
+                        </span>
+                        <span class="result-value" id="outRIrpef">—</span>
+                    </div>
+
+                    <!-- SCENARI AFFIANCATI -->
+                    <div class="scenarios-grid" id="scenariosGrid">
+                        <div class="scenario-block fp">
+                            <div class="scenario-block-title">Con fondo pensione</div>
+                            <div class="result-row" id="rowExtraBustaFP">
+                                <span class="result-label">Extra netto in busta</span>
+                                <span class="result-value" style="color: var(--text-muted);">0,00 €</span>
+                            </div>
+                            <div class="result-row" id="rowTasseCon">
+                                <span class="result-label">Tasse (IRPEF)</span>
+                                <span class="result-value" id="outTasseCon">—</span>
+                            </div>
+                            <div class="result-row" id="rowDetrCon">
+                                <span class="result-label">Detrazioni lavoro dip.</span>
+                                <span class="result-value" id="outDetrCon">—</span>
+                            </div>
+                        </div>
+                        <div class="scenario-block etf">
+                            <div class="scenario-block-title">Senza fondo pensione (ETF)</div>
+                            <div class="result-row" id="rowExtraBusta">
+                                <span class="result-label">Extra netto in busta
+                                    <i class="info-icon" tabindex="0" style="vertical-align:middle">i
+                                        <span class="tooltip-text">Importo annuo netto che il lavoratore recupera in busta paga scegliendo di NON aderire al fondo e investendo autonomamente in ETF.</span>
+                                    </i>
+                                </span>
+                                <span class="result-value" id="outExtraBusta">—</span>
+                            </div>
+                            <div class="result-row" id="rowTasseSenza">
+                                <span class="result-label">Tasse (IRPEF)</span>
+                                <span class="result-value" id="outTasseSenza">—</span>
+                            </div>
+                            <div class="result-row" id="rowDetrSenza">
+                                <span class="result-label">Detrazioni lavoro dip.</span>
+                                <span class="result-value" id="outDetrSenza">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RISPARMIO FISCALE -->
+                    <div class="scenario-block delta" id="secDelta">
+                        <div class="scenario-block-title">Risparmio fiscale</div>
+                        <div class="result-row" id="rowDeltaTasse">
+                            <span class="result-label">Tasse risparmiate</span>
+                            <span class="result-value" id="outDeltaTasse">—</span>
+                        </div>
+                        <div class="result-row" id="rowDeltaDetr">
+                            <span class="result-label">Detrazioni aggiuntive</span>
+                            <span class="result-value" id="outDeltaDetr">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="chartCard">
+                <div class="legend-inline">
+                    <span><span class="legend-dot" style="background:#15803d"></span> FP — Uscita in pensione</span>
+                    <span><span class="legend-dot" style="background:#7c3aed"></span> FP — Uscita anticipata</span>
+                    <span><span class="legend-dot" style="background:#f59e0b"></span> ETF</span>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card" id="creditsCard">
+        <div class="card-title">Disclaimer</div>
+        <div class="credits-content">            
+            <p style="font-style: italic;">
+                Nota: La simulazione ipotizza lo scenario di un dipendente che aderisce al fondo pensione negoziale del proprio CCNL. Si assume che il totale versato al fondo non superi i 5.300 €/anno. Le aliquote IRPEF sono riferite all'anno 2026. Questo simulatore prende ispirazione dal video <a href="https://youtu.be/wE9_72brJWs" target="_blank" rel="noopener noreferrer" style="font-style: italic; text-decoration: none; color: #0369a1;">&ldquo;QUANDO e PER CHI conviene Il fondo pensione&rdquo;</a> del Prof. Paolo Coletti, che ringrazio per i suoi contenuti.
+            </p>
+            <p>
+                Credit Matteo Rosato
+            </p>
+        </div>
+        <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('./html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+    </div>
+</div>
+
+<footer>
+</footer>
+
+<script>
+(function () {
+    const $ = id => document.getElementById(id);
+
+    /* ---------- helpers ---------- */
+    function fmt(n) {
+        return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+    }
+
+    function irpef(r) {
+        return 0.23 * Math.min(r, 28000)
+             + 0.33 * Math.max(0, Math.min(r, 50000) - 28000)
+             + 0.43 * Math.max(0, r - 50000);
+    }
+
+    function detrazioni(r) {
+        if (r <= 15000) return 1955;
+        if (r <= 28000) return 1910 + 1190 * (28000 - r) / 13000;
+        if (r <= 50000) return 1910 * (50000 - r) / 22000;
+        return 0;
+    }
+
+    /* ---------- chart setup ---------- */
+    const ctx = $('chart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'FP — Uscita in pensione',
+                    data: [],
+                    borderColor: '#15803d',
+                    backgroundColor: 'rgba(21,128,61,0.08)',
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    pointHitRadius: 8,
+                    fill: false,
+                    tension: 0.3
+                },
+                {
+                    label: 'FP — Uscita anticipata',
+                    data: [],
+                    borderColor: '#7c3aed',
+                    backgroundColor: 'rgba(124,58,237,0.08)',
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    pointHitRadius: 8,
+                    fill: false,
+                    tension: 0.3
+                },
+                {
+                    label: 'ETF',
+                    data: [],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245,158,11,0.08)',
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    pointHitRadius: 8,
+                    fill: false,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function (ctx) {
+                            return ctx.dataset.label + ': ' +
+                                ctx.parsed.y.toLocaleString('it-IT', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' €';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: 'Anni', font: { weight: 'bold' } },
+                    grid: { color: '#f1f5f9' }
+                },
+                y: {
+                    title: { display: true, text: 'Montante netto (€)', font: { weight: 'bold' } },
+                    grid: { color: '#f1f5f9' },
+                    ticks: {
+                        callback: function (v) {
+                            return v.toLocaleString('it-IT', { maximumFractionDigits: 0 }) + ' €';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    /* ---------- main calculation ---------- */
+    function calculate() {
+        // --- input: dati fiscali e contributivi ---
+        const ral                          = parseFloat($('ral').value) || 0;
+        const aliquotaAddRegionale         = (parseFloat($('addRegionale').value) || 0) / 100;
+        const aliquotaAddComunale          = (parseFloat($('addComunale').value) || 0) / 100;
+        const contributoLavoratoreBusta    = parseFloat($('contrBusta').value) || 0;
+        const contributoLavoratoreBonifico = parseFloat($('contrBonifico').value) || 0;
+        const contributoDatore             = parseFloat($('contrDatore').value) || 0;
+        // --- input: parametri di investimento ---
+        const rendimentoETF  = (parseFloat($('rendETF').value) || 0) / 100;
+        const rendimentoFP   = (parseFloat($('rendFP').value) || 0) / 100;
+        const aliquotaBollo  = (parseFloat($('aliqBollo').value) || 0) / 100;
+        const aliquotaETF    = (parseFloat($('aliqETF').value) || 0) / 100;
+
+        /* --- derived values --- */
+        const imponibilePreFondo = ral * (1 - 0.0949);
+
+        let totaleVersatoFondo = contributoLavoratoreBusta + contributoLavoratoreBonifico + contributoDatore;
+        const superaLimiteDeducibilita = totaleVersatoFondo > 5300;
+        if (superaLimiteDeducibilita) totaleVersatoFondo = 5300;
+
+        // highlight contribution inputs and show inline warning
+        const contrIds = ['contrBusta', 'contrBonifico', 'contrDatore'];
+        contrIds.forEach(id => {
+            const wrap = $(id).closest('.input-wrap');
+            const group = $(id).closest('.input-group');
+            wrap.classList.toggle('input-error', superaLimiteDeducibilita);
+            group.classList.toggle('input-group-error', superaLimiteDeducibilita);
+        });
+        const limitWarning = $('limitWarning');
+        limitWarning.classList.toggle('visible', superaLimiteDeducibilita);
+        if (superaLimiteDeducibilita) {
+            $('limitTotal').textContent = fmt(contributoLavoratoreBusta + contributoLavoratoreBonifico + contributoDatore);
+        }
+
+        // hide/show rows and chart based on limit
+        const hideIds = ['rowRAdd','rowRIrpef','rowExtraBusta','rowExtraBustaFP','rowTasseSenza','rowTasseCon',
+                 'rowDetrSenza','rowDetrCon','scenariosGrid','secDelta'];
+        hideIds.forEach(id => { $(id).style.display = superaLimiteDeducibilita ? 'none' : ''; });
+        $('chartCard').style.display = superaLimiteDeducibilita ? 'none' : '';
+
+        if (superaLimiteDeducibilita) {
+            // clear values for hidden rows so they don’t show stale data
+            ['outRAdd','outRIrpef','outTasseSenza','outTasseCon','outDeltaTasse',
+             'outDetrSenza','outDetrCon','outDeltaDetr','outExtraBusta'].forEach(id => {
+                $(id).textContent = '—';
+            });
+            $('outImponibile').textContent = fmt(imponibilePreFondo);
+            $('outTotaleFondo').textContent = fmt(contributoLavoratoreBusta + contributoLavoratoreBonifico + contributoDatore);
+            return;
+        }
+
+        // reddito ai fini addizionali e detrazioni: imponibile meno contributo via busta paga
+        const redditoAddizionali = imponibilePreFondo - contributoLavoratoreBusta;
+        // reddito ai fini IRPEF: redditoAddizionali meno contributo via bonifico autonomo
+        const redditoIrpef       = redditoAddizionali - contributoLavoratoreBonifico;
+
+        /* tasse */
+        const calcolaAddizionali = r => r * (aliquotaAddRegionale + aliquotaAddComunale);
+        const tasseSenzaFondo = irpef(imponibilePreFondo) + calcolaAddizionali(imponibilePreFondo);
+        const tasseConFondo   = irpef(redditoIrpef) + calcolaAddizionali(redditoAddizionali);
+        const risparmioFiscale = tasseSenzaFondo - tasseConFondo;
+
+        /* detrazioni */
+        const detrazioniSenzaFondo = detrazioni(imponibilePreFondo);
+        const detrazioniConFondo   = detrazioni(redditoAddizionali);
+        const differenzaDetrazioni = detrazioniConFondo - detrazioniSenzaFondo;
+
+        /* extra in busta paga (scenario ETF) */
+        // Extra in busta = contributi che il lavoratore recupera non versando al fondo (busta + bonifico)
+        //                  meno risparmioFiscale  (senza fondo si paga più IRPEF/addizionali, valore positivo)
+        //                  meno differenzaDetrazioni (senza fondo le detrazioni sono più basse, valore tipicamente positivo)
+        // Il contributo datoriale non entra: è perso in entrambi gli scenari se non si aderisce.
+        const extraNettoBusta = contributoLavoratoreBusta + contributoLavoratoreBonifico - risparmioFiscale - differenzaDetrazioni;
+
+        /* --- update results UI --- */
+        $('outImponibile').textContent   = fmt(imponibilePreFondo);
+        $('outTotaleFondo').textContent  = fmt(totaleVersatoFondo);
+        $('outRAdd').textContent         = fmt(redditoAddizionali);
+        $('outRIrpef').textContent       = fmt(redditoIrpef);
+        $('outTasseSenza').textContent   = fmt(tasseSenzaFondo);
+        $('outTasseCon').textContent     = fmt(tasseConFondo);
+        $('outDeltaTasse').textContent   = fmt(risparmioFiscale);
+        $('outDetrSenza').textContent    = fmt(detrazioniSenzaFondo);
+        $('outDetrCon').textContent      = fmt(detrazioniConFondo);
+        $('outDeltaDetr').textContent    = fmt(differenzaDetrazioni);
+        $('outExtraBusta').textContent   = fmt(extraNettoBusta);
+
+        /* --- year-by-year simulation --- */
+        const anni = [0];
+        const montanteLordoFP  = [0], montanteLordoETF  = [0];
+        const capitaleVersatoFP = [0], capitaleVersatoETF = [0];
+        const montanteNettoFPPensione = [0], montanteNettoFPAnticipato = [0], montanteNettoETF = [0];
+
+        for (let anno = 1; anno <= 50; anno++) {
+            anni.push(anno);
+
+            /* montante lordo */
+            montanteLordoFP[anno]  = totaleVersatoFondo + montanteLordoFP[anno - 1] * (1 + rendimentoFP);
+            montanteLordoETF[anno] = extraNettoBusta     + montanteLordoETF[anno - 1] * (1 + rendimentoETF);
+
+            /* versato cumulativo */
+            capitaleVersatoFP[anno]  = totaleVersatoFondo * anno;
+            capitaleVersatoETF[anno] = capitaleVersatoETF[anno - 1] + extraNettoBusta - montanteLordoETF[anno - 1] * aliquotaBollo;
+
+            /* montante netto */
+            const aliquotaUscitaPensione    = Math.max(0.09, 0.15 - Math.max(0, anno - 15) * 0.003);
+            montanteNettoFPPensione[anno]   = montanteLordoFP[anno] - capitaleVersatoFP[anno] * aliquotaUscitaPensione;
+            montanteNettoFPAnticipato[anno] = montanteLordoFP[anno] - capitaleVersatoFP[anno] * 0.23;
+            montanteNettoETF[anno]          = montanteLordoETF[anno] - (montanteLordoETF[anno] - capitaleVersatoETF[anno]) * aliquotaETF;
+        }
+
+        /* --- update chart --- */
+        chart.data.labels = anni;
+        chart.data.datasets[0].data = montanteNettoFPPensione;
+        chart.data.datasets[1].data = montanteNettoFPAnticipato;
+        chart.data.datasets[2].data = montanteNettoETF;
+        chart.update();
+    }
+
+    /* ---------- bind inputs ---------- */
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('input', calculate);
+    });
+
+    calculate();
+})();
+</script>
+
+</body>
+</html>
