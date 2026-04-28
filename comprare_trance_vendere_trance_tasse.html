@@ -6,6 +6,7 @@
     <title>Esperimento fiscale PAC vs Tranche</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         body {
@@ -109,9 +110,9 @@
                 del 26% sulle plusvalenze.</p>
             <p>Scenario 1 (Tranche): investimento su 3 strumenti consecutivi (A → B → C), 5 anni ciascuno.</p>
             <p>Scenario 2 (PAC unico): investimento su un unico strumento per 15 anni.</p>
-            <p>Successivamente si effettua un decumulo vendendo 200€ lordi al mese, considerando le tasse sulle
+            <p>Successivamente si effettua un decumulo prelevando 200€ <strong>netti</strong> al mese, considerando le tasse sulle
                 plusvalenze.</p>
-            <p>Le tabelle mostreranno capitale accumulato, plusvalenze, tasse e flusso netto mensile per entrambi i
+            <p>Le tabelle mostreranno capitale accumulato, plusvalenze, tasse e flusso lordo/netto mensile per entrambi i
                 scenari, sia durante l'accumulo sia durante il decumulo.</p>
         </div>
 
@@ -119,6 +120,17 @@
         <div class="card p-3">
             <table class="summary" id="summary"></table>
         </div>
+
+        <div class="card">
+            <h3>Equity Line – Accumulo + Decumulo</h3>
+            <canvas id="equityChart"></canvas>
+        </div>
+
+        <div class="card">
+            <h3>Tasse pagate ogni mese – Simulazione completa</h3>
+            <canvas id="taxChart"></canvas>
+        </div>
+
         <h2>Riepilogo testuale dell'esperimento</h2>
         <div class="card p-4 mb-4">
             <p>
@@ -131,7 +143,7 @@
                 mentre la seconda strategia (“PAC unico”) investe tutto su un unico strumento per l’intera durata.
             </p>
             <p>
-                Dopo l’accumulo, abbiamo simulato il decumulo vendendo 200€ lordi al mese, applicando le tasse sulle
+                Dopo l'accumulo, abbiamo simulato il decumulo prelevando 200€ <strong>netti</strong> al mese, applicando le tasse sulle
                 plusvalenze maturate.
             </p>
             <p>
@@ -142,57 +154,53 @@
                 indipendentemente da come si distribuiscono gli investimenti in vari strumenti.
             </p>
             <p>
-                La differenza principale riguarda il flusso netto mensile durante il decumulo.
+                La differenza principale riguarda il flusso lordo richiesto durante il decumulo.
                 Nel caso delle tranche, ogni strumento viene esaurito sequenzialmente: si vende prima lo strumento C,
                 poi B, infine A.
                 Questo significa che nelle prime fasi del decumulo la maggior parte del capitale proviene dallo
                 strumento più recente,
                 che ha subito meno accumulo di plusvalenze rispetto agli strumenti investiti prima.
-                Di conseguenza, le tasse sul prelievo mensile sono inizialmente più basse e il netto disponibile può
-                essere più elevato.
-                Man mano che si procede, gli strumenti più vecchi vengono liquidati e il flusso netto può diminuire
-                leggermente,
+                Di conseguenza, per ottenere i 200€ netti mensili desiderati, il lordo richiesto è inizialmente più basso.
+                Man mano che si procede, gli strumenti più vecchi vengono liquidati e il lordo richiesto può aumentare
+                leggeramente,
                 fino all’esaurimento completo.
             </p>
             <p>
                 Nel PAC unico, invece, l’intero capitale è concentrato in un solo strumento accumulato per 15 anni:
-                ogni prelievo mensile rappresenta una porzione del capitale complessivo e della plusvalenza maturata,
-                rendendo il flusso netto mensile più costante ma leggermente inferiore rispetto alle prime fasi delle
-                tranche.
-                In altre parole, mentre le tasse totali complessive sono identiche tra le due strategie,
-                la sequenza di riscatti influisce sul timing delle tasse pagate e sulla liquidità mensile disponibile,
-                il che può essere rilevante per pianificare i prelievi e gestire il budget durante il decumulo.
+                ogni prelievo di 200€ netti richiede una vendita di capitale lordo che varia durante il decumulo
+                a seconda del rapporto guadagni/capitale nel tempo.
+                In altre parole, mentre il netto ritirato è fisso (200€ al mese), il lordo richiesto cambia mese dopo mese
+                per pagare le tasse e mantenere il prelievo netto costante.
             </p>
             <p>
                 L’esperimento evidenzia come, con strumenti identici e stessa volatilità, la suddivisione in tranche non
                 riduce
-                le tasse totali, poiché le plusvalenze complessive sono identiche, ma può influenzare il flusso netto
-                mensile
-                e la disponibilità di capitale durante il decumulo.
+                le tasse totali, poiché le plusvalenze complessive sono identiche, ma può influenzare il flusso lordo
+                richiesto
+                durante il decumulo con prelievi netti fissi.
             </p>
             <p>
                 Nel caso delle tranche, ogni strumento viene liquidato sequenzialmente (C → B → A).
                 Questo fa sì che nelle prime fasi del decumulo il capitale provenga principalmente dallo strumento più
                 recente,
-                con plusvalenze ancora contenute, producendo un flusso netto iniziale più elevato.
-                Man mano che si liquidano gli strumenti più vecchi, il netto disponibile può variare leggermente, fino
+                con plusvalenze ancora contenute, producendo un lordo iniziale più basso per ottenere i 200€ netti desiderati.
+                Man mano che si liquidano gli strumenti più vecchi, il lordo richiesto può variare leggermente, fino
                 all’esaurimento completo.
             </p>
             <p>
                 Nel PAC unico, invece, l’intero capitale accumulato per 15 anni viene decumulato progressivamente.
-                Ogni prelievo rappresenta una quota uniforme di capitale e plusvalenza, rendendo il flusso netto mensile
-                più costante
-                ma leggermente inferiore nelle fasi iniziali rispetto alle tranche.
+                Ogni prelievo di 200€ netti rappresenta una quota di capitale e plusvalenza, il cui lordo corrispondente
+                varia nel tempo
+                ma rimane sempre funzionale al mantenimento del prelievo netto costante.
             </p>
             <p>
                 <strong>
                     In sintesi, il PAC unico tende a produrre un capitale leggermente più elevato alla fine
                     dell’accumulo,
-                    mentre le tranche offrono una distribuzione più graduata dei riscatti durante il decumulo.
+                    mentre le tranche offrono una distribuzione diversa del lordo richiesto durante il decumulo a parità di netto ritirato.
                     La scelta tra le due strategie non incide sulle tasse totali, ma può essere rilevante per
-                    pianificare la
-                    liquidità mensile
-                    e la gestione del flusso netto durante il periodo di decumulo.
+                    pianificare quanta liquidità lorda
+                    è necessario vendere mensilmente per ottenere il prelievo netto desiderato.
                 </strong>
             </p>
 
@@ -242,12 +250,14 @@
         const monthlyInvestment = 100;
         const withdrawal = 200;
         const monthsAccumulation = 180;
+        let equityChart = null;
+        let taxChart = null;
 
         function simulateTranche() {
             let instruments = [
-                { name: "A", value: 0, cost: 0 },
-                { name: "B", value: 0, cost: 0 },
-                { name: "C", value: 0, cost: 0 }
+                { name: "A", value: 0, cost: 0, equityHistory: [] },
+                { name: "B", value: 0, cost: 0, equityHistory: [] },
+                { name: "C", value: 0, cost: 0, equityHistory: [] }
             ];
 
             let accTable = [];
@@ -264,6 +274,8 @@
                 totalCost += monthlyInvestment;
 
                 let totalValue = instruments.reduce((s, i) => s + i.value, 0);
+                
+                instruments.forEach(i => i.equityHistory.push(i.value));
 
                 accTable.push([
                     m,
@@ -282,6 +294,7 @@
             let totalTaxes = 0;
             let totalNet = 0;
             let month = 0;
+            let taxesSeries = [];
 
             while (true) {
                 let totalValue = instruments.reduce((s, i) => s + i.value, 0);
@@ -293,8 +306,13 @@
                 });
 
                 let totalValueNow = instruments.reduce((s, i) => s + i.value, 0);
-
-                let gross = Math.min(withdrawal, totalValueNow);
+                let totalCostNow = instruments.reduce((s, i) => s + i.cost, 0);
+                
+                // Calcolare il lordo necessario per ottenere il netto desiderato (200€)
+                let gainRatio = Math.max(0, (totalValueNow - totalCostNow) / totalValueNow);
+                let gross = withdrawal / (1 - gainRatio * taxRate);
+                gross = Math.min(gross, totalValueNow);
+                
                 let remaining = gross;
                 let taxMonth = 0;
 
@@ -316,9 +334,11 @@
                     remaining -= sell;
                 }
 
-                let net = gross - taxMonth;
                 totalTaxes += taxMonth;
-                totalNet += net;
+                totalNet += withdrawal;
+                taxesSeries.push(taxMonth);
+
+                instruments.forEach(i => i.equityHistory.push(i.value));
 
                 let totalRemaining = instruments.reduce((s, i) => s + i.value, 0);
 
@@ -329,24 +349,36 @@
                     instruments[2].value,
                     gross,
                     taxMonth,
-                    net,
+                    withdrawal,
                     totalRemaining
                 ]);
             }
 
-            return { peakCapital, gain, taxes: totalTaxes, months: month, netAvg: totalNet / month, accTable, decTable };
+            return { 
+                peakCapital, 
+                gain, 
+                taxes: totalTaxes, 
+                months: month, 
+                netAvg: totalNet / month, 
+                accTable, 
+                decTable,
+                instruments,
+                taxesSeries
+            };
         }
 
         function simulateSingle() {
             let value = 0;
             let cost = 0;
             let accTable = [];
+            let equityHistory = [];
 
             for (let m = 1; m <= monthsAccumulation; m++) {
                 value *= (1 + monthlyRate);
                 value += monthlyInvestment;
                 cost += monthlyInvestment;
 
+                equityHistory.push(value);
                 accTable.push([m, value]);
             }
 
@@ -357,13 +389,17 @@
             let totalTaxes = 0;
             let totalNet = 0;
             let month = 0;
+            let taxesSeries = [];
 
             while (value > 0) {
                 month++;
                 value *= (1 + monthlyRate);
 
-                let gross = Math.min(withdrawal, value);
+                // Calcolare il lordo necessario per ottenere il netto desiderato (200€)
                 let gainRatio = Math.max(0, (value - cost) / value);
+                let gross = withdrawal / (1 - gainRatio * taxRate);
+                gross = Math.min(gross, value);
+
                 let gainPart = gross * gainRatio;
                 let tax = gainPart * taxRate;
                 let costPortion = gross * (cost / value);
@@ -371,15 +407,26 @@
                 value -= gross;
                 cost -= costPortion;
 
-                let net = gross - tax;
-
                 totalTaxes += tax;
-                totalNet += net;
+                totalNet += withdrawal;
+                taxesSeries.push(tax);
+                
+                equityHistory.push(value);
 
-                decTable.push([month, gross, tax, net, value]);
+                decTable.push([month, gross, tax, withdrawal, value]);
             }
 
-            return { peakCapital, gain, taxes: totalTaxes, months: month, netAvg: totalNet / month, accTable, decTable };
+            return { 
+                peakCapital, 
+                gain, 
+                taxes: totalTaxes, 
+                months: month, 
+                netAvg: totalNet / month, 
+                accTable, 
+                decTable,
+                equityHistory,
+                taxesSeries
+            };
         }
 
         function buildTable(id, headers, data) {
@@ -414,6 +461,134 @@
             buildTable("accSingle", ["Mese", "Valore totale"], single.accTable);
             buildTable("decTranche", ["Mese", "A residuo", "B residuo", "C residuo", "Lordo", "Tasse", "Netto", "Totale residuo"], tranche.decTable);
             buildTable("decSingle", ["Mese", "Lordo", "Tasse", "Netto", "Capitale residuo"], single.decTable);
+
+            // ============================
+            // EQUITY CHART
+            // ============================
+            
+            let totalEquity = [];
+            for (let i = 0; i < tranche.instruments[0].equityHistory.length; i++) {
+                totalEquity.push(
+                    tranche.instruments[0].equityHistory[i] +
+                    tranche.instruments[1].equityHistory[i] +
+                    tranche.instruments[2].equityHistory[i]
+                );
+            }
+
+            let labels = Array.from({ length: totalEquity.length }, (_, i) => i + 1);
+
+            if (equityChart) equityChart.destroy();
+
+            equityChart = new Chart(document.getElementById("equityChart"), {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { 
+                            label: "Totale Tranche", 
+                            data: totalEquity, 
+                            borderColor: "rgba(0, 123, 255, 1)",
+                            backgroundColor: "rgba(0, 123, 255, 0.1)",
+                            borderWidth: 3, 
+                            pointRadius: 0,
+                            tension: 0.1
+                        },
+                        { 
+                            label: "Fondo A", 
+                            data: tranche.instruments[0].equityHistory, 
+                            borderColor: "rgba(255, 193, 7, 0.5)",
+                            borderWidth: 1, 
+                            pointRadius: 0,
+                            tension: 0.1
+                        },
+                        { 
+                            label: "Fondo B", 
+                            data: tranche.instruments[1].equityHistory, 
+                            borderColor: "rgba(40, 167, 69, 0.5)",
+                            borderWidth: 1, 
+                            pointRadius: 0,
+                            tension: 0.1
+                        },
+                        { 
+                            label: "Fondo C", 
+                            data: tranche.instruments[2].equityHistory, 
+                            borderColor: "rgba(220, 53, 69, 0.5)",
+                            borderWidth: 1, 
+                            pointRadius: 0,
+                            tension: 0.1
+                        },
+                        { 
+                            label: "PAC unico", 
+                            data: single.equityHistory, 
+                            borderColor: "rgba(255, 193, 7, 1)",
+                            backgroundColor: "rgba(255, 193, 7, 0.1)",
+                            borderWidth: 3, 
+                            pointRadius: 0,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: "Mesi" } },
+                        y: { title: { display: true, text: "Capitale (€)" } }
+                    }
+                }
+            });
+
+            // ============================
+            // TAX CHART
+            // ============================
+            
+            let taxLabels = Array.from(
+                { length: tranche.taxesSeries.length },
+                (_, i) => i + 1
+            );
+
+            if (taxChart) taxChart.destroy();
+
+            taxChart = new Chart(document.getElementById("taxChart"), {
+                type: "line",
+                data: {
+                    labels: taxLabels,
+                    datasets: [
+                        {
+                            label: "Tranche",
+                            data: tranche.taxesSeries,
+                            borderColor: "rgba(0, 123, 255, 1)",
+                            backgroundColor: "rgba(0, 123, 255, 0.1)",
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.1
+                        },
+                        {
+                            label: "PAC unico",
+                            data: single.taxesSeries,
+                            borderColor: "rgba(255, 193, 7, 1)",
+                            backgroundColor: "rgba(255, 193, 7, 0.1)",
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: "Mesi dal decumulo" } },
+                        y: { title: { display: true, text: "Tasse mensili (€)" } }
+                    }
+                }
+            });
         }
     </script>
 </body>
