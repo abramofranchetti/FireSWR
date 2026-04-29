@@ -305,37 +305,34 @@
                     i.value *= (1 + monthlyRate);
                 });
 
-                let totalValueNow = instruments.reduce((s, i) => s + i.value, 0);
-                let totalCostNow = instruments.reduce((s, i) => s + i.cost, 0);
-                
-                // Calcolare il lordo necessario per ottenere il netto desiderato (200€)
-                let gainRatio = Math.max(0, (totalValueNow - totalCostNow) / totalValueNow);
-                let gross = withdrawal / (1 - gainRatio * taxRate);
-                gross = Math.min(gross, totalValueNow);
-                
-                let remaining = gross;
+                let remainingNet = withdrawal;
+                let gross = 0;
                 let taxMonth = 0;
 
                 for (let i = 2; i >= 0; i--) {
-                    if (remaining <= 0) break;
+                    if (remainingNet <= 0) break;
                     let inst = instruments[i];
                     if (inst.value <= 0) continue;
 
-                    let sell = Math.min(remaining, inst.value);
                     let gainRatio = Math.max(0, (inst.value - inst.cost) / inst.value);
+                    let grossNeeded = remainingNet / (1 - gainRatio * taxRate);
+                    let sell = Math.min(grossNeeded, inst.value);
                     let gainPart = sell * gainRatio;
                     let tax = gainPart * taxRate;
+                    let net = sell - tax;
                     let costPortion = sell * (inst.cost / inst.value);
 
                     inst.value -= sell;
                     inst.cost -= costPortion;
 
+                    gross += sell;
                     taxMonth += tax;
-                    remaining -= sell;
+                    remainingNet -= net;
                 }
 
+                let netMonth = withdrawal - Math.max(0, remainingNet);
                 totalTaxes += taxMonth;
-                totalNet += withdrawal;
+                totalNet += netMonth;
                 taxesSeries.push(taxMonth);
 
                 instruments.forEach(i => i.equityHistory.push(i.value));
@@ -349,7 +346,7 @@
                     instruments[2].value,
                     gross,
                     taxMonth,
-                    withdrawal,
+                    netMonth,
                     totalRemaining
                 ]);
             }

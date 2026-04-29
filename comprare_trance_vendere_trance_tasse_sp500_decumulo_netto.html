@@ -363,10 +363,11 @@
                     taxMonth += tax;
                 }
 
+                let netMonth = netWithdrawalTarget - Math.max(0, remainingNet);
                 totalTaxes += taxMonth;
                 taxesSeries.push(taxMonth);
                 totalGross += grossTotal;
-                totalNet += netWithdrawalTarget;
+                totalNet += netMonth;
 
                 // 3️⃣ equity fine mese (DOPO vendita)
                 instruments.forEach(i => i.equity.push(i.value));
@@ -378,7 +379,7 @@
                     instruments[2].value,
                     grossTotal,
                     taxMonth,
-                    netWithdrawalTarget,
+                    netMonth,
                     instruments.reduce((s, i) => s + i.value, 0)
                 ]);
             }
