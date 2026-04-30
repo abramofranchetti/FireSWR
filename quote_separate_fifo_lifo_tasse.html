@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Esperimento fiscale quote separate FIFO LIFO</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background: #a3c3ff;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding-bottom: 50px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            text-align: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 40px;
+            font-size: 0.85rem;
+        }
+
+        th,
+        td {
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 6px 10px;
+            text-align: right;
+        }
+
+        th {
+            background: rgba(106, 113, 207, 0.8);
+            color: white;
+        }
+
+        td {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .summary td,
+        .summary th {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .home-button {
+            display: inline-block;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #0073e6;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin: 10px 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #005bb5;
+        }
+
+        .explanation {
+            margin: 20px auto;
+            max-width: 900px;
+        }
+
+        .explanation p {
+            margin-bottom: 10px;
+            line-height: 1.4rem;
+        }
+
+        .controls {
+            max-width: 900px;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(140px, 1fr));
+            gap: 16px;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.75rem;
+            }
+
+            .card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="/FireSWR" class="home-button">Home</a>
+        <h1 class="card p-4">Esperimento fiscale: confronto quote separate, FIFO/LIFO e PMC</h1>
+
+        <div class="card explanation">
+            <h3>Descrizione dell'esperimento</h3>
+            <p>Si simula un investimento mensile con durata, rendimento annuo e decumulo netto modificabili.
+                La tassazione sulle plusvalenze e pari al 26%.</p>
+            <p>Ogni versamento mensile viene trattato come un lotto separato: il lotto conserva il proprio costo fiscale
+                e il proprio valore maturato.</p>
+            <p>Durante il decumulo si preleva la cifra netta mensile impostata. La pagina mostra contemporaneamente tre
+                modalita: FIFO vende prima le quote piu vecchie, LIFO vende prima le quote piu recenti, mentre il regime
+                amministrato usa una posizione unica con prezzo medio di carico aggiornato a ogni acquisto.</p>
+            <p>Se il prelievo mensile e troppo basso e il capitale continua a durare, il decumulo viene fermato dopo 100
+                anni.</p>
+        </div>
+
+        <div class="card controls">
+            <div class="control-grid">
+                <div>
+                    <label for="monthlyInvestmentInput" class="form-label">Accumulo mensile (&euro;)</label>
+                    <input type="number" id="monthlyInvestmentInput" class="form-control text-center" value="100" min="1" step="10">
+                </div>
+                <div>
+                    <label for="accumulationYearsInput" class="form-label">Anni accumulo</label>
+                    <input type="number" id="accumulationYearsInput" class="form-control text-center" value="15" min="1" max="80" step="1">
+                </div>
+                <div>
+                    <label for="withdrawalInput" class="form-label">Decumulo netto (&euro;/mese)</label>
+                    <input type="number" id="withdrawalInput" class="form-control text-center" value="200" min="1" step="10">
+                </div>
+                <div>
+                    <label for="annualRateInput" class="form-label">Rendimento annuo (%)</label>
+                    <input type="number" id="annualRateInput" class="form-control text-center" value="7" min="-99" step="0.1">
+                </div>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-light mt-3" onclick="runSimulation()">Ricalcola simulazione</button>
+            </div>
+        </div>
+
+        <h2>Riepilogo risultati</h2>
+        <div class="card p-3">
+            <table class="summary" id="summary"></table>
+            <table class="summary" id="summary_diff"></table>
+        </div>
+
+        <div class="card">
+            <h3>Capitale - Accumulo + Decumulo</h3>
+            <canvas id="equityChart"></canvas>
+        </div>
+
+        <div class="card">
+            <h3>Tasse pagate ogni mese</h3>
+            <canvas id="taxChart"></canvas>
+        </div>
+
+        <h2>Accumulo - quote separate e prezzo medio di carico</h2>
+        <div class="card p-3">
+            <table id="accComparison"></table>
+        </div>
+
+        <h2>Decumulo - confronto FIFO, LIFO e PMC</h2>
+        <div class="card p-3">
+            <table id="decComparison"></table>
+        </div>
+    </div>
+
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+
+    <script>
+        const taxRate = 0.26;
+        const maxDecumulationMonths = 12*100;
+        let annualRate = 0.07;
+        let monthlyRate = Math.pow(1 + annualRate, 1 / 12) - 1;
+        let monthlyInvestment = 100;
+        let withdrawal = 200;
+        let monthsAccumulation = 180;
+        let equityChart = null;
+        let taxChart = null;
+
+        function readInputs() {
+            monthlyInvestment = Math.max(1, parseFloat(document.getElementById("monthlyInvestmentInput").value) || 100);
+            withdrawal = Math.max(1, parseFloat(document.getElementById("withdrawalInput").value) || 200);
+            const accumulationYears = Math.max(1, parseInt(document.getElementById("accumulationYearsInput").value, 10) || 15);
+            const annualRatePercent = Math.max(-99, parseFloat(document.getElementById("annualRateInput").value) || 0);
+
+            annualRate = annualRatePercent / 100;
+            monthlyRate = Math.pow(1 + annualRate, 1 / 12) - 1;
+            monthsAccumulation = accumulationYears * 12;
+
+            document.getElementById("monthlyInvestmentInput").value = monthlyInvestment;
+            document.getElementById("withdrawalInput").value = withdrawal;
+            document.getElementById("accumulationYearsInput").value = accumulationYears;
+            document.getElementById("annualRateInput").value = annualRatePercent;
+        }
+
+        function fmt(value) {
+            return typeof value === "number" ? value.toFixed(2) : value;
+        }
+
+        function buildTable(id, headers, data) {
+            let html = "<tr>";
+            headers.forEach(h => html += "<th>" + h + "</th>");
+            html += "</tr>";
+
+            data.forEach(row => {
+                html += "<tr>";
+                row.forEach(cell => {
+                    html += "<td>" + fmt(cell) + "</td>";
+                });
+                html += "</tr>";
+            });
+
+            document.getElementById(id).innerHTML = html;
+        }
+
+        function totals(lots) {
+            const value = lots.reduce((sum, lot) => sum + lot.value, 0);
+            const cost = lots.reduce((sum, lot) => sum + lot.cost, 0);
+            return {
+                value,
+                cost,
+                gain: value - cost,
+                activeLots: lots.filter(lot => lot.value > 0.0001).length
+            };
+        }
+
+        function sellFromLot(lot, netNeeded) {
+            if (lot.value <= 0 || netNeeded <= 0) {
+                return { gross: 0, tax: 0, net: 0 };
+            }
+
+            const gainRatio = Math.max(0, (lot.value - lot.cost) / lot.value);
+            const grossNeeded = netNeeded / (1 - gainRatio * taxRate);
+            const sell = Math.min(grossNeeded, lot.value);
+            const gainPart = sell * gainRatio;
+            const tax = gainPart * taxRate;
+            const net = sell - tax;
+            const costPortion = sell * (lot.cost / lot.value);
+
+            lot.value -= sell;
+            lot.cost -= costPortion;
+
+            if (lot.value < 0.0001) {
+                lot.value = 0;
+                lot.cost = 0;
+            }
+
+            return { gross: sell, tax, net };
+        }
+
+        function simulateLots(mode) {
+            let lots = [];
+            let accTable = [];
+            let decTable = [];
+            let equity = [];
+            let taxesSeries = [];
+
+            for (let month = 1; month <= monthsAccumulation; month++) {
+                lots.forEach(lot => lot.value *= (1 + monthlyRate));
+                lots.push({
+                    name: "Q" + month,
+                    purchaseMonth: month,
+                    value: monthlyInvestment,
+                    cost: monthlyInvestment
+                });
+
+                const total = totals(lots);
+                equity.push(total.value);
+                accTable.push([
+                    month,
+                    total.activeLots,
+                    total.value,
+                    total.cost,
+                    total.gain,
+                    total.value > 0 ? total.gain / total.value * 100 : 0
+                ]);
+            }
+
+            const peak = totals(lots);
+            let month = 0;
+            let totalTaxes = 0;
+            let totalGross = 0;
+            let totalNet = 0;
+
+            while (totals(lots).value > 0.0001 && month < maxDecumulationMonths) {
+                month++;
+                lots.forEach(lot => lot.value *= (1 + monthlyRate));
+
+                const orderedLots = lots
+                    .filter(lot => lot.value > 0.0001)
+                    .sort((a, b) => mode === "FIFO"
+                        ? a.purchaseMonth - b.purchaseMonth
+                        : b.purchaseMonth - a.purchaseMonth);
+
+                let remainingNet = withdrawal;
+                let grossMonth = 0;
+                let taxMonth = 0;
+                let lotsSold = 0;
+                let firstLot = "";
+                let lastLot = "";
+
+                for (const lot of orderedLots) {
+                    if (remainingNet <= 0.0001) break;
+
+                    const beforeValue = lot.value;
+                    const sale = sellFromLot(lot, remainingNet);
+
+                    if (sale.gross > 0) {
+                        lotsSold++;
+                        if (!firstLot) firstLot = lot.name;
+                        lastLot = lot.name;
+                    }
+
+                    grossMonth += sale.gross;
+                    taxMonth += sale.tax;
+                    remainingNet -= sale.net;
+
+                    if (beforeValue <= 0) break;
+                }
+
+                const total = totals(lots);
+                const netMonth = withdrawal - Math.max(0, remainingNet);
+                totalTaxes += taxMonth;
+                totalGross += grossMonth;
+                totalNet += netMonth;
+                taxesSeries.push(taxMonth);
+                equity.push(total.value);
+
+                decTable.push([
+                    month,
+                    mode,
+                    firstLot && lastLot && firstLot !== lastLot ? firstLot + " - " + lastLot : firstLot,
+                    lotsSold,
+                    grossMonth,
+                    taxMonth,
+                    netMonth,
+                    total.activeLots,
+                    total.value,
+                    total.gain
+                ]);
+            }
+
+            const finalTotal = totals(lots);
+
+            return {
+                mode,
+                peakCapital: peak.value,
+                gain: peak.gain,
+                taxes: totalTaxes,
+                months: month,
+                grossAvg: totalGross / month,
+                netAvg: totalNet / month,
+                accTable,
+                decTable,
+                equity,
+                taxesSeries,
+                capped: finalTotal.value > 0.0001,
+                remainingCapital: finalTotal.value
+            };
+        }
+
+        function simulateAverageCost() {
+            let price = 100;
+            let shares = 0;
+            let cost = 0;
+            let accTable = [];
+            let decTable = [];
+            let equity = [];
+            let taxesSeries = [];
+
+            for (let month = 1; month <= monthsAccumulation; month++) {
+                price *= (1 + monthlyRate);
+
+                const boughtShares = monthlyInvestment / price;
+                shares += boughtShares;
+                cost += monthlyInvestment;
+
+                const value = shares * price;
+                const avgCost = shares > 0 ? cost / shares : 0;
+                equity.push(value);
+                accTable.push([
+                    month,
+                    price,
+                    shares,
+                    avgCost,
+                    value,
+                    cost,
+                    value - cost,
+                    value > 0 ? (value - cost) / value * 100 : 0
+                ]);
+            }
+
+            const peakValue = shares * price;
+            const peakGain = peakValue - cost;
+            let month = 0;
+            let totalTaxes = 0;
+            let totalGross = 0;
+            let totalNet = 0;
+
+            while (shares * price > 0.0001 && month < maxDecumulationMonths) {
+                month++;
+                price *= (1 + monthlyRate);
+
+                const valueBeforeSale = shares * price;
+                const avgCost = shares > 0 ? cost / shares : 0;
+                const gainRatio = Math.max(0, (price - avgCost) / price);
+                const grossNeeded = withdrawal / (1 - gainRatio * taxRate);
+                const gross = Math.min(grossNeeded, valueBeforeSale);
+                const sharesSold = gross / price;
+                const gainPart = gross * gainRatio;
+                const tax = gainPart * taxRate;
+                const net = gross - tax;
+                const costPortion = sharesSold * avgCost;
+
+                shares -= sharesSold;
+                cost -= costPortion;
+
+                if (shares < 0.000001) {
+                    shares = 0;
+                    cost = 0;
+                }
+
+                const value = shares * price;
+                totalTaxes += tax;
+                totalGross += gross;
+                totalNet += net;
+                taxesSeries.push(tax);
+                equity.push(value);
+
+                decTable.push([
+                    month,
+                    gross,
+                    tax,
+                    net,
+                    shares,
+                    shares > 0 ? cost / shares : 0,
+                    value,
+                    value - cost
+                ]);
+            }
+
+            return {
+                mode: "PMC amministrato",
+                peakCapital: peakValue,
+                gain: peakGain,
+                taxes: totalTaxes,
+                months: month,
+                grossAvg: totalGross / month,
+                netAvg: totalNet / month,
+                accTable,
+                decTable,
+                equity,
+                taxesSeries,
+                capped: shares * price > 0.0001,
+                remainingCapital: shares * price
+            };
+        }
+
+        function valueAt(table, rowIndex, columnIndex) {
+            return table[rowIndex] ? table[rowIndex][columnIndex] : "";
+        }
+
+        function buildAccumuloComparison(lots, averageCost) {
+            return lots.accTable.map((row, i) => [
+                row[0],
+                row[1],
+                row[2],
+                row[3],
+                row[4],
+                row[5],
+                valueAt(averageCost.accTable, i, 1),
+                valueAt(averageCost.accTable, i, 2),
+                valueAt(averageCost.accTable, i, 3)
+            ]);
+        }
+
+        function buildDecumuloComparison(fifo, lifo, averageCost) {
+            const rows = [];
+            const maxRows = Math.max(fifo.decTable.length, lifo.decTable.length, averageCost.decTable.length);
+
+            for (let i = 0; i < maxRows; i++) {
+                rows.push([
+                    i + 1,
+                    valueAt(fifo.decTable, i, 2),
+                    valueAt(fifo.decTable, i, 4),
+                    valueAt(fifo.decTable, i, 5),
+                    valueAt(fifo.decTable, i, 6),
+                    valueAt(fifo.decTable, i, 7),
+                    valueAt(fifo.decTable, i, 8),
+                    valueAt(lifo.decTable, i, 2),
+                    valueAt(lifo.decTable, i, 4),
+                    valueAt(lifo.decTable, i, 5),
+                    valueAt(lifo.decTable, i, 6),
+                    valueAt(lifo.decTable, i, 7),
+                    valueAt(lifo.decTable, i, 8),
+                    valueAt(averageCost.decTable, i, 1),
+                    valueAt(averageCost.decTable, i, 2),
+                    valueAt(averageCost.decTable, i, 3),
+                    valueAt(averageCost.decTable, i, 4),
+                    valueAt(averageCost.decTable, i, 5),
+                    valueAt(averageCost.decTable, i, 6)
+                ]);
+            }
+
+            return rows;
+        }
+
+        function outcome(result) {
+            return result.capped ? "Fermato a 100 anni" : "Esaurito";
+        }
+
+        function runSimulation() {
+            readInputs();
+
+            const fifo = simulateLots("FIFO");
+            const lifo = simulateLots("LIFO");
+            const averageCost = simulateAverageCost();
+
+            buildTable("summary",
+                ["Modalita", "Capitale a fine accumulo", "Plusvalenza maturata", "Tasse totali", "Mesi decumulo", "Lordo medio", "Netto medio", "Capitale residuo", "Esito"],
+                [
+                    [fifo.mode, fifo.peakCapital, fifo.gain, fifo.taxes, fifo.months, fifo.grossAvg, fifo.netAvg, fifo.remainingCapital, outcome(fifo)],
+                    [lifo.mode, lifo.peakCapital, lifo.gain, lifo.taxes, lifo.months, lifo.grossAvg, lifo.netAvg, lifo.remainingCapital, outcome(lifo)],
+                    [averageCost.mode, averageCost.peakCapital, averageCost.gain, averageCost.taxes, averageCost.months, averageCost.grossAvg, averageCost.netAvg, averageCost.remainingCapital, outcome(averageCost)]
+                ]
+            );
+
+            buildTable("summary_diff",
+                ["Modalita", "Capitale a fine accumulo", "Plusvalenza maturata", "Tasse totali", "Mesi decumulo", "Lordo medio", "Netto medio", "Capitale residuo", "Esito"],
+                [                    
+                    ["Differenza LIFO - FIFO", lifo.peakCapital - fifo.peakCapital, lifo.gain - fifo.gain, lifo.taxes - fifo.taxes, lifo.months - fifo.months, lifo.grossAvg - fifo.grossAvg, lifo.netAvg - fifo.netAvg, lifo.remainingCapital - fifo.remainingCapital, outcome(lifo)],
+                    ["Differenza PMC - FIFO", averageCost.peakCapital - fifo.peakCapital, averageCost.gain - fifo.gain, averageCost.taxes - fifo.taxes, averageCost.months - fifo.months, averageCost.grossAvg - fifo.grossAvg, averageCost.netAvg - fifo.netAvg, averageCost.remainingCapital - fifo.remainingCapital, outcome(averageCost)],
+                    ["Differenza PMC - LIFO", averageCost.peakCapital - lifo.peakCapital, averageCost.gain - lifo.gain, averageCost.taxes - lifo.taxes, averageCost.months - lifo.months, averageCost.grossAvg - lifo.grossAvg, averageCost.netAvg - lifo.netAvg, averageCost.remainingCapital - lifo.remainingCapital, outcome(averageCost)]
+                ]
+            );
+
+
+            buildTable("accComparison",
+                ["Mese", "Lotti attivi", "Valore totale", "Costo fiscale", "Plusvalenza", "Plusvalenza %", "Prezzo quota PMC", "Quote PMC", "PMC"],
+                buildAccumuloComparison(fifo, averageCost)
+            );
+
+            buildTable("decComparison",
+                [
+                    "Mese",
+                    "FIFO quote vendute", "FIFO lordo", "FIFO tasse", "FIFO netto", "FIFO quote residue", "FIFO capitale residuo",
+                    "LIFO quote vendute", "LIFO lordo", "LIFO tasse", "LIFO netto", "LIFO quote residue", "LIFO capitale residuo",
+                    "PMC lordo", "PMC tasse", "PMC netto", "PMC quote residue", "PMC", "PMC capitale residuo"
+                ],
+                buildDecumuloComparison(fifo, lifo, averageCost)
+            );
+
+            const equityLength = Math.max(fifo.equity.length, lifo.equity.length, averageCost.equity.length);
+            const labels = Array.from({ length: equityLength }, (_, i) => i + 1);
+            if (equityChart) equityChart.destroy();
+            equityChart = new Chart(document.getElementById("equityChart"), {
+                type: "line",
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: "Capitale totale - FIFO",
+                            data: fifo.equity,
+                            borderColor: "rgba(0, 123, 255, 1)",
+                            backgroundColor: "rgba(0, 123, 255, 0.1)",
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            tension: 0.1
+                        },
+                        {
+                            label: "Capitale totale - LIFO",
+                            data: lifo.equity,
+                            borderColor: "rgba(220, 53, 69, 1)",
+                            backgroundColor: "rgba(220, 53, 69, 0.1)",
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            tension: 0.1
+                        },
+                        {
+                            label: "Capitale totale - PMC amministrato",
+                            data: averageCost.equity,
+                            borderColor: "rgba(40, 167, 69, 1)",
+                            backgroundColor: "rgba(40, 167, 69, 0.1)",
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { position: 'top' } },
+                    scales: {
+                        x: { title: { display: true, text: "Mesi" } },
+                        y: { title: { display: true, text: "Capitale (euro)" } }
+                    }
+                }
+            });
+
+            const taxLength = Math.max(fifo.taxesSeries.length, lifo.taxesSeries.length, averageCost.taxesSeries.length);
+            const taxLabels = Array.from({ length: taxLength }, (_, i) => i + 1);
+            if (taxChart) taxChart.destroy();
+            taxChart = new Chart(document.getElementById("taxChart"), {
+                type: "line",
+                data: {
+                    labels: taxLabels,
+                    datasets: [
+                        {
+                            label: "Tasse mensili - FIFO",
+                            data: fifo.taxesSeries,
+                            borderColor: "rgba(0, 123, 255, 1)",
+                            backgroundColor: "rgba(0, 123, 255, 0.1)",
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.1
+                        },
+                        {
+                            label: "Tasse mensili - LIFO",
+                            data: lifo.taxesSeries,
+                            borderColor: "rgba(220, 53, 69, 1)",
+                            backgroundColor: "rgba(220, 53, 69, 0.1)",
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.1
+                        },
+                        {
+                            label: "Tasse mensili - PMC amministrato",
+                            data: averageCost.taxesSeries,
+                            borderColor: "rgba(40, 167, 69, 1)",
+                            backgroundColor: "rgba(40, 167, 69, 0.1)",
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { position: 'top' } },
+                    scales: {
+                        x: { title: { display: true, text: "Mesi dal decumulo" } },
+                        y: { title: { display: true, text: "Tasse mensili (euro)" } }
+                    }
+                }
+            });
+        }
+
+        window.onload = runSimulation;
+    </script>
+</body>
+
+</html>
