@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function createChart(italiaData, europaData) {
         const ctx = document.getElementById('inflationChart').getContext('2d');
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
         const averageInflation = italiaData.values.reduce((a, b) => a + (b || 0), 0) / italiaData.values.filter(v => v !== null).length;
         let firstPoint = null;
         let secondPoint = null;
@@ -79,8 +80,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 1,
                         fill: false,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
+                        pointRadius: isMobile ? 3 : 5,
+                        pointHoverRadius: isMobile ? 5 : 7
                     },
                     {
                         label: 'Infl. Media Europa',
@@ -88,18 +89,29 @@ document.addEventListener('DOMContentLoaded', function () {
                         borderColor: 'rgba(255, 99, 132, 0.5)',
                         borderWidth: 1,
                         fill: false,
-                        pointRadius: 3,
-                        pointHoverRadius: 5,
+                        pointRadius: isMobile ? 2 : 3,
+                        pointHoverRadius: isMobile ? 4 : 5,
                         borderDash: [5, 5]
                     }
                 ]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'nearest',
+                    intersect: false
+                },
                 plugins: {
+                    legend: {
+                        position: isMobile ? 'bottom' : 'top',
+                        labels: {
+                            boxWidth: isMobile ? 12 : 40
+                        }
+                    },
                     zoom: {
                         pan: {
-                            enabled: true,
+                            enabled: !isMobile,
                             mode: 'x'
                         },
                         zoom: {
@@ -111,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                             mode: 'x',
                             drag: {
-                                enabled: true,
+                                enabled: !isMobile,
                                 backgroundColor: 'rgba(0,0,0,0.3)',
                             }
                         }
@@ -166,6 +178,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 scales: {
                     x: {
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: isMobile ? 12 : 24,
+                            maxRotation: 0
+                        },
                         title: {
                             display: true,
                             text: 'Anno'
@@ -179,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 },
                 onClick: function (evt) {
-                    const activeElements = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
+                    const activeElements = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: false }, true);
                     if (activeElements.length > 0) {
                         const index = activeElements[0].index;
                         if (!firstPoint) {

@@ -16,18 +16,101 @@
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
     <script src="js/inlf.js" defer></script>
+    <style>
+        .inflation-page {
+            overflow-x: hidden;
+        }
+
+        .inflation-card {
+            width: min(100%, 1600px);
+        }
+
+        .inflation-chart-container {
+            height: 620px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .inflation-chart-frame {
+            position: relative;
+            min-width: 980px;
+            height: 100%;
+        }
+
+        .inflation-chart-frame canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        #cumulativeInflation {
+            white-space: pre-line;
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 768px) {
+            .inflation-card {
+                margin: 0;
+                padding: 14px !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+
+            .home-button {
+                float: none;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 12px;
+            }
+
+            .inflation-page h1 {
+                font-size: 1.45rem;
+                line-height: 1.25;
+            }
+
+            .inflation-page h5 {
+                font-size: 1rem;
+            }
+
+            .inflation-chart-container {
+                height: 520px !important;
+                padding: 8px;
+                margin-left: -8px;
+                margin-right: -8px;
+                border-radius: 8px;
+            }
+
+            .inflation-chart-frame {
+                min-width: 920px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .inflation-chart-container {
+                height: 500px !important;
+            }
+
+            .inflation-chart-frame {
+                min-width: 860px;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-light">
-    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+<body class="bg-light inflation-page">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm inflation-card">
         <div class="text-center mb-4">
-            <a href="/FireSWR" class="home-button">🏠 Home</a>
+            <a href="/FireSWR" class="home-button">Home</a>
         </div>
         <h1 class="text-center">Inflazione Media in Italia</h1>
         <h5 class="text-center">Dati storici annuali</h5>
 
-        <div class="chart-container mb-4">
-            <canvas id="inflationChart"></canvas>
+        <div class="chart-container inflation-chart-container mb-4">
+            <div class="inflation-chart-frame">
+                <canvas id="inflationChart"></canvas>
+            </div>
         </div>
         <div class="text-center">
             <button id="resetZoom" class="btn btn-primary">Reset Zoom</button>
