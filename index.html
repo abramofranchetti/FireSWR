@@ -21,6 +21,7 @@
             --color-pianificazione: #ff6f61;
             --color-investimenti: #4a90e2;
             --color-pac: #7ed321;
+            --color-decumulo: #1b2b8380;
             --color-obbligazioni: #f5a623;
             --color-mercati: #ff9500;
             --color-materie-prime: #d4af37;
@@ -111,6 +112,13 @@
 
         #pac {
             background: linear-gradient(135deg, rgba(126, 211, 33, 0.05), rgba(126, 211, 33, 0.02));
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+        }
+
+        #decumulo {
+            background: linear-gradient(135deg, rgba(27, 43, 131, 0.05), rgba(27, 43, 131, 0.02));
             padding: 20px;
             border-radius: var(--border-radius);
             margin-bottom: 50px;
@@ -216,6 +224,10 @@
 
         #pac .section-title {
             border-color: var(--color-pac);
+        }
+        
+        #decumulo .section-title {
+            border-color: var(--color-decumulo);
         }
 
         #obbligazioni .section-title {
@@ -335,6 +347,10 @@
         #pac .button-card .button-icon {
             color: var(--color-pac);
         }
+        
+        #decumulo .button-card .button-icon {
+            color: var(--color-decumulo);
+        }
 
         #obbligazioni .button-card .button-icon {
             color: var(--color-obbligazioni);
@@ -424,6 +440,11 @@
             background-color: rgba(126, 211, 33, 0.1);
             color: var(--color-pac);
         }
+        
+        #decumulo .button-card .button-label {
+            background-color: rgba(126, 211, 33, 0.1);
+            color: var(--color-decumulo);
+        }
 
         #obbligazioni .button-card .button-label {
             background-color: rgba(245, 166, 35, 0.1);
@@ -487,6 +508,10 @@
         }
 
         #pac .button-card:hover {
+            background: linear-gradient(135deg, rgba(126, 211, 33, 0.1), rgba(126, 211, 33, 0.05));
+        }
+
+        #decumulo .button-card:hover {
             background: linear-gradient(135deg, rgba(126, 211, 33, 0.1), rgba(126, 211, 33, 0.05));
         }
 
@@ -914,9 +939,11 @@
                 </a>
                 </div>
         </section>
+
+        <!-- Sezione: Strategie di decumulo -->
         <section id="decumulo" class="section">
             <h2 class="section-title"><a class="section-link" href="#decumulo">Strategie di decumulo</a><button class="copy-link"
-                    data-target="decumulo" aria-label="Copia link sezione">&#128277;</button></h2>
+                    data-target="decumulo" aria-label="Copia link sezione">&#128279;</button></h2>
             <div class="button-grid">
                 <a href="/FireSWR/comprare_trance_vendere_trance_tasse.html" class="button-card calculator">
                     <div class="button-icon"><i class="fas fa-chart-area"></i></div>
