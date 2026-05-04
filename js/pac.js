@@ -158,13 +158,35 @@ function loadDataset() {
     const selectedIndex = $('#indexSelect').val();
     const datasetFile = 'json/' + selectedIndex + '.json';
 
-    return fetch(datasetFile)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Errore nel caricamento del dataset: " + response.statusText);
-            }
-            return response.json();
-        })
+    let dataPromise;
+    if (selectedIndex === 'acwi') {
+        dataPromise = Promise.all([
+            fetch(datasetFile).then(response => {
+                if (!response.ok) {
+                    throw new Error("Errore nel caricamento del dataset storico: " + response.statusText);
+                }
+                return response.json();
+            }),
+            fetch('json/acwi_updated.json').then(response => {
+                if (!response.ok) {
+                    throw new Error("Errore nel caricamento del dataset aggiornato: " + response.statusText);
+                }
+                return response.json();
+            })
+        ]).then(([historicalData, updatedData]) => {
+            return mergeData(historicalData, updatedData);
+        });
+    } else {
+        dataPromise = fetch(datasetFile)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Errore nel caricamento del dataset: " + response.statusText);
+                }
+                return response.json();
+            });
+    }
+
+    return dataPromise
         .then(data => {
             // Assumiamo che data sia un array di oggetti con campi "Date" e "Close"
             // Ordiniamo il dataset per data (crescente)
@@ -465,7 +487,7 @@ function createMoneryValueChart(dates, grossValuesDollar, netValuesDollar, netti
 
 
 // Funzione per creare il grafico del drawdown
-function createDrawdownChart(dates, drawdownNetEur, drawdownNetDollar) {
+function createDrawdownChart(dates, drawdownNetEur, drawdownNetDollar, drawdownAdjustedNettissimoEur) {
     const ctx = document.getElementById('drawdownChartCanvas').getContext('2d');
     if (drawdownChartInstance) {
         drawdownChartInstance.destroy();
@@ -489,6 +511,16 @@ function createDrawdownChart(dates, drawdownNetEur, drawdownNetDollar) {
                     data: drawdownNetDollar.map(value => value * -100),
                     borderColor: 'rgba(54, 162, 235, 0.6)',
                     backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                    fill: false,
+                    tension: 0.1,
+                    pointRadius: 0,
+                    hidden: true
+                },
+                {
+                    label: 'Drawdown Nettissimo Infl. Adjusted (€) - Adjusted',
+                    data: drawdownAdjustedNettissimoEur.map(value => value * -100),
+                    borderColor: 'rgba(128, 0, 128, 0.6)',
+                    backgroundColor: 'rgba(128, 0, 128, 0.1)',
                     fill: false,
                     tension: 0.1,
                     pointRadius: 0,
@@ -552,7 +584,7 @@ function createDrawdownChart(dates, drawdownNetEur, drawdownNetDollar) {
 }
 
 // Funzione per creare il grafico del drawdown
-function createDrawdownValueChart(dates, drawdownNetEur, drawdownNetDollar) {
+function createDrawdownValueChart(dates, drawdownNetEur, drawdownNetDollar, drawdownAdjustedNettissimoEur) {
     const ctx = document.getElementById('drawdownValueChartCanvas').getContext('2d');
     if (drawdownValueChartInstance) {
         drawdownValueChartInstance.destroy();
@@ -576,6 +608,16 @@ function createDrawdownValueChart(dates, drawdownNetEur, drawdownNetDollar) {
                     data: drawdownNetDollar.map(value => value * -1),
                     borderColor: 'rgba(54, 162, 235, 0.6)',
                     backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                    fill: false,
+                    tension: 0.1,
+                    pointRadius: 0,
+                    hidden: true
+                },
+                {
+                    label: 'Drawdown Nettissimo Infl. Adjusted (€)',
+                    data: drawdownAdjustedNettissimoEur.map(value => value * -1),
+                    borderColor: 'rgba(128, 0, 128, 0.6)',
+                    backgroundColor: 'rgba(128, 0, 128, 0.1)',
                     fill: false,
                     tension: 0.1,
                     pointRadius: 0,
@@ -753,7 +795,7 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
 function runSimulation() {
     // Legge i parametri di input
     let initialCapitalEur = parseFloat($('#initialCapitalEur').val());
-    
+
     const monthlyDepositEur = parseFloat($('#monthlyDepositEur').val());
     const terFee = parseFloat($('#terFee').val()); // espresso in percentuale
     const crashThresholdPct = parseFloat($('#crashThresholdPct').val());
@@ -919,7 +961,7 @@ function runSimulation() {
         if (index === 0) return 0;
         const prevNetEur = nettissimoValuesEur[index - 1];
         const currNetEur = nettissimoValuesEur[index];
-         return prevNetEur === 0 ? 0 : (currNetEur / prevNetEur) - 1;
+        return prevNetEur === 0 ? 0 : (currNetEur / prevNetEur) - 1;
     }).slice(1);
 
     const volatilitaNettissimoEur = calcolaDeviazioneStandardAnnualizzata(rendimentiGiornalieriNettissimoEur);
@@ -950,13 +992,15 @@ function runSimulation() {
 
     // Calcola i valori reali al netto dell'inflazione        
     const adjustedNettissimoValuesEur = adjustForInflationCumulative(nettissimoValuesEur, dates, inflationData);
+    const drawdownAdjustedNettissimoEur = calcolaDrawdownGiornaliero(adjustedNettissimoValuesEur);
+    const drawdownAdjustedNettissimoEurValore = calcolaDrawdownValore(adjustedNettissimoValuesEur);
     const anniTotali = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24 * 365.25);
     const crashThreshold = crashThresholdPct / 100;
 
     createMoneryValueChart(dates, grossValuesDollar, netValuesDollar, nettissimoValuesDollar, totalDepositsDollar, grossValuesEur, netValuesEur, nettissimoValuesEur, totalDepositsEur, adjustedNettissimoValuesEur);
     createPercentageChart(dates, nettissimoValuesEur, adjustedNettissimoValuesEur, nettissimoValuesDollar);
-    createDrawdownChart(dates, drawdownNettissimoEur, drawdownNettissimoDollar);
-    createDrawdownValueChart(dates, drawdownNettissimoEurValore, drawdownNettissimoDollarValore);
+    createDrawdownChart(dates, drawdownNettissimoEur, drawdownNettissimoDollar, drawdownAdjustedNettissimoEur);
+    createDrawdownValueChart(dates, drawdownNettissimoEurValore, drawdownNettissimoDollarValore, drawdownAdjustedNettissimoEurValore);
 
     const eventiCrollo = {
         grossEur: contaEventiCrollo(drawdownGrossEur, crashThreshold),
@@ -1090,7 +1134,7 @@ function runSimulation() {
 
     resultHtml += `<div class="box">`;
     resultHtml += `<p><strong>Comparazione tra quanto ottenuto e quanto avresti dovuto risparmiare senza investire per avere la stessa cifra nello stesso tempo:</strong></p>`;
-    resultHtml += `<p><strong>Avresti dovuto risparmiare:</strong> ${formatEuro((finalNettissimoEur)/(anniTotali*12))} al mese per ${(anniTotali).toFixed(1)} anni per avere la stessa cifra.</p>`;    
+    resultHtml += `<p><strong>Avresti dovuto risparmiare:</strong> ${formatEuro((finalNettissimoEur) / (anniTotali * 12))} al mese per ${(anniTotali).toFixed(1)} anni per avere la stessa cifra.</p>`;
     resultHtml += `</div>`;
 
     resultHtml += `<div class="box">`;
