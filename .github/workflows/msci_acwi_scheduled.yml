@@ -2,7 +2,7 @@ name: MSCI ACWI
 
 on:
   schedule:
-    - cron: "1 6 * * 1-5"
+    - cron: "8 6 * * 1-5"
   workflow_dispatch:
 
 jobs:
