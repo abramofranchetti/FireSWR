@@ -33,7 +33,7 @@ jobs:
         run: rm -f json/msci_acwi.json
 
       - name: Run MSCI downloader
-        run: python msci_acwi_downloader.py
+        run: python py/msci_acwi_downloader.py
 
       - name: Configure Git
         run: |
