@@ -1,0 +1,49 @@
+name: MSCI ACWI
+
+on:
+  schedule:
+    - cron: "1 6 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull latest changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git pull --rebase origin main
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      # (opzionale ma consigliato)
+      - name: Remove existing JSON file
+        run: rm -f json/msci_acwi.json
+
+      - name: Run MSCI downloader
+        run: python msci_acwi_downloader.py
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add json/msci_acwi.json
+          git commit -m "Aggiornamento automatico MSCI ACWI" || echo "No changes"
+          git push https://github.com/${{ github.repository }}.git HEAD:main
