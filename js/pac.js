@@ -1008,7 +1008,8 @@ function runSimulation() {
         nettissimoEur: contaEventiCrollo(drawdownNettissimoEur, crashThreshold),
         grossDollar: contaEventiCrollo(drawdownGrossDollar, crashThreshold),
         netDollar: contaEventiCrollo(drawdownNetDollar, crashThreshold),
-        nettissimoDollar: contaEventiCrollo(drawdownNettissimoDollar, crashThreshold)
+        nettissimoDollar: contaEventiCrollo(drawdownNettissimoDollar, crashThreshold),
+        nettissimoEurInflAdj: contaEventiCrollo(drawdownAdjustedNettissimoEur, crashThreshold)
     };
 
     // Funzione per formattare i numeri in euro con separatore delle migliaia
@@ -1158,6 +1159,7 @@ function runSimulation() {
     resultHtml += `<p>Lordo: ${eventiCrollo.grossEur} eventi totali, media ${formatMediaEventi(eventiCrollo.grossEur)} volte/anno</p>`;
     resultHtml += `<p>Netto: ${eventiCrollo.netEur} eventi totali, media ${formatMediaEventi(eventiCrollo.netEur)} volte/anno</p>`;
     resultHtml += `<p>Nettissimo: ${eventiCrollo.nettissimoEur} eventi totali, media ${formatMediaEventi(eventiCrollo.nettissimoEur)} volte/anno</p>`;
+    resultHtml += `<p>Nettissimo Infl Adjusted €: ${eventiCrollo.nettissimoEurInflAdj} eventi totali, media ${formatMediaEventi(eventiCrollo.nettissimoEurInflAdj)} volte/anno</p>`;
     resultHtml += `</div>`;
 
     resultHtml += `</div>`;
