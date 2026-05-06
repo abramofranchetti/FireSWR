@@ -35,7 +35,7 @@ jobs:
         shell: bash
 
       - name: Run stock value downloader
-        run: python py/stock_value_downloader.py ${{ env.STOCK_SYMBOL }} ${{ env.FILE_NAME }} ${{ env.START_DATE }}
+        run: python py/stock_value_downloader_2.py ${{ env.STOCK_SYMBOL }} ${{ env.FILE_NAME }} ${{ env.START_DATE }}
 
       - name: Configure Git
         run: |
