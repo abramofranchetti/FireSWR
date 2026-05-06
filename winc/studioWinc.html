@@ -1095,7 +1095,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
             });
         }
 
-        function updateNetBreakdownTable(wincFlows, swdaSoldFlows, wincCapital, swdaSoldCapital, wincTotal, swdaSoldTotal) {
+        function updateNetBreakdownTable(wincFlows, acweFlows, wincCapital, acweCapital, wincTotal, acweTotal) {
             const lastValid = (arr) => {
                 for (let i = arr.length - 1; i >= 0; i--) {
                     if (arr[i] != null && !isNaN(arr[i])) return Number(arr[i]);
@@ -1116,23 +1116,23 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
             };
 
             const wFlow = lastValid(wincFlows);
-            const sFlow = lastValid(swdaSoldFlows);
+            const aFlow = lastValid(acweFlows);
             const wCap = lastValid(wincCapital);
-            const sCap = lastValid(swdaSoldCapital);
+            const aCap = lastValid(acweCapital);
             const wTot = lastValid(wincTotal);
-            const sTot = lastValid(swdaSoldTotal);
+            const aTot = lastValid(acweTotal);
 
             setText('nb-flow-winc', fmtEuro(wFlow));
-            setText('nb-flow-swda-sold', fmtEuro(sFlow));
-            setText('nb-flow-diff', fmtDelta((sFlow == null || wFlow == null) ? null : (sFlow - wFlow)));
+            setText('nb-flow-acwe', fmtEuro(aFlow));
+            setText('nb-flow-diff', fmtDelta((aFlow == null || wFlow == null) ? null : (aFlow - wFlow)));
 
             setText('nb-cap-winc', fmtEuro(wCap));
-            setText('nb-cap-swda-sold', fmtEuro(sCap));
-            setText('nb-cap-diff', fmtDelta((sCap == null || wCap == null) ? null : (sCap - wCap)));
+            setText('nb-cap-acwe', fmtEuro(aCap));
+            setText('nb-cap-diff', fmtDelta((aCap == null || wCap == null) ? null : (aCap - wCap)));
 
             setText('nb-tot-winc', fmtEuro(wTot));
-            setText('nb-tot-swda-sold', fmtEuro(sTot));
-            setText('nb-tot-diff', fmtDelta((sTot == null || wTot == null) ? null : (sTot - wTot)));
+            setText('nb-tot-acwe', fmtEuro(aTot));
+            setText('nb-tot-diff', fmtDelta((aTot == null || wTot == null) ? null : (aTot - wTot)));
         }
 
         function populateDividendiTable(distribuzioni, wincShares, swdaShares, swdaInitialPrice, mapSWDA, distribuzioniSWDAVirtuali) {
