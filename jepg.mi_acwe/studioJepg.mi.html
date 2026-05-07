@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Studio Rendimento JEPG vs SWDA.MI</title>
+    <title>Studio Rendimento JEPG vs ACWE.MI</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -60,12 +60,12 @@
             <a href="/FireSWR" class="home-button">🏠 Home</a>
         </div>
         <br>
-        <h1 class="text-center">Studio Rendimento JEPG.MI vs Decumulo equivalente da SWDA.MI</h1>
+        <h1 class="text-center">Studio Rendimento JEPG.MI vs Decumulo equivalente da ACWE</h1>
         <h5 class="text-center">
             Studio comparativo di strategia covered call JEPG.MI (JPMorgan ETFs (Irlanda) ICAV - Global Equity Premium Income Active UCITS ETF) e il suo sottostante.
-            Ho usato l'etf SWDA.MI (Azionario paesi sviluppati).
+            Ho usato l'etf ACWE.MI (SPDR All Country World UCITS Accumulating).
         </h5>
-        <p>Il grafico mostra come andrebbe una strategia che vende quote di SWDA.MI per ottenere mensilmente lo stesso dividendo lordo staccato dall'ETF covered call.</p>
+        <p>Il grafico mostra come andrebbe una strategia che vende quote di ACWE per ottenere mensilmente lo stesso dividendo lordo staccato dall'ETF covered call.</p>
         <form>
             <div class="form-group mt-4">
                 <label for="montante">Capitale inizale €:</label>
@@ -97,10 +97,10 @@
         <p class="small text-muted mt-2">Legenda:
         <ul>
             <li><strong>Rige verdi</strong> = Date di stacco dividendi JEPG</li>
-            <li><strong>SWDA Accumulo</strong> = SWDA (con aggiustamento dividendi), </li>
+            <li><strong>ACWE Accumulo</strong> = ACWE (con aggiustamento dividendi), </li>
             <li><strong>JEPG Accumulo</strong> = JEPG con reinvestimento dividendi, </li>
             <li><strong>JEPG Distribuzione</strong> = JEPG senza reinvestimento dei dividendi.</li>
-            <li><strong>SWDA con vendite</strong> = SWDA con vendite per coprire i dividendi di JEPG (va confrontato
+            <li><strong>ACWE con vendite</strong> = ACWE con vendite per coprire i dividendi di JEPG (va confrontato
                 con la riga arancione).</li>
         </ul>
         </p>
@@ -116,8 +116,8 @@
                     <tr>
                         <th>Voce</th>
                         <th>JEPG netto (EUR)</th>
-                        <th>SWDA netto (EUR)</th>
-                        <th>Delta SWDA - JEPG (EUR)</th>
+                        <th>ACWE netto (EUR)</th>
+                        <th>Delta ACWE - JEPG (EUR)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -149,7 +149,7 @@
                 <div class="col-md-6 col-lg-3 pb-1">
                     <div class="metric-card"
                         style="background: linear-gradient(135deg, rgba(54,162,235,0.1) 0%, rgba(54,162,235,0.05) 100%); border-left: 4px solid rgba(54,162,235,0.8);">
-                        <strong style="color: #3693eb; font-size: 0.95rem;">SWDA - Accumulo</strong>
+                        <strong style="color: #3693eb; font-size: 0.95rem;">ACWE - Accumulo</strong>
                         <div id="metrics-acwe" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
                             Calcolo in corso...
                         </div>
@@ -167,7 +167,7 @@
                 <div class="col-md-6 col-lg-3 pb-1">
                     <div class="metric-card"
                         style="background: linear-gradient(135deg, rgba(75,192,192,0.1) 0%, rgba(75,192,192,0.05) 100%); border-left: 4px solid rgba(75,192,192,0.8);">
-                        <strong style="color: #20b2aa; font-size: 0.95rem;">SWDA - Con Vendite</strong>
+                        <strong style="color: #20b2aa; font-size: 0.95rem;">ACWE - Con Vendite</strong>
                         <div id="metrics-acwe-sold" class="metric-value" style="font-size: 0.85rem; line-height: 1.4;">
                             Calcolo in corso...
                         </div>
@@ -194,9 +194,9 @@
                     <th>Data di Stacco</th>                    
                     <th>Dividendo Lordo JEPG (€)</th>                    
                     <th>Dividendo Netto JEPG (€)</th>
-                    <th>Quote SWDA Vendute</th>
-                    <th>Dividendo Lordo SWDA (da vendita) (€)</th>
-                    <th>Dividendo Netto SWDA (da vendita) (€)</th>
+                    <th>Quote ACWE Vendute</th>
+                    <th>Dividendo Lordo ACWE (da vendita) (€)</th>
+                    <th>Dividendo Netto ACWE (da vendita) (€)</th>
                     <th>Differenza tra i netti</th>
                 </tr>
             </thead>
@@ -229,7 +229,7 @@
             try {
                 const [xyleResp, csspxResp, distribuzioniResp] = await Promise.all([
                     fetch('JEPG.MI.json'),
-                    fetch('SWDA.MI.json'),
+                    fetch('ACWE.MI.json'),
                     fetch('Distribuzioni_JEPG.txt')
                 ]);
 
@@ -470,7 +470,7 @@
                         labels: labels,
                         datasets: [
                             {
-                                label: '(SWDA) - Accumulo',
+                                label: '(ACWE) - Accumulo',
                                 data: csspxCumulative,
                                 borderColor: 'rgba(54, 162, 235, 1)',
                                 backgroundColor: 'rgba(54, 162, 235, 0.1)',
@@ -500,7 +500,7 @@
                                 pointRadius: 0
                             },
                             {
-                                label: 'SWDA (con vendite equivalenti ai dividendi JEPG)',
+                                label: 'ACWE (con vendite equivalenti ai dividendi JEPG)',
                                 data: csspxAdjustedCumulative,
                                 borderColor: 'rgba(75, 192, 192, 1)',
                                 backgroundColor: 'rgba(75, 192, 192, 0.1)',
@@ -521,7 +521,7 @@
                         plugins: {
                             title: {
                                 display: true,
-                                text: 'JEPG.MI vs SWDA'
+                                text: 'JEPG.MI vs ACWE'
                             },
                             tooltip: {
                                 callbacks: {
@@ -715,7 +715,7 @@ Sortino (periodale): ${isNaN(mJepgNetto.periodSortino) ? 'n/a' : mJepgNetto.peri
                             pointRadius: 0
                         },
                         {
-                            label: 'SWDA: capitale netto + distribuzioni nette',
+                            label: 'ACWE: capitale netto + distribuzioni nette',
                             data: acweSeries,
                             borderColor: 'rgba(54, 162, 235, 1)',
                             backgroundColor: 'rgba(54, 162, 235, 0.12)',
