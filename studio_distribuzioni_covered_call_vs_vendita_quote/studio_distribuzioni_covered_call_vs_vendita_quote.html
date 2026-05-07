@@ -598,6 +598,19 @@
             return ETF_COMPARISONS.find(item => item.coveredTicker === selectedTicker) || ETF_COMPARISONS[0];
         }
 
+        function getComparisonFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const requestedTicker = params.get('etf');
+            if (!requestedTicker) return null;
+            return ETF_COMPARISONS.find(item => item.coveredTicker.toUpperCase() === requestedTicker.toUpperCase()) || null;
+        }
+
+        function updateEtfUrl(ticker) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('etf', ticker);
+            window.history.replaceState({}, '', url);
+        }
+
         function populateComparisonSelect() {
             const select = document.getElementById('coveredCallEtf');
             if (!select) return;
@@ -608,6 +621,10 @@
                 option.textContent = `${item.coveredTicker} - ${item.coveredName}`;
                 select.appendChild(option);
             });
+            const urlComparison = getComparisonFromUrl();
+            if (urlComparison) {
+                select.value = urlComparison.coveredTicker;
+            }
         }
 
         function updateComparisonTexts(config) {
@@ -1389,6 +1406,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
         document.addEventListener('DOMContentLoaded', loadAndPlot);
         const coveredCallEtfSelect = document.getElementById('coveredCallEtf');
         coveredCallEtfSelect.addEventListener('change', function () {
+            updateEtfUrl(this.value);
             const startDateInput = document.getElementById('startDate');
             if (startDateInput) startDateInput.value = '';
             loadAndPlot();
