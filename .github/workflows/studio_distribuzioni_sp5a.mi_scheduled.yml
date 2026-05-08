@@ -2,7 +2,7 @@ name: Studio Distribuzioni SP5A.MI
 
 on:
   schedule:
-    - cron: "15 8 * * 1-5"
+    - cron: "30 12 * * 1-5"
   workflow_dispatch:
 
 jobs:

@@ -2,7 +2,7 @@ name: Studio Distribuzioni SWDA.MI
 
 on:
   schedule:
-    - cron: "16 8 * * 1-5"
+    - cron: "35 12 * * 1-5"
   workflow_dispatch:
 
 jobs:

@@ -2,7 +2,7 @@ name: Studio Distribuzioni XYLE.MI
 
 on:
   schedule:
-    - cron: "20 8 * * 1-5"
+    - cron: "55 12 * * 1-5"
   workflow_dispatch:
 
 jobs:

@@ -2,7 +2,7 @@ name: Studio Distribuzioni VUAA.MI
 
 on:
   schedule:
-    - cron: "17 8 * * 1-5"
+    - cron: "40 12 * * 1-5"
   workflow_dispatch:
 
 jobs:

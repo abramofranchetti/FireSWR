@@ -2,7 +2,7 @@ name: Studio Distribuzioni FEGI.MI
 
 on:
   schedule:
-    - cron: "11 8 * * 1-5"
+    - cron: "10 12 * * 1-5"
   workflow_dispatch:
 
 jobs:

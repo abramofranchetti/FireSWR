@@ -2,7 +2,7 @@ name: Studio Distribuzioni XNAS.MI
 
 on:
   schedule:
-    - cron: "19 8 * * 1-5"
+    - cron: "50 12 * * 1-5"
   workflow_dispatch:
 
 jobs:

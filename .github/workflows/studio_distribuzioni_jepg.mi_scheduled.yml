@@ -2,7 +2,7 @@ name: Studio Distribuzioni JEPG.MI
 
 on:
   schedule:
-    - cron: "13 8 * * 1-5"
+    - cron: "20 12 * * 1-5"
   workflow_dispatch:
 
 jobs:
