@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Italia - Buoni del Tesoro Poliennali indicizzati all'inflazione italiana</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="js/ytm.js" defer></script>    
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">BTP Italia - Buoni del Tesoro Poliennali indicizzati all'inflazione italiana</h1>
+        <h5 class="text-center">Funzionamento della rivalutazione</h5>
+
+        <section class="mt-4">
+            <p>
+                Il BTP Italia e' indicizzato all'inflazione italiana tramite l'indice FOI ex tabacchi.
+                La cosa importante da guardare non e' la variazione dell'inflazione rispetto al semestre precedente,
+                ma il livello dell'indice dei prezzi. Il titolo paga la rivalutazione maturata nel semestre quando
+                l'indice sale; se l'indice scende, non viene addebitata alcuna rivalutazione negativa.
+            </p>
+
+            <div class="alert alert-info">
+                <strong>Termine tecnico:</strong> il meccanismo e' un <em>floor sul capitale</em>, con una base
+                protetta che funziona come un <em>high-water mark</em>: dopo una discesa dell'indice, la
+                rivalutazione riparte solo quando l'indice supera il massimo gia' raggiunto nei semestri precedenti.
+            </div>
+
+            <h3 class="mt-4">Regola pratica</h3>
+            <p>
+                Alla data di pagamento si confronta l'indice finale del semestre con la base protetta. La
+                rivalutazione pagata e':
+            </p>
+            <p class="text-center">
+                \( \max\left(\frac{\text{indice finale}}{\text{base protetta}} - 1, 0\right) \)
+            </p>
+            <p>
+                Se il risultato e' positivo viene pagata la rivalutazione. Se e' negativo, la rivalutazione e'
+                zero: l'investitore incassa comunque la cedola reale base prevista dal titolo.
+            </p>
+
+            <h3 class="mt-4">Esempio con indice prezzi</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Semestre</th>
+                            <th>Indice iniziale</th>
+                            <th>Indice finale</th>
+                            <th>Inflazione del semestre</th>
+                            <th>Rivalutazione pagata</th>
+                            <th>Perche'</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>100</td>
+                            <td>105</td>
+                            <td>+5,00%</td>
+                            <td>+5,00%</td>
+                            <td>L'indice sale da 100 a 105.</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>105</td>
+                            <td>106</td>
+                            <td>+0,95%</td>
+                            <td>+0,95%</td>
+                            <td>Conta il passaggio da 105 a 106, non il fatto che l'inflazione sia piu' bassa del semestre precedente.</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>106</td>
+                            <td>101</td>
+                            <td>-4,72%</td>
+                            <td>0,00%</td>
+                            <td>C'e' deflazione: il floor evita una rivalutazione negativa. La base protetta resta 106.</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>101</td>
+                            <td>110</td>
+                            <td>+8,91%</td>
+                            <td>+3,77%</td>
+                            <td>Si paga solo il recupero sopra il massimo precedente: da 106 a 110.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="mt-4">L'errore piu' comune</h3>
+            <p>
+                Non bisogna confondere l'inflazione del semestre con la variazione dell'inflazione. Se un semestre fa
+                +5,00% e quello dopo fa +0,95%, il secondo semestre non e' negativo: i prezzi sono comunque saliti.
+                Il BTP Italia paga quindi +0,95% di rivalutazione, non -4,05%.
+            </p>
+
+            <p>
+                In caso di deflazione, il BTP Italia non paga rivalutazione del capitale in quel semestre, ma non
+                chiede indietro nulla all'investitore. Nei semestri successivi, pero', la nuova rivalutazione riparte
+                solo quando l'indice supera il livello massimo gia' raggiunto.
+            </p>
+
+            <p class="small text-muted">
+                Fonte ufficiale:
+                <a href="https://www.dt.mef.gov.it/it/debito_pubblico/titoli_di_stato/quali_sono_titoli/btp_italia/#car1" target="_blank" rel="noopener">
+                    MEF - Dipartimento del Tesoro, BTP Italia
+                </a>.
+            </p>
+        </section>
+
+        <a href="btp_italia_inflation_breakeven.html" class="btn btn-primary mt-3">Vai al simulatore break-even</a>
+    </div>
+
+     <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+</body>
+
+</html>

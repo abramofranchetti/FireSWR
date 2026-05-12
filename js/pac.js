@@ -9,6 +9,8 @@ let chartInstance = null;
 let percentageChartInstance = null;
 let drawdownChartInstance = null;
 let drawdownValueChartInstance = null;
+let paidInShortfallChartInstance = null;
+let paidInShortfallValueChartInstance = null;
 
 let minDate = new Date("2000-01-01");
 let maxDate = new Date("2025-01-01");
@@ -66,6 +68,35 @@ function calcolaDrawdownValore(valori) {
         }
         return maxValore - valore;
     });
+}
+
+function calcolaShortfallSulVersato(valori, versamenti) {
+    if (!valori || !versamenti || valori.length === 0 || versamenti.length === 0) {
+        return { valori: [], percentuali: [] };
+    }
+
+    const lunghezza = Math.min(valori.length, versamenti.length);
+    const shortfallValori = [];
+    const shortfallPercentuali = [];
+
+    for (let i = 0; i < lunghezza; i++) {
+        const valore = valori[i];
+        const versato = versamenti[i];
+        if (!Number.isFinite(valore) || !Number.isFinite(versato) || versato <= 0) {
+            shortfallValori.push(0);
+            shortfallPercentuali.push(0);
+            continue;
+        }
+
+        const shortfall = Math.max(versato - valore, 0);
+        shortfallValori.push(shortfall);
+        shortfallPercentuali.push(shortfall / versato);
+    }
+
+    return {
+        valori: shortfallValori,
+        percentuali: shortfallPercentuali
+    };
 }
 
 function calcolaMassimiProgressivi(valori) {
@@ -680,6 +711,195 @@ function createDrawdownValueChart(dates, drawdownNetEur, drawdownNetDollar, draw
     });
 }
 
+function createPaidInShortfallChart(dates, shortfallPctEur, shortfallPctRealEur) {
+    const ctx = document.getElementById('paidInShortfallChartCanvas').getContext('2d');
+    if (paidInShortfallChartInstance) {
+        paidInShortfallChartInstance.destroy();
+    }
+
+    paidInShortfallChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [
+                {
+                    label: 'Shortfall sul versato Nettissimo (€)',
+                    data: shortfallPctEur.map(value => value * -100),
+                    borderColor: 'rgba(255, 99, 132, 0.6)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                    fill: false,
+                    tension: 0.1,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Shortfall sul versato Nettissimo Infl. Adjusted (€)',
+                    data: shortfallPctRealEur.map(value => value * -100),
+                    borderColor: 'rgba(128, 0, 128, 0.6)',
+                    backgroundColor: 'rgba(128, 0, 128, 0.1)',
+                    fill: false,
+                    tension: 0.1,
+                    pointRadius: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + '%';
+                        }
+                    }
+                },
+                zoom: {
+                    zoom: {
+                        wheel: {
+                            enabled: false,
+                        },
+                        pinch: {
+                            enabled: false
+                        },
+                        mode: 'x',
+                        drag: {
+                            enabled: true,
+                            backgroundColor: 'rgba(0,0,0,0.3)',
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'month',
+                        tooltipFormat: 'yyyy-MM-dd'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Data'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Shortfall sul versato (%)'
+                    },
+                    ticks: {
+                        callback: function (value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function createPaidInShortfallValueChart(dates, shortfallValueEur, shortfallValueRealEur) {
+    const ctx = document.getElementById('paidInShortfallValueChartCanvas').getContext('2d');
+    if (paidInShortfallValueChartInstance) {
+        paidInShortfallValueChartInstance.destroy();
+    }
+
+    const euroFormatter = new Intl.NumberFormat('it-IT', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    });
+
+    paidInShortfallValueChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [
+                {
+                    label: 'Shortfall sul versato Nettissimo (€)',
+                    data: shortfallValueEur.map(value => value * -1),
+                    borderColor: 'rgba(255, 99, 132, 0.6)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                    fill: false,
+                    tension: 0.1,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Shortfall sul versato Nettissimo Infl. Adjusted (€)',
+                    data: shortfallValueRealEur.map(value => value * -1),
+                    borderColor: 'rgba(128, 0, 128, 0.6)',
+                    backgroundColor: 'rgba(128, 0, 128, 0.1)',
+                    fill: false,
+                    tension: 0.1,
+                    pointRadius: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ': ' + euroFormatter.format(context.parsed.y);
+                        }
+                    }
+                },
+                zoom: {
+                    zoom: {
+                        wheel: {
+                            enabled: false,
+                        },
+                        pinch: {
+                            enabled: false
+                        },
+                        mode: 'x',
+                        drag: {
+                            enabled: true,
+                            backgroundColor: 'rgba(0,0,0,0.3)',
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'month',
+                        tooltipFormat: 'yyyy-MM-dd'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Data'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Shortfall sul versato (€)'
+                    },
+                    ticks: {
+                        callback: function (value) {
+                            return euroFormatter.format(value);
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
 // Funzione per creare il grafico percentuale
 function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, netValuesDollar) {
     const ctx = document.getElementById('percentageChartCanvas').getContext('2d');
@@ -829,6 +1049,7 @@ function runSimulation() {
     const netValuesEur = [];
     const nettissimoValuesEur = [];
     const totalDepositsEur = [];
+    const realTotalDepositsEur = [];
     const cashFlowsDollar = [];
     const cashFlowsEur = [];
     const realCashFlowsEur = [];
@@ -836,6 +1057,7 @@ function runSimulation() {
     // Per il calcolo delle plusvalenze, memorizziamo i contributi cumulativi
     let cumulativeContributionsDollar = initialCapitalEur * exchangeRates[0];
     let cumulativeContributionsEur = initialCapitalEur;
+    let cumulativeRealContributionsEur = initialCapitalEur;
 
     // Per applicare il TER su base giornaliera (si assume 252 giorni di trading/anno)
     const terAnnual = terFee / 100;
@@ -860,6 +1082,7 @@ function runSimulation() {
     grossValuesEur.push(currentGrossEur);
     netValuesEur.push(currentNetEur);
     totalDepositsEur.push(currentGrossEur);
+    realTotalDepositsEur.push(cumulativeRealContributionsEur);
     let gainEur = currentNetEur - cumulativeContributionsEur;
     let currentNettissimoEur = currentNetEur - (gainEur > 0 ? gainEur * 0.26 : 0);
     let currentNettissimoDollar = currentNettissimoEur * exchangeRates[0];
@@ -899,13 +1122,17 @@ function runSimulation() {
             if (monthlyDepositEur > 0) {
                 cashFlowsEur.push({ date: simData[i].Date, amount: -monthlyDepositEur });
                 const fattoreInflazioneVersamento = calcolaFattoreInflazione(dates[0], simData[i].Date, inflationData);
-                realCashFlowsEur.push({ date: simData[i].Date, amount: -(monthlyDepositEur / fattoreInflazioneVersamento) });
+                const realMonthlyDepositEur = monthlyDepositEur / fattoreInflazioneVersamento;
+                cumulativeRealContributionsEur += realMonthlyDepositEur;
+                realCashFlowsEur.push({ date: simData[i].Date, amount: -realMonthlyDepositEur });
             }
             totalDepositsEur.push(cumulativeContributionsEur);
+            realTotalDepositsEur.push(cumulativeRealContributionsEur);
             lastDepositMonth = currentMonth;
         } else {
             totalDepositsDollar.push(cumulativeContributionsDollar);
             totalDepositsEur.push(cumulativeContributionsEur);
+            realTotalDepositsEur.push(cumulativeRealContributionsEur);
         }
 
         // Il "nettissimo" fiscale viene calcolato in EUR e poi convertito in USD.
@@ -994,6 +1221,8 @@ function runSimulation() {
     const adjustedNettissimoValuesEur = adjustForInflationCumulative(nettissimoValuesEur, dates, inflationData);
     const drawdownAdjustedNettissimoEur = calcolaDrawdownGiornaliero(adjustedNettissimoValuesEur);
     const drawdownAdjustedNettissimoEurValore = calcolaDrawdownValore(adjustedNettissimoValuesEur);
+    const shortfallSulVersatoEur = calcolaShortfallSulVersato(nettissimoValuesEur, totalDepositsEur);
+    const shortfallSulVersatoRealeEur = calcolaShortfallSulVersato(adjustedNettissimoValuesEur, realTotalDepositsEur);
     const anniTotali = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24 * 365.25);
     const crashThreshold = crashThresholdPct / 100;
 
@@ -1001,6 +1230,8 @@ function runSimulation() {
     createPercentageChart(dates, nettissimoValuesEur, adjustedNettissimoValuesEur, nettissimoValuesDollar);
     createDrawdownChart(dates, drawdownNettissimoEur, drawdownNettissimoDollar, drawdownAdjustedNettissimoEur);
     createDrawdownValueChart(dates, drawdownNettissimoEurValore, drawdownNettissimoDollarValore, drawdownAdjustedNettissimoEurValore);
+    createPaidInShortfallChart(dates, shortfallSulVersatoEur.percentuali, shortfallSulVersatoRealeEur.percentuali);
+    createPaidInShortfallValueChart(dates, shortfallSulVersatoEur.valori, shortfallSulVersatoRealeEur.valori);
 
     const eventiCrollo = {
         grossEur: contaEventiCrollo(drawdownGrossEur, crashThreshold),
@@ -1082,7 +1313,6 @@ function runSimulation() {
     const rendimentoLordoEur = calcolaRendimentoConXirr(finalGrossEur, cumulativeContributionsEur, cashFlowsEur, dataFinale);
     const rendimentoNettoEur = calcolaRendimentoConXirr(finalNetEur, cumulativeContributionsEur, cashFlowsEur, dataFinale);
     const rendimentoNettissimoEur = calcolaRendimentoConXirr(finalNettissimoEur, cumulativeContributionsEur, cashFlowsEur, dataFinale);
-    const cumulativeRealContributionsEur = realCashFlowsEur.reduce((totale, flusso) => totale + Math.abs(flusso.amount), 0);
     const rendimenttoRealeNettissimoEur = calcolaRendimentoConXirr(adjustedNettissimoValuesEur[finalIndex], cumulativeRealContributionsEur, realCashFlowsEur, dataFinale);
 
     let resultHtml = `<h3>Risultati della simulazione</h3>`;
