@@ -23,7 +23,7 @@ else:
 print(f"Fetching data for symbol: {symbol}")
 
 # Scaricare i dati storici
-df = yf.download(symbol, start=start_date, auto_adjust=False)
+df = yf.download(symbol, start=start_date, auto_adjust=True)
 
 # Controllare se il DataFrame è vuoto
 if df.empty:
