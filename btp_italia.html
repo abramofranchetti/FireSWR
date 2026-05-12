@@ -53,6 +53,39 @@
                 zero: l'investitore incassa comunque la cedola reale base prevista dal titolo.
             </p>
 
+            <h3 class="mt-4">Cosa viene rivalutato: cedola e capitale</h3>
+            <p>
+                Il BTP Italia ha due pagamenti collegati all'inflazione, entrambi semestrali:
+            </p>
+            <ul>
+                <li>
+                    <strong>cedola reale:</strong> e' la cedola fissa del titolo, ma viene calcolata sul capitale
+                    rivalutato del semestre;
+                </li>
+                <li>
+                    <strong>rivalutazione del capitale:</strong> e' l'aumento del capitale nominale dovuto
+                    all'inflazione del semestre, e viene pagato subito insieme alla cedola.
+                </li>
+            </ul>
+            <p>
+                Quindi il BTP Italia non si limita ad aumentare la cedola: paga anche la rivalutazione del capitale.
+                Questa e' una differenza importante rispetto ad altri titoli indicizzati in cui la rivalutazione del
+                capitale puo' essere riconosciuta solo a scadenza.
+            </p>
+            <p>
+                In forma semplificata, se il coefficiente di indicizzazione del semestre e' maggiore di 1:
+            </p>
+            <p class="text-center">
+                \( \text{cedola lorda} = \text{nominale} \times CI \times \text{tasso reale semestrale} \)
+            </p>
+            <p class="text-center">
+                \( \text{rivalutazione capitale} = \text{nominale} \times (CI - 1) \)
+            </p>
+            <p>
+                Se invece il coefficiente del semestre e' inferiore a 1, scatta il floor: la rivalutazione del
+                capitale e' zero e la cedola viene calcolata almeno sul capitale nominale.
+            </p>
+
             <h3 class="mt-4">Esempio con indice prezzi</h3>
             <div class="table-responsive">
                 <table class="table table-bordered table-striped">
@@ -62,6 +95,7 @@
                             <th>Indice iniziale</th>
                             <th>Indice finale</th>
                             <th>Inflazione del semestre</th>
+                            <th>Variazione dell'inflazione</th>
                             <th>Rivalutazione pagata</th>
                             <th>Perche'</th>
                         </tr>
@@ -72,6 +106,7 @@
                             <td>100</td>
                             <td>105</td>
                             <td>+5,00%</td>
+                            <td>-</td>
                             <td>+5,00%</td>
                             <td>L'indice sale da 100 a 105.</td>
                         </tr>
@@ -80,6 +115,7 @@
                             <td>105</td>
                             <td>106</td>
                             <td>+0,95%</td>
+                            <td>-4,05 punti percentuali</td>
                             <td>+0,95%</td>
                             <td>Conta il passaggio da 105 a 106, non il fatto che l'inflazione sia piu' bassa del semestre precedente.</td>
                         </tr>
@@ -88,6 +124,7 @@
                             <td>106</td>
                             <td>101</td>
                             <td>-4,72%</td>
+                            <td>-5,67 punti percentuali</td>
                             <td>0,00%</td>
                             <td>C'e' deflazione: il floor evita una rivalutazione negativa. La base protetta resta 106.</td>
                         </tr>
@@ -96,6 +133,7 @@
                             <td>101</td>
                             <td>110</td>
                             <td>+8,91%</td>
+                            <td>+13,63 punti percentuali</td>
                             <td>+3,77%</td>
                             <td>Si paga solo il recupero sopra il massimo precedente: da 106 a 110.</td>
                         </tr>
@@ -108,6 +146,71 @@
                 Non bisogna confondere l'inflazione del semestre con la variazione dell'inflazione. Se un semestre fa
                 +5,00% e quello dopo fa +0,95%, il secondo semestre non e' negativo: i prezzi sono comunque saliti.
                 Il BTP Italia paga quindi +0,95% di rivalutazione, non -4,05%.
+            </p>
+
+            <h3 class="mt-4">Come viene calcolato l'indice nei giorni reali</h3>
+            <p>
+                Nella pratica non si usa direttamente un indice semestrale inventato come 100, 105 o 106.
+                Il MEF pubblica i coefficienti di indicizzazione usando l'indice FOI ex tabacchi. Siccome il FOI
+                e' mensile, mentre il BTP Italia puo' avere date giornaliere di godimento, stacco cedola e
+                regolamento, si usa un indice giornaliero ottenuto per interpolazione lineare.
+            </p>
+            <p>
+                Per una data nel giorno <strong>d</strong> del mese <strong>m</strong>, il numero indice di riferimento
+                si calcola usando gli indici FOI di <strong>m-3</strong> e <strong>m-2</strong>:
+            </p>
+            <p class="text-center">
+                \( NI_{d,m} = FOI_{m-3} + \frac{d - 1}{gg} \times (FOI_{m-2} - FOI_{m-3}) \)
+            </p>
+            <p>
+                dove <strong>gg</strong> e' il numero di giorni effettivi del mese. Il ritardo di due/tre mesi serve
+                per usare indici FOI gia' disponibili e pubblicati.
+            </p>
+
+            <h4 class="mt-3">Esempio di indice giornaliero</h4>
+            <p>
+                Supponiamo di dover calcolare l'indice per il <strong>15 maggio</strong>. Per maggio si usano:
+            </p>
+            <ul>
+                <li>FOI di febbraio, cioe' m-3: <strong>120,0</strong></li>
+                <li>FOI di marzo, cioe' m-2: <strong>120,6</strong></li>
+                <li>giorno d: <strong>15</strong></li>
+                <li>giorni del mese gg: <strong>31</strong></li>
+            </ul>
+            <p class="text-center">
+                \( 120,0 + \frac{15 - 1}{31} \times (120,6 - 120,0) = 120,2710 \)
+            </p>
+            <p>
+                Questo 120,2710 e' il livello dei prezzi interpolato per quella specifica data. Da qui si calcola
+                il coefficiente di indicizzazione confrontandolo con l'indice base del semestre.
+            </p>
+
+            <h4 class="mt-3">Esempio di coefficiente, cedola e rivalutazione</h4>
+            <p>
+                Se l'indice base del semestre precedente e' <strong>118,8000</strong> e l'indice interpolato alla
+                data cedola e' <strong>120,2710</strong>, il coefficiente del semestre e':
+            </p>
+            <p class="text-center">
+                \( CI = \frac{120,2710}{118,8000} = 1,01238 \)
+            </p>
+            <p>
+                Su 1.000 euro nominali, la rivalutazione lorda del capitale e':
+            </p>
+            <p class="text-center">
+                \( 1.000 \times (1,01238 - 1) = 12,38 \ \text{euro} \)
+            </p>
+            <p>
+                Se il tasso reale annuo del BTP Italia fosse il 2%, la cedola semestrale reale sarebbe 1%.
+                La cedola lorda del semestre verrebbe calcolata sul capitale rivalutato:
+            </p>
+            <p class="text-center">
+                \( 1.000 \times 1,01238 \times 1\% = 10,12 \ \text{euro} \)
+            </p>
+            <p>
+                In caso di deflazione semestrale, per esempio con coefficiente <strong>0,99000</strong>, non si paga
+                una rivalutazione negativa: la rivalutazione del capitale e' zero e la cedola reale viene calcolata
+                almeno sul capitale nominale. Poi, nei semestri successivi, la rivalutazione torna a essere pagata
+                solo quando l'indice supera la base protetta precedente.
             </p>
 
             <p>
