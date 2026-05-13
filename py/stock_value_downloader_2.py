@@ -23,7 +23,7 @@ else:
 print(f"Fetching data for symbol: {symbol}")
 
 # Scaricare i dati storici
-df = yf.download(symbol, start=start_date, auto_adjust=True)
+df = yf.download(symbol, start=start_date, auto_adjust=False)
 
 # Controllare se il DataFrame è vuoto
 if df.empty:
@@ -42,6 +42,10 @@ if isinstance(df.columns, pd.MultiIndex):
 # Reset dell'indice per ottenere una colonna semplice per la data
 df.reset_index(inplace=True)  # Rimuove l'indice gerarchico
 df["Date"] = pd.to_datetime(df["Date"]).dt.date  # Converti DateTime in formato date (senza orario)
+
+# Se Yahoo Finance non restituisce "Adj Close", usa "Close" come fallback.
+if "Adj Close" not in df.columns:
+    df["Adj Close"] = df["Close"]
 
 # Mantenere solo le colonne necessarie
 df = df[["Date", "Adj Close", "Close"]].rename(columns={"Adj Close": "AdjClose"})
