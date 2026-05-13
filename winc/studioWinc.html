@@ -591,7 +591,7 @@
                 const mapSWDA = new Map();
                 swdaRaw.forEach(item => {
                     if (!item.Date) return;
-                    mapSWDA.set(item.Date, { adj: item.AdjClose ?? null });
+                    mapSWDA.set(item.Date, { adj: item.AdjClose ?? null, close: item.Close ?? null });
                 });
 
 
@@ -600,62 +600,65 @@
                 const dateSet = new Set([...mapWINC.keys(), ...mapSWDA.keys()]);
                 const labels = Array.from(dateSet).sort((a, b) => new Date(a) - new Date(b));
 
-                const wincAdjSeries = [];
-                const wincCloseSeries = [];
-
                 // Calcolo valore cumulativo
-                let swdaInitialPrice = mapSWDA.size ? mapSWDA.get([...mapSWDA.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
-                let wincAdjInitialPrice = mapWINC.size ? mapWINC.get([...mapWINC.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let swdaAdjInitialPrice = mapSWDA.size ? mapSWDA.get([...mapSWDA.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let swdaCloseInitialPrice = mapSWDA.size ? mapSWDA.get([...mapSWDA.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
                 let wincCloseInitialPrice = mapWINC.size ? mapWINC.get([...mapWINC.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
 
                 const swdaCumulative = [];
-                const wincAdjCumulative = [];
+                const wincReinvestedCumulative = [];
                 const wincCloseCumulative = [];
                 const distribuzioniSWDAVirtuali = [];
                 const swdaSharesSeries = [];
 
                 // Nuova serie SWDA con vendite
                 const swdaAdjustedCumulative = [];
-                let swdaShares = modalita > 0 ? initialCapital / swdaInitialPrice : Math.floor(initialCapital / swdaInitialPrice); // Calcola il numero iniziale di quote di SWDA
+                let swdaShares = modalita > 0 ? initialCapital / swdaCloseInitialPrice : Math.floor(initialCapital / swdaCloseInitialPrice); // Calcola il numero iniziale di quote di SWDA
                 const wincShares = modalita > 0 ? initialCapital / wincCloseInitialPrice : Math.floor(initialCapital / wincCloseInitialPrice); // Calcola il numero iniziale di quote di WINC
+                let wincReinvestedShares = wincShares;
 
                 labels.forEach(d => {
                     const c = mapSWDA.get(d);
                     const x = mapWINC.get(d);
 
                     const swdaAdj = c ? Number(c.adj) : null;
-                    const wincAdj = x ? Number(x.adj) : null;
+                    const swdaClose = c ? Number(c.close) : null;
                     const wincClose = x ? Number(x.close) : null;
 
                     // Imposta i prezzi iniziali
-                    if (swdaAdj != null && swdaInitialPrice == null) swdaInitialPrice = swdaAdj;
-                    if (wincAdj != null && wincAdjInitialPrice == null) wincAdjInitialPrice = wincAdj;
+                    if (swdaAdj != null && swdaAdjInitialPrice == null) swdaAdjInitialPrice = swdaAdj;
+                    if (swdaClose != null && swdaCloseInitialPrice == null) swdaCloseInitialPrice = swdaClose;
                     if (wincClose != null && wincCloseInitialPrice == null) wincCloseInitialPrice = wincClose;
 
+                    const distribuzione = distribuzioni.find(dist => dist.date === d);
+                    if (distribuzione && wincClose != null && wincClose > 0) {
+                        const grossDividend = distribuzione.amount * wincReinvestedShares;
+                        wincReinvestedShares += grossDividend / wincClose;
+                    }
+
                     // Calcola valore cumulativo
-                    swdaCumulative.push(swdaInitialPrice != null && swdaAdj != null ? (initialCapital / swdaInitialPrice) * swdaAdj : null);
-                    wincAdjCumulative.push(wincAdjInitialPrice != null && wincAdj != null ? (initialCapital / wincAdjInitialPrice) * wincAdj : null);
-                    wincCloseCumulative.push(wincCloseInitialPrice != null && wincClose != null ? (initialCapital / wincCloseInitialPrice) * wincClose : null);
+                    swdaCumulative.push(swdaAdjInitialPrice != null && swdaAdj != null ? (initialCapital / swdaAdjInitialPrice) * swdaAdj : null);
+                    wincReinvestedCumulative.push(wincClose != null ? wincReinvestedShares * wincClose : null);
+                    wincCloseCumulative.push(wincClose != null ? wincShares * wincClose : null);
                 });
 
                 // Calcolo serie con vendite SWDA
-                swdaShares = modalita > 0 ? initialCapital / swdaInitialPrice : Math.floor(initialCapital / swdaInitialPrice); // Reset numero quote SWDA
+                swdaShares = modalita > 0 ? initialCapital / swdaCloseInitialPrice : Math.floor(initialCapital / swdaCloseInitialPrice); // Reset numero quote SWDA
                 labels.forEach(d => {
                     const c = mapSWDA.get(d);
                     const x = mapWINC.get(d);
 
-                    const swdaAdj = c ? Number(c.adj) : null;
-                    const wincAdj = x ? Number(x.adj) : null;
+                    const swdaClose = c ? Number(c.close) : null;
                     const wincClose = x ? Number(x.close) : null;
 
                     // Calcola dividendo totale di WINC in questa data
                     const distribuzione = distribuzioni.find(dist => dist.date === d);
-                    if (distribuzione && swdaAdj != null) {
+                    if (distribuzione && swdaClose != null) {
                         const totalDividend = distribuzione.amount * wincShares; // Dividendo totale
-                        const sharesToSell = modalita > 0 ? (totalDividend / swdaAdj) : Math.ceil(totalDividend / swdaAdj);
+                        const sharesToSell = modalita > 0 ? (totalDividend / swdaClose) : Math.ceil(totalDividend / swdaClose);
                         swdaShares -= sharesToSell; // Aggiorna il numero di quote di SWDA
                         // Calcola commissione in euro: o flat per operazione, o percentuale sul valore della vendita
-                        const saleValue = sharesToSell * swdaAdj;
+                        const saleValue = sharesToSell * swdaClose;
                         let commissionPerSale = 0;
                         if (sellCommissionType === 'percent') {
                             commissionPerSale = (sellCommissionPercent / 100) * saleValue;
@@ -667,11 +670,11 @@
                         } else {
                             commissionPerSale = sellCommission;
                         }
-                        distribuzioniSWDAVirtuali.push({ date: d, num_stock_selled: sharesToSell, swdaValueAtDate: swdaAdj, amount: saleValue, winc_value: wincClose, commission: commissionPerSale }); // Valore vendite
+                        distribuzioniSWDAVirtuali.push({ date: d, num_stock_selled: sharesToSell, swdaValueAtDate: swdaClose, amount: saleValue, winc_value: wincClose, commission: commissionPerSale }); // Valore vendite
                     }
 
                     swdaSharesSeries.push(swdaShares);
-                    swdaAdjustedCumulative.push(swdaAdj != null ? swdaShares * swdaAdj : null);
+                    swdaAdjustedCumulative.push(swdaClose != null ? swdaShares * swdaClose : null);
                 });
 
                 // Andamento "totale netto disponibile":
@@ -684,7 +687,7 @@
                     wincNetDistribByDate.set(dist.date, nettoWINC);
                 }
                 for (const distSwdaSold of distribuzioniSWDAVirtuali) {
-                    const plusvalenzaPerQuota = distSwdaSold.swdaValueAtDate - swdaInitialPrice;
+                    const plusvalenzaPerQuota = distSwdaSold.swdaValueAtDate - swdaCloseInitialPrice;
                     const totalePlusvalenza = plusvalenzaPerQuota > 0 ? plusvalenzaPerQuota * distSwdaSold.num_stock_selled : 0;
                     const taxableGain = Math.max(0, totalePlusvalenza - (distSwdaSold.commission || 0));
                     const tassePagate = taxableGain * 0.26;
@@ -710,7 +713,7 @@
                 labels.forEach((d, idx) => {
                     const c = mapSWDA.get(d);
                     const x = mapWINC.get(d);
-                    const swdaAdj = c ? Number(c.adj) : null;
+                    const swdaClose = c ? Number(c.close) : null;
                     const wincClose = x ? Number(x.close) : null;
                     const swdaSoldSharesNow = swdaSharesSeries[idx];
 
@@ -730,9 +733,9 @@
                         wincNetAvailabilitySeries.push(null);
                     }
 
-                    if (swdaAdj != null && swdaSoldSharesNow != null) {
-                        const swdaSoldLordoLiquidabile = swdaSoldSharesNow * swdaAdj;
-                        const swdaSoldTaxLiquidazione = calcTaxOnGain(swdaAdj, swdaInitialPrice, swdaSoldSharesNow);
+                    if (swdaClose != null && swdaSoldSharesNow != null) {
+                        const swdaSoldLordoLiquidabile = swdaSoldSharesNow * swdaClose;
+                        const swdaSoldTaxLiquidazione = calcTaxOnGain(swdaClose, swdaCloseInitialPrice, swdaSoldSharesNow);
                         const swdaSoldNettoLiquidabile = swdaSoldTaxLiquidazione == null ? null : (swdaSoldLordoLiquidabile - swdaSoldTaxLiquidazione);
                         swdaSoldNetCapitalSeries.push(swdaSoldNettoLiquidabile == null ? null : Number(swdaSoldNettoLiquidabile.toFixed(2)));
                         swdaSoldNetFlowsSeries.push(Number(swdaSoldNetDistribCumulati.toFixed(2)));
@@ -771,7 +774,7 @@
                 });
 
 
-                populateDividendiTable(distribuzioni, wincShares, swdaShares, swdaInitialPrice, mapSWDA, distribuzioniSWDAVirtuali);
+                populateDividendiTable(distribuzioni, wincShares, swdaShares, swdaCloseInitialPrice, mapSWDA, distribuzioniSWDAVirtuali);
                 renderNetAvailabilityChart(labels, wincNetAvailabilitySeries, swdaSoldNetAvailabilitySeries);
                 updateNetBreakdownTable(
                     wincNetFlowsSeries,
@@ -807,7 +810,7 @@
                             },
                             {
                                 label: 'WINC - Accumulo (reinvestimento dividendi lordi)',
-                                data: wincAdjCumulative,
+                                data: wincReinvestedCumulative,
                                 borderColor: 'rgba(40, 167, 69, 1)',
                                 backgroundColor: 'rgba(40, 167, 69, 0.1)',
                                 spanGaps: true,
@@ -987,7 +990,7 @@
 
                 const mSwda = computeMetrics(swdaCumulative, labels, riskFreeAnnual);
                 const mSwdaSold = computeMetrics(swdaAdjustedCumulative, labels, riskFreeAnnual);
-                const mWinc = computeMetrics(wincAdjCumulative, labels, riskFreeAnnual);
+                const mWinc = computeMetrics(wincReinvestedCumulative, labels, riskFreeAnnual);
                 const mWincNetto = computeMetrics(wincCloseCumulative, labels, riskFreeAnnual);
 
                 document.getElementById('metrics-swda').innerText =
@@ -1135,7 +1138,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
             setText('nb-tot-diff', fmtDelta((aTot == null || wTot == null) ? null : (aTot - wTot)));
         }
 
-        function populateDividendiTable(distribuzioni, wincShares, swdaShares, swdaInitialPrice, mapSWDA, distribuzioniSWDAVirtuali) {
+        function populateDividendiTable(distribuzioni, wincShares, swdaShares, swdaCloseInitialPrice, mapSWDA, distribuzioniSWDAVirtuali) {
             const tableBody = document.getElementById('dividendiTableBody');
             tableBody.innerHTML = '';
             let sommaNettiWinc = 0;
@@ -1166,7 +1169,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                 const lordoVenduto = distribuzioneSwdaSold ? distribuzioneSwdaSold.amount : 0;
                 const commission = distribuzioneSwdaSold ? (distribuzioneSwdaSold.commission || 0) : 0;
                 // Calcolo plusvalenza tassabile: (prezzo vendita - prezzo carico) * n_quote - commissioni
-                const plusvalenzaPerQuota = distribuzioneSwdaSold ? (distribuzioneSwdaSold.swdaValueAtDate - swdaInitialPrice) : 0;
+                const plusvalenzaPerQuota = distribuzioneSwdaSold ? (distribuzioneSwdaSold.swdaValueAtDate - swdaCloseInitialPrice) : 0;
                 const totalePlusvalenza = (plusvalenzaPerQuota > 0 && distribuzioneSwdaSold) ? plusvalenzaPerQuota * distribuzioneSwdaSold.num_stock_selled : 0;
                 const taxableGain = Math.max(0, totalePlusvalenza - commission);
                 const tassePagate = taxableGain * 0.26;

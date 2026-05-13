@@ -591,7 +591,7 @@
                 const mapXDEV = new Map();
                 xdevRaw.forEach(item => {
                     if (!item.Date) return;
-                    mapXDEV.set(item.Date, { adj: item.AdjClose ?? null });
+                    mapXDEV.set(item.Date, { adj: item.AdjClose ?? null, close: item.Close ?? null });
                 });
 
 
@@ -600,62 +600,65 @@
                 const dateSet = new Set([...mapWINC.keys(), ...mapXDEV.keys()]);
                 const labels = Array.from(dateSet).sort((a, b) => new Date(a) - new Date(b));
 
-                const wincAdjSeries = [];
-                const wincCloseSeries = [];
-
                 // Calcolo valore cumulativo
-                let xdevInitialPrice = mapXDEV.size ? mapXDEV.get([...mapXDEV.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
-                let wincAdjInitialPrice = mapWINC.size ? mapWINC.get([...mapWINC.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let xdevAdjInitialPrice = mapXDEV.size ? mapXDEV.get([...mapXDEV.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let xdevCloseInitialPrice = mapXDEV.size ? mapXDEV.get([...mapXDEV.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
                 let wincCloseInitialPrice = mapWINC.size ? mapWINC.get([...mapWINC.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
 
                 const xdevCumulative = [];
-                const wincAdjCumulative = [];
+                const wincReinvestedCumulative = [];
                 const wincCloseCumulative = [];
                 const distribuzioniXDEVVirtuali = [];
                 const xdevSharesSeries = [];
 
                 // Nuova serie XDEV con vendite
                 const xdevAdjustedCumulative = [];
-                let xdevShares = modalita > 0 ? initialCapital / xdevInitialPrice : Math.floor(initialCapital / xdevInitialPrice); // Calcola il numero iniziale di quote di XDEV
+                let xdevShares = modalita > 0 ? initialCapital / xdevCloseInitialPrice : Math.floor(initialCapital / xdevCloseInitialPrice); // Calcola il numero iniziale di quote di XDEV
                 const wincShares = modalita > 0 ? initialCapital / wincCloseInitialPrice : Math.floor(initialCapital / wincCloseInitialPrice); // Calcola il numero iniziale di quote di WINC
+                let wincReinvestedShares = wincShares;
 
                 labels.forEach(d => {
                     const c = mapXDEV.get(d);
                     const x = mapWINC.get(d);
 
                     const xdevAdj = c ? Number(c.adj) : null;
-                    const wincAdj = x ? Number(x.adj) : null;
+                    const xdevClose = c ? Number(c.close) : null;
                     const wincClose = x ? Number(x.close) : null;
 
                     // Imposta i prezzi iniziali
-                    if (xdevAdj != null && xdevInitialPrice == null) xdevInitialPrice = xdevAdj;
-                    if (wincAdj != null && wincAdjInitialPrice == null) wincAdjInitialPrice = wincAdj;
+                    if (xdevAdj != null && xdevAdjInitialPrice == null) xdevAdjInitialPrice = xdevAdj;
+                    if (xdevClose != null && xdevCloseInitialPrice == null) xdevCloseInitialPrice = xdevClose;
                     if (wincClose != null && wincCloseInitialPrice == null) wincCloseInitialPrice = wincClose;
 
+                    const distribuzione = distribuzioni.find(dist => dist.date === d);
+                    if (distribuzione && wincClose != null && wincClose > 0) {
+                        const grossDividend = distribuzione.amount * wincReinvestedShares;
+                        wincReinvestedShares += grossDividend / wincClose;
+                    }
+
                     // Calcola valore cumulativo
-                    xdevCumulative.push(xdevInitialPrice != null && xdevAdj != null ? (initialCapital / xdevInitialPrice) * xdevAdj : null);
-                    wincAdjCumulative.push(wincAdjInitialPrice != null && wincAdj != null ? (initialCapital / wincAdjInitialPrice) * wincAdj : null);
-                    wincCloseCumulative.push(wincCloseInitialPrice != null && wincClose != null ? (initialCapital / wincCloseInitialPrice) * wincClose : null);
+                    xdevCumulative.push(xdevAdjInitialPrice != null && xdevAdj != null ? (initialCapital / xdevAdjInitialPrice) * xdevAdj : null);
+                    wincReinvestedCumulative.push(wincClose != null ? wincReinvestedShares * wincClose : null);
+                    wincCloseCumulative.push(wincClose != null ? wincShares * wincClose : null);
                 });
 
                 // Calcolo serie con vendite XDEV
-                xdevShares = modalita > 0 ? initialCapital / xdevInitialPrice : Math.floor(initialCapital / xdevInitialPrice); // Reset numero quote XDEV
+                xdevShares = modalita > 0 ? initialCapital / xdevCloseInitialPrice : Math.floor(initialCapital / xdevCloseInitialPrice); // Reset numero quote XDEV
                 labels.forEach(d => {
                     const c = mapXDEV.get(d);
                     const x = mapWINC.get(d);
 
-                    const xdevAdj = c ? Number(c.adj) : null;
-                    const wincAdj = x ? Number(x.adj) : null;
+                    const xdevClose = c ? Number(c.close) : null;
                     const wincClose = x ? Number(x.close) : null;
 
                     // Calcola dividendo totale di WINC in questa data
                     const distribuzione = distribuzioni.find(dist => dist.date === d);
-                    if (distribuzione && xdevAdj != null) {
+                    if (distribuzione && xdevClose != null) {
                         const totalDividend = distribuzione.amount * wincShares; // Dividendo totale
-                        const sharesToSell = modalita > 0 ? (totalDividend / xdevAdj) : Math.ceil(totalDividend / xdevAdj);
+                        const sharesToSell = modalita > 0 ? (totalDividend / xdevClose) : Math.ceil(totalDividend / xdevClose);
                         xdevShares -= sharesToSell; // Aggiorna il numero di quote di XDEV
                         // Calcola commissione in euro: o flat per operazione, o percentuale sul valore della vendita
-                        const saleValue = sharesToSell * xdevAdj;
+                        const saleValue = sharesToSell * xdevClose;
                         let commissionPerSale = 0;
                         if (sellCommissionType === 'percent') {
                             commissionPerSale = (sellCommissionPercent / 100) * saleValue;
@@ -667,11 +670,11 @@
                         } else {
                             commissionPerSale = sellCommission;
                         }
-                        distribuzioniXDEVVirtuali.push({ date: d, num_stock_selled: sharesToSell, xdevValueAtDate: xdevAdj, amount: saleValue, winc_value: wincClose, commission: commissionPerSale }); // Valore vendite
+                        distribuzioniXDEVVirtuali.push({ date: d, num_stock_selled: sharesToSell, xdevValueAtDate: xdevClose, amount: saleValue, winc_value: wincClose, commission: commissionPerSale }); // Valore vendite
                     }
 
                     xdevSharesSeries.push(xdevShares);
-                    xdevAdjustedCumulative.push(xdevAdj != null ? xdevShares * xdevAdj : null);
+                    xdevAdjustedCumulative.push(xdevClose != null ? xdevShares * xdevClose : null);
                 });
 
                 // Andamento "totale netto disponibile":
@@ -684,7 +687,7 @@
                     wincNetDistribByDate.set(dist.date, nettoWINC);
                 }
                 for (const distXdevSold of distribuzioniXDEVVirtuali) {
-                    const plusvalenzaPerQuota = distXdevSold.xdevValueAtDate - xdevInitialPrice;
+                    const plusvalenzaPerQuota = distXdevSold.xdevValueAtDate - xdevCloseInitialPrice;
                     const totalePlusvalenza = plusvalenzaPerQuota > 0 ? plusvalenzaPerQuota * distXdevSold.num_stock_selled : 0;
                     const taxableGain = Math.max(0, totalePlusvalenza - (distXdevSold.commission || 0));
                     const tassePagate = taxableGain * 0.26;
@@ -710,7 +713,7 @@
                 labels.forEach((d, idx) => {
                     const c = mapXDEV.get(d);
                     const x = mapWINC.get(d);
-                    const xdevAdj = c ? Number(c.adj) : null;
+                    const xdevClose = c ? Number(c.close) : null;
                     const wincClose = x ? Number(x.close) : null;
                     const xdevSoldSharesNow = xdevSharesSeries[idx];
 
@@ -730,9 +733,9 @@
                         wincNetAvailabilitySeries.push(null);
                     }
 
-                    if (xdevAdj != null && xdevSoldSharesNow != null) {
-                        const xdevSoldLordoLiquidabile = xdevSoldSharesNow * xdevAdj;
-                        const xdevSoldTaxLiquidazione = calcTaxOnGain(xdevAdj, xdevInitialPrice, xdevSoldSharesNow);
+                    if (xdevClose != null && xdevSoldSharesNow != null) {
+                        const xdevSoldLordoLiquidabile = xdevSoldSharesNow * xdevClose;
+                        const xdevSoldTaxLiquidazione = calcTaxOnGain(xdevClose, xdevCloseInitialPrice, xdevSoldSharesNow);
                         const xdevSoldNettoLiquidabile = xdevSoldTaxLiquidazione == null ? null : (xdevSoldLordoLiquidabile - xdevSoldTaxLiquidazione);
                         xdevSoldNetCapitalSeries.push(xdevSoldNettoLiquidabile == null ? null : Number(xdevSoldNettoLiquidabile.toFixed(2)));
                         xdevSoldNetFlowsSeries.push(Number(xdevSoldNetDistribCumulati.toFixed(2)));
@@ -771,7 +774,7 @@
                 });
 
 
-                populateDividendiTable(distribuzioni, wincShares, xdevShares, xdevInitialPrice, mapXDEV, distribuzioniXDEVVirtuali);
+                populateDividendiTable(distribuzioni, wincShares, xdevShares, xdevCloseInitialPrice, mapXDEV, distribuzioniXDEVVirtuali);
                 renderNetAvailabilityChart(labels, wincNetAvailabilitySeries, xdevSoldNetAvailabilitySeries);
                 updateNetBreakdownTable(
                     wincNetFlowsSeries,
@@ -807,7 +810,7 @@
                             },
                             {
                                 label: 'WINC - Accumulo (reinvestimento dividendi lordi)',
-                                data: wincAdjCumulative,
+                                data: wincReinvestedCumulative,
                                 borderColor: 'rgba(40, 167, 69, 1)',
                                 backgroundColor: 'rgba(40, 167, 69, 0.1)',
                                 spanGaps: true,
@@ -987,7 +990,7 @@
 
                 const mXdev = computeMetrics(xdevCumulative, labels, riskFreeAnnual);
                 const mXdevSold = computeMetrics(xdevAdjustedCumulative, labels, riskFreeAnnual);
-                const mWinc = computeMetrics(wincAdjCumulative, labels, riskFreeAnnual);
+                const mWinc = computeMetrics(wincReinvestedCumulative, labels, riskFreeAnnual);
                 const mWincNetto = computeMetrics(wincCloseCumulative, labels, riskFreeAnnual);
 
                 document.getElementById('metrics-xdev').innerText =
@@ -1135,7 +1138,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
             setText('nb-tot-diff', fmtDelta((sTot == null || wTot == null) ? null : (sTot - wTot)));
         }
 
-        function populateDividendiTable(distribuzioni, wincShares, xdevShares, xdevInitialPrice, mapXDEV, distribuzioniXDEVVirtuali) {
+        function populateDividendiTable(distribuzioni, wincShares, xdevShares, xdevCloseInitialPrice, mapXDEV, distribuzioniXDEVVirtuali) {
             const tableBody = document.getElementById('dividendiTableBody');
             tableBody.innerHTML = '';
             let sommaNettiWinc = 0;
@@ -1166,7 +1169,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                 const lordoVenduto = distribuzioneXdevSold ? distribuzioneXdevSold.amount : 0;
                 const commission = distribuzioneXdevSold ? (distribuzioneXdevSold.commission || 0) : 0;
                 // Calcolo plusvalenza tassabile: (prezzo vendita - prezzo carico) * n_quote - commissioni
-                const plusvalenzaPerQuota = distribuzioneXdevSold ? (distribuzioneXdevSold.xdevValueAtDate - xdevInitialPrice) : 0;
+                const plusvalenzaPerQuota = distribuzioneXdevSold ? (distribuzioneXdevSold.xdevValueAtDate - xdevCloseInitialPrice) : 0;
                 const totalePlusvalenza = (plusvalenzaPerQuota > 0 && distribuzioneXdevSold) ? plusvalenzaPerQuota * distribuzioneXdevSold.num_stock_selled : 0;
                 const taxableGain = Math.max(0, totalePlusvalenza - commission);
                 const tassePagate = taxableGain * 0.26;

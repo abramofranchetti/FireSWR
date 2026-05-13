@@ -591,7 +591,7 @@
                 const mapCSSPX = new Map();
                 csspxRaw.forEach(item => {
                     if (!item.Date) return;
-                    mapCSSPX.set(item.Date, { adj: item.AdjClose ?? null });
+                    mapCSSPX.set(item.Date, { adj: item.AdjClose ?? null, close: item.Close ?? null });
                 });
 
 
@@ -600,63 +600,65 @@
                 const dateSet = new Set([...mapXYLE.keys(), ...mapCSSPX.keys()]);
                 const labels = Array.from(dateSet).sort((a, b) => new Date(a) - new Date(b));
 
-                const csspxAdjSeries = [];
-                const xyleAdjSeries = [];
-                const xyleCloseSeries = [];
-
                 // Calcolo valore cumulativo
-                let csspxInitialPrice = mapCSSPX.size ? mapCSSPX.get([...mapCSSPX.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
-                let xyleAdjInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let csspxAdjInitialPrice = mapCSSPX.size ? mapCSSPX.get([...mapCSSPX.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
+                let csspxCloseInitialPrice = mapCSSPX.size ? mapCSSPX.get([...mapCSSPX.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
                 let xyleCloseInitialPrice = mapXYLE.size ? mapXYLE.get([...mapXYLE.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
 
                 const csspxCumulative = [];
-                const xyleAdjCumulative = [];
+                const xyleReinvestedCumulative = [];
                 const xyleCloseCumulative = [];
                 const distribuzioniCSSPXVirtuali = [];
                 const csspxSharesSeries = [];
 
                 // Nuova serie CSSPX con vendite
                 const csspxAdjustedCumulative = [];
-                let csspxShares = modalita > 0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Calcola il numero iniziale di quote di CSSPX
+                let csspxShares = modalita > 0 ? initialCapital / csspxCloseInitialPrice : Math.floor(initialCapital / csspxCloseInitialPrice); // Calcola il numero iniziale di quote di CSSPX
                 const xyleShares = modalita > 0 ? initialCapital / xyleCloseInitialPrice : Math.floor(initialCapital / xyleCloseInitialPrice); // Calcola il numero iniziale di quote di XYLE
+                let xyleReinvestedShares = xyleShares;
 
                 labels.forEach(d => {
                     const c = mapCSSPX.get(d);
                     const x = mapXYLE.get(d);
 
                     const csspxAdj = c ? Number(c.adj) : null;
-                    const xyleAdj = x ? Number(x.adj) : null;
+                    const csspxClose = c ? Number(c.close) : null;
                     const xyleClose = x ? Number(x.close) : null;
 
                     // Imposta i prezzi iniziali
-                    if (csspxAdj != null && csspxInitialPrice == null) csspxInitialPrice = csspxAdj;
-                    if (xyleAdj != null && xyleAdjInitialPrice == null) xyleAdjInitialPrice = xyleAdj;
+                    if (csspxAdj != null && csspxAdjInitialPrice == null) csspxAdjInitialPrice = csspxAdj;
+                    if (csspxClose != null && csspxCloseInitialPrice == null) csspxCloseInitialPrice = csspxClose;
                     if (xyleClose != null && xyleCloseInitialPrice == null) xyleCloseInitialPrice = xyleClose;
 
+                    const distribuzione = distribuzioni.find(dist => dist.date === d);
+                    if (distribuzione && xyleClose != null && xyleClose > 0) {
+                        const grossDividend = distribuzione.amount * xyleReinvestedShares;
+                        xyleReinvestedShares += grossDividend / xyleClose;
+                    }
+
                     // Calcola valore cumulativo
-                    csspxCumulative.push(csspxInitialPrice != null && csspxAdj != null ? (initialCapital / csspxInitialPrice) * csspxAdj : null);
-                    xyleAdjCumulative.push(xyleAdjInitialPrice != null && xyleAdj != null ? (initialCapital / xyleAdjInitialPrice) * xyleAdj : null);
-                    xyleCloseCumulative.push(xyleCloseInitialPrice != null && xyleClose != null ? (initialCapital / xyleCloseInitialPrice) * xyleClose : null);
+                    csspxCumulative.push(csspxAdjInitialPrice != null && csspxAdj != null ? (initialCapital / csspxAdjInitialPrice) * csspxAdj : null);
+                    xyleReinvestedCumulative.push(xyleClose != null ? xyleReinvestedShares * xyleClose : null);
+                    xyleCloseCumulative.push(xyleClose != null ? xyleShares * xyleClose : null);
                 });
 
                 // Calcolo serie con vendite CSSPX
-                csspxShares = modalita > 0 ? initialCapital / csspxInitialPrice : Math.floor(initialCapital / csspxInitialPrice); // Reset numero quote CSSPX
+                csspxShares = modalita > 0 ? initialCapital / csspxCloseInitialPrice : Math.floor(initialCapital / csspxCloseInitialPrice); // Reset numero quote CSSPX
                 labels.forEach(d => {
                     const c = mapCSSPX.get(d);
                     const x = mapXYLE.get(d);
 
-                    const csspxAdj = c ? Number(c.adj) : null;
-                    const xyleAdj = x ? Number(x.adj) : null;
+                    const csspxClose = c ? Number(c.close) : null;
                     const xyleClose = x ? Number(x.close) : null;
 
                     // Calcola dividendo totale di XYLE in questa data
                     const distribuzione = distribuzioni.find(dist => dist.date === d);
-                    if (distribuzione && csspxAdj != null) {
+                    if (distribuzione && csspxClose != null) {
                         const totalDividend = distribuzione.amount * xyleShares; // Dividendo totale
-                        const sharesToSell = modalita > 0 ? (totalDividend / csspxAdj) : Math.ceil(totalDividend / csspxAdj);
+                        const sharesToSell = modalita > 0 ? (totalDividend / csspxClose) : Math.ceil(totalDividend / csspxClose);
                         csspxShares -= sharesToSell; // Aggiorna il numero di quote di CSSPX
                         // Calcola commissione in euro: o flat per operazione, o percentuale sul valore della vendita
-                        const saleValue = sharesToSell * csspxAdj;
+                        const saleValue = sharesToSell * csspxClose;
                         let commissionPerSale = 0;
                         if (sellCommissionType === 'percent') {
                             commissionPerSale = (sellCommissionPercent / 100) * saleValue;
@@ -668,11 +670,11 @@
                         } else {
                             commissionPerSale = sellCommission;
                         }
-                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxAdj, amount: saleValue, xyle_value: xyleClose, commission: commissionPerSale }); // Valore vendite
+                        distribuzioniCSSPXVirtuali.push({ date: d, num_stock_selled: sharesToSell, csspxValueAtDate: csspxClose, amount: saleValue, xyle_value: xyleClose, commission: commissionPerSale }); // Valore vendite
                     }
 
                     csspxSharesSeries.push(csspxShares);
-                    csspxAdjustedCumulative.push(csspxAdj != null ? csspxShares * csspxAdj : null);
+                    csspxAdjustedCumulative.push(csspxClose != null ? csspxShares * csspxClose : null);
                 });
 
                 // Andamento "totale netto disponibile":
@@ -685,7 +687,7 @@
                     wincNetDistribByDate.set(dist.date, nettoWinc);
                 }
                 for (const distAcwe of distribuzioniCSSPXVirtuali) {
-                    const plusvalenzaPerQuota = distAcwe.csspxValueAtDate - csspxInitialPrice;
+                    const plusvalenzaPerQuota = distAcwe.csspxValueAtDate - csspxCloseInitialPrice;
                     const totalePlusvalenza = plusvalenzaPerQuota > 0 ? plusvalenzaPerQuota * distAcwe.num_stock_selled : 0;
                     const taxableGain = Math.max(0, totalePlusvalenza - (distAcwe.commission || 0));
                     const tassePagate = taxableGain * 0.26;
@@ -711,7 +713,7 @@
                 labels.forEach((d, idx) => {
                     const c = mapCSSPX.get(d);
                     const x = mapXYLE.get(d);
-                    const csspxAdj = c ? Number(c.adj) : null;
+                    const csspxClose = c ? Number(c.close) : null;
                     const xyleClose = x ? Number(x.close) : null;
                     const acweSharesNow = csspxSharesSeries[idx];
 
@@ -731,9 +733,9 @@
                         wincNetAvailabilitySeries.push(null);
                     }
 
-                    if (csspxAdj != null && acweSharesNow != null) {
-                        const acweLordoLiquidabile = acweSharesNow * csspxAdj;
-                        const acweTaxLiquidazione = calcTaxOnGain(csspxAdj, csspxInitialPrice, acweSharesNow);
+                    if (csspxClose != null && acweSharesNow != null) {
+                        const acweLordoLiquidabile = acweSharesNow * csspxClose;
+                        const acweTaxLiquidazione = calcTaxOnGain(csspxClose, csspxCloseInitialPrice, acweSharesNow);
                         const acweNettoLiquidabile = acweTaxLiquidazione == null ? null : (acweLordoLiquidabile - acweTaxLiquidazione);
                         acweNetCapitalSeries.push(acweNettoLiquidabile == null ? null : Number(acweNettoLiquidabile.toFixed(2)));
                         acweNetFlowsSeries.push(Number(acweNetDistribCumulati.toFixed(2)));
@@ -772,7 +774,7 @@
                 });
 
 
-                populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali);
+                populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxCloseInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali);
                 renderNetAvailabilityChart(labels, wincNetAvailabilitySeries, acweNetAvailabilitySeries);
                 updateNetBreakdownTable(
                     wincNetFlowsSeries,
@@ -808,7 +810,7 @@
                             },
                             {
                                 label: 'WINC - Accumulo (reinvestimento dividendi lordi)',
-                                data: xyleAdjCumulative,
+                                data: xyleReinvestedCumulative,
                                 borderColor: 'rgba(40, 167, 69, 1)',
                                 backgroundColor: 'rgba(40, 167, 69, 0.1)',
                                 spanGaps: true,
@@ -988,7 +990,7 @@
 
                 const mAcwe = computeMetrics(csspxCumulative, labels, riskFreeAnnual);
                 const mAcweSold = computeMetrics(csspxAdjustedCumulative, labels, riskFreeAnnual);
-                const mWinc = computeMetrics(xyleAdjCumulative, labels, riskFreeAnnual);
+                const mWinc = computeMetrics(xyleReinvestedCumulative, labels, riskFreeAnnual);
                 const mWincNetto = computeMetrics(xyleCloseCumulative, labels, riskFreeAnnual);
 
                 document.getElementById('metrics-acwe').innerText =
@@ -1136,7 +1138,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
             setText('nb-tot-diff', fmtDelta((aTot == null || wTot == null) ? null : (aTot - wTot)));
         }
 
-        function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali) {
+        function populateDividendiTable(distribuzioni, xyleShares, csspxShares, csspxCloseInitialPrice, mapCSSPX, distribuzioniCSSPXVirtuali) {
             const tableBody = document.getElementById('dividendiTableBody');
             tableBody.innerHTML = '';
             let sommaNettiXyle = 0;
@@ -1167,7 +1169,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                 const lordoVenduto = distribuzioneCSSPX ? distribuzioneCSSPX.amount : 0;
                 const commission = distribuzioneCSSPX ? (distribuzioneCSSPX.commission || 0) : 0;
                 // Calcolo plusvalenza tassabile: (prezzo vendita - prezzo carico) * n_quote - commissioni
-                const plusvalenzaPerQuota = distribuzioneCSSPX ? (distribuzioneCSSPX.csspxValueAtDate - csspxInitialPrice) : 0;
+                const plusvalenzaPerQuota = distribuzioneCSSPX ? (distribuzioneCSSPX.csspxValueAtDate - csspxCloseInitialPrice) : 0;
                 const totalePlusvalenza = (plusvalenzaPerQuota > 0 && distribuzioneCSSPX) ? plusvalenzaPerQuota * distribuzioneCSSPX.num_stock_selled : 0;
                 const taxableGain = Math.max(0, totalePlusvalenza - commission);
                 const tassePagate = taxableGain * 0.26;
