@@ -893,7 +893,8 @@
 
         function calculate() {
             const inputs = getInputs();
-            const standardRates = new Array(inputs.years).fill(inputs.currentYield);
+            const curveYears = Math.max(1, Math.ceil(inputs.years));
+            const standardRates = new Array(curveYears).fill(inputs.currentYield);
             const scenarios = [
                 { key: "standard", label: "Standard lordo: cedole reinvestite al rendimento corrente", data: runScenario(inputs, standardRates, { reinvest: true, net: false }) },
                 { key: "gross", label: "Lordo: cedole reinvestite ai tassi previsti", data: runScenario(inputs, inputs.forecastRates, { reinvest: true, net: false }) },
