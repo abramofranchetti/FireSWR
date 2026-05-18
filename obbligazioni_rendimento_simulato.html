@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rendimento obbligazione realistico</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bond-ink: #1f2937;
+            --bond-muted: #64748b;
+            --bond-line: #d9e2ec;
+            --bond-blue: #2563eb;
+            --bond-green: #0f9f6e;
+            --bond-orange: #d97706;
+            --bond-red: #dc2626;
+            --bond-bg: #f4f7fb;
+        }
+
+        body {
+            color: var(--bond-ink);
+            background: var(--bond-bg);
+        }
+
+        .sim-page {
+            max-width: 1440px;
+        }
+
+        .tool-header {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .tool-header h1 {
+            font-size: clamp(1.65rem, 4vw, 2.55rem);
+            line-height: 1.1;
+            margin: 0;
+            letter-spacing: 0;
+        }
+
+        .tool-header p {
+            max-width: 980px;
+            color: var(--bond-muted);
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .panel {
+            border: 1px solid var(--bond-line);
+            border-radius: 8px;
+            background: #fff;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .panel-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(160px, 1fr));
+            gap: 14px;
+        }
+
+        .input-field label,
+        .rate-toolbar label {
+            display: block;
+            font-size: .82rem;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 5px;
+        }
+
+        .input-field input,
+        .input-field select,
+        .rate-toolbar input,
+        .rate-toolbar select,
+        .rate-textarea {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 9px 10px;
+            font-size: .95rem;
+            background: #fff;
+        }
+
+        .input-field small {
+            display: block;
+            color: var(--bond-muted);
+            margin-top: 4px;
+            line-height: 1.25;
+        }
+
+        .rate-layout {
+            display: grid;
+            grid-template-columns: minmax(280px, 420px) 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .rate-toolbar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 8px 10px;
+            font-weight: 700;
+            font-size: .9rem;
+            cursor: pointer;
+        }
+
+        .action-btn.primary {
+            background: var(--bond-blue);
+            border-color: var(--bond-blue);
+            color: #fff;
+        }
+
+        .action-btn:hover {
+            filter: brightness(.97);
+        }
+
+        .rate-textarea {
+            min-height: 230px;
+            font-family: Consolas, "Courier New", monospace;
+            line-height: 1.35;
+            resize: vertical;
+        }
+
+        .years-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+            gap: 8px;
+            max-height: 320px;
+            overflow: auto;
+            padding-right: 4px;
+        }
+
+        .year-cell {
+            border: 1px solid var(--bond-line);
+            border-radius: 8px;
+            padding: 8px;
+            background: #f8fafc;
+        }
+
+        .year-cell label {
+            display: block;
+            font-size: .75rem;
+            color: var(--bond-muted);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .year-cell input {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            padding: 6px;
+            font-size: .9rem;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .kpi {
+            border: 1px solid var(--bond-line);
+            border-radius: 8px;
+            padding: 14px;
+            background: #f8fafc;
+        }
+
+        .kpi .label {
+            color: var(--bond-muted);
+            font-size: .82rem;
+            font-weight: 700;
+            min-height: 38px;
+        }
+
+        .kpi .value {
+            font-size: clamp(1.25rem, 3vw, 1.8rem);
+            font-weight: 800;
+            margin-top: 5px;
+        }
+
+        .kpi .delta {
+            font-size: .85rem;
+            color: var(--bond-muted);
+            margin-top: 4px;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .chart-grid.three {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .chart-box {
+            height: 360px;
+            border: 1px solid var(--bond-line);
+            border-radius: 8px;
+            padding: 12px;
+            background: #fff;
+        }
+
+        .ecb-rate-layout {
+            display: grid;
+            grid-template-columns: minmax(220px, 320px) 1fr;
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        .ecb-rate-card {
+            border: 1px solid var(--bond-line);
+            border-radius: 8px;
+            padding: 16px;
+            background: #f8fafc;
+            display: grid;
+            align-content: start;
+            gap: 8px;
+        }
+
+        .ecb-rate-card .source {
+            color: var(--bond-muted);
+            font-size: .8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .ecb-rate-card .rate {
+            color: var(--bond-blue);
+            font-size: clamp(2rem, 6vw, 3.3rem);
+            font-weight: 850;
+            line-height: 1;
+        }
+
+        .ecb-rate-card .meta {
+            color: var(--bond-muted);
+            font-size: .9rem;
+            line-height: 1.35;
+        }
+
+        .ecb-chart-box {
+            min-height: 300px;
+        }
+
+        .reference-link-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .market-link {
+            display: block;
+            border: 1px solid var(--bond-line);
+            border-radius: 8px;
+            padding: 11px;
+            color: var(--bond-ink);
+            background: #f8fafc;
+            text-decoration: none;
+        }
+
+        .market-link:hover {
+            color: var(--bond-blue);
+            text-decoration: none;
+            border-color: #93c5fd;
+        }
+
+        .market-link span {
+            display: block;
+            color: var(--bond-muted);
+            font-size: .78rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--bond-line);
+            border-radius: 8px;
+        }
+
+        table.sim-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 780px;
+        }
+
+        .sim-table th,
+        .sim-table td {
+            padding: 9px 10px;
+            border-bottom: 1px solid #e5edf4;
+            text-align: right;
+            font-size: .9rem;
+            white-space: nowrap;
+        }
+
+        .sim-table th:first-child,
+        .sim-table td:first-child {
+            text-align: left;
+        }
+
+        .sim-table th {
+            background: #f1f5f9;
+            color: #334155;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .note {
+            color: var(--bond-muted);
+            font-size: .9rem;
+            line-height: 1.45;
+            margin: 10px 0 0;
+        }
+
+        .formula-box {
+            background: #f8fafc;
+            border-left: 4px solid var(--bond-blue);
+            padding: 12px 14px;
+            border-radius: 6px;
+            color: #334155;
+            font-size: .92rem;
+            line-height: 1.45;
+        }
+
+        .home-button {
+            float: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        @media (max-width: 992px) {
+            .input-grid,
+            .kpi-grid,
+            .chart-grid,
+            .chart-grid.three,
+            .rate-layout {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 680px) {
+            body {
+                background: #fff;
+            }
+
+            .container.sim-page {
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 14px;
+            }
+
+            .input-grid,
+            .kpi-grid,
+            .chart-grid,
+            .chart-grid.three,
+            .rate-layout,
+            .rate-toolbar {
+                grid-template-columns: 1fr;
+            }
+
+            .panel {
+                padding: 14px;
+            }
+
+            .chart-box {
+                height: 310px;
+            }
+
+            .ecb-rate-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .reference-link-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .years-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                max-height: 260px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container sim-page mt-4 mb-4 p-4 bg-white rounded shadow-sm">
+        <div class="mb-3">
+            <a href="/FireSWR" class="home-button"><i class="fas fa-home"></i> Home</a>
+        </div>
+
+        <header class="tool-header">
+            <h1>Rendimento obbligazione realistico</h1>
+            <p>Il rendimento totale annualizzato standard presume che le cedole siano reinvestite allo stesso rendimento corrente. Qui puoi confrontarlo con tassi futuri variabili, tassazione retail, cedole non reinvestite e rendimento della sola componente prezzo-rimborso.</p>
+        </header>
+
+        <section class="panel">
+            <div class="panel-title">Dati obbligazione</div>
+            <div class="input-grid">
+                <div class="input-field">
+                    <label for="faceValue">Valore nominale</label>
+                    <input id="faceValue" type="number" step="0.01" value="100">
+                </div>
+                <div class="input-field">
+                    <label for="purchasePrice">Prezzo di acquisto</label>
+                    <input id="purchasePrice" type="number" step="0.01" value="98.50">
+                    <small>Prezzo secco/tel quel coerente con il confronto che vuoi fare.</small>
+                </div>
+                <div class="input-field">
+                    <label for="redemptionValue">Rimborso a scadenza</label>
+                    <input id="redemptionValue" type="number" step="0.01" value="100">
+                </div>
+                <div class="input-field">
+                    <label for="yearsToMaturity">Anni a scadenza</label>
+                    <input id="yearsToMaturity" type="number" min="1" max="80" step="1" value="10">
+                </div>
+                <div class="input-field">
+                    <label for="couponRate">Cedola annua lorda (%)</label>
+                    <input id="couponRate" type="number" step="0.01" value="3.50">
+                </div>
+                <div class="input-field">
+                    <label for="frequency">Frequenza cedole</label>
+                    <select id="frequency">
+                        <option value="1">Annuale</option>
+                        <option value="2" selected>Semestrale</option>
+                        <option value="4">Trimestrale</option>
+                        <option value="12">Mensile</option>
+                    </select>
+                </div>
+                <div class="input-field">
+                    <label for="currentYield">Rendimento corrente/YTM lordo (%)</label>
+                    <input id="currentYield" type="number" step="0.01" value="3.70">
+                </div>
+                <div class="input-field">
+                    <label for="taxRate">Tassazione (%)</label>
+                    <select id="taxRate">
+                        <option value="12.5" selected>12,5% titoli di Stato</option>
+                        <option value="26">26% corporate</option>
+                        <option value="0">0% lordo</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">BCE: tasso governativo Italia 10 anni</div>
+            <div class="ecb-rate-layout">
+                <div class="ecb-rate-card">
+                    <div class="source">ECB Data Portal</div>
+                    <div class="rate" id="ecbBtpRate">--</div>
+                    <div class="meta" id="ecbBtpMeta">Caricamento dati BCE...</div>
+                    <div class="button-row">
+                        <button class="action-btn" id="useEcbAsYtm" type="button"><i class="fas fa-arrow-down"></i> Usa come YTM</button>
+                        <button class="action-btn" id="useEcbAsCurve" type="button"><i class="fas fa-equals"></i> Curva costante</button>
+                    </div>
+                </div>
+                <div class="chart-box ecb-chart-box">
+                    <canvas id="ecbBtpChart"></canvas>
+                </div>
+            </div>
+            <div class="reference-link-grid" aria-label="Link ai dati BCE">
+                <a class="market-link" href="https://data.ecb.europa.eu/data/datasets/IRS/IRS.M.IT.L.L40.CI.0000.EUR.N.Z" target="_blank" rel="noopener">
+                    <span>ECB Data Portal</span>Serie Italia 10Y
+                </a>
+                <a class="market-link" href="https://data-api.ecb.europa.eu/service/data/IRS/M.IT.L.L40.CI.0000.EUR.N.Z?format=csvdata" target="_blank" rel="noopener">
+                    <span>ECB API CSV</span>Scarica dati
+                </a>
+                <a class="market-link" href="https://it.tradingview.com/symbols/TVC-IT10Y/" target="_blank" rel="noopener">
+                    <span>TradingView</span>Pagina simbolo IT10Y
+                </a>
+            </div>
+            <p class="note">La serie BCE e mensile e armonizzata per i tassi lunghi usati nei criteri di convergenza. Non e una quotazione intraday del singolo BTP, ma e molto piu stabile di un widget esterno per dare un riferimento di mercato.</p>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">Tassi annui previsti per reinvestire le cedole</div>
+            <div class="rate-layout">
+                <div>
+                    <div class="rate-toolbar">
+                        <div>
+                            <label for="bulkRate">Tasso rapido (%)</label>
+                            <input id="bulkRate" type="number" step="0.01" value="3.00">
+                        </div>
+                        <div>
+                            <label for="endRate">Tasso finale curva (%)</label>
+                            <input id="endRate" type="number" step="0.01" value="2.25">
+                        </div>
+                    </div>
+                    <div class="button-row">
+                        <button class="action-btn" id="fillConstant"><i class="fas fa-equals"></i> Costante</button>
+                        <button class="action-btn" id="fillCurrent"><i class="fas fa-sync"></i> Come YTM</button>
+                        <button class="action-btn" id="fillLinear"><i class="fas fa-slash"></i> Curva lineare</button>
+                        <button class="action-btn primary" id="runCalc"><i class="fas fa-calculator"></i> Calcola</button>
+                    </div>
+                    <p class="note">Formato bulk: una riga per anno, tipo <strong>1;3.0</strong>. Se incolli solo una lista di tassi, la pagina assegna gli anni in ordine.</p>
+                    <textarea id="ratesText" class="rate-textarea" spellcheck="false"></textarea>
+                </div>
+                <div>
+                    <div id="yearsGrid" class="years-grid"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">Risultati annualizzati e totali</div>
+            <div id="kpiGrid" class="kpi-grid"></div>
+            <p class="note">Il netto applica la tassazione alle cedole e agli interessi generati dal reinvestimento; applica inoltre l'imposta sul capital gain positivo a scadenza. Non considera commissioni, rateo, disaggio/scarto di emissione, compensazione minusvalenze o fiscalita specifiche diverse.</p>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">Grafici</div>
+            <div class="chart-grid three">
+                <div class="chart-box">
+                    <canvas id="returnChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <canvas id="ratesChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <canvas id="compositionChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">Andamento anno per anno</div>
+            <div class="table-wrap">
+                <table class="sim-table">
+                    <thead>
+                        <tr>
+                            <th>Anno</th>
+                            <th>Tasso reinv.</th>
+                            <th>Cedole lorde anno</th>
+                            <th>Cedole nette anno</th>
+                            <th>Montante lordo cedole</th>
+                            <th>Montante netto cedole</th>
+                            <th>Valore finale lordo</th>
+                            <th>Valore finale netto</th>
+                        </tr>
+                    </thead>
+                    <tbody id="yearTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">Metodo di calcolo</div>
+            <div class="formula-box">
+                Per ogni cedola si calcola il montante a scadenza usando i tassi previsti negli anni successivi. Lo scenario standard usa invece sempre il rendimento corrente/YTM lordo come tasso di reinvestimento. Il rendimento annualizzato e: <strong>(valore finale / prezzo di acquisto)^(1 / anni) - 1</strong>.
+            </div>
+        </section>
+    </div>
+
+    <div id="disclaimer-container"></div>
+
+    <script>
+        const el = (id) => document.getElementById(id);
+        let returnChart;
+        let ratesChart;
+        let compositionChart;
+        let ecbBtpChart;
+        let latestEcbBtpRate = null;
+
+        const palette = {
+            standard: "#2563eb",
+            gross: "#0f9f6e",
+            net: "#d97706",
+            noReinvest: "#64748b",
+            noCoupons: "#dc2626"
+        };
+
+        function money(value) {
+            return new Intl.NumberFormat("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+        }
+
+        function pct(value) {
+            return new Intl.NumberFormat("it-IT", { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+        }
+
+        function pctPoints(value) {
+            return `${new Intl.NumberFormat("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)}%`;
+        }
+
+        function numberValue(id) {
+            const value = parseFloat(String(el(id).value).replace(",", "."));
+            return Number.isFinite(value) ? value : 0;
+        }
+
+        function parseRatesText() {
+            const years = Math.max(1, Math.round(numberValue("yearsToMaturity")));
+            const currentYield = numberValue("currentYield");
+            const rates = new Array(years).fill(currentYield);
+            const lines = el("ratesText").value.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+
+            lines.forEach((line, index) => {
+                const cleaned = line.replace("%", "").replace(",", ".");
+                const parts = cleaned.split(/[;\t ]+/).filter(Boolean);
+                if (parts.length >= 2) {
+                    const year = Math.round(parseFloat(parts[0]));
+                    const rate = parseFloat(parts[1]);
+                    if (year >= 1 && year <= years && Number.isFinite(rate)) rates[year - 1] = rate;
+                } else if (parts.length === 1) {
+                    const rate = parseFloat(parts[0]);
+                    if (index < years && Number.isFinite(rate)) rates[index] = rate;
+                }
+            });
+
+            return rates;
+        }
+
+        function parseCsvRows(text) {
+            const rows = [];
+            let row = [];
+            let field = "";
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const next = text[i + 1];
+                if (char === '"') {
+                    if (inQuotes && next === '"') {
+                        field += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === "," && !inQuotes) {
+                    row.push(field);
+                    field = "";
+                } else if ((char === "\n" || char === "\r") && !inQuotes) {
+                    if (char === "\r" && next === "\n") i++;
+                    row.push(field);
+                    if (row.some(value => value !== "")) rows.push(row);
+                    row = [];
+                    field = "";
+                } else {
+                    field += char;
+                }
+            }
+
+            if (field || row.length) {
+                row.push(field);
+                rows.push(row);
+            }
+            return rows;
+        }
+
+        async function loadEcbItalyBtpRate() {
+            const startYear = new Date().getFullYear() - 10;
+            const url = `https://data-api.ecb.europa.eu/service/data/IRS/M.IT.L.L40.CI.0000.EUR.N.Z?format=csvdata&startPeriod=${startYear}`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const rows = parseCsvRows(await response.text());
+                const header = rows.shift();
+                const timeIndex = header.indexOf("TIME_PERIOD");
+                const valueIndex = header.indexOf("OBS_VALUE");
+                const observations = rows
+                    .map(row => ({ period: row[timeIndex], value: parseFloat(row[valueIndex]) }))
+                    .filter(point => point.period && Number.isFinite(point.value))
+                    .sort((a, b) => a.period.localeCompare(b.period));
+
+                if (!observations.length) throw new Error("Nessun dato BCE disponibile");
+                renderEcbItalyBtpRate(observations);
+            } catch (error) {
+                el("ecbBtpRate").textContent = "N/D";
+                el("ecbBtpMeta").innerHTML = `Dati BCE non disponibili in questo momento. <a href="https://data.ecb.europa.eu/data/datasets/IRS/IRS.M.IT.L.L40.CI.0000.EUR.N.Z" target="_blank" rel="noopener">Apri la serie BCE</a>.`;
+            }
+        }
+
+        function renderEcbItalyBtpRate(observations) {
+            const latest = observations[observations.length - 1];
+            const previousYear = observations.find(point => point.period === `${parseInt(latest.period.substring(0, 4), 10) - 1}${latest.period.substring(4)}`);
+            const recent = observations;
+            latestEcbBtpRate = latest.value;
+
+            el("ecbBtpRate").textContent = pctPoints(latest.value);
+            el("ecbBtpMeta").innerHTML = `Ultimo dato: <strong>${latest.period}</strong><br>Storico mostrato: <strong>ultimi 10 anni</strong><br>Serie: IRS.M.IT.L.L40.CI.0000.EUR.N.Z${previousYear ? `<br>Variazione a 12 mesi: <strong>${pctPoints(latest.value - previousYear.value)}</strong>` : ""}`;
+
+            if (ecbBtpChart) ecbBtpChart.destroy();
+            ecbBtpChart = new Chart(el("ecbBtpChart"), {
+                type: "line",
+                data: {
+                    labels: recent.map(point => point.period),
+                    datasets: [{
+                        label: "BCE Italia 10Y (%)",
+                        data: recent.map(point => point.value),
+                        borderColor: palette.standard,
+                        backgroundColor: "rgba(37, 99, 235, 0.14)",
+                        fill: true,
+                        tension: 0.25,
+                        pointRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: "bottom" } },
+                    scales: {
+                        x: { ticks: { maxTicksLimit: 8 } },
+                        y: { ticks: { callback: value => `${value}%` } }
+                    }
+                }
+            });
+        }
+
+        function syncTextFromGrid() {
+            const inputs = document.querySelectorAll(".year-rate-input");
+            const lines = Array.from(inputs).map(input => `${input.dataset.year};${input.value}`);
+            el("ratesText").value = lines.join("\n");
+        }
+
+        function syncGridFromText() {
+            const rates = parseRatesText();
+            document.querySelectorAll(".year-rate-input").forEach((input, index) => {
+                input.value = (rates[index] ?? 0).toFixed(2);
+            });
+        }
+
+        function buildYearsGrid(preserveRates = true) {
+            const oldRates = preserveRates ? parseRatesText() : [];
+            const years = Math.max(1, Math.min(80, Math.round(numberValue("yearsToMaturity"))));
+            el("yearsToMaturity").value = years;
+            const grid = el("yearsGrid");
+            grid.innerHTML = "";
+
+            for (let i = 1; i <= years; i++) {
+                const rate = Number.isFinite(oldRates[i - 1]) ? oldRates[i - 1] : numberValue("currentYield");
+                const cell = document.createElement("div");
+                cell.className = "year-cell";
+                cell.innerHTML = `<label for="rateYear${i}">Anno ${i}</label><input id="rateYear${i}" class="year-rate-input" data-year="${i}" type="number" step="0.01" value="${rate.toFixed(2)}">`;
+                grid.appendChild(cell);
+            }
+
+            document.querySelectorAll(".year-rate-input").forEach(input => {
+                input.addEventListener("input", () => {
+                    syncTextFromGrid();
+                    calculate();
+                });
+            });
+
+            syncTextFromGrid();
+        }
+
+        function fillRates(mode) {
+            const years = Math.max(1, Math.round(numberValue("yearsToMaturity")));
+            const start = mode === "current" ? numberValue("currentYield") : numberValue("bulkRate");
+            const end = numberValue("endRate");
+            const rates = [];
+
+            for (let i = 0; i < years; i++) {
+                let rate = start;
+                if (mode === "linear") {
+                    rate = years === 1 ? start : start + (end - start) * (i / (years - 1));
+                }
+                rates.push(rate);
+            }
+
+            el("ratesText").value = rates.map((rate, index) => `${index + 1};${rate.toFixed(2)}`).join("\n");
+            syncGridFromText();
+            calculate();
+        }
+
+        function getInputs() {
+            return {
+                face: numberValue("faceValue"),
+                price: Math.max(0.0001, numberValue("purchasePrice")),
+                redemption: numberValue("redemptionValue"),
+                years: Math.max(1, Math.round(numberValue("yearsToMaturity"))),
+                couponRate: numberValue("couponRate") / 100,
+                frequency: parseInt(el("frequency").value, 10),
+                currentYield: numberValue("currentYield") / 100,
+                taxRate: parseFloat(el("taxRate").value) / 100,
+                forecastRates: parseRatesText().map(rate => rate / 100)
+            };
+        }
+
+        function periodicRate(annualRate, frequency) {
+            return Math.pow(1 + annualRate, 1 / frequency) - 1;
+        }
+
+        function futureValueCoupon(coupon, periodIndex, totalPeriods, frequency, yearlyRates, taxRate, netMode) {
+            let value = netMode ? coupon * (1 - taxRate) : coupon;
+            for (let p = periodIndex + 1; p <= totalPeriods; p++) {
+                const yearIndex = Math.min(yearlyRates.length - 1, Math.max(0, Math.ceil(p / frequency) - 1));
+                const annualRate = netMode ? yearlyRates[yearIndex] * (1 - taxRate) : yearlyRates[yearIndex];
+                value *= 1 + periodicRate(annualRate, frequency);
+            }
+            return value;
+        }
+
+        function runScenario(inputs, yearlyRates, options) {
+            const totalPeriods = inputs.years * inputs.frequency;
+            const coupon = inputs.face * inputs.couponRate / inputs.frequency;
+            let couponFutureValue = 0;
+            let couponPaid = 0;
+
+            for (let p = 1; p <= totalPeriods; p++) {
+                if (options.includeCoupons === false) continue;
+                couponPaid += options.net ? coupon * (1 - inputs.taxRate) : coupon;
+                if (options.reinvest) {
+                    couponFutureValue += futureValueCoupon(coupon, p, totalPeriods, inputs.frequency, yearlyRates, inputs.taxRate, options.net);
+                } else {
+                    couponFutureValue += options.net ? coupon * (1 - inputs.taxRate) : coupon;
+                }
+            }
+
+            const capitalTax = options.net ? Math.max(0, inputs.redemption - inputs.price) * inputs.taxRate : 0;
+            const finalValue = Math.max(0, inputs.redemption - capitalTax) + couponFutureValue;
+            const totalReturn = finalValue / inputs.price - 1;
+            const annualized = Math.pow(finalValue / inputs.price, 1 / inputs.years) - 1;
+
+            return {
+                annualized,
+                totalReturn,
+                finalValue,
+                couponFutureValue,
+                couponPaid,
+                capitalTax
+            };
+        }
+
+        function buildYearRows(inputs) {
+            const rows = [];
+            const grossAccum = new Array(inputs.years).fill(0);
+            const netAccum = new Array(inputs.years).fill(0);
+            const couponPerPeriod = inputs.face * inputs.couponRate / inputs.frequency;
+
+            for (let year = 1; year <= inputs.years; year++) {
+                const annualRate = inputs.forecastRates[year - 1] ?? inputs.currentYield;
+                for (let i = 0; i < grossAccum.length; i++) {
+                    if (grossAccum[i] > 0) grossAccum[i] *= 1 + annualRate;
+                    if (netAccum[i] > 0) netAccum[i] *= 1 + annualRate * (1 - inputs.taxRate);
+                }
+
+                const grossCoupons = couponPerPeriod * inputs.frequency;
+                const netCoupons = grossCoupons * (1 - inputs.taxRate);
+                grossAccum[year - 1] += grossCoupons;
+                netAccum[year - 1] += netCoupons;
+
+                const grossCouponValue = grossAccum.reduce((sum, value) => sum + value, 0);
+                const netCouponValue = netAccum.reduce((sum, value) => sum + value, 0);
+                const netRedemption = inputs.redemption - Math.max(0, inputs.redemption - inputs.price) * inputs.taxRate;
+
+                rows.push({
+                    year,
+                    rate: annualRate,
+                    grossCoupons,
+                    netCoupons,
+                    grossCouponValue,
+                    netCouponValue,
+                    grossFinal: inputs.redemption + grossCouponValue,
+                    netFinal: netRedemption + netCouponValue
+                });
+            }
+            return rows;
+        }
+
+        function calculate() {
+            const inputs = getInputs();
+            const standardRates = new Array(inputs.years).fill(inputs.currentYield);
+            const scenarios = [
+                { key: "standard", label: "Standard lordo: cedole reinvestite al rendimento corrente", data: runScenario(inputs, standardRates, { reinvest: true, net: false }) },
+                { key: "gross", label: "Lordo: cedole reinvestite ai tassi previsti", data: runScenario(inputs, inputs.forecastRates, { reinvest: true, net: false }) },
+                { key: "net", label: "Netto retail: cedole e reinvestimento tassati", data: runScenario(inputs, inputs.forecastRates, { reinvest: true, net: true }) },
+                { key: "noReinvest", label: "Netto: cedole incassate senza reinvestimento", data: runScenario(inputs, inputs.forecastRates, { reinvest: false, net: true }) },
+                { key: "noCoupons", label: "Senza cedole: solo prezzo-rimborso netto", data: runScenario(inputs, inputs.forecastRates, { reinvest: false, net: true, includeCoupons: false }) }
+            ];
+
+            renderKpis(scenarios);
+            renderCharts(scenarios, inputs);
+            renderTable(buildYearRows(inputs));
+        }
+
+        function renderKpis(scenarios) {
+            const standard = scenarios[0].data.annualized;
+            const standardTotal = scenarios[0].data.totalReturn;
+            el("kpiGrid").innerHTML = scenarios.map(item => {
+                const delta = item.data.annualized - standard;
+                const totalDelta = item.data.totalReturn - standardTotal;
+                return `<div class="kpi">
+                    <div class="label">${item.label}</div>
+                    <div class="value" style="color:${palette[item.key]}">${pct(item.data.annualized)}</div>
+                    <div class="delta">Totale: <strong>${pct(item.data.totalReturn)}</strong></div>
+                    <div class="delta">${item.key === "standard" ? "Riferimento" : (delta >= 0 ? "+" : "") + pct(delta) + " annuo vs standard"}</div>
+                    <div class="delta">${item.key === "standard" ? "" : (totalDelta >= 0 ? "+" : "") + pct(totalDelta) + " totale vs standard"}</div>
+                    <div class="delta">Valore finale: ${money(item.data.finalValue)}</div>
+                </div>`;
+            }).join("");
+        }
+
+        function renderCharts(scenarios, inputs) {
+            const labels = scenarios.map(item => item.label.replace(": ", "\n"));
+            const returns = scenarios.map(item => item.data.annualized * 100);
+            const totalReturns = scenarios.map(item => item.data.totalReturn * 100);
+            const standard = scenarios[0].data.annualized * 100;
+            const colors = scenarios.map(item => palette[item.key]);
+
+            if (returnChart) returnChart.destroy();
+            returnChart = new Chart(el("returnChart"), {
+                type: "bar",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "Rendimento annualizzato (%)",
+                        data: returns,
+                        backgroundColor: colors
+                    }, {
+                        label: "Rendimento totale (%)",
+                        data: totalReturns,
+                        backgroundColor: colors.map(color => color + "80")
+                    }, {
+                        type: "line",
+                        label: "Standard annualizzato",
+                        data: returns.map(() => standard),
+                        borderColor: "#111827",
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: "bottom" } },
+                    scales: { x: { ticks: { display: false } }, y: { ticks: { callback: value => `${value}%` } } }
+                }
+            });
+
+            if (ratesChart) ratesChart.destroy();
+            ratesChart = new Chart(el("ratesChart"), {
+                type: "line",
+                data: {
+                    labels: inputs.forecastRates.map((_, index) => `Anno ${index + 1}`),
+                    datasets: [{
+                        label: "Tassi previsti inseriti (%)",
+                        data: inputs.forecastRates.map(rate => rate * 100),
+                        borderColor: palette.gross,
+                        backgroundColor: "rgba(15, 159, 110, 0.14)",
+                        fill: true,
+                        tension: 0.25,
+                        pointRadius: inputs.years > 30 ? 2 : 3
+                    }, {
+                        label: "YTM corrente (%)",
+                        data: inputs.forecastRates.map(() => inputs.currentYield * 100),
+                        borderColor: "#111827",
+                        borderDash: [6, 5],
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: "bottom" } },
+                    scales: {
+                        x: { ticks: { maxTicksLimit: 10 } },
+                        y: { ticks: { callback: value => `${value}%` } }
+                    }
+                }
+            });
+
+            if (compositionChart) compositionChart.destroy();
+            compositionChart = new Chart(el("compositionChart"), {
+                type: "bar",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "Rimborso netto/lordo",
+                        data: scenarios.map(item => item.data.finalValue - item.data.couponFutureValue),
+                        backgroundColor: "#94a3b8"
+                    }, {
+                        label: "Montante cedole",
+                        data: scenarios.map(item => item.data.couponFutureValue),
+                        backgroundColor: colors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: "bottom" } },
+                    scales: {
+                        x: { stacked: true, ticks: { display: false } },
+                        y: { stacked: true }
+                    }
+                }
+            });
+        }
+
+        function renderTable(rows) {
+            el("yearTable").innerHTML = rows.map(row => `<tr>
+                <td>Anno ${row.year}</td>
+                <td>${pct(row.rate)}</td>
+                <td>${money(row.grossCoupons)}</td>
+                <td>${money(row.netCoupons)}</td>
+                <td>${money(row.grossCouponValue)}</td>
+                <td>${money(row.netCouponValue)}</td>
+                <td>${money(row.grossFinal)}</td>
+                <td>${money(row.netFinal)}</td>
+            </tr>`).join("");
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            buildYearsGrid(false);
+            fillRates("linear");
+
+            ["faceValue", "purchasePrice", "redemptionValue", "couponRate", "frequency", "currentYield", "taxRate"].forEach(id => {
+                el(id).addEventListener("input", calculate);
+                el(id).addEventListener("change", calculate);
+            });
+
+            el("yearsToMaturity").addEventListener("change", () => {
+                buildYearsGrid(true);
+                calculate();
+            });
+            el("ratesText").addEventListener("input", () => {
+                syncGridFromText();
+                calculate();
+            });
+            el("fillConstant").addEventListener("click", () => fillRates("constant"));
+            el("fillCurrent").addEventListener("click", () => fillRates("current"));
+            el("fillLinear").addEventListener("click", () => fillRates("linear"));
+            el("runCalc").addEventListener("click", calculate);
+            el("useEcbAsYtm").addEventListener("click", () => {
+                if (!Number.isFinite(latestEcbBtpRate)) return;
+                el("currentYield").value = latestEcbBtpRate.toFixed(2);
+                calculate();
+            });
+            el("useEcbAsCurve").addEventListener("click", () => {
+                if (!Number.isFinite(latestEcbBtpRate)) return;
+                el("bulkRate").value = latestEcbBtpRate.toFixed(2);
+                fillRates("constant");
+            });
+            loadEcbItalyBtpRate();
+
+            fetch("html/disclaimer.html")
+                .then(response => response.text())
+                .then(data => {
+                    el("disclaimer-container").innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
