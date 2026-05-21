@@ -891,10 +891,16 @@
                     const days = [];
                     let lastVal = null;
                     let lastDate = null;
+                    let firstValue = null;
+                    let lastValue = null;
 
                     for (let i = 0; i < labels.length; i++) {
                         const v = series[i];
                         const d = labels[i];
+                        if (v != null) {
+                            if (firstValue == null) firstValue = v;
+                            lastValue = v;
+                        }
                         if (v == null || lastVal == null) {
                             lastVal = v;
                             lastDate = d;
@@ -915,12 +921,17 @@
                         lastDate = d;
                     }
 
+                    const totalReturn = firstValue != null && lastValue != null && firstValue !== 0
+                        ? (lastValue / firstValue - 1)
+                        : NaN;
+
                     if (returns.length === 0)
                         return {
                             stdAnn: NaN,
                             sharpe: NaN,
                             sortino: NaN,
-                            periodsPerYear: NaN
+                            periodsPerYear: NaN,
+                            totalReturn: totalReturn
                         };
 
                     const n = returns.length;
@@ -972,6 +983,7 @@
 
                     return {
                         stdAnn,
+                        totalReturn,
                         sharpe,
                         sortino,
                         periodsPerYear,
@@ -995,6 +1007,7 @@
 
                 document.getElementById('metrics-xdev').innerText =
                     `Dev.std (ann): ${fmt(mXdev.stdAnn)}
+Rendimento totale: ${fmt(mXdev.totalReturn)}
 Sharpe (ann): ${isNaN(mXdev.sharpe) ? 'n/a' : mXdev.sharpe.toFixed(3)}
 Sharpe (periodale): ${isNaN(mXdev.periodSharpe) ? 'n/a' : mXdev.periodSharpe.toFixed(3)}
 Sortino (ann): ${isNaN(mXdev.sortino) ? 'n/a' : mXdev.sortino.toFixed(3)}
@@ -1002,6 +1015,7 @@ Sortino (periodale): ${isNaN(mXdev.periodSortino) ? 'n/a' : mXdev.periodSortino.
 
                 document.getElementById('metrics-xdev-sold').innerText =
                     `Dev.std (ann): ${fmt(mXdevSold.stdAnn)}
+Rendimento totale: ${fmt(mXdevSold.totalReturn)}
 Sharpe (ann): ${isNaN(mXdevSold.sharpe) ? 'n/a' : mXdevSold.sharpe.toFixed(3)}
 Sharpe (periodale): ${isNaN(mXdevSold.periodSharpe) ? 'n/a' : mXdevSold.periodSharpe.toFixed(3)}
 Sortino (ann): ${isNaN(mXdevSold.sortino) ? 'n/a' : mXdevSold.sortino.toFixed(3)}
@@ -1009,6 +1023,7 @@ Sortino (periodale): ${isNaN(mXdevSold.periodSortino) ? 'n/a' : mXdevSold.period
 
                 document.getElementById('metrics-winc').innerText =
                     `Dev.std (ann): ${fmt(mWinc.stdAnn)}
+Rendimento totale: ${fmt(mWinc.totalReturn)}
 Sharpe (ann): ${isNaN(mWinc.sharpe) ? 'n/a' : mWinc.sharpe.toFixed(3)}
 Sharpe (periodale): ${isNaN(mWinc.periodSharpe) ? 'n/a' : mWinc.periodSharpe.toFixed(3)}
 Sortino (ann): ${isNaN(mWinc.sortino) ? 'n/a' : mWinc.sortino.toFixed(3)}
@@ -1016,6 +1031,7 @@ Sortino (periodale): ${isNaN(mWinc.periodSortino) ? 'n/a' : mWinc.periodSortino.
 
                 document.getElementById('metrics-winc-netto').innerText =
                     `Dev.std (ann): ${fmt(mWincNetto.stdAnn)}
+Rendimento totale: ${fmt(mWincNetto.totalReturn)}
 Sharpe (ann): ${isNaN(mWincNetto.sharpe) ? 'n/a' : mWincNetto.sharpe.toFixed(3)}
 Sharpe (periodale): ${isNaN(mWincNetto.periodSharpe) ? 'n/a' : mWincNetto.periodSharpe.toFixed(3)}
 Sortino (ann): ${isNaN(mWincNetto.sortino) ? 'n/a' : mWincNetto.sortino.toFixed(3)}

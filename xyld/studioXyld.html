@@ -405,10 +405,10 @@
                 const mWinc = computeMetrics(xyleAdjCumulative, labels, riskFreeAnnual);
                 const mWincNetto = computeMetrics(xyleCloseCumulative, labels, riskFreeAnnual);
 
-                document.getElementById('metrics-acwe').innerText = `Dev.std (ann): ${fmt(mAcwe.stdAnn)}\nSharpe (ann): ${isNaN(mAcwe.sharpe) ? 'n/a' : mAcwe.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mAcwe.periodSharpe) ? 'n/a' : mAcwe.periodSharpe.toFixed(3)}`;
-                document.getElementById('metrics-acwe-sold').innerText = `Dev.std (ann): ${fmt(mAcweSold.stdAnn)}\nSharpe (ann): ${isNaN(mAcweSold.sharpe) ? 'n/a' : mAcweSold.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mAcweSold.periodSharpe) ? 'n/a' : mAcweSold.periodSharpe.toFixed(3)}`;
-                document.getElementById('metrics-winc').innerText = `Dev.std (ann): ${fmt(mWinc.stdAnn)}\nSharpe (ann): ${isNaN(mWinc.sharpe) ? 'n/a' : mWinc.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mWinc.periodSharpe) ? 'n/a' : mWinc.periodSharpe.toFixed(3)}`;
-                document.getElementById('metrics-winc-netto').innerText = `Dev.std (ann): ${fmt(mWincNetto.stdAnn)}\nSharpe (ann): ${isNaN(mWincNetto.sharpe) ? 'n/a' : mWincNetto.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mWincNetto.periodSharpe) ? 'n/a' : mWincNetto.periodSharpe.toFixed(3)}`;
+                document.getElementById('metrics-acwe').innerText = `Dev.std (ann): ${fmt(mAcwe.stdAnn)}\nRendimento totale: ${fmt(mAcwe.totalReturn)}\nSharpe (ann): ${isNaN(mAcwe.sharpe) ? 'n/a' : mAcwe.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mAcwe.periodSharpe) ? 'n/a' : mAcwe.periodSharpe.toFixed(3)}`;
+                document.getElementById('metrics-acwe-sold').innerText = `Dev.std (ann): ${fmt(mAcweSold.stdAnn)}\nRendimento totale: ${fmt(mAcweSold.totalReturn)}\nSharpe (ann): ${isNaN(mAcweSold.sharpe) ? 'n/a' : mAcweSold.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mAcweSold.periodSharpe) ? 'n/a' : mAcweSold.periodSharpe.toFixed(3)}`;
+                document.getElementById('metrics-winc').innerText = `Dev.std (ann): ${fmt(mWinc.stdAnn)}\nRendimento totale: ${fmt(mWinc.totalReturn)}\nSharpe (ann): ${isNaN(mWinc.sharpe) ? 'n/a' : mWinc.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mWinc.periodSharpe) ? 'n/a' : mWinc.periodSharpe.toFixed(3)}`;
+                document.getElementById('metrics-winc-netto').innerText = `Dev.std (ann): ${fmt(mWincNetto.stdAnn)}\nRendimento totale: ${fmt(mWincNetto.totalReturn)}\nSharpe (ann): ${isNaN(mWincNetto.sharpe) ? 'n/a' : mWincNetto.sharpe.toFixed(3)}\nSharpe (periodale): ${isNaN(mWincNetto.periodSharpe) ? 'n/a' : mWincNetto.periodSharpe.toFixed(3)}`;
 
             } catch (err) {
                 console.error(err);
@@ -427,9 +427,15 @@
             const days = [];
             let lastVal = null;
             let lastDate = null;
+            let firstValue = null;
+            let lastValue = null;
             for (let i = 0; i < labels.length; i++) {
                 const v = series[i];
                 const d = labels[i];
+                if (v != null) {
+                    if (firstValue == null) firstValue = v;
+                    lastValue = v;
+                }
                 if (v == null || lastVal == null) {
                     lastVal = v;
                     lastDate = d;
@@ -448,7 +454,11 @@
                 lastDate = d;
             }
 
-            if (returns.length === 0) return { stdAnn: NaN, sharpe: NaN, periodsPerYear: NaN };
+            const totalReturn = firstValue != null && lastValue != null && firstValue !== 0
+                ? (lastValue / firstValue - 1)
+                : NaN;
+
+            if (returns.length === 0) return { stdAnn: NaN, sharpe: NaN, periodsPerYear: NaN, totalReturn: totalReturn };
 
             const n = returns.length;
             const mean = returns.reduce((a, b) => a + b, 0) / n;
@@ -472,7 +482,7 @@
             const rfPeriod = rfAnn / periodsPerYear;
             const sharpe = stdAnn > 0 ? ((meanAnn - rfAnn) / stdAnn) : NaN;
             const periodSharpe = std > 0 ? ((mean - rfPeriod) / std) : NaN; // Sharpe base periodale sull'intero periodo corretto per rf
-            return { stdAnn: stdAnn, sharpe: sharpe, periodsPerYear: periodsPerYear, periodSharpe: periodSharpe };
+            return { stdAnn: stdAnn, totalReturn: totalReturn, sharpe: sharpe, periodsPerYear: periodsPerYear, periodSharpe: periodSharpe };
         }
 
         function fmt(x) {

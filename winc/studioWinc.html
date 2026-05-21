@@ -986,10 +986,16 @@
                     const days = [];
                     let lastVal = null;
                     let lastDate = null;
+                    let firstValue = null;
+                    let lastValue = null;
 
                     for (let i = 0; i < labels.length; i++) {
                         const v = series[i];
                         const d = labels[i];
+                        if (v != null) {
+                            if (firstValue == null) firstValue = v;
+                            lastValue = v;
+                        }
                         if (v == null || lastVal == null) {
                             lastVal = v;
                             lastDate = d;
@@ -1010,12 +1016,17 @@
                         lastDate = d;
                     }
 
+                    const totalReturn = firstValue != null && lastValue != null && firstValue !== 0
+                        ? (lastValue / firstValue - 1)
+                        : NaN;
+
                     if (returns.length === 0)
                         return {
                             stdAnn: NaN,
                             sharpe: NaN,
                             sortino: NaN,
-                            periodsPerYear: NaN
+                            periodsPerYear: NaN,
+                            totalReturn: totalReturn
                         };
 
                     const n = returns.length;
@@ -1067,6 +1078,7 @@
 
                     return {
                         stdAnn,
+                        totalReturn,
                         sharpe,
                         sortino,
                         periodsPerYear,
@@ -1090,6 +1102,7 @@
 
                 document.getElementById('metrics-swda').innerText =
                     `Dev.std (ann): ${fmt(mSwda.stdAnn)}
+Rendimento totale: ${fmt(mSwda.totalReturn)}
 Sharpe (ann): ${isNaN(mSwda.sharpe) ? 'n/a' : mSwda.sharpe.toFixed(3)}
 Sharpe (periodale): ${isNaN(mSwda.periodSharpe) ? 'n/a' : mSwda.periodSharpe.toFixed(3)}
 Sortino (ann): ${isNaN(mSwda.sortino) ? 'n/a' : mSwda.sortino.toFixed(3)}
@@ -1097,6 +1110,7 @@ Sortino (periodale): ${isNaN(mSwda.periodSortino) ? 'n/a' : mSwda.periodSortino.
 
                 document.getElementById('metrics-swda-sold').innerText =
                     `Dev.std (ann): ${fmt(mSwdaSold.stdAnn)}
+Rendimento totale: ${fmt(mSwdaSold.totalReturn)}
 Sharpe (ann): ${isNaN(mSwdaSold.sharpe) ? 'n/a' : mSwdaSold.sharpe.toFixed(3)}
 Sharpe (periodale): ${isNaN(mSwdaSold.periodSharpe) ? 'n/a' : mSwdaSold.periodSharpe.toFixed(3)}
 Sortino (ann): ${isNaN(mSwdaSold.sortino) ? 'n/a' : mSwdaSold.sortino.toFixed(3)}
@@ -1104,6 +1118,7 @@ Sortino (periodale): ${isNaN(mSwdaSold.periodSortino) ? 'n/a' : mSwdaSold.period
 
                 document.getElementById('metrics-winc').innerText =
                     `Dev.std (ann): ${fmt(mWinc.stdAnn)}
+Rendimento totale: ${fmt(mWinc.totalReturn)}
 Sharpe (ann): ${isNaN(mWinc.sharpe) ? 'n/a' : mWinc.sharpe.toFixed(3)}
 Sharpe (periodale): ${isNaN(mWinc.periodSharpe) ? 'n/a' : mWinc.periodSharpe.toFixed(3)}
 Sortino (ann): ${isNaN(mWinc.sortino) ? 'n/a' : mWinc.sortino.toFixed(3)}
@@ -1111,6 +1126,7 @@ Sortino (periodale): ${isNaN(mWinc.periodSortino) ? 'n/a' : mWinc.periodSortino.
 
                 document.getElementById('metrics-winc-netto').innerText =
                     `Dev.std (ann): ${fmt(mWincNetto.stdAnn)}
+Rendimento totale: ${fmt(mWincNetto.totalReturn)}
 Sharpe (ann): ${isNaN(mWincNetto.sharpe) ? 'n/a' : mWincNetto.sharpe.toFixed(3)}
 Sharpe (periodale): ${isNaN(mWincNetto.periodSharpe) ? 'n/a' : mWincNetto.periodSharpe.toFixed(3)}
 Sortino (ann): ${isNaN(mWincNetto.sortino) ? 'n/a' : mWincNetto.sortino.toFixed(3)}
