@@ -78,6 +78,20 @@
         <span id="val_anni_futuri">20</span> anni
         <br><br>
 
+        <div class="custom-control custom-switch mb-3">
+            <input type="checkbox" class="custom-control-input" id="continua_pac_a" onchange="aggiorna()">
+            <label class="custom-control-label" for="continua_pac_a">
+                Scenario A: continua i versamenti anche dopo i primi anni
+            </label>
+        </div>
+
+        <div class="custom-control custom-switch mb-3">
+            <input type="checkbox" class="custom-control-input" id="estendi_10_anni" onchange="aggiorna()">
+            <label class="custom-control-label" for="estendi_10_anni">
+                Continua a restare investito per altri 10 anni dopo l'incontro
+            </label>
+        </div>
+
         <canvas id="grafico" height="120"></canvas>
 
         <div class="result">
@@ -119,6 +133,23 @@
             let n = anni * 12;                  // mesi totali
             return versamentoMensile * ((Math.pow(1 + r, n) - 1) / r);
         }
+
+        function calcolaValoreScenarioA(versamentoMensile, anniFa, anniDopoOggi, rendimentoAnnuo, continuaPAC) {
+            if (continuaPAC) {
+                return calcolaMontante(versamentoMensile, anniFa + anniDopoOggi, rendimentoAnnuo);
+            }
+
+            return calcolaMontante(versamentoMensile, anniFa, rendimentoAnnuo) *
+                Math.pow(1 + rendimentoAnnuo / 100, anniDopoOggi);
+        }
+
+        function calcolaValoreScenarioB(versamentoMensile, anniDopoOggi, anniVersamento, rendimentoAnnuo) {
+            const anniConVersamenti = Math.min(anniDopoOggi, anniVersamento);
+            const anniSenzaVersamenti = Math.max(0, anniDopoOggi - anniVersamento);
+
+            return calcolaMontante(versamentoMensile, anniConVersamenti, rendimentoAnnuo) *
+                Math.pow(1 + rendimentoAnnuo / 100, anniSenzaVersamenti);
+        }
         // --- Plugin linea verticale + etichetta "Oggi" ---
         const lineaVerticale = {
             id: 'lineaVerticale',
@@ -157,7 +188,7 @@
             data: {
                 labels: [],
                 datasets: [{
-                    label: 'Scenario A (iniziato anni fa, smetti oggi)',
+                    label: 'Scenario A (iniziato anni fa)',
                     borderColor: '#1b5',
                     data: [],
                     fill: false,
@@ -180,13 +211,14 @@
             let versamento = parseFloat(document.getElementById("versamento").value);
             let rendimento = parseFloat(document.getElementById("rendimento").value);
             let anniFuturi = parseInt(document.getElementById("anni_futuri").value);
+            let continuaPAC_A = document.getElementById("continua_pac_a").checked;
+            let estendi10Anni = document.getElementById("estendi_10_anni").checked;
 
             document.getElementById("val_anni_fa").innerText = anniFa;
             document.getElementById("val_anni_futuri").innerText = anniFuturi;
 
-            // Scenario A: hai già investito in passato e smetti oggi
-            let capitaleA = calcolaMontante(versamento, anniFa, rendimento);
-            let capitaleAFuturo = capitaleA * Math.pow(1 + rendimento / 100, anniFuturi);
+            // Scenario A: hai già investito in passato; puoi fermarti oggi o continuare.
+            let capitaleAFuturo = calcolaValoreScenarioA(versamento, anniFa, anniFuturi, rendimento, continuaPAC_A);
 
             // Scenario B: inizi oggi – vogliamo trovare il versamento necessario
             function trovaVersamentoMensile() {
@@ -207,9 +239,9 @@
             // Calcolo degli scenari per i risultati
             let scenA = {
                 versamentoMensile: versamento,
-                anniVersati: anniFa,
-                capitaleVersato: versamento * anniFa * 12,
-                capitaleFinale: calcolaMontante(versamento, anniFa, rendimento)
+                anniVersati: continuaPAC_A ? anniFa + anniFuturi : anniFa,
+                capitaleVersato: versamento * (continuaPAC_A ? anniFa + anniFuturi : anniFa) * 12,
+                capitaleFinale: capitaleAFuturo
             };
 
             let scenB = {
@@ -222,8 +254,8 @@
             // RISULTATI (aggiorniamo gli elementi esistenti)
             document.getElementById("versA").innerText = scenA.versamentoMensile.toFixed(0);
             document.getElementById("capVersA").innerText = scenA.capitaleVersato.toFixed(0);
-            document.getElementById("capA").innerText = scenB.capitaleFinale.toFixed(0);
-            document.getElementById("guadagnoA").innerText = (scenB.capitaleFinale - scenA.capitaleVersato).toFixed(0) + " ovvero " + ((scenB.capitaleFinale - scenA.capitaleVersato) / scenA.capitaleVersato * 100).toFixed(2) + "%";
+            document.getElementById("capA").innerText = scenA.capitaleFinale.toFixed(0);
+            document.getElementById("guadagnoA").innerText = (scenA.capitaleFinale - scenA.capitaleVersato).toFixed(0) + " ovvero " + ((scenA.capitaleFinale - scenA.capitaleVersato) / scenA.capitaleVersato * 100).toFixed(2) + "%";
 
             document.getElementById("versB").innerText = scenB.versamentoMensile.toFixed(0);
             document.getElementById("capVersB").innerText = scenB.capitaleVersato.toFixed(0);
@@ -234,8 +266,9 @@
             let datiA = [];
             let datiB = [];
 
-            // Anni totali nel grafico = anni passati + anni futuri
-            let anniTotali = anniFa + anniFuturi;
+            // Anni totali nel grafico = anni passati + anni fino al pareggio + 10 anni extra
+            const anniExtraDopoIncontro = estendi10Anni ? 10 : 0;
+            let anniTotali = anniFa + anniFuturi + anniExtraDopoIncontro;
 
             for (let i = 0; i <= anniTotali; i++) {
                 if (i < anniFa) {
@@ -244,22 +277,18 @@
                     labels.push("Anno " + (i - anniFa));  // da 0 in poi = crescita futura
                 }
 
-                // Scenario A:
-                // per i primi anni A stai versando ogni mese
-                if (i <= anniFa) {
+                // Scenario A: prima di oggi versi sempre; dopo oggi continui solo se il flag e' attivo.
+                const anniDopoOggi = i - anniFa;
+                if (anniDopoOggi <= 0) {
                     datiA.push(calcolaMontante(versamento, i, rendimento));
                 } else {
-                    let anniDopoStop = i - anniFa;
-                    let valore = calcolaMontante(versamento, anniFa, rendimento) *
-                        Math.pow(1 + rendimento / 100, anniDopoStop);
-                    datiA.push(valore);
+                    datiA.push(calcolaValoreScenarioA(versamento, anniFa, anniDopoOggi, rendimento, continuaPAC_A));
                 }
 
                 // Scenario B:
                 // parte solo da anno 0 oggi
-                let iB = i - anniFa;
-                if (iB >= 0) {
-                    datiB.push(calcolaMontante(versamentoB, iB, rendimento));
+                if (anniDopoOggi >= 0) {
+                    datiB.push(calcolaValoreScenarioB(versamentoB, anniDopoOggi, anniFuturi, rendimento));
                 } else {
                     datiB.push(null); // nessun punto mostrato
                 }

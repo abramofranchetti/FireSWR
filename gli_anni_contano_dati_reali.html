@@ -103,6 +103,14 @@
             </label>
         </div>
 
+        <label>Grafico dopo il punto di incontro</label>
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="estendi10Anni" onchange="aggiorna()">
+            <label class="custom-control-label" for="estendi10Anni">
+                Continua a restare investito per altri 10 anni dopo l'incontro
+            </label>
+        </div>
+
         <canvas id="grafico" height="120"></canvas>
 
         <div class="result">
@@ -148,6 +156,7 @@
     <script>
         let sp500 = [];
         let chart;
+        const ANNI_EXTRA_DOPO_INCONTRO = 10;
 
         // ===================== CSV =====================
         async function caricaCSV() {
@@ -273,6 +282,23 @@
             };
         }
 
+        function simulaPACConOrizzonte(start, mesiVersamenti, mesiTotali, versamento) {
+            let quote = 0;
+            let versato = 0;
+
+            for (let i = 0; i < mesiTotali; i++) {
+                if (i < mesiVersamenti) {
+                    quote += versamento / sp500[start + i].value;
+                    versato += versamento;
+                }
+            }
+
+            return {
+                capitaleFinale: quote * sp500[start + mesiTotali - 1].value,
+                capitaleVersato: versato
+            };
+        }
+
         function trovaVersamento(target, start, anni) {
             let min = 0, max = 5000;
 
@@ -285,9 +311,12 @@
         }
 
         // ===================== GRAFICO =====================
-        function disegnaGrafico(start, anniPAC, anniFuturi, versamento, versamentoB, continuaPAC) {
+        function disegnaGrafico(start, anniPAC, anniFuturi, versamento, versamentoB, continuaPAC, estendi10Anni) {
             const mesiPAC = anniPAC * 12;
-            const mesiTotali = (anniPAC + anniFuturi) * 12;
+            const mesiFuturi = anniFuturi * 12;
+            const anniExtra = estendi10Anni ? ANNI_EXTRA_DOPO_INCONTRO : 0;
+            const mesiTotaliRichiesti = (anniPAC + anniFuturi + anniExtra) * 12;
+            const mesiTotali = Math.min(mesiTotaliRichiesti, sp500.length - start);
 
             let labels = [];
             let dataA = [];
@@ -307,9 +336,11 @@
                 }
                 dataA.push(quoteA * sp500[start + i].value);
 
-                // Scenario B (parte quando A smette)
+                // Scenario B: parte quando A arriva allo stop e versa fino al punto di incontro.
                 if (i >= mesiPAC) {
-                    quoteB += versamentoB / sp500[start + i].value;
+                    if (i < mesiPAC + mesiFuturi) {
+                        quoteB += versamentoB / sp500[start + i].value;
+                    }
                     dataB.push(quoteB * sp500[start + i].value);
                 } else {
                     dataB.push(null);
@@ -372,16 +403,24 @@
             const anniPAC = parseInt(document.getElementById("anniPAC").value);
             const anniFuturi = parseInt(document.getElementById("anniFuturi").value);
             const continuaPAC = document.getElementById("continuaPAC").checked;
+            const estendi10Anni = document.getElementById("estendi10Anni").checked;
+            const anniExtra = estendi10Anni ? ANNI_EXTRA_DOPO_INCONTRO : 0;
+            const mesiPAC = anniPAC * 12;
+            const mesiFuturi = anniFuturi * 12;
+            const mesiExtraDisponibili = Math.max(0, sp500.length - start - mesiPAC - mesiFuturi);
+            const mesiExtra = Math.min(anniExtra * 12, mesiExtraDisponibili);
+            const mesiBDisplay = mesiFuturi + mesiExtra;
 
-            const scenA = simulaScenarioCompleto(start, anniPAC, anniFuturi, versamento, continuaPAC);
+            const scenAIncontro = simulaScenarioCompleto(start, anniPAC, anniFuturi, versamento, continuaPAC);
+            const scenA = simulaScenarioCompleto(start, anniPAC, (mesiFuturi + mesiExtra) / 12, versamento, continuaPAC);
 
             const versB = trovaVersamento(
-                scenA.capitaleFinale,
-                start + anniPAC * 12,
+                scenAIncontro.capitaleFinale,
+                start + mesiPAC,
                 anniFuturi
             );
 
-            const scenB = simulaPAC(start + anniPAC * 12, anniFuturi * 12, versB);
+            const scenB = simulaPACConOrizzonte(start + mesiPAC, mesiFuturi, mesiBDisplay, versB);
 
             // RISULTATI
             document.getElementById("versA").innerText = versamento.toFixed(0);
@@ -395,7 +434,7 @@
             document.getElementById("capB").innerText = scenB.capitaleFinale.toFixed(0);
             document.getElementById("guadagnoB").innerText = (scenB.capitaleFinale - scenB.capitaleVersato).toFixed(0) + " ovvero " + ((scenB.capitaleFinale - scenB.capitaleVersato) / scenB.capitaleVersato * 100).toFixed(2) + "%";
 
-            disegnaGrafico(start, anniPAC, anniFuturi, versamento, versB, continuaPAC);
+            disegnaGrafico(start, anniPAC, anniFuturi, versamento, versB, continuaPAC, estendi10Anni);
             eseguiRolling();
         }
 
