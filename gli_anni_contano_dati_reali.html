@@ -80,17 +80,17 @@
             composto e l'importanza di iniziare a investire il prima possibile.</h6>
         <p>
             Simulazione basata su dati storici mensili reali. Lo strumento non tiene conto di tasse, commissioni o
-            inflazione.
+            inflazione, salvo quando attivi la visualizzazione in dollari reali con inflazione USA.
         </p>
 
         <label>Data di inizio PAC</label>
         <select id="dataInizio" oninput="aggiorna()"></select>
 
         <label>Versamento mensile ($)</label>
-        <input type="number" id="versamento" value="200" oninput="aggiorna()"">
+        <input type="number" id="versamento" value="200" oninput="aggiorna()">
 
-    <label>Durata PAC (anni)</label>
-    <input type=" number" id="anniPAC" value="10" oninput="aggiorna()">
+        <label>Durata PAC (anni)</label>
+        <input type="number" id="anniPAC" value="10" oninput="aggiorna()">
 
         <label>Anni dopo lo stop (resti investito)</label>
         <input type="number" id="anniFuturi" value="10" oninput="aggiorna()">
@@ -111,9 +111,20 @@
             </label>
         </div>
 
+        <label>Inflazione USA storica</label>
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="mostraReale" onchange="aggiorna()">
+            <label class="custom-control-label" for="mostraReale">
+                Visualizza dati attualizzati all'inflazione USA
+            </label>
+        </div>
+
         <canvas id="grafico" height="120"></canvas>
 
         <div class="result">
+            <p>
+                <b>Valori visualizzati:</b> <span id="tipoValori">nominali</span>
+            </p>
             <p>
                 Versamento mensile scenario A:
                 <b>$ <span id="versA">--</span></b>
@@ -155,13 +166,20 @@
 
     <script>
         let sp500 = [];
+        let inflazioneUSA = new Map();
+        let indiceInflazioneUSA = new Map();
+        let chiaveRiferimentoInflazione = null;
         let chart;
         const ANNI_EXTRA_DOPO_INCONTRO = 10;
 
         // ===================== CSV =====================
         async function caricaCSV() {
-            const response = await fetch('./csv/sp500_montly_historical.csv');
-            const text = await response.text();
+            const [responseSP500, responseInflazione] = await Promise.all([
+                fetch('./csv/sp500_montly_historical.csv'),
+                fetch('./csv/infl_usa_storica.csv')
+            ]);
+            const text = await responseSP500.text();
+            const inflazioneText = await responseInflazione.text();
 
             sp500 = text.trim().split('\n').map(r => {
                 const [date, value] = r.trim().split(' ');
@@ -172,9 +190,67 @@
                 };
             });
 
+            caricaInflazioneUSA(inflazioneText);
             popolaDate();
             aggiorna();
         }
+
+        function caricaInflazioneUSA(text) {
+            inflazioneUSA = new Map();
+            indiceInflazioneUSA = new Map();
+
+            text.trim().split('\n').slice(1).forEach(riga => {
+                const campi = riga.trim().split(/\s+/);
+                const anno = parseInt(campi[0]);
+                if (isNaN(anno) || campi.length < 13) return;
+
+                for (let mese = 0; mese < 12; mese++) {
+                    const inflazioneAnnua = parseFloat(campi[mese + 1]);
+                    if (!isNaN(inflazioneAnnua)) {
+                        inflazioneUSA.set(`${anno}-${String(mese + 1).padStart(2, '0')}`, inflazioneAnnua);
+                    }
+                }
+            });
+
+            let indice = 1;
+            [...inflazioneUSA.keys()].sort().forEach(chiave => {
+                indiceInflazioneUSA.set(chiave, indice);
+                indice *= Math.pow(1 + inflazioneUSA.get(chiave) / 100, 1 / 12);
+            });
+        }
+
+        function chiaveMese(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        function aggiornaRiferimentoInflazione() {
+            if (sp500.length === 0 || indiceInflazioneUSA.size === 0) return;
+
+            const ultimaChiaveSP500 = chiaveMese(sp500[sp500.length - 1].date);
+            const chiaviDisponibili = [...indiceInflazioneUSA.keys()].filter(k => k <= ultimaChiaveSP500).sort();
+            chiaveRiferimentoInflazione = chiaviDisponibili[chiaviDisponibili.length - 1] || null;
+        }
+
+        function fattoreAttualizzazioneUSA(date) {
+            if (!chiaveRiferimentoInflazione) aggiornaRiferimentoInflazione();
+            const indiceData = indiceInflazioneUSA.get(chiaveMese(date));
+            const indiceRiferimento = indiceInflazioneUSA.get(chiaveRiferimentoInflazione);
+
+            if (!indiceData || !indiceRiferimento) return 1;
+            return indiceRiferimento / indiceData;
+        }
+
+        function attualizzaInflazioneUSA(valore, date, mostraReale) {
+            return mostraReale ? valore * fattoreAttualizzazioneUSA(date) : valore;
+        }
+
+        function capitaleVersatoAttualizzato(start, mesiVersati, versamento, mostraReale) {
+            let totale = 0;
+            for (let i = 0; i < mesiVersati; i++) {
+                totale += attualizzaInflazioneUSA(versamento, sp500[start + i].date, mostraReale);
+            }
+            return totale;
+            }
 
         function simulaScenarioARolling(start, versamento, mesiPAC, mesiTotali) {
             let quote = 0;
@@ -311,7 +387,7 @@
         }
 
         // ===================== GRAFICO =====================
-        function disegnaGrafico(start, anniPAC, anniFuturi, versamento, versamentoB, continuaPAC, estendi10Anni) {
+        function disegnaGrafico(start, anniPAC, anniFuturi, versamento, versamentoB, continuaPAC, estendi10Anni, mostraReale) {
             const mesiPAC = anniPAC * 12;
             const mesiFuturi = anniFuturi * 12;
             const anniExtra = estendi10Anni ? ANNI_EXTRA_DOPO_INCONTRO : 0;
@@ -334,14 +410,14 @@
                 if (i < mesiPAC || continuaPAC) {
                     quoteA += versamento / sp500[start + i].value;
                 }
-                dataA.push(quoteA * sp500[start + i].value);
+                dataA.push(attualizzaInflazioneUSA(quoteA * sp500[start + i].value, sp500[start + i].date, mostraReale));
 
                 // Scenario B: parte quando A arriva allo stop e versa fino al punto di incontro.
                 if (i >= mesiPAC) {
                     if (i < mesiPAC + mesiFuturi) {
                         quoteB += versamentoB / sp500[start + i].value;
                     }
-                    dataB.push(quoteB * sp500[start + i].value);
+                    dataB.push(attualizzaInflazioneUSA(quoteB * sp500[start + i].value, sp500[start + i].date, mostraReale));
                 } else {
                     dataB.push(null);
                 }
@@ -378,14 +454,14 @@
                     labels,
                     datasets: [
                         {
-                            label: 'Scenario A -- iniziato anni fa poi fermato',
+                            label: mostraReale ? 'Scenario A -- dollari reali (inflazione USA)' : 'Scenario A -- iniziato anni fa poi fermato',
                             data: dataA,
                             borderColor: '#1b5',
                             tension: 0.15,
                             pointRadius: 0
                         },
                         {
-                            label: 'Scenario B -- Iniziato allo stop dei versamenti A',
+                            label: mostraReale ? 'Scenario B -- dollari reali (inflazione USA)' : 'Scenario B -- Iniziato allo stop dei versamenti A',
                             data: dataB,
                             borderColor: '#c33',
                             tension: 0.15,
@@ -404,12 +480,15 @@
             const anniFuturi = parseInt(document.getElementById("anniFuturi").value);
             const continuaPAC = document.getElementById("continuaPAC").checked;
             const estendi10Anni = document.getElementById("estendi10Anni").checked;
+            const mostraReale = document.getElementById("mostraReale").checked;
             const anniExtra = estendi10Anni ? ANNI_EXTRA_DOPO_INCONTRO : 0;
             const mesiPAC = anniPAC * 12;
             const mesiFuturi = anniFuturi * 12;
             const mesiExtraDisponibili = Math.max(0, sp500.length - start - mesiPAC - mesiFuturi);
             const mesiExtra = Math.min(anniExtra * 12, mesiExtraDisponibili);
             const mesiBDisplay = mesiFuturi + mesiExtra;
+            const indiceFinaleA = start + mesiPAC + mesiFuturi + mesiExtra - 1;
+            const indiceFinaleB = start + mesiPAC + mesiBDisplay - 1;
 
             const scenAIncontro = simulaScenarioCompleto(start, anniPAC, anniFuturi, versamento, continuaPAC);
             const scenA = simulaScenarioCompleto(start, anniPAC, (mesiFuturi + mesiExtra) / 12, versamento, continuaPAC);
@@ -421,20 +500,33 @@
             );
 
             const scenB = simulaPACConOrizzonte(start + mesiPAC, mesiFuturi, mesiBDisplay, versB);
+            const mesiVersatiA = continuaPAC ? mesiPAC + mesiFuturi + mesiExtra : mesiPAC;
+            const scenAVisualizzato = {
+                capitaleFinale: attualizzaInflazioneUSA(scenA.capitaleFinale, sp500[indiceFinaleA].date, mostraReale),
+                capitaleVersato: mostraReale ? capitaleVersatoAttualizzato(start, mesiVersatiA, versamento, true) : scenA.capitaleVersato
+            };
+            const scenBVisualizzato = {
+                capitaleFinale: attualizzaInflazioneUSA(scenB.capitaleFinale, sp500[indiceFinaleB].date, mostraReale),
+                capitaleVersato: mostraReale ? capitaleVersatoAttualizzato(start + mesiPAC, mesiFuturi, versB, true) : scenB.capitaleVersato
+            };
+
+            document.getElementById("tipoValori").innerText = mostraReale
+                ? `dollari reali attualizzati all'inflazione USA (${chiaveRiferimentoInflazione || 'n.d.'})`
+                : "nominali";
 
             // RISULTATI
             document.getElementById("versA").innerText = versamento.toFixed(0);
-            document.getElementById("capA").innerText = scenA.capitaleFinale.toFixed(0);
+            document.getElementById("capA").innerText = scenAVisualizzato.capitaleFinale.toFixed(0);
             document.getElementById("versB").innerText = versB.toFixed(0);
-            document.getElementById("guadagnoA").innerText = (scenA.capitaleFinale - scenA.capitaleVersato).toFixed(0) + " ovvero " + ((scenA.capitaleFinale - scenA.capitaleVersato) / scenA.capitaleVersato * 100).toFixed(2) + "%";
+            document.getElementById("guadagnoA").innerText = (scenAVisualizzato.capitaleFinale - scenAVisualizzato.capitaleVersato).toFixed(0) + " ovvero " + ((scenAVisualizzato.capitaleFinale - scenAVisualizzato.capitaleVersato) / scenAVisualizzato.capitaleVersato * 100).toFixed(2) + "%";
 
             // NUOVI DATI
-            document.getElementById("capVersA").innerText = scenA.capitaleVersato.toFixed(0);
-            document.getElementById("capVersB").innerText = scenB.capitaleVersato.toFixed(0);
-            document.getElementById("capB").innerText = scenB.capitaleFinale.toFixed(0);
-            document.getElementById("guadagnoB").innerText = (scenB.capitaleFinale - scenB.capitaleVersato).toFixed(0) + " ovvero " + ((scenB.capitaleFinale - scenB.capitaleVersato) / scenB.capitaleVersato * 100).toFixed(2) + "%";
+            document.getElementById("capVersA").innerText = scenAVisualizzato.capitaleVersato.toFixed(0);
+            document.getElementById("capVersB").innerText = scenBVisualizzato.capitaleVersato.toFixed(0);
+            document.getElementById("capB").innerText = scenBVisualizzato.capitaleFinale.toFixed(0);
+            document.getElementById("guadagnoB").innerText = (scenBVisualizzato.capitaleFinale - scenBVisualizzato.capitaleVersato).toFixed(0) + " ovvero " + ((scenBVisualizzato.capitaleFinale - scenBVisualizzato.capitaleVersato) / scenBVisualizzato.capitaleVersato * 100).toFixed(2) + "%";
 
-            disegnaGrafico(start, anniPAC, anniFuturi, versamento, versB, continuaPAC, estendi10Anni);
+            disegnaGrafico(start, anniPAC, anniFuturi, versamento, versB, continuaPAC, estendi10Anni, mostraReale);
             eseguiRolling();
         }
 
@@ -452,6 +544,7 @@
             const versamentoA = parseFloat(document.getElementById("versamento").value);
             const anniPAC = parseInt(document.getElementById("anniPAC").value);
             const anniFuturi = parseInt(document.getElementById("anniFuturi").value);
+            const mostraReale = document.getElementById("mostraReale").checked;
 
             const mesiPAC = anniPAC * 12;
             const mesiTotali = (anniPAC + anniFuturi) * 12;
@@ -480,17 +573,22 @@
                     versB,
                     anniFuturi * 12
                 );
+                const dataFinale = sp500[start + mesiTotali - 1].date;
+                const capFinaleA = attualizzaInflazioneUSA(scenA.capitaleFinale, dataFinale, mostraReale);
+                const capVersA = mostraReale ? capitaleVersatoAttualizzato(start, mesiPAC, versamentoA, true) : scenA.capitaleVersato;
+                const capFinaleB = attualizzaInflazioneUSA(scenB.capitaleFinale, dataFinale, mostraReale);
+                const capVersB = mostraReale ? capitaleVersatoAttualizzato(startB, anniFuturi * 12, versB, true) : scenB.capitaleVersato;
 
                 risultati.finestreUsate = maxStart + 1;
 
-                risultati.capFinaleA.push(scenA.capitaleFinale);
-                risultati.capVersA.push(scenA.capitaleVersato);
-                risultati.guadA.push(scenA.capitaleFinale - scenA.capitaleVersato);
+                risultati.capFinaleA.push(capFinaleA);
+                risultati.capVersA.push(capVersA);
+                risultati.guadA.push(capFinaleA - capVersA);
 
                 risultati.versB.push(versB);
-                risultati.capVersB.push(scenB.capitaleVersato);
-                risultati.capFinaleB.push(scenB.capitaleFinale);
-                risultati.guadB.push(scenB.capitaleFinale - scenB.capitaleVersato);
+                risultati.capVersB.push(capVersB);
+                risultati.capFinaleB.push(capFinaleB);
+                risultati.guadB.push(capFinaleB - capVersB);
             }
 
             mostraRolling(risultati, versamentoA);
@@ -520,6 +618,10 @@
 
 
         function mostraRolling(r, versamentoA) {
+            const mostraReale = document.getElementById("mostraReale").checked;
+            const descrizioneValori = mostraReale
+                ? `dollari reali attualizzati all'inflazione USA (${chiaveRiferimentoInflazione || 'n.d.'})`
+                : "dollari nominali";
             const capFinaleA = media(r.capFinaleA);
             const capVersA = media(r.capVersA);
             const guadA = media(r.guadA);
@@ -553,6 +655,7 @@
 
             out.innerHTML = `
         <h4>Risultati medi su ${r.finestreUsate} finestre temporali mensili</h4>
+        <b>Valori:</b> ${descrizioneValori}<br><br>
         <b>Versamento medio mensile scenario A:</b> $ ${versamentoA.toFixed(0)}<br>
         <b>Capitale medio versato scenario A:</b> $ ${capVersA.toFixed(0)}<br>
         <b>Capitale medio finale scenario A:</b> $ ${capFinaleA.toFixed(0)}<br>

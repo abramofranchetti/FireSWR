@@ -73,10 +73,21 @@
         <input id="rendimento" type="number" value="7" step="0.1" oninput="aggiorna()" /> %
         <br><br>
 
+        <label>Inflazione annua fissa (%):</label>
+        <input id="inflazione" type="number" value="2" step="0.1" oninput="aggiorna()" /> %
+        <br><br>
+
         <label>Tra quanti anni confrontare i risultati:</label>
         <input id="anni_futuri" type="range" min="5" max="40" value="20" oninput="aggiorna()" />
         <span id="val_anni_futuri">20</span> anni
         <br><br>
+
+        <div class="custom-control custom-switch mb-3">
+            <input type="checkbox" class="custom-control-input" id="mostra_reale" onchange="aggiorna()">
+            <label class="custom-control-label" for="mostra_reale">
+                Visualizza valori reali al posto di quelli nominali
+            </label>
+        </div>
 
         <div class="custom-control custom-switch mb-3">
             <input type="checkbox" class="custom-control-input" id="continua_pac_a" onchange="aggiorna()">
@@ -95,6 +106,11 @@
         <canvas id="grafico" height="120"></canvas>
 
         <div class="result">
+            <p>
+                <b>Valori visualizzati:</b> <span id="tipoValori">nominali</span>
+                <br>
+                <b>Rendimento annuo visualizzato:</b> <span id="rendimentoVisualizzato">--</span>%
+            </p>
             <p>
                 Versamento mensile scenario A:
                 <b>$ <span id="versA">--</span></b>
@@ -131,7 +147,29 @@
         function calcolaMontante(versamentoMensile, anni, rendimentoAnnuo) {
             let r = rendimentoAnnuo / 100 / 12; // rendimento mensile
             let n = anni * 12;                  // mesi totali
+            if (r === 0) return versamentoMensile * n;
             return versamentoMensile * ((Math.pow(1 + r, n) - 1) / r);
+        }
+
+        function fattoreInflazione(anni, inflazioneAnnuo) {
+            return Math.pow(1 + inflazioneAnnuo / 100, anni);
+        }
+
+        function valoreRealeOggi(valoreNominale, anniDopoOggi, inflazioneAnnuo) {
+            return valoreNominale / fattoreInflazione(anniDopoOggi, inflazioneAnnuo);
+        }
+
+        function calcolaRendimentoReale(rendimentoAnnuo, inflazioneAnnuo) {
+            return ((1 + rendimentoAnnuo / 100) / (1 + inflazioneAnnuo / 100) - 1) * 100;
+        }
+
+        function calcolaCapitaleVersatoRealeOggi(versamentoMensile, meseInizialeRelativo, mesiVersati, inflazioneAnnuo) {
+            let totale = 0;
+            for (let mese = 0; mese < mesiVersati; mese++) {
+                const anniDopoOggi = (meseInizialeRelativo + mese) / 12;
+                totale += valoreRealeOggi(versamentoMensile, anniDopoOggi, inflazioneAnnuo);
+            }
+            return totale;
         }
 
         function calcolaValoreScenarioA(versamentoMensile, anniFa, anniDopoOggi, rendimentoAnnuo, continuaPAC) {
@@ -210,20 +248,30 @@
             let anniFa = parseInt(document.getElementById("anni_fa").value);
             let versamento = parseFloat(document.getElementById("versamento").value);
             let rendimento = parseFloat(document.getElementById("rendimento").value);
+            let inflazione = parseFloat(document.getElementById("inflazione").value);
             let anniFuturi = parseInt(document.getElementById("anni_futuri").value);
+            let mostraReale = document.getElementById("mostra_reale").checked;
             let continuaPAC_A = document.getElementById("continua_pac_a").checked;
             let estendi10Anni = document.getElementById("estendi_10_anni").checked;
 
+            if (isNaN(versamento)) versamento = 0;
+            if (isNaN(rendimento)) rendimento = 0;
+            if (isNaN(inflazione)) inflazione = 0;
+
             document.getElementById("val_anni_fa").innerText = anniFa;
             document.getElementById("val_anni_futuri").innerText = anniFuturi;
+            document.getElementById("tipoValori").innerText = mostraReale ? "reali (euro di oggi)" : "nominali";
+            document.getElementById("rendimentoVisualizzato").innerText = (mostraReale ? calcolaRendimentoReale(rendimento, inflazione) : rendimento).toFixed(2);
 
             // Scenario A: hai già investito in passato; puoi fermarti oggi o continuare.
             let capitaleAFuturo = calcolaValoreScenarioA(versamento, anniFa, anniFuturi, rendimento, continuaPAC_A);
+            let capitaleAFuturoVisualizzato = mostraReale ? valoreRealeOggi(capitaleAFuturo, anniFuturi, inflazione) : capitaleAFuturo;
 
             // Scenario B: inizi oggi – vogliamo trovare il versamento necessario
             function trovaVersamentoMensile() {
                 let r = rendimento / 100 / 12;
                 let n = anniFuturi * 12;
+                if (r === 0) return capitaleAFuturo / n;
                 return capitaleAFuturo * r / (Math.pow(1 + r, n) - 1);
             }
             let versamentoB = trovaVersamentoMensile();
@@ -240,15 +288,20 @@
             let scenA = {
                 versamentoMensile: versamento,
                 anniVersati: continuaPAC_A ? anniFa + anniFuturi : anniFa,
-                capitaleVersato: versamento * (continuaPAC_A ? anniFa + anniFuturi : anniFa) * 12,
-                capitaleFinale: capitaleAFuturo
+                capitaleVersato: mostraReale
+                    ? calcolaCapitaleVersatoRealeOggi(versamento, -anniFa * 12, (continuaPAC_A ? anniFa + anniFuturi : anniFa) * 12, inflazione)
+                    : versamento * (continuaPAC_A ? anniFa + anniFuturi : anniFa) * 12,
+                capitaleFinale: capitaleAFuturoVisualizzato
             };
 
+            const capitaleBFinale = calcolaMontante(versamentoB, anniFuturi, rendimento);
             let scenB = {
                 versamentoMensile: versamentoB,
                 anniVersati: anniFuturi,
-                capitaleVersato: versamentoB * anniFuturi * 12,
-                capitaleFinale: calcolaMontante(versamentoB, anniFuturi, rendimento)
+                capitaleVersato: mostraReale
+                    ? calcolaCapitaleVersatoRealeOggi(versamentoB, 0, anniFuturi * 12, inflazione)
+                    : versamentoB * anniFuturi * 12,
+                capitaleFinale: mostraReale ? valoreRealeOggi(capitaleBFinale, anniFuturi, inflazione) : capitaleBFinale
             };
 
             // RISULTATI (aggiorniamo gli elementi esistenti)
@@ -280,15 +333,18 @@
                 // Scenario A: prima di oggi versi sempre; dopo oggi continui solo se il flag e' attivo.
                 const anniDopoOggi = i - anniFa;
                 if (anniDopoOggi <= 0) {
-                    datiA.push(calcolaMontante(versamento, i, rendimento));
+                    const valoreA = calcolaMontante(versamento, i, rendimento);
+                    datiA.push(mostraReale ? valoreRealeOggi(valoreA, anniDopoOggi, inflazione) : valoreA);
                 } else {
-                    datiA.push(calcolaValoreScenarioA(versamento, anniFa, anniDopoOggi, rendimento, continuaPAC_A));
+                    const valoreA = calcolaValoreScenarioA(versamento, anniFa, anniDopoOggi, rendimento, continuaPAC_A);
+                    datiA.push(mostraReale ? valoreRealeOggi(valoreA, anniDopoOggi, inflazione) : valoreA);
                 }
 
                 // Scenario B:
                 // parte solo da anno 0 oggi
                 if (anniDopoOggi >= 0) {
-                    datiB.push(calcolaValoreScenarioB(versamentoB, anniDopoOggi, anniFuturi, rendimento));
+                    const valoreB = calcolaValoreScenarioB(versamentoB, anniDopoOggi, anniFuturi, rendimento);
+                    datiB.push(mostraReale ? valoreRealeOggi(valoreB, anniDopoOggi, inflazione) : valoreB);
                 } else {
                     datiB.push(null); // nessun punto mostrato
                 }
