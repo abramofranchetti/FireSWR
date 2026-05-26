@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indici giornalieri - Migliori e peggiori giorni mancati</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        .metric-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 14px;
+            height: 100%;
+            background: #fff;
+        }
+
+        .metric-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .chart-box {
+            position: relative;
+            height: 520px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-box {
+                height: 420px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">Indici giornalieri: migliori e peggiori giorni mancati</h1>
+        <h5 class="text-center text-muted">
+            Analisi su dati storici giornalieri caricati come nel simulatore PAC. Quando un giorno viene escluso
+            dall'azionario, il capitale resta investito nel rendimento monetario Shiller pro-rata, usato come proxy di
+            titoli di Stato a breve termine.
+        </h5>
+        <p class="text-center">
+            <a href="./mensile_shiller.html">Vai alla versione mensile S&P 500 Shiller</a>
+        </p>
+
+        <div class="mt-4 p-3 bg-light border rounded">
+            <div class="row align-items-end">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <label for="indexSelect">Indice</label>
+                    <select id="indexSelect" class="form-control">
+                        <option value="msci_acwi">MSCI ACWI</option>
+                        <option value="acwi">ACWI iShares</option>
+                        <option value="sp500">S&P 500 TR</option>
+                        <option value="aapl">Apple</option>
+                        <option value="brk-b">Berkshire Hathaway</option>
+                        <option value="GC=F">Oro</option>
+                        <option value="btc-usd">Bitcoin USD</option>
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <label for="startDate">Data inizio</label>
+                    <input id="startDate" type="date" class="form-control">
+                </div>
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <label for="endDate">Data fine</label>
+                    <input id="endDate" type="date" class="form-control">
+                </div>
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <label for="bestCount">Perdo i migliori X giorni</label>
+                    <input id="bestCount" type="number" min="0" step="1" value="10" class="form-control">
+                </div>
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <label for="worstCount">Perdo i peggiori X giorni</label>
+                    <input id="worstCount" type="number" min="0" step="1" value="10" class="form-control">
+                </div>
+                <div class="col-lg-1 col-md-6 mb-3">
+                    <button id="runButton" class="btn btn-primary btn-block">
+                        <i class="fas fa-calculator"></i>
+                    </button>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <label for="rollingYears">Rolling anni</label>
+                    <input id="rollingYears" type="number" min="1" step="1" value="10" class="form-control">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-2">
+                    <div class="custom-control custom-checkbox">
+                        <input id="showBase" type="checkbox" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="showBase">Mostra investimento normale</label>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-2">
+                    <div class="custom-control custom-checkbox">
+                        <input id="showMissBest" type="checkbox" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="showMissBest">Mostra senza migliori</label>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-2">
+                    <div class="custom-control custom-checkbox">
+                        <input id="showMissWorst" type="checkbox" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="showMissWorst">Mostra senza peggiori</label>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-2">
+                    <div class="custom-control custom-checkbox">
+                        <input id="showMissBoth" type="checkbox" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="showMissBoth">Mostra senza entrambi</label>
+                    </div>
+                </div>
+            </div>
+            <small id="dateHelp" class="form-text text-muted"></small>
+        </div>
+
+        <div id="metrics" class="row mt-4"></div>
+
+        <h3 class="mt-5">Andamento dell'investimento</h3>
+        <div class="chart-box">
+            <canvas id="performanceChart"></canvas>
+        </div>
+
+        <h3 class="mt-5">Risultati</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="resultsTable">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Capitale finale</th>
+                        <th>Rendimento totale</th>
+                        <th>CAGR</th>
+                        <th>Volatilita ann.</th>
+                        <th>Max drawdown</th>
+                        <th>Giorni in breve termine</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-lg-6 mb-4">
+                <h4>Migliori giorni esclusi</h4>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered" id="bestTable">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Data</th>
+                                <th>Rendimento</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <h4>Peggiori giorni esclusi</h4>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered" id="worstTable">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Data</th>
+                                <th>Rendimento</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 p-3 bg-light border rounded">
+            <h4>Come leggere la simulazione</h4>
+            <p>
+                Lo scenario base resta investito per tutto il periodo selezionato. Negli altri scenari, quando un giorno
+                viene "perso", il capitale passa al rendimento monetario Shiller per i giorni trascorsi dalla precedente
+                osservazione. I migliori e peggiori giorni sono ricalcolati dentro l'intervallo scelto.
+            </p>
+            <p>
+                Nel rolling window ogni finestra storica usa la stessa logica: durata impostata, estremi ricalcolati
+                nella finestra e confronto fra azionario e breve termine.
+            </p>
+        </div>
+
+        <h3 class="mt-5">Simulatore rolling window</h3>
+        <p class="text-muted">
+            Per mantenere la pagina interattiva sulle serie giornaliere, le finestre rolling partono dal primo dato
+            disponibile di ciascun mese.
+        </p>
+        <div class="chart-box">
+            <canvas id="rollingChart"></canvas>
+        </div>
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered table-striped" id="rollingTable">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Finestre</th>
+                        <th>Media</th>
+                        <th>Mediana</th>
+                        <th>Min</th>
+                        <th>P10</th>
+                        <th>P90</th>
+                        <th>Max</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="disclaimer-container"></div>
+
+    <script>
+        const INDEX_LABELS = {
+            msci_acwi: 'MSCI ACWI',
+            acwi: 'ACWI iShares',
+            sp500: 'S&P 500 TR',
+            aapl: 'Apple',
+            'brk-b': 'Berkshire Hathaway',
+            'GC=F': 'Oro',
+            'btc-usd': 'Bitcoin USD'
+        };
+
+        let currentSeries = [];
+        let rateByMonth = new Map();
+        let performanceChart;
+        let rollingChart;
+
+        function parseDate(value) {
+            return new Date(value + 'T00:00:00Z');
+        }
+
+        function dayKey(date) {
+            return date.toISOString().slice(0, 10);
+        }
+
+        function monthKey(date) {
+            return date.toISOString().slice(0, 7);
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString('it-IT', { year: 'numeric', month: 'short', day: '2-digit', timeZone: 'UTC' });
+        }
+
+        function pct(value) {
+            if (!Number.isFinite(value)) return '-';
+            return (value * 100).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+        }
+
+        function money(value) {
+            if (!Number.isFinite(value)) return '-';
+            return value.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function mergeData(historicalData, updatedData) {
+            const byDate = new Map();
+            historicalData.forEach(item => byDate.set(item.Date, item));
+            updatedData.forEach(item => byDate.set(item.Date, item));
+            return [...byDate.values()];
+        }
+
+        async function loadIndexDataset(selectedIndex) {
+            const datasetFile = '../../json/' + selectedIndex + '.json';
+            let data;
+
+            if (selectedIndex === 'acwi') {
+                const [historicalData, updatedData] = await Promise.all([
+                    fetch(datasetFile).then(response => response.json()),
+                    fetch('../../json/acwi_updated.json').then(response => response.json())
+                ]);
+                data = mergeData(historicalData, updatedData);
+            } else {
+                data = await fetch(datasetFile).then(response => response.json());
+            }
+
+            return data
+                .map(item => ({
+                    date: parseDate(item.Date),
+                    dateKey: item.Date,
+                    close: Number(item.Close)
+                }))
+                .filter(item => Number.isFinite(item.close) && item.close > 0)
+                .sort((a, b) => a.date - b.date);
+        }
+
+        function parseMonetaryRateCSV(text) {
+            return text.replace('\uFEFF', '').trim().split('\n').map(line => {
+                const parts = line.trim().split(/\s+/);
+                if (parts.length < 2) return null;
+                const [ym, rateRaw] = parts;
+                const [yearRaw, monthRaw] = ym.split(',');
+                const year = Number(yearRaw);
+                const month = monthRaw === '1' ? 10 : Number(monthRaw);
+                const annualRate = Number(rateRaw.replace(',', '.')) / 100;
+                if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(annualRate)) return null;
+                return {
+                    key: `${year}-${String(month).padStart(2, '0')}`,
+                    annualRate
+                };
+            }).filter(Boolean);
+        }
+
+        function buildRateMap(rateRows) {
+            return new Map(rateRows.map(row => [row.key, row.annualRate]));
+        }
+
+        function getAnnualRateForDate(date) {
+            return rateByMonth.get(monthKey(date)) ?? 0;
+        }
+
+        function getSelectedSeries() {
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            return currentSeries.filter(item => item.dateKey >= start && item.dateKey <= end);
+        }
+
+        function buildDailyReturns(series) {
+            const returns = [];
+            for (let i = 1; i < series.length; i++) {
+                const days = Math.max((series[i].date - series[i - 1].date) / (24 * 60 * 60 * 1000), 1);
+                const annualRate = getAnnualRateForDate(series[i].date);
+                returns.push({
+                    date: series[i].date,
+                    value: series[i].close / series[i - 1].close - 1,
+                    cashReturn: Math.pow(1 + annualRate, days / 365.25) - 1,
+                    index: i - 1
+                });
+            }
+            return returns;
+        }
+
+        function pickExtremeIndexes(returns, count, direction) {
+            if (count <= 0) return new Set();
+            const sorted = [...returns].sort((a, b) => direction === 'best' ? b.value - a.value : a.value - b.value);
+            return new Set(sorted.slice(0, Math.min(count, sorted.length)).map(item => item.index));
+        }
+
+        function buildScenario(series, dailyReturns, excludedIndexes, label) {
+            const points = [{ x: series[0].date, y: 100 }];
+            const adjustedReturns = [];
+            let capital = 100;
+
+            dailyReturns.forEach(dailyReturn => {
+                const effectiveReturn = excludedIndexes.has(dailyReturn.index) ? dailyReturn.cashReturn : dailyReturn.value;
+                capital *= (1 + effectiveReturn);
+                adjustedReturns.push(effectiveReturn);
+                points.push({ x: dailyReturn.date, y: capital });
+            });
+
+            const years = (series[series.length - 1].date - series[0].date) / (365.25 * 24 * 60 * 60 * 1000);
+            const totalReturn = capital / 100 - 1;
+
+            return {
+                label,
+                points,
+                finalCapital: capital,
+                totalReturn,
+                cagr: years > 0 ? Math.pow(capital / 100, 1 / years) - 1 : 0,
+                volatility: annualizedVolatility(adjustedReturns),
+                drawdown: maxDrawdown(points),
+                excludedCount: excludedIndexes.size
+            };
+        }
+
+        function annualizedVolatility(returns) {
+            if (returns.length < 2) return 0;
+            const avg = returns.reduce((sum, value) => sum + value, 0) / returns.length;
+            const variance = returns.reduce((sum, value) => sum + Math.pow(value - avg, 2), 0) / (returns.length - 1);
+            return Math.sqrt(variance) * Math.sqrt(252);
+        }
+
+        function maxDrawdown(points) {
+            let peak = points[0].y;
+            let worst = 0;
+            points.forEach(point => {
+                peak = Math.max(peak, point.y);
+                worst = Math.min(worst, point.y / peak - 1);
+            });
+            return worst;
+        }
+
+        function percentile(arr, p) {
+            if (!arr.length) return null;
+            const sorted = [...arr].sort((a, b) => a - b);
+            const idx = (sorted.length - 1) * p;
+            const lo = Math.floor(idx);
+            const hi = Math.ceil(idx);
+            if (lo === hi) return sorted[lo];
+            return sorted[lo] * (hi - idx) + sorted[hi] * (idx - lo);
+        }
+
+        function median(arr) {
+            return percentile(arr, 0.5);
+        }
+
+        function mean(arr) {
+            return arr.length ? arr.reduce((sum, value) => sum + value, 0) / arr.length : null;
+        }
+
+        function renderMetrics(baseScenario, series, dailyReturns) {
+            const bestDay = [...dailyReturns].sort((a, b) => b.value - a.value)[0];
+            const worstDay = [...dailyReturns].sort((a, b) => a.value - b.value)[0];
+            const items = [
+                ['Indice', INDEX_LABELS[document.getElementById('indexSelect').value]],
+                ['Periodo', formatDate(series[0].date) + ' - ' + formatDate(series[series.length - 1].date)],
+                ['Giorni osservati', dailyReturns.length.toString()],
+                ['Rendimento base', pct(baseScenario.totalReturn)],
+                ['Miglior giorno', bestDay ? formatDate(bestDay.date) + ' (' + pct(bestDay.value) + ')' : '-'],
+                ['Peggior giorno', worstDay ? formatDate(worstDay.date) + ' (' + pct(worstDay.value) + ')' : '-']
+            ];
+
+            document.getElementById('metrics').innerHTML = items.map(([label, value]) => `
+                <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                    <div class="metric-card">
+                        <div class="metric-label">${label}</div>
+                        <div class="metric-value">${value}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function scenarioColors() {
+            return {
+                'Investimento normale': '#1b7f3a',
+                'Senza migliori': '#c0392b',
+                'Senza peggiori': '#1f77b4',
+                'Senza migliori e peggiori': '#7f3fbf'
+            };
+        }
+
+        function renderChart(scenarios) {
+            const colors = scenarioColors();
+            const datasets = scenarios.map(scenario => ({
+                label: scenario.label,
+                data: scenario.points,
+                borderColor: colors[scenario.label],
+                backgroundColor: colors[scenario.label],
+                borderWidth: 2,
+                pointRadius: 0,
+                tension: 0
+            }));
+
+            if (performanceChart) performanceChart.destroy();
+            performanceChart = new Chart(document.getElementById('performanceChart'), {
+                type: 'line',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { callbacks: { label: context => context.dataset.label + ': ' + money(context.parsed.y) } }
+                    },
+                    scales: {
+                        x: { type: 'time', title: { display: true, text: 'Data' } },
+                        y: {
+                            title: { display: true, text: 'Capitale indicizzato a 100' },
+                            ticks: { callback: value => money(value) }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderResultsTable(scenarios) {
+            document.querySelector('#resultsTable tbody').innerHTML = scenarios.map(scenario => `
+                <tr>
+                    <td>${scenario.label}</td>
+                    <td>${money(scenario.finalCapital)}</td>
+                    <td>${pct(scenario.totalReturn)}</td>
+                    <td>${pct(scenario.cagr)}</td>
+                    <td>${pct(scenario.volatility)}</td>
+                    <td>${pct(scenario.drawdown)}</td>
+                    <td>${scenario.excludedCount}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderExtremeTable(tableId, rows) {
+            document.querySelector(`#${tableId} tbody`).innerHTML = rows.length
+                ? rows.map(row => `<tr><td>${formatDate(row.date)}</td><td>${pct(row.value)} azionario / ${pct(row.cashReturn)} breve termine</td></tr>`).join('')
+                : '<tr><td colspan="2" class="text-muted">Nessun giorno selezionato</td></tr>';
+        }
+
+        function clampInputs(dailyReturns) {
+            const maxCount = Math.max(0, dailyReturns.length);
+            ['bestCount', 'worstCount'].forEach(id => {
+                const input = document.getElementById(id);
+                input.max = maxCount;
+                input.value = Math.min(Math.max(Number(input.value) || 0, 0), maxCount);
+            });
+        }
+
+        function renderRollingChart(rollingRows) {
+            const colors = scenarioColors();
+            const datasets = Object.keys(colors).map(label => ({
+                label,
+                data: rollingRows.map(row => ({ x: row.startDate, y: row.scenarios[label].totalReturn * 100 })),
+                borderColor: colors[label],
+                backgroundColor: colors[label],
+                borderWidth: 1.5,
+                pointRadius: 0,
+                tension: 0
+            }));
+
+            if (rollingChart) rollingChart.destroy();
+            rollingChart = new Chart(document.getElementById('rollingChart'), {
+                type: 'line',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: {
+                            callbacks: {
+                                title: items => items.length ? formatDate(new Date(items[0].parsed.x)) : '',
+                                label: context => context.dataset.label + ': ' + pct(context.parsed.y / 100)
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { type: 'time', title: { display: true, text: 'Data inizio finestra' } },
+                        y: { title: { display: true, text: 'Rendimento totale finestra (%)' } }
+                    }
+                }
+            });
+        }
+
+        function renderRollingTable(rollingRows) {
+            const labels = Object.keys(scenarioColors());
+            document.querySelector('#rollingTable tbody').innerHTML = labels.map(label => {
+                const values = rollingRows.map(row => row.scenarios[label].totalReturn);
+                return `
+                    <tr>
+                        <td>${label}</td>
+                        <td>${values.length}</td>
+                        <td>${pct(mean(values))}</td>
+                        <td>${pct(median(values))}</td>
+                        <td>${pct(Math.min(...values))}</td>
+                        <td>${pct(percentile(values, 0.10))}</td>
+                        <td>${pct(percentile(values, 0.90))}</td>
+                        <td>${pct(Math.max(...values))}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function runRollingSimulation(selectedSeries, bestCount, worstCount) {
+            const years = Math.max(Number(document.getElementById('rollingYears').value) || 1, 1);
+            const rows = [];
+            const startIndexes = [];
+            let previousMonth = null;
+
+            selectedSeries.forEach((item, index) => {
+                const key = monthKey(item.date);
+                if (key !== previousMonth) {
+                    startIndexes.push(index);
+                    previousMonth = key;
+                }
+            });
+
+            startIndexes.forEach(start => {
+                const targetEnd = new Date(selectedSeries[start].date);
+                targetEnd.setUTCFullYear(targetEnd.getUTCFullYear() + years);
+                let end = start;
+                while (end + 1 < selectedSeries.length && selectedSeries[end + 1].date <= targetEnd) end++;
+                if (end <= start || (selectedSeries[end].date - selectedSeries[start].date) < years * 365.25 * 24 * 60 * 60 * 1000 * 0.92) return;
+
+                const windowSeries = selectedSeries.slice(start, end + 1);
+                const dailyReturns = buildDailyReturns(windowSeries);
+                const bestIndexes = pickExtremeIndexes(dailyReturns, bestCount, 'best');
+                const worstIndexes = pickExtremeIndexes(dailyReturns, worstCount, 'worst');
+                const bothIndexes = new Set([...bestIndexes, ...worstIndexes]);
+                const scenarios = {};
+
+                [
+                    buildScenario(windowSeries, dailyReturns, new Set(), 'Investimento normale'),
+                    buildScenario(windowSeries, dailyReturns, bestIndexes, 'Senza migliori'),
+                    buildScenario(windowSeries, dailyReturns, worstIndexes, 'Senza peggiori'),
+                    buildScenario(windowSeries, dailyReturns, bothIndexes, 'Senza migliori e peggiori')
+                ].forEach(scenario => {
+                    scenarios[scenario.label] = scenario;
+                });
+
+                rows.push({ startDate: windowSeries[0].date, scenarios });
+            });
+
+            if (!rows.length) {
+                document.querySelector('#rollingTable tbody').innerHTML = '<tr><td colspan="8" class="text-muted">Intervallo troppo breve per la rolling window selezionata.</td></tr>';
+                if (rollingChart) rollingChart.destroy();
+                return;
+            }
+
+            renderRollingChart(rows);
+            renderRollingTable(rows);
+        }
+
+        function runSimulation() {
+            const series = getSelectedSeries();
+            if (series.length < 2) {
+                alert('Seleziona un intervallo con almeno due osservazioni giornaliere.');
+                return;
+            }
+
+            const dailyReturns = buildDailyReturns(series);
+            clampInputs(dailyReturns);
+
+            const bestCount = Number(document.getElementById('bestCount').value) || 0;
+            const worstCount = Number(document.getElementById('worstCount').value) || 0;
+            const bestIndexes = pickExtremeIndexes(dailyReturns, bestCount, 'best');
+            const worstIndexes = pickExtremeIndexes(dailyReturns, worstCount, 'worst');
+            const bothIndexes = new Set([...bestIndexes, ...worstIndexes]);
+
+            const allScenarios = [
+                buildScenario(series, dailyReturns, new Set(), 'Investimento normale'),
+                buildScenario(series, dailyReturns, bestIndexes, 'Senza migliori'),
+                buildScenario(series, dailyReturns, worstIndexes, 'Senza peggiori'),
+                buildScenario(series, dailyReturns, bothIndexes, 'Senza migliori e peggiori')
+            ];
+
+            const visible = [
+                document.getElementById('showBase').checked,
+                document.getElementById('showMissBest').checked,
+                document.getElementById('showMissWorst').checked,
+                document.getElementById('showMissBoth').checked
+            ];
+            const visibleScenarios = allScenarios.filter((_, index) => visible[index]);
+
+            renderMetrics(allScenarios[0], series, dailyReturns);
+            renderChart(visibleScenarios.length ? visibleScenarios : allScenarios);
+            renderResultsTable(allScenarios);
+            renderExtremeTable('bestTable', [...dailyReturns].sort((a, b) => b.value - a.value).slice(0, bestCount));
+            renderExtremeTable('worstTable', [...dailyReturns].sort((a, b) => a.value - b.value).slice(0, worstCount));
+            runRollingSimulation(series, bestCount, worstCount);
+        }
+
+        async function refreshIndex() {
+            const selectedIndex = document.getElementById('indexSelect').value;
+            currentSeries = await loadIndexDataset(selectedIndex);
+
+            const firstDate = currentSeries[0].dateKey;
+            const lastDate = currentSeries[currentSeries.length - 1].dateKey;
+            const startInput = document.getElementById('startDate');
+            const endInput = document.getElementById('endDate');
+
+            startInput.min = firstDate;
+            startInput.max = lastDate;
+            startInput.value = firstDate;
+            endInput.min = firstDate;
+            endInput.max = lastDate;
+            endInput.value = lastDate;
+            document.getElementById('dateHelp').textContent = `Dati disponibili per ${INDEX_LABELS[selectedIndex]} da ${firstDate} a ${lastDate}.`;
+
+            runSimulation();
+        }
+
+        async function main() {
+            const rateText = await fetch('../shiller_monetary_rate.csv').then(response => response.text());
+            rateByMonth = buildRateMap(parseMonetaryRateCSV(rateText));
+
+            document.getElementById('indexSelect').addEventListener('change', refreshIndex);
+            document.getElementById('runButton').addEventListener('click', runSimulation);
+            ['showBase', 'showMissBest', 'showMissWorst', 'showMissBoth'].forEach(id => {
+                document.getElementById(id).addEventListener('change', runSimulation);
+            });
+            ['startDate', 'endDate', 'bestCount', 'worstCount', 'rollingYears'].forEach(id => {
+                document.getElementById(id).addEventListener('change', runSimulation);
+            });
+
+            await refreshIndex();
+        }
+
+        document.addEventListener('DOMContentLoaded', main);
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('../../html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S&P 500 TR - Impatto dei migliori e peggiori periodi</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        .metric-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 14px;
+            height: 100%;
+            background: #fff;
+        }
+
+        .metric-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .chart-box {
+            position: relative;
+            height: 520px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-box {
+                height: 420px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">S&P 500 TR: migliori e peggiori periodi mancati</h1>
+        <h5 class="text-center text-muted">
+            L'indice Total Return viene ricostruito dai dati Shiller con la stessa metodologia della pagina storica:
+            prezzo S&P 500 e dividendi reinvestiti mensilmente. Il dataset e' mensile, quindi i "giorni" impostabili
+            nella simulazione rappresentano in pratica le migliori o peggiori osservazioni mensili disponibili.
+        </h5>
+        <p class="text-center">
+            <a href="./giornaliero_indici.html">Vai alla versione su indici giornalieri</a>
+        </p>
+
+        <div class="mt-4 p-3 bg-light border rounded">
+            <div class="row align-items-end">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <label for="startDate">Data inizio investimento</label>
+                    <input id="startDate" type="month" class="form-control">
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <label for="endDate">Data fine investimento</label>
+                    <input id="endDate" type="month" class="form-control">
+                </div>
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <label for="bestCount">Perdo i migliori X periodi</label>
+                    <input id="bestCount" type="number" min="0" step="1" value="10" class="form-control">
+                </div>
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <label for="worstCount">Perdo i peggiori X periodi</label>
+                    <input id="worstCount" type="number" min="0" step="1" value="10" class="form-control">
+                </div>
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <label for="rollingYears">Rolling window anni</label>
+                    <input id="rollingYears" type="number" min="1" step="1" value="10" class="form-control">
+                </div>
+                <div class="col-lg-2 col-md-12 mb-3">
+                    <button id="runButton" class="btn btn-primary btn-block">
+                        <i class="fas fa-calculator"></i> Calcola
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-2">
+                    <div class="custom-control custom-checkbox">
+                        <input id="showBase" type="checkbox" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="showBase">Mostra investimento normale</label>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-2">
+                    <div class="custom-control custom-checkbox">
+                        <input id="showMissBest" type="checkbox" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="showMissBest">Mostra senza migliori</label>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-2">
+                    <div class="custom-control custom-checkbox">
+                        <input id="showMissWorst" type="checkbox" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="showMissWorst">Mostra senza peggiori</label>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-2">
+                    <div class="custom-control custom-checkbox">
+                        <input id="showMissBoth" type="checkbox" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="showMissBoth">Mostra senza entrambi</label>
+                    </div>
+                </div>
+            </div>
+            <small id="dateHelp" class="form-text text-muted"></small>
+        </div>
+
+        <div id="metrics" class="row mt-4"></div>
+
+        <h3 class="mt-5">Andamento dell'investimento</h3>
+        <div class="chart-box">
+            <canvas id="performanceChart"></canvas>
+        </div>
+
+        <h3 class="mt-5">Risultati</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="resultsTable">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Capitale finale</th>
+                        <th>Rendimento totale</th>
+                        <th>CAGR</th>
+                        <th>Volatilita ann.</th>
+                        <th>Max drawdown</th>
+                        <th>Periodi in breve termine</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-lg-6 mb-4">
+                <h4>Migliori periodi esclusi</h4>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered" id="bestTable">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Data</th>
+                                <th>Rendimento mensile</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <h4>Peggiori periodi esclusi</h4>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered" id="worstTable">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Data</th>
+                                <th>Rendimento mensile</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 p-3 bg-light border rounded">
+            <h4>Come leggere la simulazione</h4>
+            <p>
+                Lo scenario base resta investito per tutto il periodo selezionato. Negli altri scenari, quando un
+                periodo viene "perso", il capitale non resta fermo: viene investito nel rendimento monetario Shiller,
+                usato qui come proxy di titoli di Stato USA a breve termine. Il test misura quindi l'impatto del timing
+                estremo confrontando azionario e parcheggio in breve termine.
+            </p>
+            <p>
+                Il risultato non va interpretato come una strategia operativa realistica: sapere in anticipo quali
+                saranno i migliori o peggiori periodi e' impossibile. Serve piuttosto a capire il peso del timing e la
+                concentrazione dei rendimenti.
+            </p>
+        </div>
+
+        <h3 class="mt-5">Simulatore rolling window</h3>
+        <p class="text-muted">
+            Ogni punto rappresenta una finestra storica della durata impostata. Per ogni finestra vengono ricalcolati i
+            migliori e peggiori periodi interni e il capitale escluso dall'azionario viene investito nel breve termine.
+        </p>
+        <div class="chart-box">
+            <canvas id="rollingChart"></canvas>
+        </div>
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered table-striped" id="rollingTable">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Finestre</th>
+                        <th>Media</th>
+                        <th>Mediana</th>
+                        <th>Min</th>
+                        <th>P10</th>
+                        <th>P90</th>
+                        <th>Max</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="disclaimer-container"></div>
+
+    <script>
+        function parseSP500CSV(text) {
+            return text.replace('\uFEFF', '').trim().split('\n').map(line => {
+                const parts = line.trim().split(/\s+/);
+                if (parts.length < 3) return null;
+                const [ym, priceRaw, divRaw] = parts;
+                if (!ym.includes(',')) return null;
+                const [year, month] = ym.split(',').map(Number);
+                const price = Number(priceRaw.replace(',', '.'));
+                const dividend = Number(divRaw.replace(',', '.'));
+                if (isNaN(price) || isNaN(dividend)) return null;
+                return { date: new Date(Date.UTC(year, month - 1, 1)), price, dividend };
+            }).filter(Boolean);
+        }
+
+        function parseMonetaryRateCSV(text) {
+            return text.replace('\uFEFF', '').trim().split('\n').map(line => {
+                const parts = line.trim().split(/\s+/);
+                if (parts.length < 2) return null;
+                const [ym, rateRaw] = parts;
+                if (!ym.includes(',')) return null;
+                const [yearRaw, monthRaw] = ym.split(',');
+                const year = Number(yearRaw);
+                const month = monthRaw === '1' ? 10 : Number(monthRaw);
+                const annualRate = Number(rateRaw.replace(',', '.')) / 100;
+                if (isNaN(annualRate)) return null;
+                return {
+                    date: new Date(Date.UTC(year, month - 1, 1)),
+                    monthlyReturn: Math.pow(1 + annualRate, 1 / 12) - 1
+                };
+            }).filter(Boolean);
+        }
+
+        function buildTotalReturnIndex(data) {
+            if (!data.length) return [];
+            const result = [{ date: data[0].date, price: data[0].price, tr: 100 }];
+            for (let i = 1; i < data.length; i++) {
+                const prev = result[i - 1];
+                const curr = data[i];
+                const monthlyDividend = curr.dividend / 12;
+                const tr = prev.tr * ((curr.price + monthlyDividend) / prev.price);
+                result.push({ date: curr.date, price: curr.price, tr });
+            }
+            return result;
+        }
+
+        function toMonthValue(date) {
+            return date.toISOString().slice(0, 7);
+        }
+
+        function formatMonth(date) {
+            return date.toLocaleDateString('it-IT', { year: 'numeric', month: 'short', timeZone: 'UTC' });
+        }
+
+        function pct(value) {
+            if (!Number.isFinite(value)) return '-';
+            return (value * 100).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+        }
+
+        function money(value) {
+            if (!Number.isFinite(value)) return '-';
+            return value.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function getSelectedSeries(trSeries) {
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            return trSeries.filter(item => toMonthValue(item.date) >= start && toMonthValue(item.date) <= end);
+        }
+
+        function buildRateMap(rateSeries) {
+            return new Map(rateSeries.map(item => [toMonthValue(item.date), item.monthlyReturn]));
+        }
+
+        function buildMonthlyReturns(series, rateMap) {
+            const returns = [];
+            for (let i = 1; i < series.length; i++) {
+                returns.push({
+                    date: series[i].date,
+                    value: series[i].tr / series[i - 1].tr - 1,
+                    cashReturn: rateMap.get(toMonthValue(series[i].date)) ?? 0,
+                    index: i - 1
+                });
+            }
+            return returns;
+        }
+
+        function pickExtremeIndexes(monthlyReturns, count, direction) {
+            if (count <= 0) return new Set();
+            const sorted = [...monthlyReturns].sort((a, b) => {
+                return direction === 'best' ? b.value - a.value : a.value - b.value;
+            });
+            return new Set(sorted.slice(0, Math.min(count, sorted.length)).map(item => item.index));
+        }
+
+        function buildScenario(series, monthlyReturns, excludedIndexes, label) {
+            const points = [{ x: series[0].date, y: 100 }];
+            let capital = 100;
+            const adjustedReturns = [];
+
+            monthlyReturns.forEach((monthlyReturn) => {
+                const effectiveReturn = excludedIndexes.has(monthlyReturn.index)
+                    ? monthlyReturn.cashReturn
+                    : monthlyReturn.value;
+                capital *= (1 + effectiveReturn);
+                adjustedReturns.push(effectiveReturn);
+                points.push({ x: monthlyReturn.date, y: capital });
+            });
+
+            const years = (series[series.length - 1].date - series[0].date) / (365.25 * 24 * 60 * 60 * 1000);
+            const totalReturn = capital / 100 - 1;
+            const cagr = years > 0 ? Math.pow(capital / 100, 1 / years) - 1 : 0;
+            const volatility = annualizedVolatility(adjustedReturns);
+            const drawdown = maxDrawdown(points);
+
+            return {
+                label,
+                points,
+                finalCapital: capital,
+                totalReturn,
+                cagr,
+                volatility,
+                drawdown,
+                excludedCount: excludedIndexes.size
+            };
+        }
+
+        function annualizedVolatility(returns) {
+            if (returns.length < 2) return 0;
+            const avg = returns.reduce((sum, value) => sum + value, 0) / returns.length;
+            const variance = returns.reduce((sum, value) => sum + Math.pow(value - avg, 2), 0) / (returns.length - 1);
+            return Math.sqrt(variance) * Math.sqrt(12);
+        }
+
+        function maxDrawdown(points) {
+            let peak = points[0].y;
+            let worst = 0;
+            points.forEach(point => {
+                peak = Math.max(peak, point.y);
+                worst = Math.min(worst, point.y / peak - 1);
+            });
+            return worst;
+        }
+
+        function renderMetrics(baseScenario, series, monthlyReturns) {
+            const container = document.getElementById('metrics');
+            const bestMonth = [...monthlyReturns].sort((a, b) => b.value - a.value)[0];
+            const worstMonth = [...monthlyReturns].sort((a, b) => a.value - b.value)[0];
+            const items = [
+                ['Periodo', formatMonth(series[0].date) + ' - ' + formatMonth(series[series.length - 1].date)],
+                ['Mesi osservati', monthlyReturns.length.toString()],
+                ['Rendimento base', pct(baseScenario.totalReturn)],
+                ['CAGR base', pct(baseScenario.cagr)],
+                ['Miglior mese', bestMonth ? formatMonth(bestMonth.date) + ' (' + pct(bestMonth.value) + ')' : '-'],
+                ['Peggior mese', worstMonth ? formatMonth(worstMonth.date) + ' (' + pct(worstMonth.value) + ')' : '-']
+            ];
+
+            container.innerHTML = items.map(([label, value]) => `
+                <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                    <div class="metric-card">
+                        <div class="metric-label">${label}</div>
+                        <div class="metric-value">${value}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        let performanceChart;
+
+        function renderChart(scenarios) {
+            const colors = {
+                'Investimento normale': '#1b7f3a',
+                'Senza migliori': '#c0392b',
+                'Senza peggiori': '#1f77b4',
+                'Senza migliori e peggiori': '#7f3fbf'
+            };
+            const datasets = scenarios.map(scenario => ({
+                label: scenario.label,
+                data: scenario.points,
+                borderColor: colors[scenario.label],
+                backgroundColor: colors[scenario.label],
+                borderWidth: 2,
+                pointRadius: 0,
+                tension: 0
+            }));
+
+            if (performanceChart) performanceChart.destroy();
+            performanceChart = new Chart(document.getElementById('performanceChart'), {
+                type: 'line',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: {
+                            callbacks: {
+                                label: context => context.dataset.label + ': ' + money(context.parsed.y)
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { type: 'time', title: { display: true, text: 'Data' } },
+                        y: {
+                            title: { display: true, text: 'Capitale indicizzato a 100' },
+                            ticks: { callback: value => money(value) }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderResultsTable(scenarios) {
+            document.querySelector('#resultsTable tbody').innerHTML = scenarios.map(scenario => `
+                <tr>
+                    <td>${scenario.label}</td>
+                    <td>${money(scenario.finalCapital)}</td>
+                    <td>${pct(scenario.totalReturn)}</td>
+                    <td>${pct(scenario.cagr)}</td>
+                    <td>${pct(scenario.volatility)}</td>
+                    <td>${pct(scenario.drawdown)}</td>
+                    <td>${scenario.excludedCount}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderExtremeTable(tableId, rows) {
+            document.querySelector(`#${tableId} tbody`).innerHTML = rows.length
+                ? rows.map(row => `<tr><td>${formatMonth(row.date)}</td><td>${pct(row.value)} azionario / ${pct(row.cashReturn)} breve termine</td></tr>`).join('')
+                : '<tr><td colspan="2" class="text-muted">Nessun periodo selezionato</td></tr>';
+        }
+
+        function clampInputs(monthlyReturns) {
+            const maxCount = Math.max(0, monthlyReturns.length);
+            ['bestCount', 'worstCount'].forEach(id => {
+                const input = document.getElementById(id);
+                input.max = maxCount;
+                input.value = Math.min(Math.max(Number(input.value) || 0, 0), maxCount);
+            });
+        }
+
+        function percentile(arr, p) {
+            if (!arr.length) return null;
+            const sorted = [...arr].sort((a, b) => a - b);
+            const idx = (sorted.length - 1) * p;
+            const lo = Math.floor(idx);
+            const hi = Math.ceil(idx);
+            if (lo === hi) return sorted[lo];
+            return sorted[lo] * (hi - idx) + sorted[hi] * (idx - lo);
+        }
+
+        function median(arr) {
+            return percentile(arr, 0.5);
+        }
+
+        function mean(arr) {
+            return arr.length ? arr.reduce((sum, value) => sum + value, 0) / arr.length : null;
+        }
+
+        let rollingChart;
+
+        function renderRollingChart(rollingRows) {
+            const colors = {
+                'Investimento normale': '#1b7f3a',
+                'Senza migliori': '#c0392b',
+                'Senza peggiori': '#1f77b4',
+                'Senza migliori e peggiori': '#7f3fbf'
+            };
+            const datasets = Object.keys(colors).map(label => ({
+                label,
+                data: rollingRows.map(row => ({ x: row.startDate, y: row.scenarios[label].totalReturn * 100 })),
+                borderColor: colors[label],
+                backgroundColor: colors[label],
+                borderWidth: 1.5,
+                pointRadius: 0,
+                tension: 0
+            }));
+
+            if (rollingChart) rollingChart.destroy();
+            rollingChart = new Chart(document.getElementById('rollingChart'), {
+                type: 'line',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: {
+                            callbacks: {
+                                title: items => items.length ? formatMonth(new Date(items[0].parsed.x)) : '',
+                                label: context => context.dataset.label + ': ' + pct(context.parsed.y / 100)
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { type: 'time', title: { display: true, text: 'Data inizio finestra' } },
+                        y: { title: { display: true, text: 'Rendimento totale finestra (%)' } }
+                    }
+                }
+            });
+        }
+
+        function renderRollingTable(rollingRows) {
+            const labels = ['Investimento normale', 'Senza migliori', 'Senza peggiori', 'Senza migliori e peggiori'];
+            document.querySelector('#rollingTable tbody').innerHTML = labels.map(label => {
+                const values = rollingRows.map(row => row.scenarios[label].totalReturn);
+                return `
+                    <tr>
+                        <td>${label}</td>
+                        <td>${values.length}</td>
+                        <td>${pct(mean(values))}</td>
+                        <td>${pct(median(values))}</td>
+                        <td>${pct(Math.min(...values))}</td>
+                        <td>${pct(percentile(values, 0.10))}</td>
+                        <td>${pct(percentile(values, 0.90))}</td>
+                        <td>${pct(Math.max(...values))}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function runRollingSimulation(selectedSeries, rateMap, bestCount, worstCount) {
+            const years = Math.max(Number(document.getElementById('rollingYears').value) || 1, 1);
+            const months = Math.round(years * 12);
+            const rows = [];
+
+            if (selectedSeries.length <= months) {
+                document.querySelector('#rollingTable tbody').innerHTML = '<tr><td colspan="8" class="text-muted">Intervallo troppo breve per la rolling window selezionata.</td></tr>';
+                if (rollingChart) rollingChart.destroy();
+                return;
+            }
+
+            for (let start = 0; start + months < selectedSeries.length; start++) {
+                const windowSeries = selectedSeries.slice(start, start + months + 1);
+                const monthlyReturns = buildMonthlyReturns(windowSeries, rateMap);
+                const bestIndexes = pickExtremeIndexes(monthlyReturns, bestCount, 'best');
+                const worstIndexes = pickExtremeIndexes(monthlyReturns, worstCount, 'worst');
+                const bothIndexes = new Set([...bestIndexes, ...worstIndexes]);
+                const scenarios = {};
+
+                [
+                    buildScenario(windowSeries, monthlyReturns, new Set(), 'Investimento normale'),
+                    buildScenario(windowSeries, monthlyReturns, bestIndexes, 'Senza migliori'),
+                    buildScenario(windowSeries, monthlyReturns, worstIndexes, 'Senza peggiori'),
+                    buildScenario(windowSeries, monthlyReturns, bothIndexes, 'Senza migliori e peggiori')
+                ].forEach(scenario => {
+                    scenarios[scenario.label] = scenario;
+                });
+
+                rows.push({
+                    startDate: windowSeries[0].date,
+                    endDate: windowSeries[windowSeries.length - 1].date,
+                    scenarios
+                });
+            }
+
+            renderRollingChart(rows);
+            renderRollingTable(rows);
+        }
+
+        function runSimulation(trSeries, rateMap) {
+            const series = getSelectedSeries(trSeries);
+            if (series.length < 2) {
+                alert('Seleziona un intervallo con almeno due osservazioni mensili.');
+                return;
+            }
+
+            const monthlyReturns = buildMonthlyReturns(series, rateMap);
+            clampInputs(monthlyReturns);
+
+            const bestCount = Number(document.getElementById('bestCount').value) || 0;
+            const worstCount = Number(document.getElementById('worstCount').value) || 0;
+            const bestIndexes = pickExtremeIndexes(monthlyReturns, bestCount, 'best');
+            const worstIndexes = pickExtremeIndexes(monthlyReturns, worstCount, 'worst');
+            const bothIndexes = new Set([...bestIndexes, ...worstIndexes]);
+
+            const allScenarios = [
+                buildScenario(series, monthlyReturns, new Set(), 'Investimento normale'),
+                buildScenario(series, monthlyReturns, bestIndexes, 'Senza migliori'),
+                buildScenario(series, monthlyReturns, worstIndexes, 'Senza peggiori'),
+                buildScenario(series, monthlyReturns, bothIndexes, 'Senza migliori e peggiori')
+            ];
+
+            const visible = [
+                document.getElementById('showBase').checked,
+                document.getElementById('showMissBest').checked,
+                document.getElementById('showMissWorst').checked,
+                document.getElementById('showMissBoth').checked
+            ];
+            const visibleScenarios = allScenarios.filter((_, index) => visible[index]);
+
+            renderMetrics(allScenarios[0], series, monthlyReturns);
+            renderChart(visibleScenarios.length ? visibleScenarios : allScenarios);
+            renderResultsTable(allScenarios);
+
+            const bestRows = [...monthlyReturns].sort((a, b) => b.value - a.value).slice(0, bestCount);
+            const worstRows = [...monthlyReturns].sort((a, b) => a.value - b.value).slice(0, worstCount);
+            renderExtremeTable('bestTable', bestRows);
+            renderExtremeTable('worstTable', worstRows);
+            runRollingSimulation(series, rateMap, bestCount, worstCount);
+        }
+
+        async function main() {
+            const [spText, rateText] = await Promise.all([
+                fetch('../sp500_shiller_price_dividends.csv').then(r => r.text()),
+                fetch('../shiller_monetary_rate.csv').then(r => r.text())
+            ]);
+            const spParsed = parseSP500CSV(spText);
+            const spTR = buildTotalReturnIndex(spParsed);
+            const rateMap = buildRateMap(parseMonetaryRateCSV(rateText));
+
+            const firstMonth = toMonthValue(spTR[0].date);
+            const lastMonth = toMonthValue(spTR[spTR.length - 1].date);
+            const startInput = document.getElementById('startDate');
+            const endInput = document.getElementById('endDate');
+            startInput.min = firstMonth;
+            startInput.max = lastMonth;
+            startInput.value = firstMonth;
+            endInput.min = firstMonth;
+            endInput.max = lastMonth;
+            endInput.value = lastMonth;
+            document.getElementById('dateHelp').textContent = `Dati disponibili da ${firstMonth} a ${lastMonth}.`;
+
+            document.getElementById('runButton').addEventListener('click', () => runSimulation(spTR, rateMap));
+            ['showBase', 'showMissBest', 'showMissWorst', 'showMissBoth'].forEach(id => {
+                document.getElementById(id).addEventListener('change', () => runSimulation(spTR, rateMap));
+            });
+            ['startDate', 'endDate', 'bestCount', 'worstCount', 'rollingYears'].forEach(id => {
+                document.getElementById(id).addEventListener('change', () => runSimulation(spTR, rateMap));
+            });
+
+            runSimulation(spTR, rateMap);
+        }
+
+        document.addEventListener('DOMContentLoaded', main);
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('../../html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
+
