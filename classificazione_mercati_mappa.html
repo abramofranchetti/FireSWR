@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mappa classificazione mercati MSCI e FTSE</title>
+    <link rel="canonical" href="https://abramofranchetti.github.io/FireSWR/classificazione_mercati_mappa.html">
+    <link href="css/style.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+    <style>
+        :root {
+            --developed: #2563eb;
+            --emerging: #16a34a;
+            --advanced-emerging: #0f766e;
+            --secondary-emerging: #65a30d;
+            --frontier: #d97706;
+            --unclassified: #d1d5db;
+            --ink: #172033;
+            --muted: #667085;
+            --panel: #ffffff;
+            --line: #e5e7eb;
+            --page: #f5f7fb;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--page);
+            color: var(--ink);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .market-page {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #fff;
+            background: #1f2937;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-weight: 700;
+        }
+
+        .source-date {
+            color: var(--muted);
+            font-size: 0.92rem;
+            text-align: right;
+        }
+
+        .hero {
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: clamp(1.65rem, 3vw, 2.45rem);
+            line-height: 1.12;
+        }
+
+        .subtitle {
+            max-width: 980px;
+            margin: 0;
+            color: var(--muted);
+            font-size: 1rem;
+            line-height: 1.55;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: minmax(220px, 1fr) minmax(260px, 1.3fr) minmax(220px, 1fr);
+            gap: 12px;
+            margin: 22px 0;
+        }
+
+        .control-group {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .label {
+            display: block;
+            color: #344054;
+            font-size: 0.82rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .segments {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .segment {
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            color: #334155;
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .segment.active {
+            background: #1f2937;
+            color: #fff;
+            border-color: #1f2937;
+        }
+
+        .search {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .stat {
+            border: 1px solid var(--line);
+            border-left-width: 5px;
+            border-radius: 8px;
+            padding: 10px;
+            background: #fff;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 1.3rem;
+        }
+
+        .stat span {
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        .map-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 360px;
+            gap: 16px;
+            align-items: start;
+        }
+
+        .map-panel,
+        .side-panel,
+        .data-panel,
+        .notes-panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+        }
+
+        .map-panel {
+            position: relative;
+            overflow: hidden;
+            min-height: 560px;
+        }
+
+        #worldMap {
+            display: block;
+            width: 100%;
+            height: min(68vh, 720px);
+            min-height: 520px;
+            background: #eef4f8;
+        }
+
+        .country {
+            stroke: #fff;
+            stroke-width: 0.45;
+            cursor: pointer;
+            transition: fill 0.15s ease, opacity 0.15s ease;
+        }
+
+        .country.dimmed {
+            opacity: 0.22;
+        }
+
+        .country.selected {
+            stroke: #111827;
+            stroke-width: 1.6;
+        }
+
+        .tooltip {
+            position: absolute;
+            pointer-events: none;
+            display: none;
+            min-width: 190px;
+            background: #111827;
+            color: #fff;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.88rem;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
+            z-index: 3;
+        }
+
+        .legend {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 12px;
+            border-top: 1px solid var(--line);
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #475467;
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .swatch {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .side-panel {
+            padding: 16px;
+        }
+
+        .country-card h2 {
+            margin: 0 0 10px;
+            font-size: 1.35rem;
+        }
+
+        .country-row {
+            display: grid;
+            grid-template-columns: 82px minmax(0, 1fr);
+            gap: 10px;
+            padding: 10px 0;
+            border-top: 1px solid var(--line);
+        }
+
+        .pill {
+            display: inline-flex;
+            width: fit-content;
+            align-items: center;
+            border-radius: 999px;
+            padding: 5px 9px;
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .difference-list {
+            margin: 18px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .difference-list li {
+            border-top: 1px solid var(--line);
+            padding: 10px 0;
+            font-size: 0.92rem;
+            line-height: 1.35;
+        }
+
+        .data-panel,
+        .notes-panel {
+            margin-top: 16px;
+            padding: 16px;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .panel-title h2 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .table-wrap {
+            overflow: auto;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            max-height: 520px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 760px;
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+            font-size: 0.92rem;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: #f8fafc;
+            color: #344054;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+        }
+
+        tr:hover td {
+            background: #f8fafc;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .note {
+            border-left: 4px solid #94a3b8;
+            padding-left: 12px;
+            color: #475467;
+            line-height: 1.45;
+            font-size: 0.92rem;
+        }
+
+        .note strong {
+            display: block;
+            color: #172033;
+            margin-bottom: 4px;
+        }
+
+        .sources {
+            margin-top: 16px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .sources a {
+            color: #1d4ed8;
+        }
+
+        @media (max-width: 1050px) {
+            .controls,
+            .map-layout,
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 620px) {
+            .market-page {
+                padding: 14px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .source-date {
+                text-align: left;
+            }
+
+            #worldMap {
+                min-height: 360px;
+                height: 420px;
+            }
+
+            .map-panel {
+                min-height: 420px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="market-page">
+        <div class="topbar">
+            <a class="back-link" href="/FireSWR">Home</a>
+            <div class="source-date">Dati verificati il 26 maggio 2026. FTSE: tabella al 7 aprile 2026.</div>
+        </div>
+
+        <section class="hero">
+            <h1>Mappa mondiale delle classificazioni MSCI e FTSE</h1>
+            <p class="subtitle">
+                La mappa evidenzia i paesi classificati nei principali universi azionari: sviluppati, emergenti e
+                frontiera. Per FTSE sono mantenute anche le due sottocategorie ufficiali Advanced Emerging e Secondary
+                Emerging, perché spiegano molte differenze rispetto a MSCI.
+            </p>
+        </section>
+
+        <section class="controls" aria-label="Controlli mappa">
+            <div class="control-group">
+                <label class="label">Provider</label>
+                <div class="segments" id="providerControls">
+                    <button class="segment active" type="button" data-provider="MSCI">MSCI</button>
+                    <button class="segment" type="button" data-provider="FTSE">FTSE Russell</button>
+                    <button class="segment" type="button" data-provider="COMPARE">Confronto</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="label" for="countrySearch">Cerca paese</label>
+                <input class="search" id="countrySearch" type="search" placeholder="Es. Italia, Korea, Vietnam">
+            </div>
+            <div class="control-group">
+                <label class="label">Categoria</label>
+                <div class="segments" id="categoryControls">
+                    <button class="segment active" type="button" data-category="all">Tutte</button>
+                    <button class="segment" type="button" data-category="Developed">Sviluppati</button>
+                    <button class="segment" type="button" data-category="Emerging">Emergenti</button>
+                    <button class="segment" type="button" data-category="Frontier">Frontiera</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats" id="stats" aria-label="Conteggi classificazioni"></section>
+
+        <section class="map-layout">
+            <div class="map-panel">
+                <svg id="worldMap" role="img" aria-label="Mappa del mondo con classificazione dei mercati"></svg>
+                <div class="tooltip" id="tooltip"></div>
+                <div class="legend" id="legend"></div>
+            </div>
+
+            <aside class="side-panel">
+                <div class="country-card" id="countryDetails">
+                    <h2>Seleziona un paese</h2>
+                    <p class="muted">Passa sopra la mappa o clicca un paese per vedere la classificazione MSCI e FTSE.</p>
+                </div>
+                <ul class="difference-list">
+                    <li><strong>Corea del Sud:</strong> sviluppato per FTSE, emergente per MSCI.</li>
+                    <li><strong>Polonia:</strong> sviluppata per FTSE, emergente per MSCI.</li>
+                    <li><strong>Grecia:</strong> emergente per MSCI; FTSE la sposterà da Advanced Emerging a Developed il 21 settembre 2026.</li>
+                    <li><strong>Vietnam:</strong> frontiera per FTSE fino alla riclassificazione a Secondary Emerging prevista il 21 settembre 2026.</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section class="data-panel">
+            <div class="panel-title">
+                <h2>Tabella paesi classificati</h2>
+                <span class="muted" id="tableCount"></span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Paese</th>
+                            <th>MSCI</th>
+                            <th>FTSE</th>
+                            <th>Nota</th>
+                        </tr>
+                    </thead>
+                    <tbody id="countryTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="notes-panel">
+            <div class="notes-grid">
+                <div class="note">
+                    <strong>Non e' una classifica economica generale</strong>
+                    Gli indici valutano soprattutto accessibilita', liquidita', dimensione del mercato e investibilita'
+                    per investitori istituzionali internazionali.
+                </div>
+                <div class="note">
+                    <strong>Un paese puo' essere ricco ma non sviluppato per l'indice</strong>
+                    MSCI e FTSE non coincidono sempre: Corea del Sud, Polonia e Grecia sono esempi pratici.
+                </div>
+                <div class="note">
+                    <strong>La mappa non e' consulenza finanziaria</strong>
+                    Serve a capire quali paesi entrano nei benchmark globali. Le regole e le inclusioni possono cambiare.
+                </div>
+            </div>
+            <div class="sources">
+                Fonti: <a href="https://www.msci.com/indexes/index-resources/market-classification" target="_blank" rel="noopener">MSCI Market Classification</a>,
+                <a href="https://www.msci.com/downloads/web/msci-com/indexes/index-resources/market-classification/MSCI_MARKET_CLASSIFICATION_FRAMEWORK_2025.pdf" target="_blank" rel="noopener">MSCI Market Classification Framework, giugno 2025</a>,
+                <a href="https://www.lseg.com/en/ftse-russell/equity-country-classification" target="_blank" rel="noopener">LSEG FTSE Russell Equity Country Classification</a>,
+                <a href="https://www.lseg.com/content/dam/ftse-russell/en_us/documents/country-classification/ftse-country-classification-update-latest.pdf" target="_blank" rel="noopener">FTSE Equity Country Classification, interim review aprile 2026</a>.
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const DATA = {
+            MSCI: {
+                Developed: [
+                    "Australia", "Austria", "Belgium", "Canada", "Denmark", "Finland", "France", "Germany",
+                    "Hong Kong", "Ireland", "Israel", "Italy", "Japan", "Netherlands", "New Zealand", "Norway",
+                    "Portugal", "Singapore", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"
+                ],
+                Emerging: [
+                    "Brazil", "Chile", "China", "Colombia", "Czech Republic", "Egypt", "Greece", "Hungary",
+                    "India", "Indonesia", "Kuwait", "Malaysia", "Mexico", "Peru", "Philippines", "Poland",
+                    "Qatar", "Saudi Arabia", "South Africa", "South Korea", "Taiwan", "Thailand", "Turkey",
+                    "United Arab Emirates"
+                ],
+                Frontier: [
+                    "Bahrain", "Bangladesh", "Botswana", "Bulgaria", "Croatia", "Estonia", "Iceland", "Jamaica",
+                    "Jordan", "Kazakhstan", "Kenya", "Lithuania", "Mauritius", "Morocco", "Nigeria", "Oman",
+                    "Pakistan", "Romania", "Serbia", "Slovenia", "Sri Lanka", "Trinidad and Tobago", "Tunisia",
+                    "Vietnam", "Benin", "Burkina Faso", "Ivory Coast", "Niger", "Senegal"
+                ]
+            },
+            FTSE: {
+                Developed: [
+                    "Australia", "Austria", "Belgium", "Luxembourg", "Canada", "Denmark", "Finland", "France",
+                    "Germany", "Hong Kong", "Ireland", "Israel", "Italy", "Japan", "Netherlands", "New Zealand",
+                    "Norway", "Poland", "Portugal", "Singapore", "South Korea", "Spain", "Sweden", "Switzerland",
+                    "United Kingdom", "United States"
+                ],
+                "Advanced Emerging": [
+                    "Brazil", "Czech Republic", "Greece", "Hungary", "Malaysia", "Mexico", "South Africa",
+                    "Taiwan", "Thailand", "Turkey"
+                ],
+                "Secondary Emerging": [
+                    "Chile", "China", "Colombia", "Egypt", "Iceland", "India", "Indonesia", "Kuwait",
+                    "Philippines", "Qatar", "Romania", "Saudi Arabia", "United Arab Emirates"
+                ],
+                Frontier: [
+                    "Bahrain", "Bangladesh", "Botswana", "Bulgaria", "Ivory Coast", "Croatia", "Cyprus",
+                    "Estonia", "Ghana", "Jordan", "Kazakhstan", "Kenya", "Latvia", "Lithuania", "Malta",
+                    "Mauritius", "Mongolia", "Morocco", "Oman", "Pakistan", "Palestine", "Peru",
+                    "North Macedonia", "Serbia", "Slovakia", "Slovenia", "Sri Lanka", "Tanzania", "Tunisia",
+                    "Vietnam"
+                ]
+            }
+        };
+
+        const DISPLAY_LABELS = {
+            Developed: "Sviluppato",
+            Emerging: "Emergente",
+            "Advanced Emerging": "Advanced Emerging",
+            "Secondary Emerging": "Secondary Emerging",
+            Frontier: "Frontiera",
+            Unclassified: "Non classificato"
+        };
+
+        const COLORS = {
+            Developed: getComputedStyle(document.documentElement).getPropertyValue("--developed").trim(),
+            Emerging: getComputedStyle(document.documentElement).getPropertyValue("--emerging").trim(),
+            "Advanced Emerging": getComputedStyle(document.documentElement).getPropertyValue("--advanced-emerging").trim(),
+            "Secondary Emerging": getComputedStyle(document.documentElement).getPropertyValue("--secondary-emerging").trim(),
+            Frontier: getComputedStyle(document.documentElement).getPropertyValue("--frontier").trim(),
+            Unclassified: getComputedStyle(document.documentElement).getPropertyValue("--unclassified").trim(),
+            Different: "#7c3aed"
+        };
+
+        const NAME_ALIASES = new Map([
+            ["arabia saudita", "Saudi Arabia"],
+            ["austria", "Austria"],
+            ["belgio", "Belgium"],
+            ["brasile", "Brazil"],
+            ["canada", "Canada"],
+            ["cechia", "Czech Republic"],
+            ["cina", "China"],
+            ["corea", "South Korea"],
+            ["corea del sud", "South Korea"],
+            ["emirati arabi uniti", "United Arab Emirates"],
+            ["finlandia", "Finland"],
+            ["francia", "France"],
+            ["germania", "Germany"],
+            ["giappone", "Japan"],
+            ["grecia", "Greece"],
+            ["india", "India"],
+            ["indonesia", "Indonesia"],
+            ["irlanda", "Ireland"],
+            ["israele", "Israel"],
+            ["italia", "Italy"],
+            ["messico", "Mexico"],
+            ["norvegia", "Norway"],
+            ["nuova zelanda", "New Zealand"],
+            ["paesi bassi", "Netherlands"],
+            ["polonia", "Poland"],
+            ["regno unito", "United Kingdom"],
+            ["repubblica ceca", "Czech Republic"],
+            ["spagna", "Spain"],
+            ["stati uniti", "United States"],
+            ["sudafrica", "South Africa"],
+            ["svezia", "Sweden"],
+            ["svizzera", "Switzerland"],
+            ["turchia", "Turkey"],
+            ["united states of america", "United States"],
+            ["usa", "United States"],
+            ["uk", "United Kingdom"],
+            ["england", "United Kingdom"],
+            ["czechia", "Czech Republic"],
+            ["republic of korea", "South Korea"],
+            ["korea", "South Korea"],
+            ["south korea", "South Korea"],
+            ["turkiye", "Turkey"],
+            ["türkiye", "Turkey"],
+            ["russian federation", "Russia"],
+            ["côte d’ivoire", "Ivory Coast"],
+            ["côte d'ivoire", "Ivory Coast"],
+            ["cote d'ivoire", "Ivory Coast"],
+            ["ivory coast", "Ivory Coast"],
+            ["republic of north macedonia", "North Macedonia"],
+            ["slovak republic", "Slovakia"],
+            ["viet nam", "Vietnam"],
+            ["palestine, state of", "Palestine"],
+            ["iran, islamic republic of", "Iran"],
+            ["bolivia, plurinational state of", "Bolivia"],
+            ["venezuela, bolivarian republic of", "Venezuela"],
+            ["tanzania, united republic of", "Tanzania"]
+        ]);
+
+        let provider = "MSCI";
+        let activeCategory = "all";
+        let features = [];
+        let selectedCountry = null;
+
+        const svg = d3.select("#worldMap");
+        const tooltip = document.getElementById("tooltip");
+        const searchInput = document.getElementById("countrySearch");
+
+        function normalizeName(name) {
+            if (!name) return "";
+            const cleaned = String(name).trim();
+            const key = cleaned.toLowerCase();
+            return NAME_ALIASES.get(key) || cleaned;
+        }
+
+        function searchTerms(country) {
+            const canonical = normalizeName(country);
+            const aliases = [...NAME_ALIASES.entries()]
+                .filter(([, target]) => target === canonical)
+                .map(([alias]) => alias);
+            return [canonical.toLowerCase(), ...aliases];
+        }
+
+        function providerCategory(country, currentProvider = provider) {
+            const canonical = normalizeName(country);
+            if (currentProvider === "FTSE") {
+                if (DATA.FTSE.Developed.includes(canonical)) return "Developed";
+                if (DATA.FTSE["Advanced Emerging"].includes(canonical)) return "Advanced Emerging";
+                if (DATA.FTSE["Secondary Emerging"].includes(canonical)) return "Secondary Emerging";
+                if (DATA.FTSE.Frontier.includes(canonical)) return "Frontier";
+                return "Unclassified";
+            }
+
+            for (const category of ["Developed", "Emerging", "Frontier"]) {
+                if (DATA.MSCI[category].includes(canonical)) return category;
+            }
+            return "Unclassified";
+        }
+
+        function groupedCategory(category) {
+            if (category === "Advanced Emerging" || category === "Secondary Emerging") return "Emerging";
+            return category;
+        }
+
+        function countryColor(country) {
+            if (provider === "COMPARE") {
+                const msci = groupedCategory(providerCategory(country, "MSCI"));
+                const ftse = groupedCategory(providerCategory(country, "FTSE"));
+                if (msci === "Unclassified" && ftse === "Unclassified") return COLORS.Unclassified;
+                return msci === ftse ? "#94a3b8" : COLORS.Different;
+            }
+            return COLORS[providerCategory(country)] || COLORS.Unclassified;
+        }
+
+        function matchesFilters(country) {
+            const canonical = normalizeName(country);
+            const query = searchInput.value.trim().toLowerCase();
+            const searchMatch = !query || searchTerms(canonical).some((term) => term.includes(query));
+            if (!searchMatch) return false;
+
+            if (activeCategory === "all") return true;
+            if (provider === "COMPARE") {
+                return groupedCategory(providerCategory(canonical, "MSCI")) === activeCategory ||
+                    groupedCategory(providerCategory(canonical, "FTSE")) === activeCategory;
+            }
+            return groupedCategory(providerCategory(canonical)) === activeCategory;
+        }
+
+        function allClassifiedCountries() {
+            const names = new Set();
+            Object.values(DATA.MSCI).flat().forEach((name) => names.add(name));
+            Object.values(DATA.FTSE).flat().forEach((name) => names.add(name));
+            return [...names].sort((a, b) => a.localeCompare(b, "it"));
+        }
+
+        function categoryText(country, currentProvider) {
+            const category = providerCategory(country, currentProvider);
+            return DISPLAY_LABELS[category] || category;
+        }
+
+        function badge(category) {
+            const color = COLORS[category] || COLORS.Unclassified;
+            return `<span class="pill" style="background:${color}">${DISPLAY_LABELS[category] || category}</span>`;
+        }
+
+        function updateStats() {
+            const container = document.getElementById("stats");
+            const statItems = provider === "FTSE"
+                ? ["Developed", "Advanced Emerging", "Secondary Emerging", "Frontier"]
+                : ["Developed", "Emerging", "Frontier"];
+
+            if (provider === "COMPARE") {
+                const countries = allClassifiedCountries();
+                const different = countries.filter((country) =>
+                    groupedCategory(providerCategory(country, "MSCI")) !== groupedCategory(providerCategory(country, "FTSE"))
+                ).length;
+                container.innerHTML = [
+                    statMarkup("Paesi in almeno un provider", countries.length, "#64748b"),
+                    statMarkup("Stessa macro categoria", countries.length - different, "#64748b"),
+                    statMarkup("Differenze MSCI/FTSE", different, COLORS.Different),
+                    statMarkup("Non presenti in entrambi", countries.filter((country) =>
+                        providerCategory(country, "MSCI") === "Unclassified" || providerCategory(country, "FTSE") === "Unclassified"
+                    ).length, "#64748b")
+                ].join("");
+                return;
+            }
+
+            container.innerHTML = statItems.map((category) => {
+                const count = DATA[provider][category].length;
+                return statMarkup(DISPLAY_LABELS[category] || category, count, COLORS[category]);
+            }).join("");
+        }
+
+        function statMarkup(label, count, color) {
+            return `<div class="stat" style="border-left-color:${color}"><strong>${count}</strong><span>${label}</span></div>`;
+        }
+
+        function updateLegend() {
+            const items = provider === "FTSE"
+                ? ["Developed", "Advanced Emerging", "Secondary Emerging", "Frontier", "Unclassified"]
+                : provider === "COMPARE"
+                    ? ["Different", "Unclassified"]
+                    : ["Developed", "Emerging", "Frontier", "Unclassified"];
+            const labels = { Different: "Macro categoria diversa tra MSCI e FTSE" };
+            document.getElementById("legend").innerHTML = items.map((item) =>
+                `<span class="legend-item"><span class="swatch" style="background:${COLORS[item]}"></span>${labels[item] || DISPLAY_LABELS[item]}</span>`
+            ).join("");
+        }
+
+        function updateMap() {
+            svg.selectAll(".country")
+                .attr("fill", (d) => countryColor(d.properties.name))
+                .classed("dimmed", (d) => !matchesFilters(d.properties.name))
+                .classed("selected", (d) => normalizeName(d.properties.name) === selectedCountry);
+        }
+
+        function updateTable() {
+            const rows = allClassifiedCountries().filter(matchesFilters);
+            document.getElementById("tableCount").textContent = `${rows.length} paesi`;
+            document.getElementById("countryTable").innerHTML = rows.map((country) => {
+                const msciCategory = providerCategory(country, "MSCI");
+                const ftseCategory = providerCategory(country, "FTSE");
+                const sameMacro = groupedCategory(msciCategory) === groupedCategory(ftseCategory);
+                const note = sameMacro ? "" : "Macro categoria diversa";
+                return `<tr data-country="${country}">
+                    <td><strong>${country}</strong></td>
+                    <td>${badge(msciCategory)}</td>
+                    <td>${badge(ftseCategory)}</td>
+                    <td class="muted">${note}</td>
+                </tr>`;
+            }).join("");
+
+            document.querySelectorAll("#countryTable tr").forEach((row) => {
+                row.addEventListener("click", () => selectCountry(row.dataset.country));
+            });
+        }
+
+        function updateDetails(country) {
+            const target = document.getElementById("countryDetails");
+            if (!country) {
+                target.innerHTML = "<h2>Seleziona un paese</h2><p class=\"muted\">Passa sopra la mappa o clicca un paese per vedere la classificazione MSCI e FTSE.</p>";
+                return;
+            }
+            const msciCategory = providerCategory(country, "MSCI");
+            const ftseCategory = providerCategory(country, "FTSE");
+            target.innerHTML = `
+                <h2>${country}</h2>
+                <div class="country-row"><strong>MSCI</strong><div>${badge(msciCategory)}</div></div>
+                <div class="country-row"><strong>FTSE</strong><div>${badge(ftseCategory)}</div></div>
+                <p class="muted">${groupedCategory(msciCategory) === groupedCategory(ftseCategory)
+                    ? "I due provider assegnano la stessa macro categoria."
+                    : "I due provider assegnano una macro categoria diversa."}</p>
+            `;
+        }
+
+        function selectCountry(country) {
+            selectedCountry = normalizeName(country);
+            updateDetails(selectedCountry);
+            updateMap();
+        }
+
+        function render() {
+            updateStats();
+            updateLegend();
+            updateMap();
+            updateTable();
+        }
+
+        async function loadMap() {
+            const world = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
+            features = topojson.feature(world, world.objects.countries).features
+                .filter((feature) => feature.properties.name !== "Antarctica");
+
+            const projection = d3.geoNaturalEarth1();
+            const path = d3.geoPath(projection);
+
+            function draw() {
+                const node = svg.node();
+                const width = node.clientWidth;
+                const height = node.clientHeight;
+                svg.attr("viewBox", `0 0 ${width} ${height}`);
+                projection.fitExtent([[12, 16], [width - 12, height - 16]], { type: "FeatureCollection", features });
+                svg.selectAll(".country").attr("d", path);
+            }
+
+            svg.selectAll(".country")
+                .data(features)
+                .join("path")
+                .attr("class", "country")
+                .attr("d", path)
+                .on("mousemove", (event, d) => {
+                    const country = normalizeName(d.properties.name);
+                    tooltip.style.display = "block";
+                    tooltip.style.left = `${event.offsetX + 14}px`;
+                    tooltip.style.top = `${event.offsetY + 14}px`;
+                    tooltip.innerHTML = `<strong>${country}</strong><br>MSCI: ${categoryText(country, "MSCI")}<br>FTSE: ${categoryText(country, "FTSE")}`;
+                })
+                .on("mouseleave", () => {
+                    tooltip.style.display = "none";
+                })
+                .on("click", (_event, d) => selectCountry(d.properties.name));
+
+            draw();
+            window.addEventListener("resize", draw);
+            render();
+        }
+
+        document.getElementById("providerControls").addEventListener("click", (event) => {
+            if (!event.target.matches("button")) return;
+            provider = event.target.dataset.provider;
+            document.querySelectorAll("#providerControls .segment").forEach((button) => button.classList.toggle("active", button === event.target));
+            render();
+        });
+
+        document.getElementById("categoryControls").addEventListener("click", (event) => {
+            if (!event.target.matches("button")) return;
+            activeCategory = event.target.dataset.category;
+            document.querySelectorAll("#categoryControls .segment").forEach((button) => button.classList.toggle("active", button === event.target));
+            render();
+        });
+
+        searchInput.addEventListener("input", render);
+        loadMap().catch(() => {
+            document.querySelector(".map-panel").insertAdjacentHTML("afterbegin", "<p class=\"muted\" style=\"padding:16px\">Non riesco a caricare la geometria della mappa. La tabella resta disponibile.</p>");
+            render();
+        });
+    </script>
+</body>
+
+</html>
