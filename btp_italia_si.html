@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Italia Si - Funzionamento e indicizzazione</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+        <h1 class="text-center">BTP Italia Si</h1>
+        <h5 class="text-center">Funzionamento, cedole e differenze rispetto al BTP Italia classico</h5>
+
+        <section class="mt-4">
+            <p>
+                Il BTP Italia Si e' un titolo di Stato legato all'inflazione italiana misurata dall'indice
+                <strong>FOI senza tabacchi</strong>. La prima emissione indicata nella scheda MEF ha godimento
+                <strong>23 giugno 2026</strong>, scadenza <strong>23 giugno 2031</strong>, durata di 5 anni,
+                cedole semestrali e premio finale extra dello <strong>0,6% lordo</strong> per chi acquista in
+                collocamento e mantiene il titolo fino alla scadenza.
+            </p>
+
+            <div class="alert alert-info">
+                <strong>Idea chiave:</strong> a ogni semestre la cedola e' data da una componente fissa piu'
+                una componente legata all'inflazione del semestre. Entrambe sono applicate al capitale nominale
+                sottoscritto. Il capitale non viene rivalutato: a scadenza viene rimborsato il nominale.
+            </div>
+
+            <h3 class="mt-4">Formula della cedola semestrale</h3>
+            <p>
+                La cedola lorda semestrale e' la somma di:
+            </p>
+            <ul>
+                <li>
+                    <strong>componente fissa:</strong> meta' del tasso cedolare annuo definitivo;
+                </li>
+                <li>
+                    <strong>componente inflazione:</strong> la variazione positiva del coefficiente di inflazione
+                    del semestre, con floor a zero.
+                </li>
+            </ul>
+            <p class="text-center">
+                \( \text{cedola lorda} =
+                \text{nominale} \times
+                \left(\frac{\text{tasso fisso annuo}}{2} +
+                \max(CI - 1, 0)\right) \)
+            </p>
+            <p>
+                In forma percentuale, la componente inflazione indicata dal MEF e':
+            </p>
+            <p class="text-center">
+                \( \max\left(0\%; 100\% \times (CI(d,m) - 1)\right) \)
+            </p>
+            <p>
+                Quindi, se l'indice FOI scende nel semestre, la componente inflazione non diventa negativa:
+                vale zero. L'investitore incassa comunque la componente fissa della cedola.
+            </p>
+
+            <h3 class="mt-4">Coefficiente di inflazione</h3>
+            <p>
+                Il coefficiente di inflazione confronta il numero indice alla data di pagamento della cedola
+                con il numero indice alla data di pagamento della cedola precedente:
+            </p>
+            <p class="text-center">
+                \( CI(d,m) =
+                \frac{\text{Numero Indice alla data cedola corrente}}
+                {\text{Numero Indice alla data cedola precedente}} \)
+            </p>
+            <p>
+                Per la prima cedola il confronto parte dalla data di emissione. Per le cedole successive si usa
+                la data della cedola immediatamente precedente, sei mesi prima.
+            </p>
+
+            <h3 class="mt-4">Calcolo del numero indice giornaliero</h3>
+            <p>
+                Il FOI senza tabacchi e' pubblicato mensilmente, ma le date del titolo sono giornaliere.
+                Per questo si usa un numero indice giornaliero ottenuto per interpolazione lineare tra gli indici
+                FOI disponibili con ritardo di due/tre mesi:
+            </p>
+            <p class="text-center">
+                \( NI_{d,m} = FOI_{m-3} + \frac{d - 1}{gg} \times (FOI_{m-2} - FOI_{m-3}) \)
+            </p>
+            <p>
+                dove <strong>d</strong> e' il giorno del mese, <strong>gg</strong> e' il numero di giorni effettivi
+                del mese, <strong>FOI<sub>m-3</sub></strong> e' l'indice FOI del mese che precede di tre mesi
+                quello di calcolo e <strong>FOI<sub>m-2</sub></strong> e' quello del mese che precede di due mesi.
+            </p>
+
+            <h4 class="mt-3">Esempio di numero indice</h4>
+            <p>
+                Per calcolare il numero indice del <strong>15 maggio</strong>, ipotizziamo:
+            </p>
+            <ul>
+                <li>FOI di febbraio, cioe' m-3: <strong>120,0</strong></li>
+                <li>FOI di marzo, cioe' m-2: <strong>120,6</strong></li>
+                <li>giorno d: <strong>15</strong></li>
+                <li>giorni del mese gg: <strong>31</strong></li>
+            </ul>
+            <p class="text-center">
+                \( 120,0 + \frac{15 - 1}{31} \times (120,6 - 120,0) = 120,2710 \)
+            </p>
+
+            <h3 class="mt-4">Esempio di cedola</h3>
+            <p>
+                Supponiamo un nominale di <strong>1.000 euro</strong>, un tasso fisso annuo del
+                <strong>2,00%</strong>, un numero indice precedente pari a <strong>118,8000</strong> e un numero
+                indice corrente pari a <strong>120,2710</strong>.
+            </p>
+            <p class="text-center">
+                \( CI = \frac{120,2710}{118,8000} = 1,01238 \)
+            </p>
+            <p class="text-center">
+                \( \text{componente fissa} = 1.000 \times 1,00\% = 10,00 \ \text{euro} \)
+            </p>
+            <p class="text-center">
+                \( \text{componente inflazione} = 1.000 \times 1,238\% = 12,38 \ \text{euro} \)
+            </p>
+            <p class="text-center">
+                \( \text{cedola lorda} = 10,00 + 12,38 = 22,38 \ \text{euro} \)
+            </p>
+            <p>
+                Se invece il coefficiente fosse <strong>0,99000</strong>, la componente inflazione sarebbe zero:
+                la cedola lorda sarebbe solo la componente fissa di <strong>10,00 euro</strong>.
+            </p>
+
+            <h3 class="mt-4">Rimborso e premio finale</h3>
+            <p>
+                Alla scadenza il capitale e' rimborsato in unica soluzione al valore nominale non rivalutato.
+                Per chi acquista durante il collocamento e conserva il titolo fino al <strong>23 giugno 2031</strong>,
+                il MEF riconosce anche un premio finale extra dello <strong>0,6% lordo</strong> del nominale
+                acquistato.
+            </p>
+            <p>
+                Su 1.000 euro nominali, il premio lordo e':
+            </p>
+            <p class="text-center">
+                \( 1.000 \times 0,6\% = 6,00 \ \text{euro} \)
+            </p>
+
+            <h3 class="mt-4">Differenze rispetto al BTP Italia classico</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Aspetto</th>
+                            <th>BTP Italia classico</th>
+                            <th>BTP Italia Si</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Struttura della cedola</td>
+                            <td>Cedola reale calcolata sul capitale rivalutato.</td>
+                            <td>Componente fissa piu' componente inflazione, entrambe sul nominale.</td>
+                        </tr>
+                        <tr>
+                            <td>Rivalutazione del capitale</td>
+                            <td>La rivalutazione del capitale viene pagata semestralmente insieme alla cedola.</td>
+                            <td>Non c'e' pagamento separato di capitale rivalutato: l'inflazione entra nella cedola.</td>
+                        </tr>
+                        <tr>
+                            <td>Rimborso a scadenza</td>
+                            <td>Rimborso almeno al nominale; l'inflazione e' stata gia' distribuita nei semestri.</td>
+                            <td>Rimborso del capitale nominale non rivalutato.</td>
+                        </tr>
+                        <tr>
+                            <td>Deflazione del semestre</td>
+                            <td>Scatta il floor: nessuna rivalutazione negativa e cedola reale garantita.</td>
+                            <td>La componente inflazione vale zero e resta la componente fissa.</td>
+                        </tr>
+                        <tr>
+                            <td>Base dopo deflazione</td>
+                            <td>La logica del BTP Italia classico tende a evitare che si paghi due volte inflazione gia' riconosciuta.</td>
+                            <td>La formula della scheda confronta il semestre corrente con la cedola precedente.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="mt-4">Quando i due metodi si comportano diversamente</h3>
+            <p>
+                Se l'indice FOI cresce in modo regolare, i due strumenti hanno un profilo economico simile nella
+                parte inflattiva: entrambi riconoscono la crescita dei prezzi del semestre, anche se il BTP Italia
+                classico la separa tra cedola reale e rivalutazione del capitale, mentre il BTP Italia Si la somma
+                direttamente alla cedola.
+            </p>
+            <p>
+                La differenza diventa piu' visibile quando l'inflazione non e' lineare, soprattutto dopo una fase
+                di deflazione. Nel BTP Italia classico il meccanismo di protezione del capitale puo' conservare una
+                base di riferimento piu' alta: dopo un calo dei prezzi, il recupero successivo puo' essere pagato
+                solo per la parte che supera la base gia' raggiunta. Nel BTP Italia Si, invece, la componente
+                inflazione indicata nella scheda e' calcolata confrontando il numero indice corrente con quello
+                della cedola precedente: se l'indice risale da un livello depresso, il semestre puo' produrre una
+                componente inflazione positiva anche se l'indice non ha ancora recuperato un massimo precedente.
+            </p>
+
+            <h4 class="mt-3">Esempio: salita, deflazione e recupero</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Semestre</th>
+                            <th>Indice iniziale</th>
+                            <th>Indice finale</th>
+                            <th>Variazione semestre</th>
+                            <th>BTP Italia classico: rivalutazione capitale</th>
+                            <th>BTP Italia Si: componente inflazione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>100</td>
+                            <td>105</td>
+                            <td>+5,00%</td>
+                            <td>+5,00%</td>
+                            <td>+5,00%</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>105</td>
+                            <td>106</td>
+                            <td>+0,95%</td>
+                            <td>+0,95%</td>
+                            <td>+0,95%</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>106</td>
+                            <td>101</td>
+                            <td>-4,72%</td>
+                            <td>0,00%</td>
+                            <td>0,00%</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>101</td>
+                            <td>104</td>
+                            <td>+2,97%</td>
+                            <td>0,00% se la base protetta resta 106</td>
+                            <td>+2,97%</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>104</td>
+                            <td>110</td>
+                            <td>+5,77%</td>
+                            <td>+3,77% rispetto alla base 106</td>
+                            <td>+5,77%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                In questo scenario il BTP Italia Si riconosce l'inflazione positiva dei semestri di recupero
+                subito dopo la deflazione. Il BTP Italia classico, invece, puo' attendere che l'indice torni sopra
+                la base protetta prima di riconoscere nuova rivalutazione del capitale.
+            </p>
+
+            <h4 class="mt-3">Situazioni pratiche</h4>
+            <ul>
+                <li>
+                    <strong>Inflazione sempre positiva:</strong> le differenze principali sono di forma del flusso,
+                    non di direzione economica. Il BTP Italia classico separa cedola reale e rivalutazione, il BTP
+                    Italia Si paga una cedola che somma fisso e inflazione.
+                </li>
+                <li>
+                    <strong>Deflazione secca in un semestre:</strong> entrambi proteggono l'investitore dalla
+                    componente inflazione negativa: si incassa almeno la parte fissa/reale.
+                </li>
+                <li>
+                    <strong>Deflazione seguita da recupero parziale:</strong> qui il BTP Italia Si puo' mostrare
+                    cedole piu' alte, perche' guarda la variazione rispetto alla cedola precedente. Il BTP Italia
+                    classico puo' non pagare nuova rivalutazione finche' non viene superata la base protetta.
+                </li>
+                <li>
+                    <strong>Inflazione volatile ma livello finale simile:</strong> il calendario dei pagamenti conta.
+                    Il BTP Italia Si puo' trasformare piu' rapidamente i recuperi semestrali in cedola; il BTP Italia
+                    classico e' piu' legato alla logica della rivalutazione del capitale gia' riconosciuta.
+                </li>
+            </ul>
+
+            <p class="small text-muted">
+                Fonte ufficiale:
+                <a href="https://www.dt.mef.gov.it/export/sites/sitodt/modules/documenti_it/debito_pubblico/comunicazioni_emissioni/btp_italia_si_comunicazione_emissione/BTP-Italia-Si-23.06.2031-1-Scheda-informativa.pdf" target="_blank" rel="noopener">
+                    MEF - BTP Italia Si 23.06.2031, Scheda informativa
+                </a>.
+            </p>
+        </section>
+
+        <a href="btp_italia_si_inflation_breakeven.html" class="btn btn-primary mt-3">Vai al simulatore break-even BTP Italia Si</a>
+        <a href="btp_italia.html" class="btn btn-secondary mt-3 ml-2">Confronta con il BTP Italia classico</a>
+    </div>
+
+    <div id="disclaimer-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                });
+        });
+    </script>
+</body>
+
+</html>
