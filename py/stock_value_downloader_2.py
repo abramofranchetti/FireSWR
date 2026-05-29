@@ -37,11 +37,19 @@ print("Data fetched successfully")
 if isinstance(df.columns, pd.MultiIndex):
     df.columns = df.columns.get_level_values(0)
 
-# A questo punto, `df` avrà colonne come: ['Date', 'Close']
-
 # Reset dell'indice per ottenere una colonna semplice per la data
-df.reset_index(inplace=True)  # Rimuove l'indice gerarchico
-df["Date"] = pd.to_datetime(df["Date"]).dt.date  # Converti DateTime in formato date (senza orario)
+df.reset_index(inplace=True)
+
+# Normalizza il nome della colonna data, gestendo casi in cui l'indice non sia stato chiamato Date
+if "Date" not in df.columns:
+    if "index" in df.columns:
+        df.rename(columns={"index": "Date"}, inplace=True)
+    else:
+        first_col = df.columns[0]
+        df.rename(columns={first_col: "Date"}, inplace=True)
+
+# Converti DateTime in formato date (senza orario)
+df["Date"] = pd.to_datetime(df["Date"]).dt.date
 
 # Se Yahoo Finance non restituisce "Adj Close", usa "Close" come fallback.
 if "Adj Close" not in df.columns:

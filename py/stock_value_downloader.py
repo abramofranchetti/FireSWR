@@ -33,13 +33,23 @@ print("Data fetched successfully")
 
 # *** Appiattire le colonne multi-livello ***
 # Modifica le colonne per rimuovere la struttura multi-livello
-df.columns = [col[0] if col[1] == "" else col[0] for col in df.columns]
-
-# A questo punto, `df` avrà colonne come: ['Date', 'Close']
+if isinstance(df.columns, pd.MultiIndex):
+    df.columns = df.columns.get_level_values(0)
+else:
+    df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
 
 # Reset dell'indice per ottenere una colonna semplice per la data
 df.reset_index(inplace=True)  # Rimuove l'indice gerarchico
-df["Date"] = pd.to_datetime(df["Date"]).dt.date  # Converti DateTime in formato date (senza orario)
+
+if "Date" not in df.columns:
+    if "index" in df.columns:
+        df.rename(columns={"index": "Date"}, inplace=True)
+    else:
+        first_col = df.columns[0]
+        df.rename(columns={first_col: "Date"}, inplace=True)
+
+# Converti DateTime in formato date (senza orario)
+df["Date"] = pd.to_datetime(df["Date"]).dt.date
 
 # Mantenere solo le colonne necessarie
 df = df[["Date", "Close"]]
