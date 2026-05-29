@@ -80,7 +80,7 @@
             </div>
             <div class="form-row mt-2">
                 <div class="form-group col-md-6">
-                    <label for="montante">Capitale inizale $:</label>
+                    <label for="montante">Capitale inizale €:</label>
                     <input type="number" class="form-control" id="montante" value="100000" step="1000">
                 </div>
                 <div class="form-group col-md-6">
@@ -1084,7 +1084,7 @@
                                 callbacks: {
                                     label: function (context) {
                                         const v = context.raw;
-                                        return context.dataset.label + ': ' + (v == null ? 'n/a' : v.toFixed(2) + ' $');
+                                        return context.dataset.label + ': ' + (v == null ? 'n/a' : v.toFixed(2) + ' €');
                                     }
                                 }
                             },
@@ -1105,7 +1105,7 @@
                                 }
                             },
                             y: {
-                                title: { display: true, text: 'Valore ($)' },
+                                title: { display: true, text: 'Valore (€)' },
                                 beginAtZero: false
                             }
                         }
