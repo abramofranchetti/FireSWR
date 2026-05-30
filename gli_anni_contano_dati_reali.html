@@ -397,29 +397,40 @@
             let labels = [];
             let dataA = [];
             let dataB = [];
+            let dataVersatoA = [];
+            let dataVersatoB = [];
 
             let quoteA = 0;
             let quoteB = 0;
+            let versatoA = 0;
+            let versatoB = 0;
 
             for (let i = 0; i < mesiTotali; i++) {
+                const dataCorrente = sp500[start + i].date;
+
                 labels.push(
-                    `${sp500[start + i].date.getMonth() + 1}/${sp500[start + i].date.getFullYear()}`
+                    `${dataCorrente.getMonth() + 1}/${dataCorrente.getFullYear()}`
                 );
 
                 // Scenario A
                 if (i < mesiPAC || continuaPAC) {
                     quoteA += versamento / sp500[start + i].value;
+                    versatoA += attualizzaInflazioneUSA(versamento, dataCorrente, mostraReale);
                 }
-                dataA.push(attualizzaInflazioneUSA(quoteA * sp500[start + i].value, sp500[start + i].date, mostraReale));
+                dataA.push(attualizzaInflazioneUSA(quoteA * sp500[start + i].value, dataCorrente, mostraReale));
+                dataVersatoA.push(versatoA);
 
                 // Scenario B: parte quando A arriva allo stop e versa fino al punto di incontro.
                 if (i >= mesiPAC) {
                     if (i < mesiPAC + mesiFuturi) {
                         quoteB += versamentoB / sp500[start + i].value;
+                        versatoB += attualizzaInflazioneUSA(versamentoB, dataCorrente, mostraReale);
                     }
-                    dataB.push(attualizzaInflazioneUSA(quoteB * sp500[start + i].value, sp500[start + i].date, mostraReale));
+                    dataB.push(attualizzaInflazioneUSA(quoteB * sp500[start + i].value, dataCorrente, mostraReale));
+                    dataVersatoB.push(versatoB);
                 } else {
                     dataB.push(null);
+                    dataVersatoB.push(null);
                 }
             }
 
@@ -457,15 +468,35 @@
                             label: mostraReale ? 'Scenario A -- dollari reali (inflazione USA)' : 'Scenario A -- iniziato anni fa poi fermato',
                             data: dataA,
                             borderColor: '#1b5',
+                            borderWidth: 2,
                             tension: 0.15,
                             pointRadius: 0
+                        },
+                        {
+                            label: mostraReale ? 'Capitale versato A -- dollari reali' : 'Capitale versato A',
+                            data: dataVersatoA,
+                            borderColor: '#1b5',
+                            borderWidth: 1,
+                            stepped: true,
+                            pointRadius: 0,
+                            tension: 0
                         },
                         {
                             label: mostraReale ? 'Scenario B -- dollari reali (inflazione USA)' : 'Scenario B -- Iniziato allo stop dei versamenti A',
                             data: dataB,
                             borderColor: '#c33',
+                            borderWidth: 2,
                             tension: 0.15,
                             pointRadius: 0
+                        },
+                        {
+                            label: mostraReale ? 'Capitale versato B -- dollari reali' : 'Capitale versato B',
+                            data: dataVersatoB,
+                            borderColor: '#c33',
+                            borderWidth: 1,
+                            stepped: true,
+                            pointRadius: 0,
+                            tension: 0
                         }
                     ]
                 }
