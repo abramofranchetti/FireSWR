@@ -36,6 +36,16 @@
             line-height: 1.5;
         }
 
+        .chart-card {
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+
+        .chart-wrap {
+            position: relative;
+            min-height: 320px;
+        }
+
         .metric-output strong,
         .metric-output .highlight {
             color: #1d4ed8;
@@ -88,6 +98,8 @@
             </div>
         </div>
 
+        <div id="charts" class="mt-6"></div>
+
         <pre id="output" class="metric-output mt-6 p-4 rounded text-sm"></pre>
 
         <!-- SPIEGAZIONI -->
@@ -130,6 +142,13 @@
             <code>co-exceedance = giorni congiunti / giorni totali</code>.<br>
             4. Si conta quante volte B è in coda quando A è già in coda:
             <code>conditional = giorni congiunti / giorni in coda di A</code>.<br><br>
+
+            <b>Grafici</b><br>
+            Il grafico a barre confronta, per il quantile selezionato, il dato realmente osservato con due riferimenti:
+            indipendenza pura e modello gaussiano che usa solo la correlazione Pearson.
+            Il grafico a linee mostra invece il rapporto <code>osservato / indipendenza</code> al variare del quantile:
+            valori sopra 1 indicano che gli eventi negativi simultanei sono più frequenti di quanto accadrebbe con asset indipendenti.
+            <br><br>
 
             <b>Absolute-drop co-exceedance</b><br>
             Percentuale di giorni in cui entrambi perdono almeno X% nello stesso giorno.
@@ -203,6 +222,8 @@
         const cache = {};
         const select = document.getElementById("etfs");
         const output = document.getElementById("output");
+        const chartsContainer = document.getElementById("charts");
+        let activeCharts = [];
 
         function erfApprox(x) {
             const sign = x < 0 ? -1 : 1;
@@ -271,6 +292,174 @@
 
         function formatPercent(value) {
             return `${(value * 100).toFixed(2)}%`;
+        }
+
+        function quantileMetrics(x, y, u, corr) {
+            const qx = math.quantileSeq(x, u);
+            const qy = math.quantileSeq(y, u);
+            let bothQ = 0;
+            let xQ = 0;
+
+            for (let k = 0; k < x.length; k++) {
+                if (x[k] <= qx) xQ++;
+                if (x[k] <= qx && y[k] <= qy) bothQ++;
+            }
+
+            const observedCoExceedance = bothQ / x.length;
+            const observedConditionalCoExceedance = xQ > 0 ? bothQ / xQ : 0;
+            const independentCoExceedance = u * u;
+            const independentConditionalCoExceedance = u;
+            const normalThreshold = inverseNormalCdf(u);
+            const pearsonCoExceedance = bivariateNormalCdf(normalThreshold, normalThreshold, corr);
+            const pearsonConditionalCoExceedance = pearsonCoExceedance / u;
+
+            return {
+                qx,
+                qy,
+                bothQ,
+                xQ,
+                observedCoExceedance,
+                observedConditionalCoExceedance,
+                independentCoExceedance,
+                independentConditionalCoExceedance,
+                pearsonCoExceedance,
+                pearsonConditionalCoExceedance,
+                coExceedanceVsIndependence: independentCoExceedance > 0 ? observedCoExceedance / independentCoExceedance : 0,
+                conditionalVsIndependence: independentConditionalCoExceedance > 0 ? observedConditionalCoExceedance / independentConditionalCoExceedance : 0
+            };
+        }
+
+        function resetCharts() {
+            activeCharts.forEach(chart => chart.destroy());
+            activeCharts = [];
+            chartsContainer.innerHTML = "";
+        }
+
+        function renderPairCharts(pairResults) {
+            resetCharts();
+
+            pairResults.forEach((pair, index) => {
+                const card = document.createElement("div");
+                card.className = "chart-card rounded p-4 mb-6";
+                card.innerHTML = `
+                    <h3 class="text-lg font-bold mb-1">${pair.A} vs ${pair.B}</h3>
+                    <p class="text-sm text-gray-600 mb-4">Confronto delle code negative sui rendimenti giornalieri comuni.</p>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="chart-wrap">
+                            <canvas id="barChart${index}"></canvas>
+                        </div>
+                        <div class="chart-wrap">
+                            <canvas id="curveChart${index}"></canvas>
+                        </div>
+                    </div>
+                `;
+                chartsContainer.appendChild(card);
+
+                const m = pair.metrics;
+                const barChart = new Chart(document.getElementById(`barChart${index}`), {
+                    type: "bar",
+                    data: {
+                        labels: ["Co-exceedance", "Conditional"],
+                        datasets: [
+                            {
+                                label: "Osservato",
+                                data: [m.observedCoExceedance * 100, m.observedConditionalCoExceedance * 100],
+                                backgroundColor: "#2563eb"
+                            },
+                            {
+                                label: "Indipendenza",
+                                data: [m.independentCoExceedance * 100, m.independentConditionalCoExceedance * 100],
+                                backgroundColor: "#94a3b8"
+                            },
+                            {
+                                label: "Solo Pearson",
+                                data: [m.pearsonCoExceedance * 100, m.pearsonConditionalCoExceedance * 100],
+                                backgroundColor: "#f59e0b"
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `Valori al quantile ${(pair.selectedQuantile * 100).toFixed(1)}%`
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)}%`
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: value => `${value}%`
+                                }
+                            }
+                        }
+                    }
+                });
+
+                const curveChart = new Chart(document.getElementById(`curveChart${index}`), {
+                    type: "line",
+                    data: {
+                        labels: pair.curve.map(point => `${(point.u * 100).toFixed(1)}%`),
+                        datasets: [
+                            {
+                                label: "Co-exceedance / indipendenza",
+                                data: pair.curve.map(point => point.coRatio),
+                                borderColor: "#2563eb",
+                                backgroundColor: "#2563eb",
+                                tension: 0.25,
+                                pointRadius: 3
+                            },
+                            {
+                                label: "Conditional / indipendenza",
+                                data: pair.curve.map(point => point.conditionalRatio),
+                                borderColor: "#dc2626",
+                                backgroundColor: "#dc2626",
+                                tension: 0.25,
+                                pointRadius: 3
+                            },
+                            {
+                                label: "Indipendenza",
+                                data: pair.curve.map(() => 1),
+                                borderColor: "#64748b",
+                                borderDash: [6, 4],
+                                pointRadius: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: "Quanto il reale supera l'indipendenza"
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)}x`
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: value => `${value}x`
+                                }
+                            }
+                        }
+                    }
+                });
+
+                activeCharts.push(barChart, curveChart);
+            });
         }
 
         // Lista statica ETF, aggiorna tu a mano quando vuoi
@@ -376,6 +565,7 @@
             const u = document.getElementById("quantile").value / 100;
             const X = document.getElementById("drop").value / 100;
             output.textContent = "";
+            resetCharts();
 
             Promise.all(selected.map(loadETF)).then(dataSets => {
                 // dataSets[i] = { prices: [...], returns: [{date,ret},...] }
@@ -436,6 +626,9 @@ Drop assoluto X: ${X * 100}%
                 const portUT = computeUnderwater(portPrices);
                 output.textContent += `Portafoglio equal-weighted: Ulcer ${(portUI * 100).toFixed(2)}%, Underwater ${(portUT * 100).toFixed(2)}%\n\n`;
 
+                const pairResults = [];
+                const curveQuantiles = [0.01, 0.02, 0.03, 0.05, 0.075, 0.10, 0.15, 0.20];
+
                 for (let i = 0; i < selected.length; i++) {
                     for (let j = i + 1; j < selected.length; j++) {
                         const A = selected[i], B = selected[j];
@@ -448,28 +641,31 @@ Drop assoluto X: ${X * 100}%
 
                         const corr = math.corr(x, y);
 
-                        const qx = math.quantileSeq(x, u);
-                        const qy = math.quantileSeq(y, u);
+                        const metrics = quantileMetrics(x, y, u, corr);
 
-                        let bothQ = 0, xQ = 0, bothA = 0, xA = 0;
+                        let bothA = 0, xA = 0;
 
                         for (let k = 0; k < T; k++) {
-                            if (x[k] <= qx) xQ++;
-                            if (x[k] <= qx && y[k] <= qy) bothQ++;
-
                             if (x[k] <= -X) xA++;
                             if (x[k] <= -X && y[k] <= -X) bothA++;
                         }
 
-                        const observedCoExceedance = bothQ / T;
-                        const observedConditionalCoExceedance = xQ > 0 ? bothQ / xQ : 0;
-                        const independentCoExceedance = u * u;
-                        const independentConditionalCoExceedance = u;
-                        const normalThreshold = inverseNormalCdf(u);
-                        const pearsonCoExceedance = bivariateNormalCdf(normalThreshold, normalThreshold, corr);
-                        const pearsonConditionalCoExceedance = pearsonCoExceedance / u;
-                        const coExceedanceVsIndependence = independentCoExceedance > 0 ? observedCoExceedance / independentCoExceedance : 0;
-                        const conditionalVsIndependence = independentConditionalCoExceedance > 0 ? observedConditionalCoExceedance / independentConditionalCoExceedance : 0;
+                        const curve = curveQuantiles.map(curveU => {
+                            const curveMetrics = quantileMetrics(x, y, curveU, corr);
+                            return {
+                                u: curveU,
+                                coRatio: curveMetrics.coExceedanceVsIndependence,
+                                conditionalRatio: curveMetrics.conditionalVsIndependence
+                            };
+                        });
+
+                        pairResults.push({
+                            A,
+                            B,
+                            selectedQuantile: u,
+                            metrics,
+                            curve
+                        });
 
                         output.textContent +=
                             `---------------------------------------
@@ -478,12 +674,12 @@ Coppia: ${A} – ${B}
 Correlazione (Pearson): ${corr.toFixed(4)}
 - Pearson linear correlation of daily returns (range -1..1: 1 means perfect positive linear relation).
 
-Quantile-based co-exceedance: ${formatPercent(observedCoExceedance)} (se indipendenti: ${formatPercent(independentCoExceedance)}; solo Pearson: ${formatPercent(pearsonCoExceedance)})
-- Osservato / indipendenza: ${coExceedanceVsIndependence.toFixed(2)}x
+Quantile-based co-exceedance: ${formatPercent(metrics.observedCoExceedance)} (se indipendenti: ${formatPercent(metrics.independentCoExceedance)}; solo Pearson: ${formatPercent(metrics.pearsonCoExceedance)})
+- Osservato / indipendenza: ${metrics.coExceedanceVsIndependence.toFixed(2)}x
 - Percentuale di giorni in cui entrambi gli asset sono contemporaneamente nel loro peggior ${(u * 100).toFixed(1)}%.
 
-Quantile-based conditional co-exceedance: ${formatPercent(observedConditionalCoExceedance)} (se indipendenti: ${formatPercent(independentConditionalCoExceedance)}; solo Pearson: ${formatPercent(pearsonConditionalCoExceedance)})
-- Osservato / indipendenza: ${conditionalVsIndependence.toFixed(2)}x
+Quantile-based conditional co-exceedance: ${formatPercent(metrics.observedConditionalCoExceedance)} (se indipendenti: ${formatPercent(metrics.independentConditionalCoExceedance)}; solo Pearson: ${formatPercent(metrics.pearsonConditionalCoExceedance)})
+- Osservato / indipendenza: ${metrics.conditionalVsIndependence.toFixed(2)}x
 - P(${B} nel peggior ${(u * 100).toFixed(1)}% | ${A} nel peggior ${(u * 100).toFixed(1)}%).
 
 Absolute-drop co-exceedance: ${(bothA / T).toFixed(4)}
@@ -492,14 +688,16 @@ Absolute-drop co-exceedance: ${(bothA / T).toFixed(4)}
 Absolute-drop conditional co-exceedance: ${(bothA / xA).toFixed(4)}
 - P(asset B drops >= X | asset A drops >= X).
 
-Eventi quantile ${A}: ${xQ}
-Eventi quantile congiunti: ${bothQ}
+Eventi quantile ${A}: ${metrics.xQ}
+Eventi quantile congiunti: ${metrics.bothQ}
 Eventi drop ${A}: ${xA}
 Eventi drop congiunti: ${bothA}
 
 `;
                     }
                 }
+
+                renderPairCharts(pairResults);
             });
         }
 
