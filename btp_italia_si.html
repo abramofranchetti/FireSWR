@@ -343,9 +343,22 @@
                             <td>1.200,00 euro</td>
                         </tr>
                         <tr>
+                            <td>Rendimento totale lordo su nominale</td>
+                            <td>21,03%</td>
+                            <td>20,00%</td>
+                        </tr>
+                        <tr>
                             <td>Valore presente dei flussi</td>
                             <td>1.079,51 euro</td>
                             <td>1.070,09 euro</td>
+                        </tr>
+                        <tr>
+                            <td>Differenza sul guadagno lordo</td>
+                            <td colspan="2">
+                                10,29 euro in piu' per il classico: sono 1,03 punti percentuali di rendimento totale
+                                sul nominale, oppure il 5,15% in piu' se rapportati al guadagno lordo del BTP Italia
+                                Si di 200,00 euro
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -353,7 +366,10 @@
             <p>
                 In questo scenario regolare il BTP Italia classico ha un VP leggermente piu' alto perche' la cedola
                 reale viene calcolata su un capitale via via rivalutato. Il confronto e' al netto dei premi finali,
-                che vanno valutati separatamente emissione per emissione.
+                che vanno valutati separatamente emissione per emissione. La differenza puo' essere letta in due
+                modi: sul nominale e' pari a <strong>1,03 punti percentuali</strong> di rendimento totale; rispetto
+                al solo guadagno lordo del BTP Italia Si, cioe' 200,00 euro, equivale invece a circa
+                <strong>5,15%</strong>.
             </p>
 
             <h3 class="mt-4">Simulatore dinamico dei flussi</h3>
@@ -454,11 +470,41 @@
                     </div>
                 </div>
 
+                <div class="row text-center">
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3 bg-white border rounded">
+                            <div class="small text-muted">Rendimento totale classico</div>
+                            <strong id="btpSimClassicReturn">-</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3 bg-white border rounded">
+                            <div class="small text-muted">Rendimento totale Si</div>
+                            <strong id="btpSimSiReturn">-</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3 bg-white border rounded">
+                            <div class="small text-muted">Differenza rendimento</div>
+                            <strong id="btpSimReturnDiff">-</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3 bg-white border rounded">
+                            <div class="small text-muted">Diff. sul guadagno Si</div>
+                            <strong id="btpSimGainRelativeDiff">-</strong>
+                        </div>
+                    </div>
+                </div>
+
                 <p class="small text-muted">
                     <strong>Differenza finale</strong> somma i flussi nominali senza attualizzarli.
                     <strong>Differenza VP</strong> indica invece la differenza in valore presente: i flussi futuri
                     vengono scontati al tasso di attualizzazione impostato, quindi un euro incassato piu' avanti
                     pesa meno di un euro incassato prima.
+                    <strong>Differenza rendimento</strong> e' espressa in punti percentuali sul nominale; e' diversa
+                    dalla <strong>diff. sul guadagno Si</strong>, che rapporta la differenza finale al solo guadagno
+                    lordo del BTP Italia Si.
                 </p>
 
                 <div class="chart-wrapper" style="height: 420px;">

@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded', function () {
         siTotal: document.getElementById('btpSimSiTotal'),
         totalDiff: document.getElementById('btpSimTotalDiff'),
         pvDiff: document.getElementById('btpSimPvDiff'),
+        classicReturn: document.getElementById('btpSimClassicReturn'),
+        siReturn: document.getElementById('btpSimSiReturn'),
+        returnDiff: document.getElementById('btpSimReturnDiff'),
+        gainRelativeDiff: document.getElementById('btpSimGainRelativeDiff'),
         tableBody: document.getElementById('btpSimTableBody'),
         chart: document.getElementById('btpSimChart'),
         indexChart: document.getElementById('btpSimIndexChart')
@@ -198,6 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
             siChartData,
             indexLabels,
             indexChartData,
+            nominal,
             classicTotal,
             siTotal,
             classicPv,
@@ -323,13 +328,24 @@ document.addEventListener('DOMContentLoaded', function () {
             const result = calculate();
             const totalDiff = result.siTotal - result.classicTotal;
             const pvDiff = result.siPv - result.classicPv;
+            const classicReturn = (result.classicTotal - result.nominal) / result.nominal;
+            const siReturn = (result.siTotal - result.nominal) / result.nominal;
+            const returnDiff = siReturn - classicReturn;
+            const siGain = result.siTotal - result.nominal;
+            const gainRelativeDiff = siGain !== 0 ? (result.classicTotal - result.siTotal) / siGain : 0;
 
             elements.classicTotal.textContent = formatEuro(result.classicTotal);
             elements.siTotal.textContent = formatEuro(result.siTotal);
             elements.totalDiff.textContent = formatEuro(totalDiff);
             elements.pvDiff.textContent = formatEuro(pvDiff);
+            elements.classicReturn.textContent = formatPct(classicReturn);
+            elements.siReturn.textContent = formatPct(siReturn);
+            elements.returnDiff.textContent = formatPct(returnDiff);
+            elements.gainRelativeDiff.textContent = formatPct(gainRelativeDiff);
             elements.totalDiff.className = totalDiff >= 0 ? 'text-success' : 'text-danger';
             elements.pvDiff.className = pvDiff >= 0 ? 'text-success' : 'text-danger';
+            elements.returnDiff.className = returnDiff >= 0 ? 'text-success' : 'text-danger';
+            elements.gainRelativeDiff.className = gainRelativeDiff >= 0 ? 'text-success' : 'text-danger';
 
             renderTable(result.rows);
             renderChart(result);
