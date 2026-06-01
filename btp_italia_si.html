@@ -12,6 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/btp_italia_si_simulator.js" defer></script>
 </head>
 
 <body class="bg-light">
@@ -36,6 +38,13 @@
                 <strong>Idea chiave:</strong> a ogni semestre la cedola e' data da una componente fissa piu'
                 una componente legata all'inflazione del semestre. Entrambe sono applicate al capitale nominale
                 sottoscritto. Il capitale non viene rivalutato: a scadenza viene rimborsato il nominale.
+            </div>
+
+            <div class="alert alert-warning">
+                <strong>Differenza cruciale:</strong> nel BTP Italia classico l'inflazione rivaluta il capitale
+                e la cedola reale viene calcolata su quel capitale rivalutato. Nel BTP Italia Si, invece, la
+                cedola fissa resta calcolata sul nominale e l'inflazione del semestre viene aggiunta come voce
+                separata, sempre sul nominale.
             </div>
 
             <h3 class="mt-4">Formula della cedola semestrale</h3>
@@ -66,6 +75,30 @@
             <p>
                 Quindi, se l'indice FOI scende nel semestre, la componente inflazione non diventa negativa:
                 vale zero. L'investitore incassa comunque la componente fissa della cedola.
+            </p>
+
+            <h4 class="mt-3">Formula a confronto</h4>
+            <p>
+                La differenza non e' solo formale. Nel BTP Italia classico la cedola reale beneficia della
+                rivalutazione del capitale:
+            </p>
+            <p class="text-center">
+                \( \text{BTP Italia classico: cedola} =
+                \text{tasso reale semestrale} \times \text{capitale rivalutato} \)
+            </p>
+            <p>
+                Nel BTP Italia Si, invece, la parte fissa e la parte inflazione sono entrambe calcolate sul
+                capitale nominale:
+            </p>
+            <p class="text-center">
+                \( \text{BTP Italia Si: cedola} =
+                \text{tasso fisso semestrale} \times \text{capitale nominale}
+                + \text{inflazione semestre} \times \text{capitale nominale} \)
+            </p>
+            <p>
+                Per questo, a parita' di tasso e inflazione positiva, il BTP Italia classico paga anche un piccolo
+                extra sulla cedola: il tasso reale si applica a un capitale gia' aumentato dall'inflazione. Il BTP
+                Italia Si paga invece il tasso fisso sul nominale non rivalutato.
             </p>
 
             <h3 class="mt-4">Coefficiente di inflazione</h3>
@@ -162,13 +195,13 @@
                     <tbody>
                         <tr>
                             <td>Struttura della cedola</td>
-                            <td>Cedola reale calcolata sul capitale rivalutato.</td>
+                            <td>Cedola reale calcolata sul capitale rivalutato: anche la cedola cresce con l'inflazione accumulata.</td>
                             <td>Componente fissa piu' componente inflazione, entrambe sul nominale.</td>
                         </tr>
                         <tr>
                             <td>Rivalutazione del capitale</td>
-                            <td>La rivalutazione del capitale viene pagata semestralmente insieme alla cedola.</td>
-                            <td>Non c'e' pagamento separato di capitale rivalutato: l'inflazione entra nella cedola.</td>
+                            <td>La rivalutazione del capitale viene pagata semestralmente insieme alla cedola e aumenta la base su cui si calcola la cedola reale.</td>
+                            <td>Non c'e' pagamento separato di capitale rivalutato: l'inflazione del semestre entra nella cedola, ma il capitale resta nominale.</td>
                         </tr>
                         <tr>
                             <td>Rimborso a scadenza</td>
@@ -191,10 +224,11 @@
 
             <h3 class="mt-4">Quando i due metodi si comportano diversamente</h3>
             <p>
-                Se l'indice FOI cresce in modo regolare, i due strumenti hanno un profilo economico simile nella
-                parte inflattiva: entrambi riconoscono la crescita dei prezzi del semestre, anche se il BTP Italia
-                classico la separa tra cedola reale e rivalutazione del capitale, mentre il BTP Italia Si la somma
-                direttamente alla cedola.
+                Se l'indice FOI cresce in modo regolare, entrambi riconoscono la crescita dei prezzi del semestre,
+                ma non nello stesso modo. Il BTP Italia classico paga la rivalutazione del capitale e calcola la
+                cedola reale sul capitale rivalutato. Il BTP Italia Si somma invece tasso fisso e inflazione del
+                semestre in una cedola calcolata sul nominale. La differenza e' piccola quando inflazione e tasso
+                sono bassi, ma esiste: nel classico anche la cedola viene rivalutata.
             </p>
             <p>
                 La differenza diventa piu' visibile quando l'inflazione non e' lineare, soprattutto dopo una fase
@@ -268,6 +302,200 @@
                 subito dopo la deflazione. Il BTP Italia classico, invece, puo' attendere che l'indice torni sopra
                 la base protetta prima di riconoscere nuova rivalutazione del capitale.
             </p>
+
+            <h4 class="mt-3">Scenario ipotetico a 5 anni con valore presente</h4>
+            <p>
+                Ipotizziamo 1.000 euro nominali, durata 5 anni, 10 cedole semestrali, tasso reale/fisso annuo
+                del <strong>2,00%</strong>, inflazione costante dell'<strong>1,00%</strong> per semestre e tasso
+                di attualizzazione del <strong>2,50%</strong> annuo, cioe' <strong>1,25%</strong> per semestre.
+                Per isolare la differenza tra i due meccanismi, escludiamo i premi finali: anche alcune emissioni
+                del BTP Italia classico prevedevano un premio fedelta', quindi includere solo quello del BTP Italia
+                Si renderebbe il confronto non omogeneo.
+            </p>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Voce</th>
+                            <th>BTP Italia classico</th>
+                            <th>BTP Italia Si</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Formula cedola</td>
+                            <td>1,00% semestrale x capitale rivalutato</td>
+                            <td>1,00% semestrale x nominale + 1,00% inflazione semestre x nominale</td>
+                        </tr>
+                        <tr>
+                            <td>Prima cedola lorda</td>
+                            <td>10,10 euro di cedola + 10,00 euro di rivalutazione capitale = 20,10 euro</td>
+                            <td>10,00 euro di quota fissa + 10,00 euro di quota inflazione = 20,00 euro</td>
+                        </tr>
+                        <tr>
+                            <td>Ultimo flusso lordo prima del rimborso</td>
+                            <td>21,98 euro, perche' la cedola e' calcolata sul capitale rivalutato</td>
+                            <td>20,00 euro, perche' fisso e inflazione restano applicati al nominale</td>
+                        </tr>
+                        <tr>
+                            <td>Somma flussi lordi, incluso rimborso</td>
+                            <td>1.210,29 euro</td>
+                            <td>1.200,00 euro</td>
+                        </tr>
+                        <tr>
+                            <td>Valore presente dei flussi</td>
+                            <td>1.079,51 euro</td>
+                            <td>1.070,09 euro</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                In questo scenario regolare il BTP Italia classico ha un VP leggermente piu' alto perche' la cedola
+                reale viene calcolata su un capitale via via rivalutato. Il confronto e' al netto dei premi finali,
+                che vanno valutati separatamente emissione per emissione.
+            </p>
+
+            <h3 class="mt-4">Simulatore dinamico dei flussi</h3>
+            <p>
+                Il simulatore confronta i flussi lordi dei due metodi. Puoi usare un'inflazione semestrale costante
+                oppure inserire direttamente una serie dell'indice prezzi, utile per simulare oscillazioni, deflazione
+                e recuperi parziali.
+            </p>
+
+            <div id="btpSiSimulator" class="border rounded p-3 bg-light">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="btpSimNominal">Nominale</label>
+                        <input type="number" class="form-control" id="btpSimNominal" value="1000" min="1" step="100">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="btpSimYears">Durata anni</label>
+                        <input type="number" class="form-control" id="btpSimYears" value="5" min="1" max="20" step="1">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="btpSimClassicRate">Cedola reale BTP Italia annua (%)</label>
+                        <input type="number" class="form-control" id="btpSimClassicRate" value="2.00" step="0.05">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="btpSimSiRate">Cedola fissa BTP Italia Si annua (%)</label>
+                        <input type="number" class="form-control" id="btpSimSiRate" value="2.00" step="0.05">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="btpSimMode">Scenario prezzi</label>
+                        <select class="form-control" id="btpSimMode">
+                            <option value="constant">Inflazione semestrale costante</option>
+                            <option value="index">Indice prezzi manuale</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="btpSimInflation">Inflazione semestrale costante (%)</label>
+                        <input type="number" class="form-control" id="btpSimInflation" value="1.00" step="0.10">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="btpSimDiscount">Tasso attualizzazione annuo (%)</label>
+                        <input type="number" class="form-control" id="btpSimDiscount" value="2.50" step="0.10">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="btpSimClassicPremium">Premio finale BTP Italia classico (%)</label>
+                        <input type="number" class="form-control" id="btpSimClassicPremium" value="0.00" step="0.05">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="btpSimSiPremium">Premio finale BTP Italia Si (%)</label>
+                        <input type="number" class="form-control" id="btpSimSiPremium" value="0.00" step="0.05">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="btpSimIndexSeries">Indice prezzi per semestre</label>
+                    <textarea class="form-control" id="btpSimIndexSeries" rows="3">100, 105, 106, 101, 104, 110, 109, 112, 111, 116, 118</textarea>
+                    <small class="form-text text-muted">
+                        Inserisci il valore iniziale e poi un valore per ogni semestre. Per 5 anni servono 11 valori.
+                        Sono accettati valori separati da virgola, spazio o nuova riga.
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <button type="button" class="btn btn-primary" id="btpSimRun">Aggiorna simulazione</button>
+                    <button type="button" class="btn btn-outline-secondary" id="btpSimConstant">Genera indice costante</button>
+                    <button type="button" class="btn btn-outline-secondary" id="btpSimOscillating">Esempio indice oscillante</button>
+                </div>
+
+                <div class="row text-center" id="btpSimSummary">
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3 bg-white border rounded">
+                            <div class="small text-muted">Flussi lordi classico</div>
+                            <strong id="btpSimClassicTotal">-</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3 bg-white border rounded">
+                            <div class="small text-muted">Flussi lordi Si</div>
+                            <strong id="btpSimSiTotal">-</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3 bg-white border rounded">
+                            <div class="small text-muted">Differenza finale</div>
+                            <strong id="btpSimTotalDiff">-</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3 bg-white border rounded">
+                            <div class="small text-muted">Differenza VP</div>
+                            <strong id="btpSimPvDiff">-</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="small text-muted">
+                    <strong>Differenza finale</strong> somma i flussi nominali senza attualizzarli.
+                    <strong>Differenza VP</strong> indica invece la differenza in valore presente: i flussi futuri
+                    vengono scontati al tasso di attualizzazione impostato, quindi un euro incassato piu' avanti
+                    pesa meno di un euro incassato prima.
+                </p>
+
+                <div class="chart-wrapper" style="height: 420px;">
+                    <canvas id="btpSimChart"></canvas>
+                </div>
+
+                <div class="chart-wrapper" style="height: 320px;">
+                    <canvas id="btpSimIndexChart"></canvas>
+                </div>
+
+                <div class="table-responsive mt-3">
+                    <table class="table table-sm table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Sem.</th>
+                                <th>Indice inizio</th>
+                                <th>Indice fine</th>
+                                <th>Infl. semestre</th>
+                                <th>Cedola classico</th>
+                                <th>Riv. capitale classico</th>
+                                <th>Flusso classico</th>
+                                <th>Cedola Si</th>
+                                <th>Flusso Si</th>
+                                <th>Diff. semestre</th>
+                            </tr>
+                        </thead>
+                        <tbody id="btpSimTableBody"></tbody>
+                    </table>
+                </div>
+
+                <p class="small text-muted mb-0">
+                    Nota: il calcolo e' lordo e semplificato. Per il BTP Italia classico la rivalutazione del
+                    capitale viene pagata solo quando l'indice supera la base protetta precedente; la cedola reale
+                    e' calcolata sul capitale rivalutato, con base minima pari al nominale. Per il BTP Italia Si la
+                    componente inflazione negativa viene posta a zero.
+                </p>
+            </div>
 
             <h4 class="mt-3">Situazioni pratiche</h4>
             <ul>
