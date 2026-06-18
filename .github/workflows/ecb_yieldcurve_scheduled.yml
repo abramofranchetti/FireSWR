@@ -35,4 +35,11 @@ jobs:
         run: |
           git add xml/data.xml
           git commit -m "Aggiornamento automatico XML BCE curva rendimenti" --allow-empty
-          git push https://github.com/${{ github.repository }}.git HEAD:main
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main
+            if git push https://github.com/${{ github.repository }}.git HEAD:main; then
+              exit 0
+            fi
+            sleep $((i * 10))
+          done
+          exit 1

@@ -46,4 +46,11 @@ jobs:
         run: |
           git add json/msci_acwi.json
           git commit -m "Aggiornamento automatico MSCI ACWI" || echo "No changes"
-          git push https://github.com/${{ github.repository }}.git HEAD:main
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main
+            if git push https://github.com/${{ github.repository }}.git HEAD:main; then
+              exit 0
+            fi
+            sleep $((i * 10))
+          done
+          exit 1

@@ -49,4 +49,11 @@ jobs:
         run: |
           git add ${{ env.FILE_NAME }}
           git commit -m "Aggiornamento automatico del JSON per ${{ env.STOCK_SYMBOL }}" --allow-empty
-          git push https://github.com/${{ github.repository }}.git HEAD:main
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main
+            if git push https://github.com/${{ github.repository }}.git HEAD:main; then
+              exit 0
+            fi
+            sleep $((i * 10))
+          done
+          exit 1
