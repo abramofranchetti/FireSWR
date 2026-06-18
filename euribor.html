@@ -883,13 +883,14 @@
                 });
 
                 if (variablePaymentChart) variablePaymentChart.destroy();
+                const roundedAveragePayments = plan.averagePayments.map(payment => Math.round(payment));
                 variablePaymentChart = new Chart(document.getElementById('variablePaymentChart'), {
                     type: 'bar',
                     data: {
                         labels: plan.yearLabels,
                         datasets: [{
                             label: 'Rata mensile media',
-                            data: plan.averagePayments,
+                            data: roundedAveragePayments,
                             backgroundColor: '#4b5563',
                             borderColor: '#374151',
                             borderWidth: 1
@@ -909,7 +910,7 @@
                                 beginAtZero: false,
                                 ticks: {
                                     maxTicksLimit: window.innerWidth < 600 ? 6 : 8,
-                                    callback: value => `€${Number(value).toLocaleString('it-IT')}`
+                                    callback: value => `€${Math.round(Number(value)).toLocaleString('it-IT')}`
                                 }
                             }
                         },
@@ -917,7 +918,7 @@
                             legend: { display: false },
                             tooltip: {
                                 callbacks: {
-                                    label: ctx => `Rata media: ${formatEuro(ctx.parsed.y)}`
+                                    label: ctx => `Rata media: €${Math.round(ctx.parsed.y).toLocaleString('it-IT')}`
                                 }
                             }
                         }
