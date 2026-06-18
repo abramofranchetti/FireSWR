@@ -179,6 +179,54 @@
             background: #0d47a1;
         }
 
+        .variable-rate-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: end;
+        }
+
+        .variable-rate-actions button {
+            min-height: 41px;
+        }
+
+        .variable-rate-actions .secondary-btn {
+            background: #6c757d;
+        }
+
+        .variable-rate-actions .secondary-btn:hover {
+            background: #343a40;
+        }
+
+        .yearly-rate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+            gap: 8px;
+            margin: 10px 0 16px 0;
+            max-height: 260px;
+            overflow: auto;
+            padding: 10px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        .yearly-rate-grid label {
+            color: #374151;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .yearly-rate-grid input {
+            width: 100%;
+            margin-top: 4px;
+            padding: 7px 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 0.92rem;
+        }
+
         .amortization-summary {
             display: grid;
             grid-template-columns: repeat(4, minmax(130px, 1fr));
@@ -270,6 +318,11 @@
                 grid-template-columns: 1fr;
             }
 
+            .variable-rate-actions {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
             .amortization-canvas-wrap {
                 height: 300px;
             }
@@ -337,6 +390,48 @@
                 </div>
             </div>
         </section>
+        <section class="amortization-study" id="variableRateStudy">
+            <h2>Mutuo variabile: tassi diversi per ogni anno</h2>
+            <p>
+                Qui puoi simulare un mutuo variabile con ammortamento alla francese. A ogni cambio anno la rata viene
+                ricalcolata usando il debito residuo, i mesi mancanti e il nuovo tasso annuo inserito. In questo modo
+                puoi vedere come una sequenza di tassi cambia sia il debito residuo sia la rata nel tempo.
+            </p>
+
+            <div class="amortization-controls">
+                <label>Capitale (€)
+                    <input id="variablePrincipal" type="number" min="1000" step="1000" value="100000">
+                </label>
+                <label>Durata (anni)
+                    <input id="variableYears" type="number" min="1" max="40" step="1" value="30">
+                </label>
+                <label>Tasso iniziale (%)
+                    <input id="variableBaseRate" type="number" step="0.05" value="3">
+                </label>
+                <div class="variable-rate-actions">
+                    <button id="variableBuildRatesBtn" type="button">Crea anni</button>
+                    <button id="variableApplyRateBtn" class="secondary-btn" type="button">Applica a tutti</button>
+                </div>
+            </div>
+
+            <div class="yearly-rate-grid" id="variableYearlyRates"></div>
+            <div class="amortization-summary" id="variableSummary"></div>
+
+            <div class="amortization-charts">
+                <div class="amortization-chart-box">
+                    <h3>Debito residuo con tassi variabili</h3>
+                    <div class="amortization-canvas-wrap">
+                        <canvas id="variableDebtChart"></canvas>
+                    </div>
+                </div>
+                <div class="amortization-chart-box">
+                    <h3>Rata mensile media per anno</h3>
+                    <div class="amortization-canvas-wrap">
+                        <canvas id="variablePaymentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
         <script>
             const urls = {
                 euribor3m: 'https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA?format=jsondata&detail=dataonly',
@@ -351,6 +446,8 @@
             let chart;
             let amortizationDebtChart;
             let amortizationInterestChart;
+            let variableDebtChart;
+            let variablePaymentChart;
             let latestEuribor3mRate = null;
             // Imposta la dimensione del canvas in base al device pixel ratio per evitare sgranature
             function resizeCanvas() {
@@ -615,7 +712,217 @@
                 if (rateInput && !rateInput.dataset.userEdited) {
                     rateInput.value = rate.toFixed(3);
                 }
+                const variableRateInput = document.getElementById('variableBaseRate');
+                if (variableRateInput && !variableRateInput.dataset.userEdited) {
+                    variableRateInput.value = rate.toFixed(3);
+                    fillVariableRates(rate);
+                }
                 renderAmortizationStudy();
+                renderVariableRateStudy();
+            }
+
+            function getVariableRateInputs() {
+                return Array.from(document.querySelectorAll('.variable-year-rate'));
+            }
+
+            function fillVariableRates(rate, force = false) {
+                getVariableRateInputs().forEach(input => {
+                    if (force || !input.dataset.userEdited) {
+                        input.value = Number(rate).toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+                        if (force) delete input.dataset.userEdited;
+                    }
+                });
+            }
+
+            function buildVariableRateInputs(forceRebuild = false) {
+                const yearsInput = document.getElementById('variableYears');
+                const grid = document.getElementById('variableYearlyRates');
+                const baseRateInput = document.getElementById('variableBaseRate');
+                if (!yearsInput || !grid || !baseRateInput) return;
+
+                const years = Math.min(40, Math.max(1, Math.round(Number(yearsInput.value) || 30)));
+                const baseRate = Number(baseRateInput.value);
+                const fallbackRate = Number.isFinite(baseRate) ? baseRate : (latestEuribor3mRate ?? 3);
+                const existingRates = getVariableRateInputs().map(input => input.value);
+
+                if (!forceRebuild && getVariableRateInputs().length === years) return;
+
+                yearsInput.value = years;
+                grid.innerHTML = Array.from({ length: years }, (_, index) => {
+                    const previousValue = existingRates[index];
+                    const value = previousValue !== undefined ? previousValue : fallbackRate.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+                    return `
+                        <label>Anno ${index + 1}
+                            <input class="variable-year-rate" type="number" step="0.05" value="${value}" data-year="${index + 1}">
+                        </label>
+                    `;
+                }).join('');
+
+                getVariableRateInputs().forEach(input => {
+                    input.addEventListener('change', (event) => {
+                        event.target.dataset.userEdited = 'true';
+                        renderVariableRateStudy();
+                    });
+                });
+            }
+
+            function getYearlyRates(years) {
+                buildVariableRateInputs();
+                const baseRate = Number(document.getElementById('variableBaseRate').value);
+                const fallbackRate = Number.isFinite(baseRate) ? baseRate : (latestEuribor3mRate ?? 3);
+                const inputs = getVariableRateInputs();
+
+                return Array.from({ length: years }, (_, index) => {
+                    const rate = Number(inputs[index] ? inputs[index].value : fallbackRate);
+                    return Number.isFinite(rate) ? rate : fallbackRate;
+                });
+            }
+
+            function buildVariableAmortization(principal, yearlyRates) {
+                const totalYears = yearlyRates.length;
+                const totalMonths = totalYears * 12;
+                let balance = principal;
+                let totalInterest = 0;
+                const labels = ['0'];
+                const residualPercent = [100];
+                const averagePayments = [];
+                const yearLabels = [];
+
+                for (let year = 0; year < totalYears; year++) {
+                    const remainingMonthsAtYearStart = totalMonths - year * 12;
+                    const monthsThisYear = Math.min(12, remainingMonthsAtYearStart);
+                    const monthlyRate = yearlyRates[year] / 100 / 12;
+                    const payment = getMonthlyPayment(balance, yearlyRates[year], remainingMonthsAtYearStart / 12);
+                    let yearPaymentTotal = 0;
+
+                    for (let month = 0; month < monthsThisYear; month++) {
+                        const interest = balance * monthlyRate;
+                        const principalPaid = payment - interest;
+                        balance = Math.max(0, balance - principalPaid);
+                        totalInterest += interest;
+                        yearPaymentTotal += payment;
+                    }
+
+                    labels.push(String(year + 1));
+                    residualPercent.push((balance / principal) * 100);
+                    yearLabels.push(String(year + 1));
+                    averagePayments.push(yearPaymentTotal / monthsThisYear);
+                }
+
+                return { labels, residualPercent, yearLabels, averagePayments, totalInterest };
+            }
+
+            function renderVariableRateStudy() {
+                const principalInput = document.getElementById('variablePrincipal');
+                const yearsInput = document.getElementById('variableYears');
+                const summary = document.getElementById('variableSummary');
+                if (!principalInput || !yearsInput || !summary) return;
+
+                const principal = Math.max(1000, Number(principalInput.value) || 100000);
+                const years = Math.min(40, Math.max(1, Math.round(Number(yearsInput.value) || 30)));
+                principalInput.value = principal;
+                yearsInput.value = years;
+                buildVariableRateInputs();
+
+                const yearlyRates = getYearlyRates(years);
+                const plan = buildVariableAmortization(principal, yearlyRates);
+                const totalPaid = principal + plan.totalInterest;
+                const maxPayment = Math.max(...plan.averagePayments);
+                const minPayment = Math.min(...plan.averagePayments);
+                const halfwayIndex = Math.min(Math.ceil(years / 2), plan.residualPercent.length - 1);
+                const halfwayDebt = plan.residualPercent[halfwayIndex] || 0;
+
+                summary.innerHTML = `
+                    <div class="amortization-metric"><span>Totale pagato</span><strong>${formatEuro(totalPaid)}</strong></div>
+                    <div class="amortization-metric"><span>Interessi totali</span><strong>${formatEuro(plan.totalInterest)}</strong></div>
+                    <div class="amortization-metric"><span>Rata min / max</span><strong>${formatEuro(minPayment)} / ${formatEuro(maxPayment)}</strong></div>
+                    <div class="amortization-metric"><span>Debito residuo a meta' durata</span><strong>${halfwayDebt.toFixed(1)}%</strong></div>
+                `;
+
+                if (variableDebtChart) variableDebtChart.destroy();
+                variableDebtChart = new Chart(document.getElementById('variableDebtChart'), {
+                    type: 'line',
+                    data: {
+                        labels: plan.labels,
+                        datasets: [{
+                            label: 'Debito residuo',
+                            data: plan.residualPercent,
+                            borderColor: '#1976d2',
+                            backgroundColor: '#1976d2',
+                            pointRadius: 0,
+                            borderWidth: 3,
+                            fill: false,
+                            tension: 0.08
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        devicePixelRatio: Math.max(window.devicePixelRatio || 1, 2),
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Tempo (anni)' },
+                                ticks: { maxTicksLimit: window.innerWidth < 600 ? 7 : 12 }
+                            },
+                            y: {
+                                title: { display: true, text: 'Debito rimanente (%)' },
+                                min: 0,
+                                max: 100,
+                                ticks: { maxTicksLimit: window.innerWidth < 600 ? 6 : 8 }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => `Debito residuo: ${ctx.parsed.y.toFixed(1)}%`
+                                }
+                            }
+                        }
+                    }
+                });
+
+                if (variablePaymentChart) variablePaymentChart.destroy();
+                variablePaymentChart = new Chart(document.getElementById('variablePaymentChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: plan.yearLabels,
+                        datasets: [{
+                            label: 'Rata mensile media',
+                            data: plan.averagePayments,
+                            backgroundColor: '#4b5563',
+                            borderColor: '#374151',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        devicePixelRatio: Math.max(window.devicePixelRatio || 1, 2),
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Anno' },
+                                ticks: { maxTicksLimit: window.innerWidth < 600 ? 7 : 12 }
+                            },
+                            y: {
+                                title: { display: true, text: 'Rata mensile media (€)' },
+                                beginAtZero: false,
+                                ticks: {
+                                    maxTicksLimit: window.innerWidth < 600 ? 6 : 8,
+                                    callback: value => `€${Number(value).toLocaleString('it-IT')}`
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => `Rata media: ${formatEuro(ctx.parsed.y)}`
+                                }
+                            }
+                        }
+                    }
+                });
             }
 
             async function loadChart() {
@@ -865,12 +1172,32 @@
                 event.target.dataset.userEdited = 'true';
                 renderAmortizationStudy();
             });
+            document.getElementById('variableBuildRatesBtn').addEventListener('click', () => {
+                buildVariableRateInputs(true);
+                renderVariableRateStudy();
+            });
+            document.getElementById('variableApplyRateBtn').addEventListener('click', () => {
+                const baseRate = Number(document.getElementById('variableBaseRate').value);
+                fillVariableRates(Number.isFinite(baseRate) ? baseRate : (latestEuribor3mRate ?? 3), true);
+                renderVariableRateStudy();
+            });
+            document.getElementById('variablePrincipal').addEventListener('change', renderVariableRateStudy);
+            document.getElementById('variableYears').addEventListener('change', () => {
+                buildVariableRateInputs(true);
+                renderVariableRateStudy();
+            });
+            document.getElementById('variableBaseRate').addEventListener('change', (event) => {
+                event.target.dataset.userEdited = 'true';
+                renderVariableRateStudy();
+            });
 
             // Aggiorna il grafico automaticamente al cambio data
             document.getElementById('startDate').addEventListener('change', loadChart);
             document.getElementById('endDate').addEventListener('change', loadChart);
 
             renderAmortizationStudy();
+            buildVariableRateInputs(true);
+            renderVariableRateStudy();
             loadChart();
         </script>
     </div>
