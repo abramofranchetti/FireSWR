@@ -33,6 +33,12 @@ $(document).ready(function () {
         return sum / data.length;
     }
 
+    function calculateMedian(data) {
+        const sorted = [...data].sort((a, b) => a - b);
+        const mid = Math.floor(sorted.length / 2);
+        return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    }
+
     function calculatePercentageChange(start, end) {
         return ((end - start) / start) * 100;
     }
@@ -56,6 +62,7 @@ $(document).ready(function () {
         });
 
         const averageRate = calculateAverage(exchangeRates);
+        const medianRate = calculateMedian(exchangeRates);
 
         const ctx = document.getElementById('chartCanvas').getContext('2d');
         if (chartInstance) {
@@ -71,14 +78,17 @@ $(document).ready(function () {
                         data: exchangeRates,
                         borderColor: 'rgba(75, 192, 192, 1)',
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 1,
                         fill: false,
-                        tension: 0.1,
+                        tension: 0,
+                        stepped: true,
                         pointRadius: 0
                     },
                 ]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 interaction: {
                     mode: 'index',
                     intersect: false,
@@ -99,7 +109,10 @@ $(document).ready(function () {
                                 label: {
                                     content: 'Parità di cambio',
                                     enabled: true,
-                                    position: 'start'
+                                    position: 'start',
+                                    font: {
+                                        size: 10
+                                    }
                                 }
                             },
                             line1: {
@@ -111,7 +124,25 @@ $(document).ready(function () {
                                 label: {
                                     content: 'Media ' + averageRate.toFixed(4),
                                     enabled: true,
-                                    position: 'start'
+                                    position: 'start',
+                                    font: {
+                                        size: 10
+                                    }
+                                }
+                            },
+                            line2: {
+                                type: 'line',
+                                yMin: medianRate,
+                                yMax: medianRate,
+                                borderColor: 'rgb(0, 255, 0)',
+                                borderWidth: 1,                                
+                                label: {
+                                    content: 'Mediana ' + medianRate.toFixed(4),
+                                    enabled: true,
+                                    position: 'center',
+                                    font: {
+                                        size: 10
+                                    }
                                 }
                             }
                         }
