@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il costo nascosto dei dividendi a distribuzione</title>
+    <meta name="description"
+        content="Simulatore dell'effetto della tassazione italiana sui dividendi distribuiti e del TER equivalente sulla crescita composta.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <header class="page-header">
+        <nav class="topbar" aria-label="Navigazione principale">
+            <a href="/FireSWR" class="home-button">Home</a>
+            <a href="../html/disclaimer.html" class="disclaimer-link">Disclaimer</a>
+        </nav>
+        <div class="hero">
+            <p class="eyebrow">Dividendi, tasse e capitalizzazione composta</p>
+            <h1>Il costo nascosto dei dividendi a distribuzione</h1>
+            <p class="lead">
+                Una simulazione numerica per stimare quanto la tassazione annua sui dividendi possa comportarsi, in
+                termini economici, come un costo ricorrente sul patrimonio investito.
+            </p>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <section class="intro-card card">
+            <div>
+                <h2>Esperimento numerico</h2>
+                <p>
+                    Il confronto parte dallo stesso rendimento totale annuo. Nello scenario ad accumulazione tutto il
+                    rendimento resta investito. Nello scenario a distribuzione una quota del rendimento arriva come
+                    dividendo lordo, viene tassata ogni anno e solo la parte netta viene reinvestita.
+                </p>
+            </div>
+            <div class="formula-box">
+                <span>Rendimento totale</span>
+                <strong>Dividend Yield + Crescita prezzo</strong>
+            </div>
+        </section>
+
+        <section class="workspace">
+            <aside class="controls card" aria-label="Parametri della simulazione">
+                <div class="section-heading">
+                    <h2>Parametri</h2>
+                    <p>Slider e input numerici sono sincronizzati.</p>
+                </div>
+
+                <div class="preset-actions">
+                    <button type="button" data-preset="msci">Usa valori MSCI World</button>
+                    <button type="button" data-preset="ftse">Usa valori FTSE All World</button>
+                </div>
+
+                <div class="control-group" data-field="initialCapital">
+                    <label for="initialCapitalNumber">Capitale iniziale</label>
+                    <div class="dual-input">
+                        <input id="initialCapitalRange" type="range" min="1000" max="1000000" step="1000"
+                            value="100000">
+                        <input id="initialCapitalNumber" type="number" min="0" max="100000000" step="1000"
+                            value="100000" inputmode="decimal">
+                    </div>
+                </div>
+
+                <div class="control-group" data-field="years">
+                    <label for="yearsNumber">Anni</label>
+                    <div class="dual-input">
+                        <input id="yearsRange" type="range" min="1" max="60" step="1" value="30">
+                        <input id="yearsNumber" type="number" min="1" max="100" step="1" value="30"
+                            inputmode="numeric">
+                    </div>
+                </div>
+
+                <div class="control-group" data-field="totalReturn">
+                    <label for="totalReturnNumber">Rendimento totale annuo</label>
+                    <div class="dual-input">
+                        <input id="totalReturnRange" type="range" min="-5" max="20" step="0.1" value="8">
+                        <input id="totalReturnNumber" type="number" min="-50" max="100" step="0.1" value="8"
+                            inputmode="decimal">
+                    </div>
+                </div>
+
+                <div class="control-group" data-field="dividendYield">
+                    <label for="dividendYieldNumber">Dividend Yield lordo</label>
+                    <div class="dual-input">
+                        <input id="dividendYieldRange" type="range" min="0" max="12" step="0.1" value="3">
+                        <input id="dividendYieldNumber" type="number" min="0" max="50" step="0.1" value="3"
+                            inputmode="decimal">
+                    </div>
+                </div>
+
+                <div class="control-group" data-field="taxRate">
+                    <label for="taxRateNumber">Aliquota fiscale sui dividendi</label>
+                    <div class="dual-input">
+                        <input id="taxRateRange" type="range" min="0" max="60" step="0.1" value="26">
+                        <input id="taxRateNumber" type="number" min="0" max="100" step="0.1" value="26"
+                            inputmode="decimal">
+                    </div>
+                </div>
+
+                <p id="warning" class="warning" role="status" aria-live="polite"></p>
+            </aside>
+
+            <section class="results-area">
+                <div class="metrics-grid" aria-label="Risultati principali">
+                    <article class="metric card">
+                        <span>Valore finale ETF ad accumulazione</span>
+                        <strong id="accumulationFinal">-</strong>
+                    </article>
+                    <article class="metric card">
+                        <span>Valore finale ETF a distribuzione</span>
+                        <strong id="distributionFinal">-</strong>
+                    </article>
+                    <article class="metric card emphasis">
+                        <span>TER equivalente</span>
+                        <strong id="equivalentTer">-</strong>
+                    </article>
+                    <article class="metric card">
+                        <span>Differenza assoluta</span>
+                        <strong id="absoluteDifference">-</strong>
+                    </article>
+                    <article class="metric card">
+                        <span>Differenza percentuale</span>
+                        <strong id="percentageDifference">-</strong>
+                    </article>
+                    <article class="metric card">
+                        <span>Totale tasse pagate</span>
+                        <strong id="totalTaxes">-</strong>
+                    </article>
+                    <article class="metric card">
+                        <span>Dividendi lordi complessivi</span>
+                        <strong id="totalGrossDividends">-</strong>
+                    </article>
+                    <article class="metric card">
+                        <span>Dividendi netti reinvestiti</span>
+                        <strong id="totalNetDividends">-</strong>
+                    </article>
+                </div>
+
+                <article class="ter-card card">
+                    <h2>TER equivalente</h2>
+                    <p id="terExplanation">
+                        Questo significa che la tassazione annuale dei dividendi produce un effetto sulla crescita del
+                        patrimonio equivalente ad un fondo con un TER annuo del -.
+                    </p>
+                </article>
+
+                <article class="final-tax-card card">
+                    <div class="section-heading">
+                        <h2>Dopo la tassazione finale</h2>
+                        <p>
+                            Qui si simula la vendita finale dell'investimento. Lo scenario ad accumulazione paga le
+                            imposte alla fine sulla plusvalenza maturata; nello scenario a distribuzione le imposte sui
+                            dividendi sono gia state pagate anno per anno e i dividendi netti reinvestiti aumentano il
+                            capitale fiscalmente investito.
+                        </p>
+                    </div>
+                    <div class="final-tax-grid">
+                        <div>
+                            <span>TER equivalente prima della tassazione finale</span>
+                            <strong id="equivalentTerBeforeFinalTax">-</strong>
+                        </div>
+                        <div>
+                            <span>TER equivalente residuo dopo tasse finali</span>
+                            <strong id="equivalentTerAfterFinalTax">-</strong>
+                        </div>
+                        <div>
+                            <span>Riduzione del TER equivalente</span>
+                            <strong id="terReductionAfterFinalTax">-</strong>
+                        </div>
+                        <div>
+                            <span>Valore finale ad accumulazione, dopo tasse finali</span>
+                            <strong id="accumulationAfterFinalTax">-</strong>
+                        </div>
+                        <div>
+                            <span>Valore finale a distribuzione, dopo tasse finali</span>
+                            <strong id="distributionAfterFinalTax">-</strong>
+                        </div>
+                        <div>
+                            <span>Divario residuo tra i due scenari</span>
+                            <strong id="netFinalDifference">-</strong>
+                        </div>
+                    </div>
+                    <p id="finalTaxExplanation" class="final-tax-note"></p>
+                </article>
+            </section>
+        </section>
+
+        <section class="charts-grid">
+            <article class="chart-card card">
+                <h2>Evoluzione patrimonio</h2>
+                <div class="chart-wrap">
+                    <canvas id="wealthChart"></canvas>
+                </div>
+            </article>
+            <article class="chart-card card">
+                <h2>Dividendi, tasse e reinvestimento</h2>
+                <div class="chart-wrap">
+                    <canvas id="dividendChart"></canvas>
+                </div>
+            </article>
+            <article class="chart-card card wide">
+                <h2>Perdita cumulata dovuta alla tassazione</h2>
+                <div class="chart-wrap">
+                    <canvas id="lossChart"></canvas>
+                </div>
+            </article>
+        </section>
+
+        <section class="explanation card">
+            <h2>Come leggere il risultato</h2>
+            <p>
+                La tassazione dei dividendi distribuiti anticipa il pagamento delle imposte: ogni anno una parte del
+                rendimento viene sottratta al capitale prima che possa restare investita.
+            </p>
+            <p>
+                Il capitale perso con le imposte non puo piu produrre rendimento composto. Anche una piccola perdita
+                ricorrente, ripetuta per molti anni, puo creare una differenza rilevante tra un ETF ad accumulazione e
+                un ETF a distribuzione con lo stesso rendimento totale lordo.
+            </p>
+            <p>
+                Il fenomeno e economicamente simile ad un TER, anche se non e tecnicamente un costo di gestione del
+                fondo: il risultato finale e una riduzione stabile della crescita del patrimonio.
+            </p>
+            <p class="key-message">
+                La tassazione dei dividendi distribuiti rappresenta un costo ricorrente che riduce la capitalizzazione
+                composta, proprio come farebbe un TER.
+            </p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div id="disclaimer-container"></div>
+        <p class="footer-note">
+            Pagina dimostrativa. Calcoli eseguiti interamente lato client con JavaScript vanilla e Chart.js.
+            <a href="../html/disclaimer.html">Leggi il disclaimer completo</a>.
+        </p>
+    </footer>
+</body>
+
+</html>
