@@ -161,6 +161,36 @@
       font-size: 1.05rem;
     }
 
+    .description-section {
+      margin-top: 16px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .description-section h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .description-section p,
+    .description-section ul {
+      margin: 0;
+      color: #4b5563;
+      font-size: 0.92rem;
+    }
+
+    .description-section ul {
+      padding-left: 18px;
+      margin-top: 8px;
+    }
+
+    .description-section li + li {
+      margin-top: 6px;
+    }
+
     footer {
       margin-top: 14px;
       font-size: 0.78rem;
@@ -247,6 +277,18 @@
           </div>
         </div>
       </section>
+    </section>
+
+    <section class="description-section" aria-label="Spiegazione della pagina">
+      <h2>Cos'è questa pagina</h2>
+      <p>
+        Questa pagina mostra il confronto tra due modi di affrontare l'acquisto della casa: il finanziamento con mutuo e l'acquisto con capitale disponibile in contanti, investendo la rata mensile.
+      </p>
+      <ul>
+        <li>Il grafico mostra l'evoluzione del valore netto dei due scenari nel tempo.</li>
+        <li>Il punto di pareggio indica quando i due approcci producono lo stesso rendimento lordo.</li>
+        <li>Puoi modificare i parametri per capire come cambiano i risultati in base al tasso, alla durata e al capitale.</li>
+      </ul>
     </section>
 
     <div id="disclaimer-container"></div>
