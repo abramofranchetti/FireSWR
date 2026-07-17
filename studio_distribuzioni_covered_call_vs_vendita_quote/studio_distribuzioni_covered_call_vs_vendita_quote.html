@@ -1159,7 +1159,8 @@
                             sharpe: NaN,
                             sortino: NaN,
                             periodsPerYear: NaN,
-                            totalReturn: totalReturn
+                            totalReturn: totalReturn,
+                            annualizedReturn: NaN
                         };
 
                     const n = returns.length;
@@ -1191,6 +1192,9 @@
                         : 365;
 
                     const periodsPerYear = avgDays > 0 ? 365 / avgDays : 1;
+                    const annualizedReturn = totalReturn != null && !isNaN(totalReturn)
+                        ? Math.pow(1 + totalReturn, periodsPerYear / Math.max(returns.length, 1)) - 1
+                        : NaN;
 
                     // --- ANNUALIZZAZIONE ---
                     const meanAnn = mean * periodsPerYear;
@@ -1212,6 +1216,7 @@
                     return {
                         stdAnn,
                         totalReturn,
+                        annualizedReturn,
                         sharpe,
                         sortino,
                         periodsPerYear,
@@ -1233,9 +1238,24 @@
                 const mWinc = computeMetrics(wincReinvestedCumulative, labels, riskFreeAnnual);
                 const mWincNetto = computeMetrics(wincCloseCumulative, labels, riskFreeAnnual);
 
+                const dividendSeries = [];
+                let dividendSeriesShares = wincShares;
+                labels.forEach(d => {
+                    const x = mapWINC.get(d);
+                    const wincClose = x ? Number(x.close) : null;
+                    const distribuzione = distribuzioni.find(dist => dist.date === d);
+                    if (distribuzione && wincClose != null && wincClose > 0) {
+                        const grossDividend = distribuzione.amount * dividendSeriesShares;
+                        dividendSeriesShares += grossDividend / wincClose;
+                    }
+                    dividendSeries.push(wincClose != null ? dividendSeriesShares * wincClose : null);
+                });
+                const mDividend = computeMetrics(dividendSeries, labels, riskFreeAnnual);
+
                 document.getElementById('metrics-swda').innerText =
                     `Dev.std (ann): ${fmt(mSwda.stdAnn)}
 Rendimento totale: ${fmt(mSwda.totalReturn)}
+Rendimento annualizzato: ${fmt(mSwda.annualizedReturn)}
 Sharpe (ann): ${isNaN(mSwda.sharpe) ? 'n/a' : mSwda.sharpe.toFixed(3)}
 Sharpe (periodale): ${isNaN(mSwda.periodSharpe) ? 'n/a' : mSwda.periodSharpe.toFixed(3)}
 Sortino (ann): ${isNaN(mSwda.sortino) ? 'n/a' : mSwda.sortino.toFixed(3)}
@@ -1244,6 +1264,9 @@ Sortino (periodale): ${isNaN(mSwda.periodSortino) ? 'n/a' : mSwda.periodSortino.
                 document.getElementById('metrics-swda-sold').innerText =
                     `Dev.std (ann): ${fmt(mSwdaSold.stdAnn)}
 Rendimento totale: ${fmt(mSwdaSold.totalReturn)}
+Rendimento annualizzato: ${fmt(mSwdaSold.annualizedReturn)}
+Rendimento totale da dividendi: ${fmt(mDividend.totalReturn)}
+Rendimento annualizzato da dividendi: ${fmt(mDividend.annualizedReturn)}
 Sharpe (ann): ${isNaN(mSwdaSold.sharpe) ? 'n/a' : mSwdaSold.sharpe.toFixed(3)}
 Sharpe (periodale): ${isNaN(mSwdaSold.periodSharpe) ? 'n/a' : mSwdaSold.periodSharpe.toFixed(3)}
 Sortino (ann): ${isNaN(mSwdaSold.sortino) ? 'n/a' : mSwdaSold.sortino.toFixed(3)}
@@ -1252,6 +1275,9 @@ Sortino (periodale): ${isNaN(mSwdaSold.periodSortino) ? 'n/a' : mSwdaSold.period
                 document.getElementById('metrics-winc').innerText =
                     `Dev.std (ann): ${fmt(mWinc.stdAnn)}
 Rendimento totale: ${fmt(mWinc.totalReturn)}
+Rendimento annualizzato: ${fmt(mWinc.annualizedReturn)}
+Rendimento totale da dividendi: ${fmt(mDividend.totalReturn)}
+Rendimento annualizzato da dividendi: ${fmt(mDividend.annualizedReturn)}
 Sharpe (ann): ${isNaN(mWinc.sharpe) ? 'n/a' : mWinc.sharpe.toFixed(3)}
 Sharpe (periodale): ${isNaN(mWinc.periodSharpe) ? 'n/a' : mWinc.periodSharpe.toFixed(3)}
 Sortino (ann): ${isNaN(mWinc.sortino) ? 'n/a' : mWinc.sortino.toFixed(3)}
@@ -1260,6 +1286,9 @@ Sortino (periodale): ${isNaN(mWinc.periodSortino) ? 'n/a' : mWinc.periodSortino.
                 document.getElementById('metrics-winc-netto').innerText =
                     `Dev.std (ann): ${fmt(mWincNetto.stdAnn)}
 Rendimento totale: ${fmt(mWincNetto.totalReturn)}
+Rendimento annualizzato: ${fmt(mWincNetto.annualizedReturn)}
+Rendimento totale da dividendi: ${fmt(mDividend.totalReturn)}
+Rendimento annualizzato da dividendi: ${fmt(mDividend.annualizedReturn)}
 Sharpe (ann): ${isNaN(mWincNetto.sharpe) ? 'n/a' : mWincNetto.sharpe.toFixed(3)}
 Sharpe (periodale): ${isNaN(mWincNetto.periodSharpe) ? 'n/a' : mWincNetto.periodSharpe.toFixed(3)}
 Sortino (ann): ${isNaN(mWincNetto.sortino) ? 'n/a' : mWincNetto.sortino.toFixed(3)}
