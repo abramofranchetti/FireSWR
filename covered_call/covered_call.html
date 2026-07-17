@@ -367,6 +367,51 @@
                         scende .</li>
                 </ul>
 
+                <h3 class="subsection-title">Il problema dell'Equity Reversal (leva al contrario)</h3>
+                <p>
+                    Una covered call standard funziona come una <strong>leva dinamica inefficiente</strong>. Il motivo è che
+                    la vendita di una call modifica il profilo di rischio del portafoglio in modo non lineare: quando il
+                    mercato sale, la <strong>Gamma Exposure (GEX)</strong> spinge il <strong>Delta</strong> della call
+                    venduta verso valori più alti, riducendo l'esposizione netta del portafoglio proprio nei rally. Quando
+                    il mercato scende, invece, il Delta si riduce e la posizione si avvicina a una esposizione quasi piena
+                    al sottostante, lasciando l'investitore esposto quasi al 100% proprio sui minimi. Questo meccanismo,
+                    descritto negli studi di <strong>Israelov</strong> come <strong>Equity Reversal</strong>, è un costo
+                    di market timing involontario che rappresenta circa il <strong>25% del rischio totale</strong> della
+                    strategia senza offrire rendimento aggiuntivo [Israelov &amp; Nielsen, AQR].
+                </p>
+
+                <h3 class="subsection-title">La soluzione risk-managed: integrazione con i futures sull'S&amp;P 500</h3>
+                <p>
+                    Il modo più naturale per neutralizzare il problema dell'Equity Reversal è introdurre una gestione
+                    attiva dell'esposizione tramite <strong>futures sull'S&amp;P 500</strong>. In una strategia
+                    <strong>Risk-Managed Covered Call</strong>, il gestore misura quotidianamente l'esposizione netta del
+                    portafoglio in termini di Delta e usa i futures per riportarla a un target costante, ad esempio
+                    <strong>0.5</strong> o <strong>0.6</strong>. In questo modo l'hedge elimina la componente negativa
+                    del reversal, stabilizza il profilo di rischio e consente di catturare il
+                    <strong>Volatility Risk Premium (VRP)</strong> in forma più pura. Storicamente, questo approccio ha
+                    migliorato lo <strong>Sharpe Ratio</strong> da circa <strong>0.37 a 0.52</strong> e ridotto la
+                    volatilità complessiva di circa il <strong>20%</strong> [Israelov &amp; Nielsen, AQR].
+                </p>
+
+                <h3 class="subsection-title">Nuove evidenze empiriche e VRP sistematico</h3>
+                <p>
+                    Le evidenze empiriche più recenti confermano che il <strong>VRP</strong> è una componente
+                    sistematica, non un accidente di periodo. I dati storici su indici come l'S&amp;P 500 mostrano come
+                    il premio incassato dalla vendita di call sia spesso abbastanza stabile da generare un contributo
+                    positivo al rendimento, soprattutto in mercati laterali o con volatilità elevata. Quando però il rischio
+                    di mercato viene gestito in modo più rigoroso, il beneficio del premio emerge in modo più pulito: la
+                    gestione del Delta riduce il rischio di timing involontario e consente di monetizzare il premio
+                    assicurativo con maggiore efficienza. In pratica, il rendimento delle strategie covered call dipende
+                    sempre meno dalla semplice vendita di opzioni e sempre più dalla qualità dell'hedging e della
+                    disciplina di gestione [Israelov &amp; Nielsen, AQR; Balestri].
+                </p>
+
+                <div class="highlight mt-3">
+                    <strong>Sintesi operativa:</strong> la covered call non va vista solo come vendita di premio, ma
+                    come strategia in cui la qualità della gestione del rischio e dell'esposizione è spesso più importante
+                    del semplice livello del premio incassato.
+                </div>
+
                 <h3 class="subsection-title">2. Il Problema dell'Erosione (ATM vs OTM)</h3>
                 <p>La scelta dello <em>strike price</em> determina la sostenibilità nel lungo periodo:</p>
                 <ul>
