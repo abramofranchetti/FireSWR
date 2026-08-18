@@ -1,5 +1,6 @@
 $(document).ready(function () {
     let chartInstance = null;
+    let inverseChartInstance = null;
     let mergedData = [];
     let updateTimeout = null;
     let minDate = null;
@@ -43,7 +44,7 @@ $(document).ready(function () {
         return ((end - start) / start) * 100;
     }
 
-    function updateChart(data) {
+    function prepareChartData(data) {
         const dates = [];
         const exchangeRates = [];
 
@@ -61,23 +62,23 @@ $(document).ready(function () {
             }
         });
 
+        return { dates, exchangeRates };
+    }
+
+    function createLineChart(ctx, dates, exchangeRates, title, lineColor, fillColor, onClickHandler) {
         const averageRate = calculateAverage(exchangeRates);
         const medianRate = calculateMedian(exchangeRates);
 
-        const ctx = document.getElementById('chartCanvas').getContext('2d');
-        if (chartInstance) {
-            chartInstance.destroy();
-        }
-        chartInstance = new Chart(ctx, {
+        return new Chart(ctx, {
             type: 'line',
             data: {
                 labels: dates,
                 datasets: [
                     {
-                        label: 'Cambio Euro/Dollaro',
+                        label: title,
                         data: exchangeRates,
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: lineColor,
+                        backgroundColor: fillColor,
                         borderWidth: 1,
                         fill: false,
                         tension: 0,
@@ -184,11 +185,36 @@ $(document).ready(function () {
                         suggestedMax: Math.max(...exchangeRates) * 1.1,
                         title: {
                             display: true,
-                            text: 'Cambio Euro/Dollaro'
+                            text: title
                         }
                     }
                 },
-                onClick: function (event, elements) {
+                onClick: onClickHandler
+            }
+        });
+    }
+
+    function updateChart(data) {
+        const { dates, exchangeRates } = prepareChartData(data);
+        const inverseExchangeRates = exchangeRates.map(rate => 1 / rate);
+
+        const ctx = document.getElementById('chartCanvas').getContext('2d');
+        const inverseCtx = document.getElementById('inverseChartCanvas').getContext('2d');
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+        if (inverseChartInstance) {
+            inverseChartInstance.destroy();
+        }
+
+        chartInstance = createLineChart(
+            ctx,
+            dates,
+            exchangeRates,
+            'Cambio Euro/Dollaro',
+            'rgba(75, 192, 192, 1)',
+            'rgba(75, 192, 192, 0.2)',
+            function (event, elements) {
                     if (elements.length > 0) {
                         const index = elements[0].index;
                         const value = exchangeRates[index];
@@ -250,8 +276,17 @@ $(document).ready(function () {
                         }
                     }
                 }
-            }
-        });
+        );
+
+        inverseChartInstance = createLineChart(
+            inverseCtx,
+            dates,
+            inverseExchangeRates,
+            'Cambio Dollaro/Euro',
+            'rgba(255, 159, 64, 1)',
+            'rgba(255, 159, 64, 0.2)',
+            null
+        );
     }
 
     Promise.all([
@@ -312,6 +347,9 @@ $(document).ready(function () {
             firstPoint = null;
             secondPoint = null;
             $('#percentageChange').text('Clicca su un punto e poi su un altro per calcolare la variazione %');
+        }
+        if (inverseChartInstance) {
+            inverseChartInstance.resetZoom();
         }
     });
 });

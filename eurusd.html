@@ -74,6 +74,15 @@
         <button id="resetZoomButton" class="btn btn-primary mt-3">Reset Zoom</button>
         <div class="usd-percentage-change" id="percentageChange">Clicca su un punto e poi su un altro per calcolare la
             variazione %</div>
+        <h2 class="mt-5 mb-3">Andamento Dollaro/Euro</h2>
+        <div class="alert alert-secondary mt-3 mb-4">
+            <p class="mb-0">
+                <strong>Definizione:</strong> il cambio Dollaro/Euro rappresenta quanti Euro servono per comprare 1 Dollaro (1 USD = X EUR).
+            </p>
+        </div>
+        <div style="position: relative; height: 400px; width: 100%;">
+            <canvas id="inverseChartCanvas"></canvas>
+        </div>
     </div>    
      <!-- Disclaimer -->
      <div id="disclaimer-container"></div>
