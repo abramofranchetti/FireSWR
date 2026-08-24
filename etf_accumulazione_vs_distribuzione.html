@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Psicologia degli ETF: Accumulazione vs Distribuzione</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body class="min-h-screen bg-stone-50 text-slate-900">
+  <main class="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
+    <section class="mx-auto w-full max-w-7xl">
+      <header class="mb-7 grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div>
+          <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-teal-700">
+            Esperimento di finanza comportamentale
+          </p>
+          <h1 class="max-w-4xl text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl">
+            Psicologia degli ETF: Accumulazione vs Distribuzione
+          </h1>
+          <p class="mt-4 max-w-3xl text-base leading-7 text-slate-600">
+            Due portafogli possono avere una logica economica simile, ma generare reazioni molto diverse.
+            Il punto non e' solo quanto vale l'investimento: e' quale prezzo mentale usi come ancora.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <button
+            id="crashButton"
+            type="button"
+            class="inline-flex min-h-12 items-center justify-center rounded-lg bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-teal-200"
+          >
+            Simula Crollo di Mercato
+          </button>
+          <button
+            id="resetButton"
+            type="button"
+            class="inline-flex min-h-12 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-100 focus:outline-none focus:ring-4 focus:ring-slate-200"
+          >
+            Reset
+          </button>
+        </div>
+      </header>
+
+      <div class="grid gap-5 lg:grid-cols-[340px_1fr]">
+        <aside class="space-y-5">
+          <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 class="text-lg font-bold text-slate-950">Parametri della simulazione</h2>
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Modifica le ipotesi e osserva come cambia la soglia psicologica della distribuzione.
+            </p>
+
+            <div class="mt-5 space-y-4">
+              <label class="block">
+                <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                  Orizzonte
+                  <span id="yearsValue" class="whitespace-nowrap text-teal-700">15 anni</span>
+                </span>
+                <input id="yearsInput" type="number" min="5" max="30" step="1" value="15" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-100" />
+              </label>
+
+              <label class="block">
+                <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                  Capitale iniziale
+                  <span id="initialValue" class="whitespace-nowrap text-teal-700">100</span>
+                </span>
+                <input id="initialInput" type="number" min="10" max="10000" step="10" value="100" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-100" />
+              </label>
+
+              <label class="block">
+                <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                  Crescita annua PDM
+                  <span id="growthValue" class="whitespace-nowrap text-teal-700">7%</span>
+                </span>
+                <input id="growthInput" type="range" min="0" max="12" step="0.5" value="7" class="mt-3 w-full accent-teal-700" />
+              </label>
+
+              <label class="block">
+                <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                  Dividendo reinvestito
+                  <span id="dividendValue" class="whitespace-nowrap text-teal-700">2%</span>
+                </span>
+                <input id="dividendInput" type="range" min="0" max="6" step="0.25" value="2" class="mt-3 w-full accent-teal-700" />
+              </label>
+
+              <label class="block">
+                <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                  Anno del crollo
+                  <span id="crashYearValue" class="whitespace-nowrap text-teal-700">12</span>
+                </span>
+                <input id="crashYearInput" type="number" min="1" max="15" step="1" value="12" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-100" />
+              </label>
+
+              <label class="block">
+                <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                  Intensita' crollo
+                  <span id="crashValue" class="whitespace-nowrap text-teal-700">25%</span>
+                </span>
+                <input id="crashInput" type="range" min="5" max="50" step="1" value="25" class="mt-3 w-full accent-rose-700" />
+              </label>
+            </div>
+          </section>
+
+          <section class="rounded-xl border border-teal-200 bg-teal-50 p-5 shadow-sm">
+            <h2 class="text-lg font-bold text-slate-950">L'intuizione</h2>
+            <p id="explanationText" class="mt-3 text-sm leading-6 text-slate-700"></p>
+          </section>
+        </aside>
+
+        <section class="space-y-4">
+          <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+            <div class="h-[560px] w-full">
+              <canvas id="etfChart" aria-label="Grafico comparativo ETF ad accumulazione e distribuzione"></canvas>
+            </div>
+          </div>
+
+          <div id="statusText" class="rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm leading-6 text-slate-700 shadow-sm">
+            Scenario standard: crescita costante del PDM al 7% annuo, senza crollo.
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Stato centrale: tutti i parametri sono editabili dalla UI.
+    const DEFAULTS = {
+      anni: 15,
+      valoreIniziale: 100,
+      rendimentoAnnuo: 7,
+      dividendoReinvestito: 2,
+      annoCrollo: 12,
+      crollo: 25
+    };
+
+    const formatterEuro = new Intl.NumberFormat('it-IT', {
+      style: 'currency',
+      currency: 'EUR',
+      maximumFractionDigits: 0
+    });
+
+    const elementi = {
+      chartCanvas: document.getElementById('etfChart'),
+      crashButton: document.getElementById('crashButton'),
+      resetButton: document.getElementById('resetButton'),
+      statusText: document.getElementById('statusText'),
+      explanationText: document.getElementById('explanationText'),
+      yearsInput: document.getElementById('yearsInput'),
+      initialInput: document.getElementById('initialInput'),
+      growthInput: document.getElementById('growthInput'),
+      dividendInput: document.getElementById('dividendInput'),
+      crashYearInput: document.getElementById('crashYearInput'),
+      crashInput: document.getElementById('crashInput'),
+      yearsValue: document.getElementById('yearsValue'),
+      initialValue: document.getElementById('initialValue'),
+      growthValue: document.getElementById('growthValue'),
+      dividendValue: document.getElementById('dividendValue'),
+      crashYearValue: document.getElementById('crashYearValue'),
+      crashValue: document.getElementById('crashValue')
+    };
+
+    let chart;
+    let crashApplicato = false;
+
+    function arrotonda(valore) {
+      return Number(valore.toFixed(2));
+    }
+
+    function leggiNumero(input, minimo, massimo, fallback) {
+      const valore = Number(input.value);
+
+      if (!Number.isFinite(valore)) {
+        return fallback;
+      }
+
+      return Math.min(Math.max(valore, minimo), massimo);
+    }
+
+    function leggiParametri() {
+      const anni = leggiNumero(elementi.yearsInput, 5, 30, DEFAULTS.anni);
+      const annoCrollo = leggiNumero(
+        elementi.crashYearInput,
+        1,
+        anni,
+        Math.min(DEFAULTS.annoCrollo, anni)
+      );
+
+      return {
+        anni,
+        valoreIniziale: leggiNumero(elementi.initialInput, 10, 10000, DEFAULTS.valoreIniziale),
+        rendimentoAnnuo: leggiNumero(elementi.growthInput, 0, 12, DEFAULTS.rendimentoAnnuo) / 100,
+        dividendoReinvestito: leggiNumero(elementi.dividendInput, 0, 6, DEFAULTS.dividendoReinvestito) / 100,
+        annoCrollo,
+        crollo: leggiNumero(elementi.crashInput, 5, 50, DEFAULTS.crollo) / 100
+      };
+    }
+
+    function sincronizzaControlli(parametri) {
+      elementi.crashYearInput.max = String(parametri.anni);
+
+      if (Number(elementi.crashYearInput.value) > parametri.anni) {
+        elementi.crashYearInput.value = String(parametri.anni);
+      }
+
+      elementi.yearsInput.value = String(parametri.anni);
+      elementi.initialInput.value = String(parametri.valoreIniziale);
+      elementi.growthInput.value = String(arrotonda(parametri.rendimentoAnnuo * 100));
+      elementi.dividendInput.value = String(arrotonda(parametri.dividendoReinvestito * 100));
+      elementi.crashYearInput.value = String(parametri.annoCrollo);
+      elementi.crashInput.value = String(arrotonda(parametri.crollo * 100));
+
+      elementi.yearsValue.textContent = `${parametri.anni} anni`;
+      elementi.initialValue.textContent = formatterEuro.format(parametri.valoreIniziale);
+      elementi.growthValue.textContent = `${arrotonda(parametri.rendimentoAnnuo * 100)}%`;
+      elementi.dividendValue.textContent = `${arrotonda(parametri.dividendoReinvestito * 100)}%`;
+      elementi.crashYearValue.textContent = String(parametri.annoCrollo);
+      elementi.crashValue.textContent = `${arrotonda(parametri.crollo * 100)}%`;
+    }
+
+    function creaEtichette(anni) {
+      return Array.from({ length: anni + 1 }, (_, anno) => `Anno ${anno}`);
+    }
+
+    function calcolaPdm(parametri, applicaCrollo) {
+      const pdm = [];
+
+      for (let anno = 0; anno <= parametri.anni; anno += 1) {
+        let valore = parametri.valoreIniziale * Math.pow(1 + parametri.rendimentoAnnuo, anno);
+
+        // Il crollo viene applicato dall'anno selezionato in avanti per mostrare
+        // uno shock persistente rispetto alla traiettoria regolare.
+        if (applicaCrollo && anno >= parametri.annoCrollo) {
+          valore *= 1 - parametri.crollo;
+        }
+
+        pdm.push(arrotonda(valore));
+      }
+
+      return pdm;
+    }
+
+    function calcolaPmcAccumulo(parametri) {
+      // Versamento unico iniziale: il prezzo medio di carico resta invariato.
+      return Array.from({ length: parametri.anni + 1 }, () => parametri.valoreIniziale);
+    }
+
+    function calcolaPmcDistribuzione(parametri, pdm) {
+      const pmc = [parametri.valoreIniziale];
+
+      for (let anno = 1; anno <= parametri.anni; anno += 1) {
+        const pmcPrecedente = pmc[anno - 1];
+
+        // Modello volutamente comportamentale: il dividendo reinvestito al PDM
+        // corrente aumenta il costo medio percepito. Il fattore temporale dà piu'
+        // peso ai reinvestimenti effettuati dopo anni di mercato salito.
+        const incrementoReinvestimento = pdm[anno] * parametri.dividendoReinvestito * (1 + anno / 4);
+        pmc.push(arrotonda(pmcPrecedente + incrementoReinvestimento));
+      }
+
+      return pmc;
+    }
+
+    function creaDati(parametri, applicaCrollo) {
+      const pdm = calcolaPdm(parametri, applicaCrollo);
+      const pmcAccumulo = calcolaPmcAccumulo(parametri);
+      const pmcDistribuzione = calcolaPmcDistribuzione(parametri, pdm);
+
+      return { pdm, pmcAccumulo, pmcDistribuzione };
+    }
+
+    function datasetGrafico(dati) {
+      return [
+        {
+          label: 'Prezzo di Mercato (PDM)',
+          data: dati.pdm,
+          borderColor: '#2563eb',
+          backgroundColor: 'rgba(37, 99, 235, 0.08)',
+          borderWidth: 3,
+          pointRadius: 4,
+          pointHoverRadius: 7,
+          tension: 0.28,
+          fill: {
+            target: 2,
+            above: 'rgba(20, 184, 166, 0.17)',
+            below: 'rgba(225, 29, 72, 0.18)'
+          }
+        },
+        {
+          label: 'PMC Accumulazione',
+          data: dati.pmcAccumulo,
+          borderColor: '#16a34a',
+          backgroundColor: '#16a34a',
+          borderWidth: 3,
+          borderDash: [8, 6],
+          pointRadius: 0,
+          tension: 0
+        },
+        {
+          label: 'PMC Distribuzione',
+          data: dati.pmcDistribuzione,
+          borderColor: '#dc2626',
+          backgroundColor: '#dc2626',
+          borderWidth: 3,
+          pointRadius: 3,
+          pointHoverRadius: 6,
+          tension: 0.2
+        }
+      ];
+    }
+
+    function testoScenario(parametri, dati) {
+      const pdmCrollo = dati.pdm[parametri.annoCrollo];
+      const pmcAcc = dati.pmcAccumulo[parametri.annoCrollo];
+      const pmcDist = dati.pmcDistribuzione[parametri.annoCrollo];
+
+      if (!crashApplicato) {
+        return `Scenario standard: PDM in crescita al ${arrotonda(parametri.rendimentoAnnuo * 100)}% annuo per ${parametri.anni} anni. Il PMC Accumulazione resta fermo, mentre il PMC Distribuzione sale con i reinvestimenti.`;
+      }
+
+      return `Anno ${parametri.annoCrollo}: PDM ${formatterEuro.format(pdmCrollo)}, sopra il PMC Accumulazione (${formatterEuro.format(pmcAcc)}) ma sotto il PMC Distribuzione (${formatterEuro.format(pmcDist)}). La perdita economica e' identica sul valore di mercato, ma la perdita percepita cambia molto.`;
+    }
+
+    function aggiornaSpiegazione(parametri, dati) {
+      const ultimoAnno = parametri.anni;
+      const pdmFinale = dati.pdm[ultimoAnno];
+      const pmcDistFinale = dati.pmcDistribuzione[ultimoAnno];
+
+      elementi.explanationText.innerHTML = `
+        Nell'ETF ad accumulazione l'investitore vede un solo riferimento: il prezzo iniziale di ${formatterEuro.format(parametri.valoreIniziale)}.
+        Anche dopo anni, quel PMC resta una linea verde piatta. Nell'ETF a distribuzione, invece, ogni dividendo reinvestito
+        diventa mentalmente un nuovo acquisto: il PMC rosso sale e si avvicina al prezzo di mercato.
+        <br><br>
+        Con questi parametri, a fine periodo il PDM arriva a <strong>${formatterEuro.format(pdmFinale)}</strong>
+        e il PMC Distribuzione a <strong>${formatterEuro.format(pmcDistFinale)}</strong>.
+        Quando premi il pulsante, il crollo del ${arrotonda(parametri.crollo * 100)}% nell'anno ${parametri.annoCrollo}
+        mette in scena il punto psicologico: la linea blu puo' sembrare "in perdita" rispetto al PMC rosso,
+        pur restando ampiamente sopra il capitale iniziale.
+      `;
+    }
+
+    function calcolaLimiteY(dati) {
+      const tuttiIValori = [...dati.pdm, ...dati.pmcAccumulo, ...dati.pmcDistribuzione];
+      const massimo = Math.max(...tuttiIValori);
+      const minimo = Math.min(...tuttiIValori);
+      const margine = Math.max((massimo - minimo) * 0.18, 20);
+
+      return {
+        suggestedMin: Math.max(0, Math.floor(minimo - margine)),
+        suggestedMax: Math.ceil(massimo + margine)
+      };
+    }
+
+    function aggiornaGrafico() {
+      const parametri = leggiParametri();
+      sincronizzaControlli(parametri);
+
+      const dati = creaDati(parametri, crashApplicato);
+      const limitiY = calcolaLimiteY(dati);
+
+      chart.data.labels = creaEtichette(parametri.anni);
+      chart.data.datasets = datasetGrafico(dati);
+      chart.options.scales.y.suggestedMin = limitiY.suggestedMin;
+      chart.options.scales.y.suggestedMax = limitiY.suggestedMax;
+      chart.update();
+
+      elementi.statusText.textContent = testoScenario(parametri, dati);
+      aggiornaSpiegazione(parametri, dati);
+      elementi.crashButton.disabled = crashApplicato;
+      elementi.crashButton.classList.toggle('cursor-not-allowed', crashApplicato);
+      elementi.crashButton.classList.toggle('opacity-75', crashApplicato);
+    }
+
+    function inizializzaGrafico() {
+      const parametri = leggiParametri();
+      const datiIniziali = creaDati(parametri, false);
+      const limitiY = calcolaLimiteY(datiIniziali);
+
+      chart = new Chart(elementi.chartCanvas, {
+        type: 'line',
+        data: {
+          labels: creaEtichette(parametri.anni),
+          datasets: datasetGrafico(datiIniziali)
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          scales: {
+            x: {
+              grid: {
+                color: 'rgba(148, 163, 184, 0.18)'
+              },
+              ticks: {
+                color: '#475569',
+                maxRotation: 0,
+                autoSkip: true
+              }
+            },
+            y: {
+              beginAtZero: false,
+              suggestedMin: limitiY.suggestedMin,
+              suggestedMax: limitiY.suggestedMax,
+              grid: {
+                color: 'rgba(148, 163, 184, 0.22)'
+              },
+              ticks: {
+                color: '#475569',
+                callback: (value) => formatterEuro.format(value)
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                color: '#334155',
+                usePointStyle: true,
+                padding: 18,
+                font: {
+                  size: 13,
+                  weight: '600'
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: '#0f172a',
+              padding: 12,
+              titleFont: {
+                size: 14,
+                weight: '700'
+              },
+              bodyFont: {
+                size: 13
+              },
+              callbacks: {
+                label: (context) => `${context.dataset.label}: ${formatterEuro.format(context.parsed.y)}`
+              }
+            }
+          }
+        }
+      });
+
+      sincronizzaControlli(parametri);
+      elementi.statusText.textContent = testoScenario(parametri, datiIniziali);
+      aggiornaSpiegazione(parametri, datiIniziali);
+    }
+
+    elementi.crashButton.addEventListener('click', () => {
+      crashApplicato = true;
+      aggiornaGrafico();
+    });
+
+    elementi.resetButton.addEventListener('click', () => {
+      const mappaInput = {
+        anni: elementi.yearsInput,
+        valoreIniziale: elementi.initialInput,
+        rendimentoAnnuo: elementi.growthInput,
+        dividendoReinvestito: elementi.dividendInput,
+        annoCrollo: elementi.crashYearInput,
+        crollo: elementi.crashInput
+      };
+
+      crashApplicato = false;
+
+      Object.entries(DEFAULTS).forEach(([chiave, valore]) => {
+        mappaInput[chiave].value = String(valore);
+      });
+
+      aggiornaGrafico();
+    });
+
+    [
+      elementi.yearsInput,
+      elementi.initialInput,
+      elementi.growthInput,
+      elementi.dividendInput,
+      elementi.crashYearInput,
+      elementi.crashInput
+    ].forEach((input) => {
+      input.addEventListener('input', () => {
+        crashApplicato = false;
+        aggiornaGrafico();
+      });
+    });
+
+    inizializzaGrafico();
+  </script>
+</body>
+</html>
