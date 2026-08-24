@@ -85,6 +85,14 @@
 
               <label class="block">
                 <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                  Aliquota fiscale distribuzione
+                  <span id="taxValue" class="whitespace-nowrap text-teal-700">26%</span>
+                </span>
+                <input id="taxInput" type="range" min="0" max="43" step="0.5" value="26" class="mt-3 w-full accent-teal-700" />
+              </label>
+
+              <label class="block">
+                <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
                   Anno del crollo
                   <span id="crashYearValue" class="whitespace-nowrap text-teal-700">12</span>
                 </span>
@@ -129,6 +137,7 @@
       valoreIniziale: 100,
       rendimentoAnnuo: 7,
       dividendoReinvestito: 2,
+      aliquotaFiscale: 26,
       annoCrollo: 12,
       crollo: 25
     };
@@ -149,12 +158,14 @@
       initialInput: document.getElementById('initialInput'),
       growthInput: document.getElementById('growthInput'),
       dividendInput: document.getElementById('dividendInput'),
+      taxInput: document.getElementById('taxInput'),
       crashYearInput: document.getElementById('crashYearInput'),
       crashInput: document.getElementById('crashInput'),
       yearsValue: document.getElementById('yearsValue'),
       initialValue: document.getElementById('initialValue'),
       growthValue: document.getElementById('growthValue'),
       dividendValue: document.getElementById('dividendValue'),
+      taxValue: document.getElementById('taxValue'),
       crashYearValue: document.getElementById('crashYearValue'),
       crashValue: document.getElementById('crashValue')
     };
@@ -190,6 +201,7 @@
         valoreIniziale: leggiNumero(elementi.initialInput, 10, 10000, DEFAULTS.valoreIniziale),
         rendimentoAnnuo: leggiNumero(elementi.growthInput, 0, 12, DEFAULTS.rendimentoAnnuo) / 100,
         dividendoReinvestito: leggiNumero(elementi.dividendInput, 0, 6, DEFAULTS.dividendoReinvestito) / 100,
+        aliquotaFiscale: leggiNumero(elementi.taxInput, 0, 43, DEFAULTS.aliquotaFiscale) / 100,
         annoCrollo,
         crollo: leggiNumero(elementi.crashInput, 5, 50, DEFAULTS.crollo) / 100
       };
@@ -206,6 +218,7 @@
       elementi.initialInput.value = String(parametri.valoreIniziale);
       elementi.growthInput.value = String(arrotonda(parametri.rendimentoAnnuo * 100));
       elementi.dividendInput.value = String(arrotonda(parametri.dividendoReinvestito * 100));
+      elementi.taxInput.value = String(arrotonda(parametri.aliquotaFiscale * 100));
       elementi.crashYearInput.value = String(parametri.annoCrollo);
       elementi.crashInput.value = String(arrotonda(parametri.crollo * 100));
 
@@ -213,6 +226,7 @@
       elementi.initialValue.textContent = formatterEuro.format(parametri.valoreIniziale);
       elementi.growthValue.textContent = `${arrotonda(parametri.rendimentoAnnuo * 100)}%`;
       elementi.dividendValue.textContent = `${arrotonda(parametri.dividendoReinvestito * 100)}%`;
+      elementi.taxValue.textContent = `${arrotonda(parametri.aliquotaFiscale * 100)}%`;
       elementi.crashYearValue.textContent = String(parametri.annoCrollo);
       elementi.crashValue.textContent = `${arrotonda(parametri.crollo * 100)}%`;
     }
@@ -246,15 +260,20 @@
 
     function calcolaPmcDistribuzione(parametri, pdm) {
       const pmc = [parametri.valoreIniziale];
+      let quote = 1;
+      let capitaleInvestito = parametri.valoreIniziale;
 
       for (let anno = 1; anno <= parametri.anni; anno += 1) {
-        const pmcPrecedente = pmc[anno - 1];
+        const prezzo = pdm[anno];
+        const dividendoNetto = prezzo
+          * parametri.dividendoReinvestito
+          * (1 - parametri.aliquotaFiscale);
 
-        // Modello volutamente comportamentale: il dividendo reinvestito al PDM
-        // corrente aumenta il costo medio percepito. Il fattore temporale dà piu'
-        // peso ai reinvestimenti effettuati dopo anni di mercato salito.
-        const incrementoReinvestimento = pdm[anno] * parametri.dividendoReinvestito * (1 + anno / 4);
-        pmc.push(arrotonda(pmcPrecedente + incrementoReinvestimento));
+        // Il dividendo netto compra quote al prezzo corrente: il PMC e' quindi
+        // una media ponderata, non un incremento sommato al PMC precedente.
+        quote += dividendoNetto / prezzo;
+        capitaleInvestito += dividendoNetto;
+        pmc.push(arrotonda(capitaleInvestito / quote));
       }
 
       return pmc;
@@ -459,6 +478,7 @@
         valoreIniziale: elementi.initialInput,
         rendimentoAnnuo: elementi.growthInput,
         dividendoReinvestito: elementi.dividendInput,
+        aliquotaFiscale: elementi.taxInput,
         annoCrollo: elementi.crashYearInput,
         crollo: elementi.crashInput
       };
@@ -477,6 +497,7 @@
       elementi.initialInput,
       elementi.growthInput,
       elementi.dividendInput,
+      elementi.taxInput,
       elementi.crashYearInput,
       elementi.crashInput
     ].forEach((input) => {
