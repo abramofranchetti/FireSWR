@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vendere quote vs dividendi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <main class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <header class="mb-7 grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div>
+        <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-blue-700">Dividendi sintetici e fiscalita'</p>
+        <h1 class="max-w-4xl text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl">
+          Vendere quote non significa che le quote debbano finire
+        </h1>
+        <p class="mt-4 max-w-3xl text-base leading-7 text-slate-600">
+          Se l'ETF ad accumulazione segue lo stesso rendimento totale dell'ETF a distribuzione, vendere quote per
+          replicare il dividendo e' economicamente equivalente al lordo. In Italia, pero', cambia il netto: il
+          dividendo viene tassato tutto subito, mentre nella vendita quote viene tassata solo la plusvalenza incorporata.
+        </p>
+      </div>
+      <a href="/FireSWR/" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-100">
+        Torna all'indice
+      </a>
+    </header>
+
+    <div class="grid gap-5 lg:grid-cols-[340px_1fr]">
+      <aside class="space-y-5">
+        <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="text-lg font-bold text-slate-950">Parametri</h2>
+          <div class="mt-5 space-y-4">
+            <label class="block">
+              <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                Capitale iniziale <span id="capitalValue" class="text-blue-700">100.000 EUR</span>
+              </span>
+              <input id="capitalInput" type="number" min="1000" max="5000000" step="1000" value="100000" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100" />
+            </label>
+
+            <label class="block">
+              <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                Orizzonte <span id="yearsValue" class="text-blue-700">30 anni</span>
+              </span>
+              <input id="yearsInput" type="range" min="5" max="300" step="1" value="30" class="mt-3 w-full accent-blue-700" />
+            </label>
+
+            <label class="block">
+              <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                Rendimento totale lordo <span id="returnValue" class="text-blue-700">7%</span>
+              </span>
+              <input id="returnInput" type="range" min="-5" max="12" step="0.25" value="7" class="mt-3 w-full accent-blue-700" />
+            </label>
+
+            <label class="block">
+              <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                Dividend yield lordo <span id="dividendValue" class="text-blue-700">3%</span>
+              </span>
+              <input id="dividendInput" type="range" min="0" max="10" step="0.25" value="3" class="mt-3 w-full accent-blue-700" />
+            </label>
+
+            <label class="block">
+              <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                Tassazione dividendi <span id="dividendTaxValue" class="text-blue-700">26%</span>
+              </span>
+              <input id="dividendTaxInput" type="range" min="0" max="43" step="0.5" value="26" class="mt-3 w-full accent-blue-700" />
+            </label>
+
+            <label class="block">
+              <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                Tassazione plusvalenze <span id="gainTaxValue" class="text-blue-700">26%</span>
+              </span>
+              <input id="gainTaxInput" type="range" min="0" max="43" step="0.5" value="26" class="mt-3 w-full accent-blue-700" />
+            </label>
+
+            <label class="block">
+              <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                Commissione vendita quote <span id="commissionValue" class="text-blue-700">0,2%</span>
+              </span>
+              <input id="commissionInput" type="range" min="0" max="1" step="0.01" value="0.2" class="mt-3 w-full accent-blue-700" />
+            </label>
+          </div>
+        </section>
+
+        <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="text-lg font-bold text-slate-950">Scenario</h2>
+          <div class="mt-4 grid gap-3">
+            <label class="flex cursor-pointer gap-3 rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-700">
+              <input type="radio" name="mode" value="sameNet" checked class="mt-1 accent-blue-700" />
+              <span><strong class="text-slate-950">Vendo il lordo necessario</strong><br />Calcola quanto devo vendere per ottenere lo stesso netto del dividendo.</span>
+            </label>
+            <label class="flex cursor-pointer gap-3 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-slate-700">
+              <input type="radio" name="mode" value="sameGross" class="mt-1 accent-blue-700" />
+              <span><strong class="text-slate-950">Vendo lo stesso lordo</strong><br />Confronta quanto netto incasso vendendo lo stesso importo lordo del dividendo.</span>
+            </label>            
+          </div>
+        </section>
+
+        <section class="rounded-lg border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
+          <h2 class="text-lg font-bold text-slate-950">Sintesi</h2>
+          <p id="summaryText" class="mt-3 text-sm leading-6 text-slate-700"></p>
+        </section>
+      </aside>
+
+      <section class="space-y-5">
+        <div class="grid gap-4 md:grid-cols-3">
+          <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="text-sm font-semibold text-slate-500">Quote accumulo residue</div>
+            <div id="sharesMetric" class="mt-2 text-2xl font-bold text-slate-950"></div>
+          </div>
+          <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <div id="advantageLabel" class="text-sm font-semibold text-slate-500">Vantaggio sui flussi netti</div>
+            <div id="advantageMetric" class="mt-2 text-2xl font-bold text-emerald-700"></div>
+          </div>
+          <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="text-sm font-semibold text-slate-500">Anno esaurimento quote</div>
+            <div id="ruinMetric" class="mt-2 text-2xl font-bold text-slate-950"></div>
+          </div>
+        </div>
+
+        <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+          <div class="mb-3">
+            <h2 class="text-lg font-bold text-slate-950">Flussi netti cumulati e controllo del totale lordo</h2>
+          </div>
+          <div class="h-[420px] w-full">
+            <canvas id="wealthChart" aria-label="Flussi netti cumulati e totale lordo"></canvas>
+          </div>
+        </div>
+
+        <div class="grid gap-5 xl:grid-cols-2">
+          <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+            <div class="mb-3">
+              <h2 class="text-lg font-bold text-slate-950">Quote residue nell'ETF ad accumulazione</h2>
+            </div>
+            <div class="h-[300px] w-full">
+              <canvas id="sharesChart" aria-label="Quote residue"></canvas>
+            </div>
+          </div>
+
+          <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+            <div class="mb-3">
+              <h2 class="text-lg font-bold text-slate-950">Flusso annuo: dividendo netto vs vendita quote</h2>
+            </div>
+            <div class="h-[300px] w-full">
+              <canvas id="flowChart" aria-label="Flussi annui netti"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-lg border border-slate-200 bg-white px-5 py-4 text-sm leading-6 text-slate-700 shadow-sm">
+          <strong>Nota:</strong> il modello usa due ETF idealizzati sullo stesso sottostante. Il lordo e' identico
+          per costruzione. Se alla fine liquidi tutto e applichi la stessa aliquota a ogni plusvalenza, parte del
+          vantaggio diventa differimento fiscale; il vantaggio immediato e' nei flussi: a parita' di lordo venduto
+          incassi piu' netto, oppure a parita' di netto vendi meno lordo. Le commissioni sulle vendite quote sono
+          sottratte dal netto della strategia ad accumulazione.
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const formatterEuro = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+    const formatterNumber = new Intl.NumberFormat('it-IT', { maximumFractionDigits: 2 });
+    const formatterPercent = new Intl.NumberFormat('it-IT', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+    const els = {
+      capitalInput: document.getElementById('capitalInput'),
+      yearsInput: document.getElementById('yearsInput'),
+      returnInput: document.getElementById('returnInput'),
+      dividendInput: document.getElementById('dividendInput'),
+      dividendTaxInput: document.getElementById('dividendTaxInput'),
+      gainTaxInput: document.getElementById('gainTaxInput'),
+      commissionInput: document.getElementById('commissionInput'),
+      capitalValue: document.getElementById('capitalValue'),
+      yearsValue: document.getElementById('yearsValue'),
+      returnValue: document.getElementById('returnValue'),
+      dividendValue: document.getElementById('dividendValue'),
+      dividendTaxValue: document.getElementById('dividendTaxValue'),
+      gainTaxValue: document.getElementById('gainTaxValue'),
+      commissionValue: document.getElementById('commissionValue'),
+      summaryText: document.getElementById('summaryText'),
+      sharesMetric: document.getElementById('sharesMetric'),
+      advantageLabel: document.getElementById('advantageLabel'),
+      advantageMetric: document.getElementById('advantageMetric'),
+      ruinMetric: document.getElementById('ruinMetric'),
+      wealthChart: document.getElementById('wealthChart'),
+      sharesChart: document.getElementById('sharesChart'),
+      flowChart: document.getElementById('flowChart')
+    };
+
+    let wealthChart;
+    let sharesChart;
+    let flowChart;
+
+    function readNumber(input, min, max, fallback) {
+      const value = Number(input.value);
+      if (!Number.isFinite(value)) return fallback;
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function params() {
+      return {
+        capital: readNumber(els.capitalInput, 1000, 5000000, 100000),
+        years: readNumber(els.yearsInput, 5, 300, 30),
+        totalReturn: readNumber(els.returnInput, -5, 12, 7) / 100,
+        dividendYield: readNumber(els.dividendInput, 0, 10, 3) / 100,
+        dividendTax: readNumber(els.dividendTaxInput, 0, 43, 26) / 100,
+        gainTax: readNumber(els.gainTaxInput, 0, 43, 26) / 100,
+        commission: readNumber(els.commissionInput, 0, 1, 0.2) / 100,
+        mode: document.querySelector('input[name="mode"]:checked').value
+      };
+    }
+
+    function syncLabels(p) {
+      els.capitalValue.textContent = formatterEuro.format(p.capital);
+      els.yearsValue.textContent = `${p.years} anni`;
+      els.returnValue.textContent = formatterPercent.format(p.totalReturn);
+      els.dividendValue.textContent = formatterPercent.format(p.dividendYield);
+      els.dividendTaxValue.textContent = formatterPercent.format(p.dividendTax);
+      els.gainTaxValue.textContent = formatterPercent.format(p.gainTax);
+      els.commissionValue.textContent = formatterPercent.format(p.commission);
+    }
+
+    function saleNetForGross(grossSale, price, costPerShare, gainTax, commissionRate) {
+      if (grossSale <= 0 || price <= 0) return { gross: 0, net: 0, tax: 0, commission: 0, shares: 0 };
+      const shares = grossSale / price;
+      const gainPerShare = Math.max(0, price - costPerShare);
+      const tax = gainPerShare * shares * gainTax;
+      const commission = grossSale * commissionRate;
+      return { gross: grossSale, net: grossSale - tax - commission, tax, commission, shares };
+    }
+
+    function grossForTargetNet(targetNet, price, costPerShare, gainTax, commissionRate) {
+      if (targetNet <= 0) return 0;
+      let low = 0;
+      let high = targetNet;
+      while (saleNetForGross(high, price, costPerShare, gainTax, commissionRate).net < targetNet) {
+        high *= 1.5;
+        if (high > 1e12) break;
+      }
+      for (let i = 0; i < 80; i += 1) {
+        const mid = (low + high) / 2;
+        if (saleNetForGross(mid, price, costPerShare, gainTax, commissionRate).net >= targetNet) {
+          high = mid;
+        } else {
+          low = mid;
+        }
+      }
+      return high;
+    }
+
+    function netLiquidation(value, costBasis, gainTax) {
+      return value - Math.max(0, value - costBasis) * gainTax;
+    }
+
+    function simulate(p) {
+      const labels = Array.from({ length: p.years + 1 }, (_, year) => `Anno ${year}`);
+      const initialPrice = 100;
+      const distPriceGrowth = p.dividendYield >= 0
+        ? (1 + p.totalReturn) / (1 + p.dividendYield)
+        : 1 + p.totalReturn;
+
+      let accPrice = initialPrice;
+      let distPrice = initialPrice;
+      let accShares = p.capital / initialPrice;
+      const distShares = p.capital / initialPrice;
+      let accCostBasis = p.capital;
+      const distCostBasis = p.capital;
+      let accNetCash = 0;
+      let accGrossCash = 0;
+      let distNetCash = 0;
+      let distGrossCash = 0;
+      let ruinYear = null;
+
+      const data = {
+        labels,
+        accNetAvailable: [p.capital],
+        distNetAvailable: [p.capital],
+        accGrossTotal: [p.capital],
+        distGrossTotal: [p.capital],
+        accNetCash: [0],
+        distNetCash: [0],
+        accGrossCash: [0],
+        distGrossCash: [0],
+        shares: [accShares],
+        distNetFlow: [0],
+        accNetFlow: [0],
+        accGrossFlow: [0],
+        distGrossFlow: [0]
+      };
+
+      for (let year = 1; year <= p.years; year += 1) {
+        accPrice *= 1 + p.totalReturn;
+        distPrice *= distPriceGrowth;
+
+        const grossDividend = distShares * distPrice * p.dividendYield;
+        const netDividend = grossDividend * (1 - p.dividendTax);
+        const costPerAccShare = accShares > 0 ? accCostBasis / accShares : 0;
+        const requestedGrossSale = p.mode === 'sameNet'
+          ? grossForTargetNet(netDividend, accPrice, costPerAccShare, p.gainTax, p.commission)
+          : grossDividend;
+        const maxGrossSale = accShares * accPrice;
+        const grossSale = Math.min(requestedGrossSale, maxGrossSale);
+        const sale = saleNetForGross(grossSale, accPrice, costPerAccShare, p.gainTax, p.commission);
+        const soldCostBasis = costPerAccShare * sale.shares;
+
+        accShares = Math.max(0, accShares - sale.shares);
+        accCostBasis = Math.max(0, accCostBasis - soldCostBasis);
+        accNetCash += sale.net;
+        accGrossCash += sale.gross;
+        distNetCash += netDividend;
+        distGrossCash += grossDividend;
+
+        if (ruinYear == null && accShares <= 0.000001) {
+          ruinYear = year;
+        }
+
+        const accValue = accShares * accPrice;
+        const distValue = distShares * distPrice;
+        data.accNetAvailable.push(netLiquidation(accValue, accCostBasis, p.gainTax) + accNetCash);
+        data.distNetAvailable.push(netLiquidation(distValue, distCostBasis, p.gainTax) + distNetCash);
+        data.accGrossTotal.push(accValue + accGrossCash);
+        data.distGrossTotal.push(distValue + distGrossCash);
+        data.accNetCash.push(accNetCash);
+        data.distNetCash.push(distNetCash);
+        data.accGrossCash.push(accGrossCash);
+        data.distGrossCash.push(distGrossCash);
+        data.shares.push(accShares);
+        data.distNetFlow.push(netDividend);
+        data.accNetFlow.push(sale.net);
+        data.accGrossFlow.push(sale.gross);
+        data.distGrossFlow.push(grossDividend);
+      }
+
+      data.ruinYear = ruinYear;
+      return data;
+    }
+
+    function lineDataset(label, data, color, dashed = false) {
+      return {
+        label,
+        data,
+        borderColor: color,
+        backgroundColor: color,
+        borderWidth: 3,
+        borderDash: dashed ? [7, 5] : [],
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        tension: 0.18
+      };
+    }
+
+    function createCharts(data) {
+      wealthChart = new Chart(els.wealthChart, {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: [
+            lineDataset('Accumulazione - flussi netti cumulati', data.accNetCash, '#0f766e'),
+            lineDataset('Distribuzione - dividendi netti cumulati', data.distNetCash, '#dc2626'),
+            lineDataset('Accumulazione - totale lordo', data.accGrossTotal, '#64748b', true),
+            lineDataset('Distribuzione - totale lordo', data.distGrossTotal, '#94a3b8', true)
+          ]
+        },
+        options: chartOptions((value) => formatterEuro.format(value))
+      });
+
+      sharesChart = new Chart(els.sharesChart, {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: [lineDataset('Quote residue', data.shares, '#2563eb')]
+        },
+        options: chartOptions((value) => formatterNumber.format(value))
+      });
+
+      flowChart = new Chart(els.flowChart, {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: [
+            { label: 'Dividendo netto', data: data.distNetFlow, backgroundColor: 'rgba(220, 38, 38, 0.78)', borderRadius: 4 },
+            { label: 'Vendita quote netta', data: data.accNetFlow, backgroundColor: 'rgba(15, 118, 110, 0.78)', borderRadius: 4 }
+          ]
+        },
+        options: chartOptions((value) => formatterEuro.format(value))
+      });
+    }
+
+    function chartOptions(tickFormatter) {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: {
+            grid: { color: 'rgba(148, 163, 184, 0.14)' },
+            ticks: { color: '#475569', maxRotation: 0, autoSkip: true }
+          },
+          y: {
+            beginAtZero: false,
+            grid: { color: 'rgba(148, 163, 184, 0.22)' },
+            ticks: { color: '#475569', callback: tickFormatter }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { color: '#334155', usePointStyle: true, padding: 16, font: { size: 12, weight: '600' } }
+          },
+          tooltip: {
+            backgroundColor: '#0f172a',
+            padding: 12,
+            callbacks: { label: (context) => `${context.dataset.label}: ${tickFormatter(context.parsed.y)}` }
+          }
+        }
+      };
+    }
+
+    function updateCharts(data) {
+      wealthChart.data.labels = data.labels;
+      wealthChart.data.datasets[0].data = data.accNetCash;
+      wealthChart.data.datasets[1].data = data.distNetCash;
+      wealthChart.data.datasets[2].data = data.accGrossTotal;
+      wealthChart.data.datasets[3].data = data.distGrossTotal;
+      wealthChart.update();
+
+      sharesChart.data.labels = data.labels;
+      sharesChart.data.datasets[0].data = data.shares;
+      sharesChart.update();
+
+      flowChart.data.labels = data.labels;
+      flowChart.data.datasets[0].data = data.distNetFlow;
+      flowChart.data.datasets[1].data = data.accNetFlow;
+      flowChart.update();
+    }
+
+    function updateSummary(p, data) {
+      const last = data.labels.length - 1;
+      const netFlowAdvantage = data.accNetCash[last] - data.distNetCash[last];
+      const finalShares = data.shares[last];
+      const totalGrossReduction = data.distGrossCash[last] > 0 ? 1 - data.accGrossCash[last] / data.distGrossCash[last] : 0;
+
+      els.sharesMetric.textContent = formatterNumber.format(finalShares);
+      els.ruinMetric.textContent = data.ruinYear == null ? 'Mai' : `Anno ${data.ruinYear}`;
+      els.advantageMetric.textContent = p.mode === 'sameNet'
+        ? formatterPercent.format(totalGrossReduction)
+        : formatterEuro.format(netFlowAdvantage);
+      els.advantageLabel.textContent = p.mode === 'sameNet'
+        ? 'Lordo cumulato venduto in meno'
+        : 'Vantaggio sui flussi netti';
+
+      if (p.mode === 'sameNet') {
+        els.summaryText.innerHTML = `
+          In questo scenario la vendita quote cerca lo stesso netto del dividendo. Poiche' sulla vendita si tassa solo
+          la plusvalenza, al netto della commissione del <strong>${formatterPercent.format(p.commission)}</strong>
+          il lordo cumulato da vendere e' <strong>${formatterEuro.format(data.accGrossCash[last])}</strong>
+          invece di <strong>${formatterEuro.format(data.distGrossCash[last])}</strong>: una riduzione del
+          <strong>${formatterPercent.format(totalGrossReduction)}</strong>. Le quote finali restano
+          <strong>${formatterNumber.format(finalShares)}</strong>: non finiscono automaticamente, finiscono solo se il
+          prelievo e' eccessivo rispetto alla crescita.
+        `;
+        return;
+      }
+
+      els.summaryText.innerHTML = `
+        In questo scenario vendi lo stesso lordo del dividendo distribuito. Il totale lordo resta allineato per
+        costruzione, ma i flussi netti cumulati dell'accumulazione sono <strong>${formatterEuro.format(data.accNetCash[last])}</strong>
+        contro <strong>${formatterEuro.format(data.distNetCash[last])}</strong> della distribuzione: un vantaggio di
+        <strong>${formatterEuro.format(netFlowAdvantage)}</strong> dopo commissioni di vendita. Il motivo e' fiscale:
+        il dividendo e' tassato interamente, mentre la vendita quote tassa solo la quota di plusvalenza.
+      `;
+    }
+
+    function update() {
+      const p = params();
+      syncLabels(p);
+      const data = simulate(p);
+      if (!wealthChart) {
+        createCharts(data);
+      } else {
+        updateCharts(data);
+      }
+      updateSummary(p, data);
+    }
+
+    [
+      els.capitalInput,
+      els.yearsInput,
+      els.returnInput,
+      els.dividendInput,
+      els.dividendTaxInput,
+      els.gainTaxInput,
+      els.commissionInput,
+      ...document.querySelectorAll('input[name="mode"]')
+    ].forEach((input) => input.addEventListener('input', update));
+
+    update();
+  </script>
+</body>
+</html>
