@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore Ammortamento Auto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <a href="/FireSWR" class="home-button">🏠 Home</a>
+    <h1>Calcolatore Ammortamento Auto</h1>
+    <p class="intro">Stima il costo totale di possesso, la rata e il costo chilometrico, separando capitale, interessi e gestione.</p>
+
+    <form id="auto-calculator">
+        <fieldset>
+            <legend>1. Acquisto e Finanziamento</legend>
+            <div class="form-group">
+                <label for="prezzo">Prezzo di acquisto (€):</label>
+                <input type="number" id="prezzo" value="25000" required>
+            </div>
+            <div class="form-group">
+                <label for="anticipo">Anticipo versato (€):</label>
+                <input type="number" id="anticipo" value="5000" required>
+            </div>
+            <div class="form-group">
+                <label for="anni">Durata ammortamento / finanziamento (Anni):</label>
+                <input type="number" id="anni" value="5" min="1" step="1" required>
+            </div>
+            <div class="form-group">
+                <label for="tasso">Tasso di interesse annuo - TAEG (%):</label>
+                <input type="number" id="tasso" step="0.1" value="6.5" required>
+            </div>
+            <div class="form-group">
+                <label for="valoreResiduo">Valore residuo stimato alla fine degli anni (€):</label>
+                <input type="number" id="valoreResiduo" value="8000" required>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>2. Costi di Gestione (Annui)</legend>
+            <div class="form-group">
+                <label for="kmAnnui">Chilometri percorsi in un anno:</label>
+                <input type="number" id="kmAnnui" value="15000" required>
+            </div>
+            <div class="form-group">
+                <label for="consumo">Consumo medio (km al litro):</label>
+                <input type="number" id="consumo" step="0.1" value="16" required>
+            </div>
+            <div class="form-group">
+                <label for="costoCarburante">Costo carburante (€ al litro):</label>
+                <input type="number" id="costoCarburante" step="0.01" value="1.85" required>
+            </div>
+            <div class="form-group">
+                <label for="assicurazione">Assicurazione annua (€):</label>
+                <input type="number" id="assicurazione" value="600" required>
+            </div>
+            <div class="form-group">
+                <label for="bollo">Bollo auto ed extra annui (€):</label>
+                <input type="number" id="bollo" value="250" required>
+            </div>
+            <div class="form-group">
+                <label for="manutenzione">Manutenzione e gomme annue (€):</label>
+                <input type="number" id="manutenzione" value="400" required>
+            </div>
+            <div class="form-group">
+                <label for="altriCosti">Altri costi annui (€):</label>
+                <input type="number" id="altriCosti" value="0" min="0" required>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>3. Impatto sullo stipendio</legend>
+            <div class="form-group">
+                <label for="stipendio">Stipendio netto mensile (€):</label>
+                <input type="number" id="stipendio" value="1800" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="quotaStipendio">Quota dello stipendio destinata all'auto (%):</label>
+                <input type="number" id="quotaStipendio" value="20" min="1" max="100" step="1" required>
+            </div>
+        </fieldset>
+
+        <button type="submit">Calcola costi</button>
+    </form>
+
+    <div id="risultati" class="hidden">
+        <div id="errore" class="error" role="alert"></div>
+        <h2>Risultati e analisi</h2>
+        <div class="result-grid">
+            <div class="result-card">
+                <h3>Rata Mensile</h3>
+                <p id="res-rata">0 €</p>
+                <small>Solo finanziamento</small>
+            </div>
+            <div class="result-card highlight">
+                <h3>Costo Mensile Reale</h3>
+                <p id="res-mensile-reale">0 €</p>
+                <small>Svalutazione + interessi + gestione</small>
+            </div>
+            <div class="result-card">
+                <h3>Costo per Km</h3>
+                <p id="res-costo-km">0 €</p>
+                <small>Tutto incluso</small>
+            </div>
+            <div class="result-card">
+                <h3>Svalutazione Totale</h3>
+                <p id="res-svalutazione">0 €</p>
+                <small>Nel periodo indicato</small>
+            </div>
+            <div class="result-card">
+                <h3>Costo totale possesso</h3>
+                <p id="res-totale">0 €</p>
+                <small>Al netto del valore residuo</small>
+            </div>
+            <div class="result-card">
+                <h3>Esborso iniziale</h3>
+                <p id="res-anticipo">0 €</p>
+                <small>Anticipo versato</small>
+            </div>
+        </div>
+        <div class="analysis-grid">
+            <section class="panel chart-panel">
+                <div class="section-heading">
+                    <div><h3>Composizione del costo annuo</h3><p>Stima media per ciascun anno</p></div>
+                    <span id="res-annuo" class="total-label">0 €/anno</span>
+                </div>
+                <canvas id="grafico-costi" aria-label="Grafico dei costi annuali" role="img"></canvas>
+                <div id="legenda-grafico" class="chart-legend"></div>
+            </section>
+            <section class="panel">
+                <div class="section-heading"><div><h3>Dettaglio annuale</h3><p>Interessi decrescenti con ammortamento alla francese</p></div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Anno</th><th>Rata</th><th>Interessi</th><th>Gestione</th><th>Costo reale</th></tr></thead>
+                        <tbody id="tabella-annuale"></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+        <section class="panel salary-panel">
+            <div class="section-heading">
+                <div><h3>Quanto pesa sul tuo stipendio</h3><p>Il tempo realistico usa la quota mensile che hai indicato.</p></div>
+                <span id="res-peso-stipendio" class="total-label">0%</span>
+            </div>
+            <div class="time-grid">
+                <div class="time-result"><span>Per pagare il prezzo</span><strong id="res-tempo-prezzo">0</strong><small>con la quota scelta</small></div>
+                <div class="time-result"><span>Per recuperare l'anticipo</span><strong id="res-tempo-anticipo">0</strong><small>con la quota scelta</small></div>
+                <div class="time-result"><span>Per recuperare il TCO</span><strong id="res-tempo-tco">0</strong><small>con la quota scelta</small></div>
+            </div>
+            <p id="nota-stipendio" class="nota"></p>
+        </section>
+        <p class="nota">Il costo reale considera svalutazione economica, interessi e costi di gestione. La rata è un esborso finanziario e contiene anche la quota capitale; non va sommata di nuovo al TCO.</p>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
