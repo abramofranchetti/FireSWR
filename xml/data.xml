@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><message:GenericData xmlns:message="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message" xmlns:common="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:generic="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic" xsi:schemaLocation="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message https://data-api.ecb.europa.eu:443/vocabulary/sdmx/2_1/SDMXMessage.xsd http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common https://data-api.ecb.europa.eu:443/vocabulary/sdmx/2_1/SDMXCommon.xsd http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic https://data-api.ecb.europa.eu:443/vocabulary/sdmx/2_1/SDMXDataGeneric.xsd">
 <message:Header>
-<message:ID>659f56b3-dd17-4677-90ad-70caf12d0594</message:ID>
+<message:ID>8c32bcc2-f826-4250-b3c7-e8a0e2ae7ce9</message:ID>
 <message:Test>false</message:Test>
-<message:Prepared>2026-08-28T21:41:49.826+02:00</message:Prepared>
+<message:Prepared>2026-08-29T13:15:13.720+02:00</message:Prepared>
 <message:Sender id="ECB"/>
 <message:Structure structureID="ECB_FMD2" dimensionAtObservation="TIME_PERIOD">
 <common:Structure>
@@ -10,7 +10,7 @@
 </common:Structure>
 </message:Structure>
 </message:Header>
-<message:DataSet action="Replace" validFromDate="2026-08-28T21:41:49.826+02:00" structureRef="ECB_FMD2">
+<message:DataSet action="Replace" validFromDate="2026-08-29T13:15:13.720+02:00" structureRef="ECB_FMD2">
 <generic:Series>
 <generic:SeriesKey>
 <generic:Value id="FREQ" value="B"/>
