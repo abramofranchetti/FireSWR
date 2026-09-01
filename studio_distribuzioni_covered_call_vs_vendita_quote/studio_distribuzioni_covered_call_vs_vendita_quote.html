@@ -822,16 +822,44 @@
                     mapSWDA.set(item.Date, { adj: item.AdjClose ?? null, close: item.Close ?? null });
                 });
 
+                // Trova la data più vecchia comune tra i due ETF
+                const wincDates = Array.from(mapWINC.keys()).sort((a, b) => new Date(a) - new Date(b));
+                const swdaDates = Array.from(mapSWDA.keys()).sort((a, b) => new Date(a) - new Date(b));
+                
+                const wincMinDate = wincDates.length > 0 ? wincDates[0] : null;
+                const swdaMinDate = swdaDates.length > 0 ? swdaDates[0] : null;
+                
+                // La data di inizio è il massimo tra le due date minime (la più recente delle due date più vecchie)
+                let commonStartDate = null;
+                if (wincMinDate && swdaMinDate) {
+                    commonStartDate = new Date(wincMinDate) > new Date(swdaMinDate) ? wincMinDate : swdaMinDate;
+                }
 
+                // Filtra i dividendi anche per la data comune
+                if (commonStartDate) {
+                    distribuzioni = distribuzioni.filter(dist => new Date(dist.date) >= new Date(commonStartDate));
+                }
 
-                // unione delle date
-                const dateSet = new Set([...mapWINC.keys(), ...mapSWDA.keys()]);
+                // unione delle date solo dalla data comune in poi
+                const dateSet = new Set();
+                mapWINC.forEach((v, date) => {
+                    if (!commonStartDate || new Date(date) >= new Date(commonStartDate)) {
+                        dateSet.add(date);
+                    }
+                });
+                mapSWDA.forEach((v, date) => {
+                    if (!commonStartDate || new Date(date) >= new Date(commonStartDate)) {
+                        dateSet.add(date);
+                    }
+                });
+                
                 const labels = Array.from(dateSet).sort((a, b) => new Date(a) - new Date(b));
 
-                // Calcolo valore cumulativo
-                let swdaAdjInitialPrice = mapSWDA.size ? mapSWDA.get([...mapSWDA.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).adj : null;
-                let swdaCloseInitialPrice = mapSWDA.size ? mapSWDA.get([...mapSWDA.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
-                let wincCloseInitialPrice = mapWINC.size ? mapWINC.get([...mapWINC.keys()].sort((a, b) => new Date(a) - new Date(b))[0]).close : null;
+                // Calcolo valore cumulativo - usa i prezzi dalla PRIMA data comune
+                const firstCommonDate = labels.length > 0 ? labels[0] : null;
+                let swdaAdjInitialPrice = firstCommonDate && mapSWDA.has(firstCommonDate) ? mapSWDA.get(firstCommonDate).adj : null;
+                let swdaCloseInitialPrice = firstCommonDate && mapSWDA.has(firstCommonDate) ? mapSWDA.get(firstCommonDate).close : null;
+                let wincCloseInitialPrice = firstCommonDate && mapWINC.has(firstCommonDate) ? mapWINC.get(firstCommonDate).close : null;
 
                 const swdaCumulative = [];
                 const wincReinvestedCumulative = [];

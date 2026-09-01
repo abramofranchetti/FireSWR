@@ -265,8 +265,32 @@
                     mapCSSPX.set(item.Date, { adj: item.AdjClose ?? null });
                 });
 
-                // unione delle date
-                const dateSet = new Set([...mapXYLE.keys(), ...mapCSSPX.keys()]);
+                // Trova la data più vecchia comune tra i due ETF
+                const xyleDates = Array.from(mapXYLE.keys()).sort((a, b) => new Date(a) - new Date(b));
+                const csspxDates = Array.from(mapCSSPX.keys()).sort((a, b) => new Date(a) - new Date(b));
+                
+                const xyleMinDate = xyleDates.length > 0 ? xyleDates[0] : null;
+                const csspxMinDate = csspxDates.length > 0 ? csspxDates[0] : null;
+                
+                // La data di inizio è il massimo tra le due date minime (la più recente delle due date più vecchie)
+                let startDate = null;
+                if (xyleMinDate && csspxMinDate) {
+                    startDate = new Date(xyleMinDate) > new Date(csspxMinDate) ? xyleMinDate : csspxMinDate;
+                }
+
+                // unione delle date solo dalla data comune in poi
+                const dateSet = new Set();
+                mapXYLE.forEach((v, date) => {
+                    if (!startDate || new Date(date) >= new Date(startDate)) {
+                        dateSet.add(date);
+                    }
+                });
+                mapCSSPX.forEach((v, date) => {
+                    if (!startDate || new Date(date) >= new Date(startDate)) {
+                        dateSet.add(date);
+                    }
+                });
+                
                 const labels = Array.from(dateSet).sort((a, b) => new Date(a) - new Date(b));
 
                 const csspxAdjSeries = [];

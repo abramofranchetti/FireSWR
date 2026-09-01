@@ -11,7 +11,7 @@ jobs:
     env:
       STOCK_SYMBOL: "SWDA.MI"
       FILE_NAME: "studio_distribuzioni_covered_call_vs_vendita_quote/SWDA.MI.json"
-      START_DATE: "2024-03-26"
+      START_DATE: "2021-10-04"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
