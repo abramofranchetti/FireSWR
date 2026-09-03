@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evoluzione curve rendimenti BCE</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/ecbyieldcurve_history.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/ecbyieldcurve_history.js" defer></script>
+</head>
+<body class="curve-history-page">
+    <main class="history-shell">
+        <a href="/FireSWR" class="home-button">Home</a>
+        <header class="history-header">
+            <p class="eyebrow">ECB EURO AREA YIELD CURVES</p>
+            <h1>Come si sposta la curva nel tempo</h1>
+            <p>Confronta due date, separa il movimento dei tassi dalla forma e osserva dove si concentra il cambiamento.</p>
+        </header>
+        <section class="controls-panel" aria-label="Controlli confronto">
+            <label>Rating<select id="rating"><option>AAA</option><option>All Ratings</option></select></label>
+            <label>Curva<select id="curve-type"><option value="spot">Spot</option><option value="forward">Instantaneous forward</option><option value="par">Par yield</option></select></label>
+            <label>Data iniziale<select id="date-from"></select></label>
+            <label>Data finale<select id="date-to"></select></label>
+            <button id="animate" type="button">Riproduci evoluzione</button>
+        </section>
+        <section class="chart-grid">
+            <article class="chart-panel"><h2>Curve sovrapposte</h2><div class="chart-frame"><canvas id="curve-chart"></canvas></div></article>
+            <article class="chart-panel"><h2>Variazione tra le date</h2><div class="chart-frame"><canvas id="change-chart"></canvas></div></article>
+        </section>
+        <section class="metrics" id="metrics"></section>
+        <section class="guide">
+            <p class="eyebrow">GUIDA PRATICA</p>
+            <h2>Leggere il movimento</h2>
+            <div class="guide-grid">
+                <div><b>Traslazione</b><p>La curva sale o scende quasi parallelamente: è soprattutto un cambiamento del livello generale dei rendimenti.</p></div>
+                <div><b>Ripidimento</b><p>Le scadenze lunghe cambiano più delle brevi. Un valore 30Y-2Y più alto indica una curva più ripida.</p></div>
+                <div><b>Appiattimento</b><p>Le scadenze brevi cambiano più delle lunghe, oppure il differenziale lungo-breve si riduce.</p></div>
+                <div><b>Curvatura</b><p>Il tratto centrale si muove diversamente dagli estremi. Guarda la differenza tra 10 anni e la linea che unisce 2 e 30 anni.</p></div>
+                <div><b>Attenzione</b><p>Un movimento positivo non significa automaticamente aspettative di crescita: confronta sempre spot, forward e par yield.</p></div>
+            </div>
+        </section>
+        <p class="source">Fonte: European Central Bank. Dati disponibili nei giorni di pubblicazione BCE.</p>
+    </main>
+</body>
+</html>

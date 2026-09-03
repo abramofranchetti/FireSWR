@@ -1,0 +1,31 @@
+name: ECB YieldCurve History
+
+on:
+  schedule:
+    - cron: "15 9 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collect-ecb-yieldcurve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install dependencies
+        run: python -m pip install requests
+      - name: Download and archive ECB curve
+        run: python py/download_ecb_yieldcurve_history.py
+      - name: Commit history
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add xml/history json/ecb_yieldcurve_history.json
+          git diff --cached --quiet || git commit -m "Aggiornamento storico curve BCE"
+          git push
