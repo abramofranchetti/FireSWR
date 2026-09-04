@@ -48,17 +48,20 @@ document.addEventListener('DOMContentLoaded', async function () {
         const changeChart = new Chart(document.getElementById('change-chart'), {
             type: 'line',
             data: { datasets: [{ label: `${secondDate} meno ${firstDate}`, data: changes, borderColor: '#d68b32', backgroundColor: 'rgba(214,139,50,.14)', fill: true, pointRadius: 0, tension: 0.15 }] },
-            options: chartOptions('Variazione (bp)', true)
+            options: chartOptions('Variazione (bp)', changes)
         });
         window.curveHistoryCharts = [curveChart, changeChart];
         renderMetrics(firstDate, secondDate, firstPoints, secondPoints);
     }
 
-    function chartOptions(yTitle, zeroLine) {
+    function chartOptions(yTitle, changes = null) {
+        const maxChange = changes ? Math.max(1, ...changes.map(point => Math.abs(point.y))) : null;
+        const changePadding = maxChange ? Math.max(1, maxChange * 0.15) : 0;
+        const changeScale = maxChange ? { min: -(maxChange + changePadding), max: maxChange + changePadding } : {};
         return { responsive: true, maintainAspectRatio: false, interaction: { mode: 'nearest', intersect: false },
             plugins: { legend: { position: 'top' } },
             scales: { x: { type: 'linear', min: 0, max: 30, title: { display: true, text: 'Scadenza (anni)' } },
-                y: { title: { display: true, text: yTitle }, ...(zeroLine ? { suggestedMin: -50, suggestedMax: 50 } : {}) } } };
+                y: { title: { display: true, text: yTitle }, ...changeScale } } };
     }
 
     function renderMetrics(firstDate, secondDate, firstPoints, secondPoints) {
