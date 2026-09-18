@@ -1,37 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <previsioni>
-<data_emissione date="17/09/2026 alle 13:00" />
+<data_emissione date="18/09/2026 alle 13:00" />
+<data_aggiornamento date="18/09 alle 16.00" />
 <meteogrammi>
 <meteogramma zoneid="1" name="Dolomiti Nord-Est">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso" />
-          <previsione title="Temperatura 2000m" type="text" value="max 11 C" />
-          <previsione title="Temperatura 3000m" type="text" value="max 2 C" />
-          <previsione title="Precipitazioni" type="text" value="Modeste locali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura 2000m" type="text" value="min 8 C" />
-          <previsione title="Temperatura 3000m" type="text" value="min 1 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png" />
+         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
           <previsione title="Temperatura 2000m" type="text" value="max 11 C" />
           <previsione title="Temperatura 3000m" type="text" value="max 3 C" />
-					<previsione title="Precipitazioni" type="text" value="Locali anche a carattere di rovescio" />
+          <previsione title="Precipitazioni" type="text" value="Locali anche a carattere di rovescio" />
 					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
@@ -44,8 +25,8 @@
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura 2000m" type="text" value="max 12 C" />
           <previsione title="Temperatura 3000m" type="text" value="max 3 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
@@ -53,54 +34,54 @@
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso per velature" />
+          <previsione title="Temperatura 2000m" type="text" value="min 10 C" />
+          <previsione title="Temperatura 3000m" type="text" value="min 4 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per velature" />
+          <previsione title="Temperatura 2000m" type="text" value="max 15 C" />
+          <previsione title="Temperatura 3000m" type="text" value="max 5 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per velature" />
-				  <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 </meteogramma>
 
 <meteogramma zoneid="2" name="Dolomiti Sud-Ovest">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso" />
-          <previsione title="Temperatura 2000m" type="text" value="max 11 C" />
-          <previsione title="Temperatura 3000m" type="text" value="max 2 C" />
-          <previsione title="Precipitazioni" type="text" value="Modeste locali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura 2000m" type="text" value="min 8 C" />
-          <previsione title="Temperatura 3000m" type="text" value="min 1 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png" />
+         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
           <previsione title="Temperatura 2000m" type="text" value="max 11 C" />
           <previsione title="Temperatura 3000m" type="text" value="max 3 C" />
-					<previsione title="Precipitazioni" type="text" value="Locali anche a carattere di rovescio" />
+          <previsione title="Precipitazioni" type="text" value="Locali anche a carattere di rovescio" />
 					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
@@ -113,8 +94,8 @@
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura 2000m" type="text" value="max 12 C" />
           <previsione title="Temperatura 3000m" type="text" value="max 3 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
@@ -122,68 +103,68 @@
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso per velature" />
+          <previsione title="Temperatura 2000m" type="text" value="min 10 C" />
+          <previsione title="Temperatura 3000m" type="text" value="min 4 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per velature" />
+          <previsione title="Temperatura 2000m" type="text" value="max 15 C" />
+          <previsione title="Temperatura 3000m" type="text" value="max 5 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per velature" />
-				  <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 </meteogramma>
 
 <meteogramma zoneid="3" name="Belluno e Prealpi orientali">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b2.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso" />
-          <previsione title="Temperatura 1500m" type="text" value="max 13 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 9 C" />
-          <previsione title="Precipitazioni" type="text" value="Piogge anche con rovesci" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura 1500m" type="text" value="min 11 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min 8 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png" />
+         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
           <previsione title="Temperatura 1500m" type="text" value="max 13 C" />
           <previsione title="Temperatura 2000m" type="text" value="max 9 C" />
-					<previsione title="Precipitazioni" type="text" value="Locali anche a carattere di rovescio" />
+          <previsione title="Precipitazioni" type="text" value="Locali anche a carattere di rovescio" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura 1500m" type="text" value="min 11 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min 8 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min 7 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura 1500m" type="text" value="max 14 C" />
           <previsione title="Temperatura 2000m" type="text" value="max 10 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
@@ -191,68 +172,68 @@
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso per velature" />
+          <previsione title="Temperatura 1500m" type="text" value="min 12 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min 10 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per velature" />
+          <previsione title="Temperatura 1500m" type="text" value="max 17 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 14 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per velature" />
-				  <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 </meteogramma>
 
 <meteogramma zoneid="4" name="Prealpi centrali">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso" />
-          <previsione title="Temperatura 1500m" type="text" value="max 13 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 9 C" />
-          <previsione title="Precipitazioni" type="text" value="Piogge anche con rovesci" />
-					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura 1500m" type="text" value="min 11 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min 8 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png" />
+         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
           <previsione title="Temperatura 1500m" type="text" value="max 13 C" />
           <previsione title="Temperatura 2000m" type="text" value="max 9 C" />
-					<previsione title="Precipitazioni" type="text" value="Locali anche a carattere di rovescio" />
+          <previsione title="Precipitazioni" type="text" value="Locali anche a carattere di rovescio" />
 					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura 1500m" type="text" value="min 11 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min 8 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min 7 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura 1500m" type="text" value="max 14 C" />
           <previsione title="Temperatura 2000m" type="text" value="max 10 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
@@ -260,81 +241,101 @@
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso per velature" />
+          <previsione title="Temperatura 1500m" type="text" value="min 12 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min 10 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per velature" />
+          <previsione title="Temperatura 1500m" type="text" value="max 17 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 14 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per velature" />
-				  <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 </meteogramma>
 
 <meteogramma zoneid="5" name="Pedemontana orientale">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 19/21 C" />
-          <previsione title="Precipitazioni" type="text" value="Moderate" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
+          <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="min 14/16 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 22/24 C" />
-					<previsione title="Precipitazioni" type="text" value="Deboli locali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="min 13/15 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 23/25 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 27/29 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -343,62 +344,62 @@
 </meteogramma>
 
 <meteogramma zoneid="6" name="Treviso e pianura orientale">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 19/21 C" />
-          <previsione title="Precipitazioni" type="text" value="Rovesci o temporali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
+          <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="min 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 23/25 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="20%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura" type="text" value="min 14/16 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 24/26 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per nubi alte" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 27/29 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -407,67 +408,67 @@
 </meteogramma>
 
 <meteogramma zoneid="7" name="Veneziano orientale">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b7.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 19/21 C" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/c5.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
           <previsione title="Precipitazioni" type="text" value="Rovesci o temporali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
+					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da nordest" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
+				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
           <previsione title="Temperatura" type="text" value="min 14/16 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
+					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 23/25 C" />
-					<previsione title="Precipitazioni" type="text" value="Sparse anche a carattere di rovescio" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="sab 19 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="min 14/16 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 24/26 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per nubi alte" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 27/29 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -476,49 +477,29 @@
 </meteogramma>
 
 <meteogramma zoneid="8" name="Prealpi occidentali">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a4.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
+         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
           <previsione title="Temperatura 1500m" type="text" value="max 13 C" />
           <previsione title="Temperatura 2000m" type="text" value="max 9 C" />
-          <previsione title="Precipitazioni" type="text" value="Piogge anche con rovesci" />
+          <previsione title="Precipitazioni" type="text" value="Locali anche a carattere di rovescio" />
 					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura 1500m" type="text" value="min 11 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min 8 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura 1500m" type="text" value="max 13 C" />
-          <previsione title="Temperatura 2000m" type="text" value="max 9 C" />
-					<previsione title="Precipitazioni" type="text" value="Locali anche a carattere di rovescio" />
-					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura 1500m" type="text" value="min 11 C" />
-          <previsione title="Temperatura 2000m" type="text" value="min 8 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min 7 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura 1500m" type="text" value="max 14 C" />
           <previsione title="Temperatura 2000m" type="text" value="max 10 C" />
 					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
@@ -526,81 +507,101 @@
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso per velature" />
+          <previsione title="Temperatura 1500m" type="text" value="min 12 C" />
+          <previsione title="Temperatura 2000m" type="text" value="min 10 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
          <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per velature" />
+          <previsione title="Temperatura 1500m" type="text" value="max 17 C" />
+          <previsione title="Temperatura 2000m" type="text" value="max 14 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Parzialmente nuvoloso per velature" />
-				  <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="Buona" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+				  <previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Discreta" />
 				</scadenza>
 </meteogramma>
 
 <meteogramma zoneid="9" name="Vicenza e pedemontana">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 17/19 C" />
-          <previsione title="Precipitazioni" type="text" value="Rovesci o temporali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
+          <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="min 14/16 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 23/25 C" />
-					<previsione title="Precipitazioni" type="text" value="Deboli locali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura" type="text" value="min 14/16 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 24/26 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 27/29 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -609,62 +610,62 @@
 </meteogramma>
 
 <meteogramma zoneid="10" name="Padova e pianura centrale">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 18/20 C" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/c1.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
           <previsione title="Precipitazioni" type="text" value="Rovesci o temporali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
+					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="min 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 24/26 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="20%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="min 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 25/27 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per nubi alte" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 27/29 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -673,67 +674,67 @@
 </meteogramma>
 
 <meteogramma zoneid="11" name="Venezia e laguna">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b7.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 20/22 C" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/c5.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
           <previsione title="Precipitazioni" type="text" value="Rovesci o temporali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
+					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da nordest" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
+				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="min 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
+					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 23/25 C" />
-					<previsione title="Precipitazioni" type="text" value="Sparse anche a carattere di rovescio" />
-					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="sab 19 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="min 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 23/25 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per nubi alte" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 27/29 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -742,67 +743,67 @@
 </meteogramma>
 
 <meteogramma zoneid="12" name="Delta del Po">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b7.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 22/24 C" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/c5.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
           <previsione title="Precipitazioni" type="text" value="Rovesci o temporali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
+					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da nordest" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
+				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="min 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
+          <previsione title="Temperatura" type="text" value="min 15/17 C" />
+					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
 					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 24/26 C" />
-					<previsione title="Precipitazioni" type="text" value="Sparse anche a carattere di rovescio" />
-					<previsione title="Probabilita' precipitazione" type="text" value="30%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="sab 19 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="min 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 24/26 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per nubi alte" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 15/17 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 27/29 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -811,62 +812,62 @@
 </meteogramma>
 
 <meteogramma zoneid="13" name="Rovigo e pianura meridionale">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b7.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 20/22 C" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/c5.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
           <previsione title="Precipitazioni" type="text" value="Rovesci o temporali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
+					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="min 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 25/27 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="min 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 25/27 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per nubi alte" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 27/29 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -875,62 +876,62 @@
 </meteogramma>
 
 <meteogramma zoneid="14" name="Verona e pedemontana">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 18/20 C" />
-          <previsione title="Precipitazioni" type="text" value="Rovesci o temporali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
+          <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
+					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
 					<previsione title="Quota neve" type="text" value="" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="min 15/17 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 24/26 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
           <previsione title="Temperatura" type="text" value="min 14/16 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 25/27 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 27/29 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -939,67 +940,67 @@
 </meteogramma>
 
 <meteogramma zoneid="15" name="Area del Garda">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b3.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 18/20 C" />
-          <previsione title="Precipitazioni" type="text" value="Rovesci o temporali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="" />
-				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
-         <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="min 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
 				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 23/25 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
+          <previsione title="Precipitazioni" type="text" value="Piogge modeste" />
+					<previsione title="Probabilita' precipitazione" type="text" value="40%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Variabili" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Deboli da nordest" />
+					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
 				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="min 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 24/26 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 27/29 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -1008,67 +1009,67 @@
 </meteogramma>
 
 <meteogramma zoneid="16" name="Litorale nord">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b7.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 19/21 C" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/c5.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 24/26 C" />
           <previsione title="Precipitazioni" type="text" value="Rovesci o temporali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
+					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da nordest" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
+				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
           <previsione title="Temperatura" type="text" value="min 14/16 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
+					<previsione title="Probabilita' precipitazione" type="text" value="20%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 23/25 C" />
-					<previsione title="Precipitazioni" type="text" value="Sparse anche a carattere di rovescio" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="sab 19 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="min 14/16 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 24/26 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per nubi alte" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 14/16 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -1077,67 +1078,67 @@
 </meteogramma>
 
 <meteogramma zoneid="17" name="Litorale centrale">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b7.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 20/22 C" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/c5.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 24/26 C" />
           <previsione title="Precipitazioni" type="text" value="Rovesci o temporali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
+					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da nordest" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
+				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="min 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+          <previsione title="Temperatura" type="text" value="min 15/17 C" />
+					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
+					<previsione title="Probabilita' precipitazione" type="text" value="20%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 23/25 C" />
-					<previsione title="Precipitazioni" type="text" value="Sparse anche a carattere di rovescio" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="sab 19 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="min 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 23/25 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per nubi alte" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 15/17 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -1146,67 +1147,67 @@
 </meteogramma>
 
 <meteogramma zoneid="18" name="Litorale sud">
-				<scadenza data="gio 17 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b7.png" />
-         <previsione title="Cielo" type="text" value="Nuvoloso o molto nuvoloso" />
-          <previsione title="Temperatura" type="text" value="max 21/23 C" />
+				<scadenza data="ven 18 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/c5.png" />
+         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in aumento" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
           <previsione title="Precipitazioni" type="text" value="Rovesci o temporali" />
-					<previsione title="Probabilita' precipitazione" type="text" value="90%" />
+					<previsione title="Probabilita' precipitazione" type="text" value="60%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da nordest" />
 					<previsione title="Attendibilita'" type="text" value="" />
 				</scadenza>
-				<scadenza data="ven 18 settembre mattina">
+				<scadenza data="sab 19 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a3.png" />
          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
           <previsione title="Temperatura" type="text" value="min 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
+					<previsione title="Precipitazioni" type="text" value="Piogge modeste" />
+					<previsione title="Probabilita' precipitazione" type="text" value="20%" />
 					<previsione title="Quota neve" type="text" value="" />
           <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="ven 18 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/b1.png"/>
-          <previsione title="Cielo" type="text" value="Annuvolamenti e schiarite" />
-          <previsione title="Temperatura" type="text" value="max 24/26 C" />
-					<previsione title="Precipitazioni" type="text" value="Sparse anche a carattere di rovescio" />
-					<previsione title="Probabilita' precipitazione" type="text" value="50%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Moderati da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
-				</scadenza>
-				<scadenza data="sab 19 settembre mattina">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="min 16/18 C" />
-					<previsione title="Precipitazioni" type="text" value="Generalmente assenti" />
-					<previsione title="Probabilita' precipitazione" type="text" value="10%" />
-					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="sab 19 settembre pomeriggio">
-					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Nuvolosit&#224; in diminuzione" />
-          <previsione title="Temperatura" type="text" value="max 24/26 C" />
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
+          <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 25/27 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-          <previsione title="Vento" type="text" value="Deboli da nordest" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
-				<scadenza data="dom 20 settembre">
+				<scadenza data="dom 20 settembre mattina">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per nubi alte" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="min 16/18 C" />
 					<previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
-					<previsione title="Attendibilita'" type="text" value="Buona" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="dom 20 settembre pomeriggio">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+          <previsione title="Temperatura" type="text" value="max 26/28 C" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+          <previsione title="Vento" type="text" value="Variabili" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
 				</scadenza>
 				<scadenza data="lun 21 settembre">
+					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
+					<previsione title="Precipitazioni" type="text" value="Assenti" />
+					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
+					<previsione title="Quota neve" type="text" value="" />
+					<previsione title="Attendibilita'" type="text" value="Ottima" />
+				</scadenza>
+				<scadenza data="mar 22 settembre">
 					<previsione title="Simbolo" type="image" value="https://www.arpa.veneto.it/risorse/data-bollettini/meteo/icone/meteo/a2.png"/>
-         <previsione title="Cielo" type="text" value="Sereno o poco nuvoloso per velature" />
+         <previsione title="Cielo" type="text" value="Poco nuvoloso" />
 				  <previsione title="Precipitazioni" type="text" value="Assenti" />
 					<previsione title="Probabilita' precipitazione" type="text" value="0%" />
 					<previsione title="Quota neve" type="text" value="" />
@@ -1217,191 +1218,192 @@
 </meteogrammi>
 <bollettini>
 
-<bollettino bollettinoid="MV" name="Meteo Veneto" title="Bollettino del 17 settembre">
-<evoluzionegenerale><![CDATA[Gioved&igrave; il passaggio di una saccatura determiner&agrave; una fase di tempo instabile seguita venerd&igrave; da un secondo impulso secondario. Da sabato graduale aumento della pressione. Il tempo sulla regione sar&agrave; instabile, a tratti perturbato,  gioved&igrave;, con precipitazioni anche diffuse con frequenti rovesci e temporali. Venerd&igrave; residua variabilit&agrave;, con precipitazioni pi&ugrave; frequenti sulle zone montane e sui settori centro-orientali, mentre altrove risulteranno pi&ugrave; discontinue o del tutto assenti. Sabato residua variabilit&agrave;, specie al mattino, con qualche piovasco sparso. Domenico stabile e in prevalenza soleggiato. Da luned&igrave; comincer&agrave; ad approfondirsi una saccatura, associata ad aria fredda, che scorrer&agrave; sul versante orientale adriatico, e che determiner&agrave; ancora un po' di variabilit&agrave; e un marcato rinforzo dei venti in quota dai quadranti settentrionali e sulla costa dai quadranti orientali. Le temperature massime subiranno un brusco calo gioved&igrave;, per poi riprendersi nei giorni successivi.]]></evoluzionegenerale><avviso><![CDATA[AVVISO METEO. Nel pomeriggio di gioved&igrave; tempo a tratti instabile, con precipitazioni sparse e intermittenti, anche con rovesci e temporali, specie su pianura centro-sud e costa, dove potranno risultare localmente intensi. ]]></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="17 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_0.png.jpg" caption="17 settembre pomeriggio" />
+<bollettino bollettinoid="MV" name="Meteo Veneto" title="Bollettino del 18 settembre">
+<evoluzionegenerale><![CDATA[Venerd&igrave; ancora circolazione ciclonica; si alterneranno piogge e rasserenamenti. Sabato pressione in aumento e da domenica situazione pienamente anticiclonica con temperature sopra la media.]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="18 settembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_0.png.jpg" caption="18 settembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Previsione: </b>In prevalenza molto nuvoloso, salvo parziali e temporanee schiarite. Precipitazioni da sparse e intermittenti, con locali rovesci e temporali, specie su costa e pianura meridionale, dove localmente potranno risultare di forte intensit&agrave;; tendenza ad attenuazione/diradamento dei fenomeni verso il tardo pomeriggio, a partire dai settori settentrionali. Temperature massime in calo, localmente anche marcato. Venti in pianura in prevalenza dai quadranti orientali deboli/moderati, a tratti tesi sulla costa meridionale; in quota moderati da sud-ovest. ]]>
-					</text>
-				</giorno>
-				<giorno data="18 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_1.png.jpg" caption="18 settembre mattina" />
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_2.png.jpg" caption="18 settembre pomeriggio" />
-					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Nuvolosit&agrave; irregolare, a tratti consistenti, pi&ugrave; frequente sui settori costieri e sulle zone montane, alternata a schiarite.<br /><b>Precipitazioni: </b>Generalmente assenti fino a met&agrave; mattina, poi sulle zone montane e sui settori costieri, graduale aumento della probabilit&agrave; di qualche piovasco sparso, con occasionali rovesci o temporali locali, altrove assenti o sporadici.<br /><b>Temperature: </b>Minime in calo; massime in ripresa in pianura, senza notevoli variazioni altrove.<br /><b>Venti: </b>In pianura deboli/moderati da nord-est. In quota venti deboli/moderati da sud-ovest/ovest.<br /><b>Mare: </b>Poco mosso.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Previsione: </b>Nuvolosit&agrave; in aumento fino a cielo anche coperto a tratti. Attese piogge che prima o poi arriveranno ad interessare tutte le zone; si tratter&agrave; di piovaschi/rovesci/temporali, con i temporali pi&ugrave; probabilmente su costa e zone limitrofe e localmente non esclusi temporali intensi. Temperature: prima delle piogge in aumento e poi in calo, con differenze anche sensibili rispetto a gioved&igrave;; valori prossimi alla media prima delle piogge e poi sotto la media anche di molto.]]>
 					</text>
 				</giorno>
 				<giorno data="19 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_3.png.jpg" caption="19 settembre mattina" />
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_4.png.jpg" caption="19 settembre pomeriggio" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_1.png.jpg" caption="19 settembre mattina" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_2.png.jpg" caption="19 settembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Residua variabilit&agrave; al primo mattino, con iniziali nubi irregolari, seguite da schiarite via via pi&ugrave; ampie in pianura, mentre sulle zone montane permarranno nubi irregolari. Non si esclude qualche locale nebbia al primo mattino in pianura.<br /><b>Precipitazioni: </b>Al mattino saranno possibili piovaschi locali su Prealpi e pianura, poi generalmente assenti, salvo locali deboli fenomeni sulle zone prealpine nel pomeriggio.<br /><b>Temperature: </b>Senza notevoli variazioni.<br /><b>Venti: </b>In pianura deboli orientali; in quota deboli/moderati dai quadranti settentrionali.<br /><b>Mare: </b>Calmo o poco mosso.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>In prevalenza poco o parzialmente nuvoloso, su costa e zone limitrofe fino al mattino a tratti nuvoloso.
+<br /><b>Precipitazioni: </b>Probabilit&agrave; bassa (5-25%) per piovaschi/rovesci locali a tratti, fino al mattino su costa e zone limitrofe e di pomeriggio sulle Prealpi.<br /><b>Temperature: </b>In calo di notte e in aumento di giorno, con differenze anche sensibili rispetto a venerd&igrave;. Valori non distanti dalla media di notte e sopra la media in modo leggero/moderato di giorno.<br /><b>Venti: </b>Deboli/moderati. Sulla pianura fino al mattino da nord-est e dal pomeriggio con direzione variabile, nelle valli con direzione variabile, in alta montagna da nord-ovest.<br /><b>Mare: </b>Poco mosso.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data="20 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_5.png.jpg" caption="20 settembre" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_3.png.jpg" caption="20 settembre mattina" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_4.png.jpg" caption="20 settembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tendenza per domenica 20: </b>Tempo stabile e in prevalenza soleggiato, salvo tratti di nuvolosit&agrave; medio-alta; probabili nebbie nelle prime ore in pianura, specie sui settori meridionali. Temperature minime stazionarie, massime in aumento, con valori superiori alla media del periodo. Venti in quota moderati da nord-ovest, in pianura deboli variabili.
-<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Poco o parzialmente nuvoloso. Fino al primo mattino nebbie locali sulla pianura e nelle valli.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>Fino al primo mattino senza variazioni di rilievo e poi in aumento leggero/moderato rispetto a sabato.<br /><b>Venti: </b>Deboli/moderati con direzione variabile.<br /><b>Mare: </b>Calmo.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data="21 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_6.png.jpg" caption="21 settembre" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_5.png.jpg" caption="21 settembre" />
 					<text>
-                        <![CDATA[<b>Tendenza per luned&igrave; 21: </b>Sereno o poco nuvoloso, con nuvolosit&agrave; in aumento in serata; probabili nebbie locali in pianura al primo mattino. Rinforzo dei venti di Bora in pianura in serata. In quota venti da moderati a tesi dai quadranti settentrionali. Temperature senza notevoli variazioni.
-Previsore: R.R.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Tendenza per luned&igrave; 21: </b>Precipitazioni assenti, cielo poco o parzialmente nuvoloso, temperature in aumento sulla pianura e senza variazioni di rilievo sui monti.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+					</text>
+				</giorno>
+				<giorno data="22 settembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MV_6.png.jpg" caption="22 settembre" />
+					<text>
+                        <![CDATA[<b>Tendenza per marted&igrave; 22: </b>Precipitazioni assenti, cielo poco o parzialmente nuvoloso, temperature in aumento di notte e in calo di giorno.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
 					</text>
 				</giorno>
 </bollettino>
 
-<bollettino bollettinoid="DM" name="Dolomiti Meteo" title="Bollettino del 17 settembre">
-<evoluzionegenerale><![CDATA[Una saccatura di origine nord atlantica determina gioved&igrave; instabilit&agrave; con molte nubi, precipitazioni a tratti e calo termico. Venerd&igrave; ancora flusso a tratti umido da sudovest poi un promontorio garantir&agrave; tempo generalmente stabile sabato e domenica. Luned&igrave; forti correnti in quota settentrionali con tempo ancora generalmente stabile.   ]]></evoluzionegenerale><avviso><![CDATA[AVVISO METEO. Nel pomeriggio di gioved&igrave; tempo a tratti instabile, con precipitazioni sparse e intermittenti, anche con rovesci e temporali, specie su pianura centro-sud e costa, dove potranno risultare localmente intensi. ]]></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="17 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_0.png.jpg" caption="17 settembre pomeriggio" />
+<bollettino bollettinoid="DM" name="Dolomiti Meteo" title="Bollettino del 18 settembre">
+<evoluzionegenerale><![CDATA[Venerd&igrave; ancora flusso a tratti umido da sudovest per l'effetto di una modesta saccatura in moto verso levante. Nel fine settimana il campo barico sar&agrave; inizialmente livellato, con la nostra regione che si trover&agrave; al margine di un promontorio in espansione sulla Penisola Iberica, il quale garantir&agrave; tempo generalmente stabile. Anche luned&igrave; e marted&igrave; permangono condizioni di stabilit&agrave;; tuttavia una profonda saccatura &egrave; in approfondimento nell'Europa orientale, dal Mar Baltico verso la Polonia, con forti correnti in quota settentrionali che lambiranno le Alpi Orientali.  ]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="18 settembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_0.png.jpg" caption="18 settembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Previsione: </b>Cielo nuvoloso con irregolari schiarite. Residue deboli precipitazioni qua e l&agrave; nel pomeriggio (20-40%) in esaurimento ovunque in serata. Neve sulle cime dolomitiche pi&ugrave; elevate. Temperature in calo, sensibile nei valori massimi ed in montagna. Su Prealpi - a 1500 m: max 13, a 2000 m: max 9. Dolomiti - a 2000 m: max 11, a 3000 m: max 2. Venti in quota moderati o tesi da sudovest a 10-20 km/h a 2000 m e 20-30 km/h a 3000 m.  ]]>
-					</text>
-				</giorno>
-				<giorno data="18 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_1.png.jpg" caption="18 settembre mattina" />
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_2.png.jpg" caption="18 settembre pomeriggio" />
-					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Nuvolosit&agrave; a tratti estesa specie fino al primo mattino, poi schiarite irregolari alternate ad annuvolamenti anche estesi fino a sera.  
-<br /><b>Precipitazioni: </b>Durante la giornata a tratti non sono esclusi piovaschi o qualche rovescio qua e l&agrave; (20-40%) un p&ograve; pi&ugrave; probabili su Bellunese tra le ore centrali e il pomeriggio/sera.
-<br /><b>Temperature: </b>Temperature stazionarie o in lieve calo le minime. Su  Prealpi - a 1500 m: min 11 max 13, a 2000 m: min 8 max 9 Dolomiti - a 2000 m: min 8 max 11, a 3000 m: min 1 max 3<br /><b>Venti: </b>Venti in quota moderati da sudovest in rotazione e attenuazione da nordovest in serata, deboli variabili in valle. a 10-20 km/h a 2000 m e 20-35 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Previsione: </b>Schiarite alternate ad annuvolamenti, con qualche addensamento pi&ugrave; consistente soprattutto su Dolomiti fino a sera.  
+A tratti possibile qualche piovasco o rovescio (20-40%), un po' pi&ugrave; probabili sul Bellunese tra il pomeriggio e la serata.
+Venti in quota moderati da sudovest in rotazione e attenuazione da nordovest in serata, deboli variabili in valle; a 10-20 km/h a 2000 m e 20-35 km/h a 3000 m. 
+Temperature stazionarie; (&deg;C)  Prealpi - a 1500 m: max 13, a 2000 m: max 9. Dolomiti - a 2000 m: max 11, a 3000 m: max 3]]>
 					</text>
 				</giorno>
 				<giorno data="19 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_3.png.jpg" caption="19 settembre mattina" />
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_4.png.jpg" caption="19 settembre pomeriggio" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_1.png.jpg" caption="19 settembre mattina" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_2.png.jpg" caption="19 settembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Cielo poco nuvoloso con qualche nube bassa qua e l&agrave; fino al primo mattino. Qualche modesto annuvolamento nel pomeriggio specie su Prealpi.   
-<br /><b>Precipitazioni: </b>Precipitazioni assenti o poco probabile qualche breve piovasco nel pomeriggio su Prealpi (10%)<br /><b>Temperature: </b>Temperature massime in aumento. Prealpi - a 1500 m: min 11 max 14, a 2000 m: min 8 max 10 Dolomiti - a 2000 m: min 8 max 12, a 3000 m: min 1 max 3<br /><b>Venti: </b>Venti in quota deboli/moderati da nordovest, deboli variabili in valle a 10-20 km/h a 2000 m e 15-25 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Cielo poco nuvoloso con qualche nube bassa nelle valli fino al primo mattino. Qualche modesto annuvolamento nel pomeriggio a ridosso dei rilievi, specie su Prealpi.   
+<br /><b>Precipitazioni: </b>Precipitazioni generalmente assenti, eccetto residuale probabilit&agrave; di qualche breve piovasco al pomeriggio su Prealpi (10%)<br /><b>Temperature: </b>Temperature minime in lieve calo e massime in aumento; (&deg;C)  Prealpi - a 1500 m: min 11 max 14, a 2000 m: min 7 max 10 Dolomiti - a 2000 m: min 8 max 12, a 3000 m: min 1 max 3<br /><b>Venti: </b>Venti in quota deboli/moderati da nordovest, deboli variabili in valle a 5-15 km/h a 2000 m e 10-25 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
 					</text>
 				</giorno>
 				<giorno data="20 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_5.png.jpg" caption="20 settembre" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_3.png.jpg" caption="20 settembre mattina" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_4.png.jpg" caption="20 settembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tendenza per domenica 20: </b>Cielo da poco nuvoloso al primo mattino, dopo il dissolvimento di eventuali nubi basse in alcune valli, poi nubi alte in aumento fino a velato dal mezzogiorno e nel pomeriggio assieme a qualche addensamento su Prealpi. Temperature in aumento e venti in quota moderati da nordovest.   
+                        <![CDATA[<b>Tempo atteso: </b>Cielo poco nuvoloso al primo mattino, dopo il dissolvimento di eventuali nubi basse in alcune valli. Dal mattino e nel corso della giornata passaggio di nubi alte, in aumento fino a velato nel primo pomeriggio assieme a qualche addensamento su Prealpi.
+<br /><b>Precipitazioni: </b>Assenti<br /><b>Temperature: </b>Temperature in aumento, specie nei valori massimi Prealpi - a 1500 m: min 12 max 17, a 2000 m: min 10 max 14 Dolomiti - a 2000 m: min 10 max 15, a 3000 m: min 4 max 5<br /><b>Venti: </b>Venti in montagna deboli/moderati da nordovest, in deciso rinforzo verso sera soprattutto nei settori settentrionali ed orientali; a 5-20 km/h a 2000 m e a 10-50 km/h a 3000 m.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+					</text>
+				</giorno>
+				<giorno data="21 settembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_5.png.jpg" caption="21 settembre" />
+					<text>
+                        <![CDATA[<b>Tendenza per luned&igrave; 21: </b>Cielo a tratti velato per estese nubi alte e qualche annuvolamento su Prealpi e lungo la cresta di confine. Temperature senza variazioni di rilievo.
+Venti in quota fino a tesi da nordovest con qualche ulteriore rinforzo possibile verso sera nelle valli pi&ugrave; settentrionali.  
 
 <br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
 					</text>
 				</giorno>
-				<giorno data="21 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_6.png.jpg" caption="21 settembre" />
+				<giorno data="22 settembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_DM_6.png.jpg" caption="22 settembre" />
 					<text>
-                        <![CDATA[<b>Tendenza per luned&igrave; 21: </b>Cielo a tratti velato per estese nubi alte e qualche annuvolamento su Prealpi e lungo la cresta di confine. Temperature in generale calo, venti in quota in rinforzo fino a tesi da nordovest con qualche rinforzo possibile verso sera nelle valli pi&ugrave; settentrionali.  
+                        <![CDATA[<b>Tendenza per marted&igrave; 22: </b>Sereno o poco nuvoloso al primo mattino. Nel corso della giornata aumento irregolare della nuvolosit&agrave; su Prealpi fino a parzialmente nuvoloso ma senza precipitazioni, mentre a nord prevarr&agrave; il sole.
+Temperature in moderato calo.
 
-Previsore: DDL<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+C.B.<br /><b>Attendibilit&agrave;: </b>Discreta<br />]]>
 					</text>
 				</giorno>
 <quota_zero_termico>
-<previsione data="17 settembre">3300</previsione>
-<previsione data="18 settembre">3400</previsione>
-<previsione data="19 settembre">3500</previsione>
-<previsione data="20 settembre">4000</previsione>
-<previsione data="21 settembre">3400</previsione>
+<previsione data="18 settembre">3500</previsione>
+<previsione data="19 settembre">3800</previsione>
+<previsione data="20 settembre">4100</previsione>
+<previsione data="21 settembre">3900</previsione>
+<previsione data="22 settembre">3800</previsione>
 </quota_zero_termico>
-<previsioni_localita data="18 settembre">
+<previsioni_localita data="19 settembre">
 <localita nome="Bosco C.N.">
-<tmin value="11" /><tmax value="16" />
-<scadenza data="ven 18 settembre Notte"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><scadenza data="ven 18 settembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><pioggia value="0-5" /><neve value="0" />
+<tmin value="10" /><tmax value="17" />
+<scadenza data="sab 19 settembre Notte"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Mattina"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Pomeriggio"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Sera"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Asiago">
-<tmin value="8" /><tmax value="16" />
-<scadenza data="ven 18 settembre Notte"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><scadenza data="ven 18 settembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><pioggia value="0-5" /><neve value="0" />
+<tmin value="8" /><tmax value="17" />
+<scadenza data="sab 19 settembre Notte"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Mattina"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Pomeriggio"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Sera"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Belluno">
-<tmin value="14" /><tmax value="23" />
-<scadenza data="ven 18 settembre Notte"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><scadenza data="ven 18 settembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><pioggia value="0-5" /><neve value="0" />
+<tmin value="13" /><tmax value="24" />
+<scadenza data="sab 19 settembre Notte"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Mattina"><cielo value="Poco nuvoloso con foschie/nebbie nelle ore pi&#249; fredde" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Pomeriggio"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Sera"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Agordo">
-<tmin value="12" /><tmax value="21" />
-<scadenza data="ven 18 settembre Notte"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><scadenza data="ven 18 settembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><pioggia value="0-5" /><neve value="0" />
+<tmin value="10" /><tmax value="22" />
+<scadenza data="sab 19 settembre Notte"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Mattina"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Pomeriggio"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Arabba">
-<tmin value="6" /><tmax value="14" />
-<scadenza data="ven 18 settembre Notte"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><scadenza data="ven 18 settembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><pioggia value="0-5" /><neve value="0" />
+<tmin value="5" /><tmax value="16" />
+<scadenza data="sab 19 settembre Notte"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Mattina"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Pomeriggio"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Cortina d'Ampezzo">
-<tmin value="7" /><tmax value="17" />
-<scadenza data="ven 18 settembre Notte"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><scadenza data="ven 18 settembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><pioggia value="0-5" /><neve value="0" />
+<tmin value="7" /><tmax value="19" />
+<scadenza data="sab 19 settembre Notte"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Mattina"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Pomeriggio"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Pieve di Cadore">
-<tmin value="10" /><tmax value="20" />
-<scadenza data="ven 18 settembre Notte"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><scadenza data="ven 18 settembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><pioggia value="0-5" /><neve value="0" />
+<tmin value="9" /><tmax value="21" />
+<scadenza data="sab 19 settembre Notte"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Mattina"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Pomeriggio"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Sera"><cielo value="Sereno o poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 <localita nome="Auronzo di Cadore">
-<tmin value="8" /><tmax value="20" />
-<scadenza data="ven 18 settembre Notte"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Mattina"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><scadenza data="ven 18 settembre Pomeriggio"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="30%" />
-</scadenza><scadenza data="ven 18 settembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="10%" />
-</scadenza><pioggia value="0-5" /><neve value="0" />
+<tmin value="7" /><tmax value="21" />
+<scadenza data="sab 19 settembre Notte"><cielo value="Sereno" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Mattina"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Pomeriggio"><cielo value="Poco nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><scadenza data="sab 19 settembre Sera"><cielo value="Parzialmente nuvoloso" /><probabilita_pioggia value="0%" />
+</scadenza><pioggia value="0" /><neve value="0" />
 </localita>
 </previsioni_localita>
 </bollettino>
 
-<bollettino bollettinoid="MP" name="Meteo Pianura Veneta" title="Bollettino del 17 settembre">
-<evoluzionegenerale><![CDATA[Gioved&igrave; il passaggio di una saccatura determiner&agrave; una fase di tempo instabile seguita venerd&igrave; da un secondo impulso secondario. Da sabato graduale aumento della pressione. Il tempo sulla regione sar&agrave; instabile, a tratti perturbato,  gioved&igrave;, con precipitazioni anche diffuse con frequenti rovesci e temporali. Venerd&igrave; residua variabilit&agrave;, con precipitazioni pi&ugrave; frequenti sulle zone montane e sui settori centro-orientali, mentre altrove risulteranno pi&ugrave; discontinue o del tutto assenti. Sabato residua variabilit&agrave;, specie al mattino, con qualche piovasco sparso. Domenico stabile e in prevalenza soleggiato. Da luned&igrave; comincer&agrave; ad approfondirsi una saccatura, associata ad aria fredda, che scorrer&agrave; sul versante orientale adriatico, e che determiner&agrave; ancora un po' di variabilit&agrave; e un marcato rinforzo dei venti in quota dai quadranti settentrionali e sulla costa dai quadranti orientali. Le temperature massime subiranno un brusco calo gioved&igrave;, per poi riprendersi nei giorni successivi.]]></evoluzionegenerale><avviso><![CDATA[AVVISO METEO. Nel pomeriggio di gioved&igrave; tempo a tratti instabile, con precipitazioni sparse e intermittenti, anche con rovesci e temporali, specie su pianura centro-sud e costa, dove potranno risultare localmente intensi. ]]></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="17 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_0.png.jpg" caption="17 settembre pomeriggio" />
+<bollettino bollettinoid="MP" name="Meteo Pianura Veneta" title="Bollettino del 18 settembre">
+<evoluzionegenerale><![CDATA[Venerd&igrave; ancora circolazione ciclonica; si alterneranno piogge e rasserenamenti. Sabato pressione in aumento e da domenica situazione pienamente anticiclonica con temperature sopra la media.]]></evoluzionegenerale><avviso></avviso><fenomeniparticolari></fenomeniparticolari>				<giorno data="18 settembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_0.png.jpg" caption="18 settembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Previsione: </b>In prevalenza molto nuvoloso, salvo parziali e temporanee schiarite. Precipitazioni da sparse e intermittenti, con locali rovesci e temporali, specie su costa e pianura meridionale, dove localmente potranno risultare di forte intensit&agrave;; tendenza ad attenuazione/diradamento dei fenomeni verso il tardo pomeriggio, a partire dai settori settentrionali. Temperature massime in calo, localmente anche marcato. Venti in prevalenza dai quadranti orientali deboli/moderati, a tratti tesi sulla costa meridionale.]]>
-					</text>
-				</giorno>
-				<giorno data="18 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_1.png.jpg" caption="18 settembre mattina" />
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_2.png.jpg" caption="18 settembre pomeriggio" />
-					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Nuvolosit&agrave; irregolare, a tratti consistenti, pi&ugrave; frequente sui settori costieri, alternata a schiarite.<br /><b>Precipitazioni: </b>Generalmente assenti fino a met&agrave; mattina, poi sui settori costieri, graduale aumento della probabilit&agrave; di qualche piovasco sparso, con occasionali rovesci o temporali locali, altrove assenti o sporadici.<br /><b>Temperature: </b>Minime in calo; massime in ripresa.<br /><b>Venti: </b>Deboli/moderati da nord-est. <br /><b>Mare: </b>Poco mosso.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Previsione: </b>Nuvolosit&agrave; in aumento fino a cielo anche coperto a tratti. Attese piogge che prima o poi arriveranno ad interessare tutte le zone; si tratter&agrave; di piovaschi/rovesci/temporali, con i temporali pi&ugrave; probabilmente su costa e zone limitrofe. Temperature: prima delle piogge in aumento e poi in calo, con differenze anche sensibili rispetto a gioved&igrave;; valori prossimi alla media prima delle piogge e poi sotto la media anche di molto. Venti deboli/moderati da nord-est, a tratti rinforzi con direzione variabile durante i temporali. ]]>
 					</text>
 				</giorno>
 				<giorno data="19 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_3.png.jpg" caption="19 settembre mattina" />
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_4.png.jpg" caption="19 settembre pomeriggio" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_1.png.jpg" caption="19 settembre mattina" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_2.png.jpg" caption="19 settembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tempo atteso: </b>Residua variabilit&agrave; al primo mattino, con iniziali nubi irregolari, seguite da schiarite via via pi&ugrave; ampie. Non si esclude qualche locale nebbia al primo mattino.<br /><b>Precipitazioni: </b>Al mattino saranno possibili piovaschi locali, poi generalmente assenti.<br /><b>Temperature: </b>Senza notevoli variazioni.<br /><b>Venti: </b>Deboli orientali.<br /><b>Mare: </b>Calmo o poco mosso.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>In prevalenza poco o parzialmente nuvoloso, su costa e zone limitrofe fino al mattino a tratti nuvoloso.<br /><b>Precipitazioni: </b>Su costa e zone limitrofe fino al mattino probabilit&agrave; bassa (5-25%) per piovaschi/rovesci locali a tratti, per il resto assenti.<br /><b>Temperature: </b>In calo di notte e in aumento di giorno, con differenze anche sensibili rispetto a venerd&igrave;. Valori non distanti dalla media di notte e sopra la media in modo leggero/moderato di giorno.<br /><b>Venti: </b>Deboli/moderati, fino al mattino da nord-est e dal pomeriggio con direzione variabile.<br /><b>Mare: </b>Poco mosso.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data="20 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_5.png.jpg" caption="20 settembre" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_3.png.jpg" caption="20 settembre mattina" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_4.png.jpg" caption="20 settembre pomeriggio" />
 					<text>
-                        <![CDATA[<b>Tendenza per domenica 20: </b>Tempo stabile e in prevalenza soleggiato, salvo tratti di nuvolosit&agrave; medio-alta; probabili nebbie nelle prime ore, specie sui settori meridionali. Temperature minime stazionarie, massime in aumento, con valori superiori alla media del periodo. Venti  deboli variabili.
-<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Tempo atteso: </b>Poco o parzialmente nuvoloso. Fino al primo mattino nebbie locali sulla pianura e nelle valli.<br /><b>Precipitazioni: </b>Assenti.<br /><b>Temperature: </b>Fino al primo mattino senza variazioni di rilievo e poi in aumento leggero/moderato rispetto a sabato.<br /><b>Venti: </b>Deboli/moderati con direzione variabile.<br /><b>Mare: </b>Calmo.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 				<giorno data="21 settembre">
-					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_6.png.jpg" caption="21 settembre" />
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_5.png.jpg" caption="21 settembre" />
 					<text>
-                        <![CDATA[<b>Tendenza per luned&igrave; 21: </b>Sereno o poco nuvoloso, con nuvolosit&agrave; in aumento in serata; probabili nebbie locali al primo mattino. Rinforzo dei venti di Bora in serata. Temperature senza notevoli variazioni.
-Previsore: R.R.<br /><b>Attendibilit&agrave;: </b>Buona<br />]]>
+                        <![CDATA[<b>Tendenza per luned&igrave; 21: </b>Precipitazioni assenti, cielo poco o parzialmente nuvoloso, temperature in aumento.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
+					</text>
+				</giorno>
+				<giorno data="22 settembre">
+					<img src="https://meteo.arpa.veneto.it/meteo/bollettini/it/images/map_MP_6.png.jpg" caption="22 settembre" />
+					<text>
+                        <![CDATA[<b>Tendenza per marted&igrave; 22: </b>Precipitazioni assenti, cielo poco o parzialmente nuvoloso, temperature in aumento di notte e in calo di giorno.<br /><b>Attendibilit&agrave;: </b>Ottima<br />]]>
 					</text>
 				</giorno>
 </bollettino>
