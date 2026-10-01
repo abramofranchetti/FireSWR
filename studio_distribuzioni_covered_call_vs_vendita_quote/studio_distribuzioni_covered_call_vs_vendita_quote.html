@@ -243,6 +243,7 @@
                             <th>Dividendo Netto <span data-covered-ticker></span> (€)</th>
                             <th>Quote <span data-underlying-ticker></span> Vendute</th>
                             <th>Dividendo Lordo <span data-underlying-ticker></span> (da vendita) (€)</th>
+                            <th>Vendita lorda / valore <span data-underlying-ticker></span> prima della vendita</th>
                             <th>Dividendo Netto <span data-underlying-ticker></span> (da vendita) (€)</th>
                             <th>Differenza tra i netti</th>
                         </tr>
@@ -253,6 +254,12 @@
                     </tfoot>
                 </table>
             </div>
+            <small class="text-muted">Il tasso è mostrato per singolo stacco; tra parentesi, la stima annualizzata usa la frequenza storica mediana degli stacchi nel periodo selezionato.</small>
+            <h4 class="text-center mt-4">Tasso mensile equivalente di prelievo da <span data-underlying-ticker></span></h4>
+            <div class="chart-container mt-3" style="height:320px;">
+                <canvas id="monthlyWithdrawalChart"></canvas>
+            </div>
+            <small class="text-muted">Stima del prelievo lordo mensile: vendita lorda equivalente divisa per il valore di <span data-underlying-ticker></span> prima della vendita e per i mesi effettivi tra gli stacchi. Il primo punto usa l'intervallo fino allo stacco successivo. Media e mediana sono riferimenti descrittivi dei dati storici, non una garanzia di sostenibilità futura.</small>
         </div>
         <!-- Sezione statica per Tax Metrics e grafico confronto netti -->
         <div id="taxCardsContainer" class="mt-4">
@@ -925,6 +932,7 @@
                             sellCommissionMin,
                             sellCommissionMax
                         );
+                        const underlyingValueBeforeSale = swdaShares * swdaClose;
                         swdaShares -= sharesToSell; // Aggiorna il numero di quote di SWDA
                         // Calcola commissione in euro: o flat per operazione, o percentuale sul valore della vendita
                         const saleValue = sharesToSell * swdaClose;
@@ -933,6 +941,7 @@
                             date: d,
                             num_stock_selled: sharesToSell,
                             swdaValueAtDate: swdaClose,
+                            underlyingValueBeforeSale,
                             amount: saleValue,
                             winc_value: wincClose,
                             commission: saleNet.commission,
@@ -1457,6 +1466,31 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
         function populateDividendiTable(distribuzioni, wincShares, swdaShares, swdaCloseInitialPrice, mapSWDA, distribuzioniSWDAVirtuali, config) {
             const tableBody = document.getElementById('dividendiTableBody');
             tableBody.innerHTML = '';
+            const distributionTimestamps = distribuzioni
+                .map(dist => Date.parse(`${dist.date}T00:00:00Z`))
+                .filter(Number.isFinite)
+                .sort((first, second) => first - second);
+            const distributionIntervals = distributionTimestamps.slice(1)
+                .map((timestamp, index) => (timestamp - distributionTimestamps[index]) / (1000 * 60 * 60 * 24))
+                .filter(interval => interval > 0)
+                .sort((first, second) => first - second);
+            const distributionMonthsByDate = new Map();
+            distributionTimestamps.forEach((timestamp, index) => {
+                if (distributionTimestamps.length < 2) return;
+                const intervalDays = index === 0
+                    ? (distributionTimestamps[1] - timestamp) / (1000 * 60 * 60 * 24)
+                    : (timestamp - distributionTimestamps[index - 1]) / (1000 * 60 * 60 * 24);
+                if (intervalDays > 0) {
+                    distributionMonthsByDate.set(new Date(timestamp).toISOString().slice(0, 10), intervalDays / (365.2425 / 12));
+                }
+            });
+            const middleInterval = Math.floor(distributionIntervals.length / 2);
+            const medianIntervalDays = distributionIntervals.length === 0
+                ? null
+                : distributionIntervals.length % 2 === 0
+                    ? (distributionIntervals[middleInterval - 1] + distributionIntervals[middleInterval]) / 2
+                    : distributionIntervals[middleInterval];
+            const annualizationFactor = medianIntervalDays ? 365.2425 / medianIntervalDays : null;
             const matchNetDistributions = document.getElementById('matchNetDistributions')?.checked || false;
             const underlyingNetLabel = matchNetDistributions
                 ? `Vendite ${config.underlyingTicker} - netto pareggiato (€)`
@@ -1472,6 +1506,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
             const chartLabels = [];
             const nettoWincSeries = [];
             const nettoAcweSeries = [];
+            const monthlyWithdrawalSeries = [];
 
             distribuzioni.forEach(dist => {
                 const { date, amount } = dist;
@@ -1489,6 +1524,16 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                     : 0;
                 const quoteSwdaVendute = distribuzioneSwdaSold ? distribuzioneSwdaSold.num_stock_selled : 0;
                 const lordoVenduto = distribuzioneSwdaSold ? distribuzioneSwdaSold.amount : 0;
+                const valoreSwdaPrimaVendita = distribuzioneSwdaSold ? distribuzioneSwdaSold.underlyingValueBeforeSale : 0;
+                const percentualeVenditaSuSwda = valoreSwdaPrimaVendita > 0 ? (lordoVenduto / valoreSwdaPrimaVendita) * 100 : null;
+                const monthsInDistributionPeriod = distributionMonthsByDate.get(date);
+                const monthlyWithdrawalRate = percentualeVenditaSuSwda !== null && monthsInDistributionPeriod
+                    ? percentualeVenditaSuSwda / monthsInDistributionPeriod
+                    : null;
+                monthlyWithdrawalSeries.push(monthlyWithdrawalRate === null ? null : Number(monthlyWithdrawalRate.toFixed(4)));
+                const percentualeAnnua = percentualeVenditaSuSwda !== null && annualizationFactor !== null
+                    ? percentualeVenditaSuSwda * annualizationFactor
+                    : null;
                 const commission = distribuzioneSwdaSold ? (distribuzioneSwdaSold.commission || 0) : 0;
                 const tassePagate = distribuzioneSwdaSold ? (distribuzioneSwdaSold.taxes || 0) : 0;
                 const nettoSp500 = distribuzioneSwdaSold ? (distribuzioneSwdaSold.netAmount ?? (lordoVenduto - tassePagate - commission)) : 0;
@@ -1503,6 +1548,7 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                         <td>${nettoWINC.toFixed(2)} Tasse: 26% (=${percentualeDist.toFixed(2)}%)</td>                        
                         <td>${quoteSwdaVendute}</td>
                         <td>${lordoVenduto.toFixed(2)}</td>
+                        <td>${percentualeVenditaSuSwda === null ? 'n/a' : percentualeVenditaSuSwda.toFixed(2) + '%'} (${percentualeAnnua === null ? 'ann. n/d' : 'ann. ' + percentualeAnnua.toFixed(2) + '%'})</td>
                         <td>${nettoSp500.toFixed(2)} Tasse: ${percentualeTasse.toFixed(2)}% Comm: ${commission.toFixed(2)}€</td>
                         <td>${(nettoSp500 - nettoWINC).toFixed(2)}  (${(((nettoSp500 - nettoWINC) / nettoWINC) * 100).toFixed(2)}%)</td>
                     `;
@@ -1542,10 +1588,82 @@ Sortino (periodale): ${isNaN(mWincNetto.periodSortino) ? 'n/a' : mWincNetto.peri
                         <td>${sommaNettiWinc.toFixed(2)} Tasse: 26%</td>                        
                         <td></td>
                         <td></td>
+                        <td></td>
                         <td>${sommaNettiSp500.toFixed(2)} Tasse: ${sommaLordiSp500 > 0 ? ((sommaLordiSp500 - sommaNettiSp500) / sommaLordiSp500 * 100).toFixed(2) : '0.00'}% (Commissioni Tot: ${sommaCommissioni.toFixed(2)}€)</td>
                         <td>${sommaDifferenza.toFixed(2)} (${(((sommaNettiSp500 - sommaNettiWinc) / sommaNettiWinc) * 100).toFixed(2)}%)</td>
                     `;
             tableFoot.appendChild(row);
+
+            const monthlyWithdrawalCanvas = document.getElementById('monthlyWithdrawalChart');
+            if (monthlyWithdrawalCanvas) {
+                const monthlyWithdrawalLabel = `Prelievo lordo mensile equivalente da ${config.underlyingTicker} (% del portafoglio)`;
+                const sortedMonthlyRates = monthlyWithdrawalSeries
+                    .filter(rate => rate !== null && Number.isFinite(rate))
+                    .sort((first, second) => first - second);
+                const meanMonthlyRate = sortedMonthlyRates.length > 0
+                    ? sortedMonthlyRates.reduce((sum, rate) => sum + rate, 0) / sortedMonthlyRates.length
+                    : null;
+                const middleRate = Math.floor(sortedMonthlyRates.length / 2);
+                const medianMonthlyRate = sortedMonthlyRates.length === 0
+                    ? null
+                    : sortedMonthlyRates.length % 2 === 0
+                        ? (sortedMonthlyRates[middleRate - 1] + sortedMonthlyRates[middleRate]) / 2
+                        : sortedMonthlyRates[middleRate];
+                const meanLabel = `Media storica: ${meanMonthlyRate === null ? 'n/d' : meanMonthlyRate.toFixed(2) + '% / mese'}`;
+                const medianLabel = `Mediana storica: ${medianMonthlyRate === null ? 'n/d' : medianMonthlyRate.toFixed(2) + '% / mese'}`;
+                const meanSeries = chartLabels.map(() => meanMonthlyRate);
+                const medianSeries = chartLabels.map(() => medianMonthlyRate);
+                if (window._monthlyWithdrawalChart) {
+                    window._monthlyWithdrawalChart.data.labels = chartLabels;
+                    window._monthlyWithdrawalChart.data.datasets[0].label = monthlyWithdrawalLabel;
+                    window._monthlyWithdrawalChart.data.datasets[0].data = monthlyWithdrawalSeries;
+                    window._monthlyWithdrawalChart.data.datasets[1].label = meanLabel;
+                    window._monthlyWithdrawalChart.data.datasets[1].data = meanSeries;
+                    window._monthlyWithdrawalChart.data.datasets[2].label = medianLabel;
+                    window._monthlyWithdrawalChart.data.datasets[2].data = medianSeries;
+                    window._monthlyWithdrawalChart.update();
+                } else {
+                    window._monthlyWithdrawalChart = new Chart(monthlyWithdrawalCanvas.getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [{
+                                label: monthlyWithdrawalLabel,
+                                data: monthlyWithdrawalSeries,
+                                borderColor: 'rgba(220,53,69,0.9)',
+                                backgroundColor: 'rgba(220,53,69,0.12)',
+                                pointRadius: 3,
+                                tension: 0.15,
+                                spanGaps: false
+                            }, {
+                                label: meanLabel,
+                                data: meanSeries,
+                                borderColor: 'rgba(255,159,64,0.95)',
+                                borderDash: [7, 4],
+                                pointRadius: 0,
+                                fill: false
+                            }, {
+                                label: medianLabel,
+                                data: medianSeries,
+                                borderColor: 'rgba(32,178,170,0.95)',
+                                borderDash: [3, 3],
+                                pointRadius: 0,
+                                fill: false
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: { mode: 'index', intersect: false },
+                            scales: {
+                                x: { title: { display: true, text: 'Data di stacco' }, ticks: { maxRotation: 90, autoSkip: true, maxTicksLimit: 12 } },
+                                y: { beginAtZero: true, title: { display: true, text: '% al mese' } }
+                            },
+                            plugins: { legend: { position: 'top' } }
+                        }
+                    });
+                }
+            }
 
             // Aggiorna o crea il grafico usando il canvas statico
             const ctxEl = document.getElementById('taxComparisonChart');
