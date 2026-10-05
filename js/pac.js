@@ -946,7 +946,8 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
                     backgroundColor: 'rgba(54, 162, 235, 0.1)',
                     fill: false,
                     tension: 0.1,
-                    pointRadius: 0
+                    pointRadius: 0,
+                    hidden: true
                 }
             ]
         },
