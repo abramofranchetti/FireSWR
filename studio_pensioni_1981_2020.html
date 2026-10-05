@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Studio sulla pensione italiana: simulazione dei contributi versati dal 1981 al 2020 e confronto con un investimento privato.">
+  <title>Studio sulle Pensioni: Quanto si versava davvero?</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy: #142d3e;
+      --navy-soft: #203f52;
+      --ink: #25343d;
+      --muted: #667782;
+      --paper: #f3f6f5;
+      --line: #dce5e3;
+      --green: #19765e;
+      --green-soft: #e8f4ef;
+      --red: #bd514b;
+      --white: #fff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      line-height: 1.65;
+    }
+
+    h1, h2, h3, .metric-value {
+      font-family: "Manrope", sans-serif;
+    }
+
+    .topline {
+      height: 6px;
+      background: linear-gradient(90deg, var(--green) 0 34%, var(--navy) 34% 100%);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 76px 0 68px;
+      color: var(--white);
+      background:
+        radial-gradient(ellipse at 90% 10%, rgba(60, 139, 112, .24), transparent 35%),
+        linear-gradient(125deg, #142d3e, #203f52 72%, #285443);
+    }
+
+    .hero::after {
+      position: absolute;
+      right: -82px;
+      bottom: -170px;
+      width: 410px;
+      height: 410px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 50%;
+      content: "";
+      box-shadow: 0 0 0 42px rgba(255, 255, 255, .025), 0 0 0 84px rgba(255, 255, 255, .02);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 20px;
+      color: #b7d9ca;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      max-width: 850px;
+      margin: 0;
+      font-size: clamp(2.15rem, 5vw, 3.65rem);
+      font-weight: 800;
+      line-height: 1.12;
+    }
+
+    .hero-rule {
+      width: 66px;
+      height: 4px;
+      margin-top: 28px;
+      border-radius: 2px;
+      background: #83c6a8;
+    }
+
+    main {
+      padding: 46px 0 72px;
+    }
+
+    .content-section {
+      margin-bottom: 48px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    .section-icon {
+      display: grid;
+      flex: 0 0 42px;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 1rem;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(1.35rem, 3vw, 1.8rem);
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .section-kicker {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    .intro-panel {
+      padding: 24px 26px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--green);
+      border-radius: 6px;
+      background: var(--white);
+      color: #40515a;
+      font-size: 1.04rem;
+    }
+
+    .table-frame {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: 0 8px 24px rgba(20, 45, 62, .045);
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    .study-table {
+      min-width: 900px;
+      margin: 0;
+      vertical-align: middle;
+    }
+
+    .study-table thead th {
+      padding: 16px 15px;
+      border: 0;
+      background: var(--navy);
+      color: var(--white);
+      font-size: .78rem;
+      font-weight: 700;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+
+    .study-table tbody td {
+      padding: 15px;
+      border-color: #e8eeec;
+      color: #354750;
+      font-size: .91rem;
+    }
+
+    .study-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .study-table .total-row td {
+      background: #f0f6f3;
+      color: var(--navy);
+      font-weight: 800;
+    }
+
+    .table-note {
+      margin: 0;
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    .metric-card {
+      height: 100%;
+      min-height: 152px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--green);
+      border-radius: 7px;
+      background: var(--white);
+      box-shadow: 0 8px 24px rgba(20, 45, 62, .045);
+    }
+
+    .metric-label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 15px;
+      color: var(--muted);
+      font-size: .87rem;
+      font-weight: 600;
+    }
+
+    .metric-label i {
+      color: var(--green);
+    }
+
+    .metric-value {
+      color: var(--navy);
+      font-size: clamp(1.55rem, 3vw, 2rem);
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .metric-card.highlight {
+      border-top-color: #69a587;
+      background: var(--green-soft);
+    }
+
+    .metric-card.highlight .metric-value {
+      color: var(--green);
+    }
+
+    .inflation-panel {
+      padding: 25px 27px;
+      border: 1px solid #e9d9d6;
+      border-left: 4px solid var(--red);
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .inflation-panel p {
+      margin: 0;
+      color: #48575e;
+      font-size: 1.02rem;
+    }
+
+    .inflation-panel strong {
+      color: var(--red);
+    }
+
+    .comparison-table {
+      min-width: 680px;
+    }
+
+    .comparison-table thead th {
+      white-space: normal;
+    }
+
+    .comparison-table tbody td {
+      padding-top: 17px;
+      padding-bottom: 17px;
+    }
+
+    .comparison-table .highlight-row td {
+      background: var(--green-soft);
+      color: #175f4c;
+      font-weight: 700;
+    }
+
+    .comparison-table .highlight-row td:first-child {
+      border-left: 4px solid var(--green);
+    }
+
+    .conclusion-list {
+      display: grid;
+      gap: 13px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .conclusion-list li {
+      display: grid;
+      grid-template-columns: 27px 1fr;
+      gap: 13px;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--white);
+    }
+
+    .conclusion-list i {
+      margin-top: 4px;
+      color: var(--green);
+    }
+
+    .conclusion-list strong {
+      color: var(--navy);
+    }
+
+    footer {
+      padding: 22px 0;
+      border-top: 1px solid var(--line);
+      background: #eaf0ee;
+      color: var(--muted);
+      font-size: .82rem;
+      text-align: center;
+    }
+
+    @media (max-width: 575.98px) {
+      .hero {
+        padding: 58px 0 52px;
+      }
+
+      main {
+        padding-top: 34px;
+      }
+
+      .content-section {
+        margin-bottom: 38px;
+      }
+
+      .intro-panel,
+      .inflation-panel {
+        padding: 20px;
+      }
+
+      .metric-card {
+        min-height: 135px;
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topline" aria-hidden="true"></div>
+
+  <header class="hero">
+    <div class="container hero-content">
+      <span class="eyebrow"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Analisi previdenziale · 1981-2020</span>
+      <h1>Studio sulle Pensioni: Quanto si versava davvero? (Simulazione 1981 - 2020)</h1>
+      <div class="hero-rule" aria-hidden="true"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="content-section" aria-labelledby="introduzione">
+      <div class="section-heading">
+        <span class="section-icon"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></span>
+        <div>
+          <span class="section-kicker">Contesto</span>
+          <h2 id="introduzione">Introduzione</h2>
+        </div>
+      </div>
+      <div class="intro-panel">
+        Analisi della vita lavorativa di un dipendente andato in pensione a 67 anni nel 2020, con 40 anni di contributi ininterrotti (1981-2020). L'aliquota previdenziale INPS totale è circa il 33%, divisa in: 9,19% a carico del lavoratore e 23,81% a carico del datore di lavoro.
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="versamenti">
+      <div class="section-heading">
+        <span class="section-icon"><i class="fa-solid fa-table-list" aria-hidden="true"></i></span>
+        <div>
+          <span class="section-kicker">Contributi previdenziali</span>
+          <h2 id="versamenti">I Versamenti Decennio per Decennio</h2>
+        </div>
+      </div>
+      <div class="table-frame">
+        <div class="table-scroll">
+          <table class="table study-table">
+            <thead>
+              <tr>
+                <th scope="col">Decennio</th>
+                <th scope="col">Stipendio Medio Lordo</th>
+                <th scope="col">Versato dal Dipendente (9,19%)</th>
+                <th scope="col">Versato dal Datore (23,81%)</th>
+                <th scope="col">Totale Nominale (33%)</th>
+                <th scope="col">Valore Rivalutato nel 2020</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1981-1990</td>
+                <td>15.000.000 Lire (~7.750 €)</td>
+                <td>712 €/anno</td>
+                <td>1.845 €/anno</td>
+                <td>25.570 €</td>
+                <td>~90.000 €</td>
+              </tr>
+              <tr>
+                <td>1991-2000</td>
+                <td>32.000.000 Lire (~16.500 €)</td>
+                <td>1.516 €/anno</td>
+                <td>3.929 €/anno</td>
+                <td>54.450 €</td>
+                <td>~112.000 €</td>
+              </tr>
+              <tr>
+                <td>2001-2010</td>
+                <td>23.000 €</td>
+                <td>2.113 €/anno</td>
+                <td>5.476 €/anno</td>
+                <td>75.890 €</td>
+                <td>~97.000 €</td>
+              </tr>
+              <tr>
+                <td>2011-2020</td>
+                <td>28.000 €</td>
+                <td>2.573 €/anno</td>
+                <td>6.666 €/anno</td>
+                <td>92.390 €</td>
+                <td>~99.000 €</td>
+              </tr>
+              <tr class="total-row">
+                <td>TOTALE</td>
+                <td>-</td>
+                <td>~69.140 €</td>
+                <td>~179.160 €</td>
+                <td>~248.300 €</td>
+                <td>~398.000 €</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">Importi espressi in euro, salvo diversa indicazione.</p>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="assegno">
+      <div class="section-heading">
+        <span class="section-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
+        <div>
+          <span class="section-kicker">Il risultato</span>
+          <h2 id="assegno">L'Assegno Pensionistico</h2>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-12 col-sm-6 col-lg-3">
+          <article class="metric-card">
+            <div class="metric-label"><i class="fa-solid fa-piggy-bank" aria-hidden="true"></i> Montante Contributivo Finale</div>
+            <div class="metric-value">398.000 €</div>
+          </article>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <article class="metric-card">
+            <div class="metric-label"><i class="fa-solid fa-percent" aria-hidden="true"></i> Coefficiente di trasformazione (2020, 67 anni)</div>
+            <div class="metric-value">5,575%</div>
+          </article>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <article class="metric-card">
+            <div class="metric-label"><i class="fa-solid fa-arrow-up-right-dots" aria-hidden="true"></i> Pensione Lorda Annua</div>
+            <div class="metric-value">22.188 €</div>
+          </article>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <article class="metric-card highlight">
+            <div class="metric-label"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Pensione Mensile Lorda (13 mensilità)</div>
+            <div class="metric-value">~1.706 €</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="inflazione">
+      <div class="section-heading">
+        <span class="section-icon"><i class="fa-solid fa-chart-column" aria-hidden="true"></i></span>
+        <div>
+          <span class="section-kicker">Potere d'acquisto</span>
+          <h2 id="inflazione">L'Impatto dell'Inflazione</h2>
+        </div>
+      </div>
+      <div class="inflation-panel">
+        <p>Tra il 1981 e il 2020 l'inflazione media annua è stata del 4,17% (con picchi del 17% negli anni '80). L'inflazione cumulata è stata superiore al 430%. Il sistema di rivalutazione dell'INPS, legato al PIL, ha quindi gonfiato enormemente il montante rispetto al capitale nominale versato, generando un 'regalo' contabile di circa 150.000 €.</p>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="confronto">
+      <div class="section-heading">
+        <span class="section-icon"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i></span>
+        <div>
+          <span class="section-kicker">Confronto in Euro 2020</span>
+          <h2 id="confronto">Sforzo Reale vs Investimento Privato</h2>
+        </div>
+      </div>
+      <div class="table-frame">
+        <div class="table-scroll">
+          <table class="table study-table comparison-table">
+            <thead>
+              <tr>
+                <th scope="col">Metodo di accumulo (40 anni)</th>
+                <th scope="col">Sforzo Mensile Necessario (Euro 2020)</th>
+                <th scope="col">Totale versato di tasca propria</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Risparmio puro (0% rendimento reale)</td>
+                <td>829 € al mese</td>
+                <td>398.000 €</td>
+              </tr>
+              <tr>
+                <td>Investimento prudente (2% rendimento reale)</td>
+                <td>549 € al mese</td>
+                <td>~263.000 € (più 135.000 € di interessi)</td>
+              </tr>
+              <tr class="highlight-row">
+                <td>Realtà storica INPS (solo quota dipendente)</td>
+                <td>~201 € al mese</td>
+                <td>~96.500 €</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section mb-0" aria-labelledby="conclusioni">
+      <div class="section-heading">
+        <span class="section-icon"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i></span>
+        <div>
+          <span class="section-kicker">In sintesi</span>
+          <h2 id="conclusioni">Conclusioni</h2>
+        </div>
+      </div>
+      <ul class="conclusion-list">
+        <li>
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+          <div><strong>Break-even fulmineo:</strong> Il pensionato recupera tutti i soldi versati di tasca propria in appena 3 anni e 1 mese di pensione.</div>
+        </li>
+        <li>
+          <i class="fa-solid fa-people-arrows-left-right" aria-hidden="true"></i>
+          <div><strong>Lo sconto generazionale:</strong> Il lavoratore ha finanziato di tasca sua solo un quarto/un terzo del costo reale della sua pensione.</div>
+        </li>
+        <li>
+          <i class="fa-solid fa-building-columns" aria-hidden="true"></i>
+          <div><strong>Chi ha pagato il resto?</strong> Il divario è stato colmato dai versamenti aziendali (quasi il triplo di quelli del dipendente) e dal debito demografico/statale dovuto alle regole di rivalutazione e calcolo favorevoli del passato.</div>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    Studio sulle pensioni italiane · Simulazione 1981-2020
+  </footer>
+</body>
+</html>
