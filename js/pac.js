@@ -403,7 +403,8 @@ function createMoneryValueChart(dates, grossValuesDollar, netValuesDollar, netti
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                     fill: false,
                     tension: 0.1,
-                    pointRadius: 0
+                    pointRadius: 0,
+                    hidden: true
                 },
                 {
                     label: 'Totale Versato ($)',
@@ -462,7 +463,8 @@ function createMoneryValueChart(dates, grossValuesDollar, netValuesDollar, netti
                     backgroundColor: 'rgba(128, 0, 128, 0.1)',
                     fill: false,
                     tension: 0.1,
-                    pointRadius: 0
+                    pointRadius: 0,
+                    hidden: true
                 }
             ]
         },
@@ -738,7 +740,8 @@ function createPaidInShortfallChart(dates, shortfallPctEur, shortfallPctRealEur)
                     backgroundColor: 'rgba(128, 0, 128, 0.1)',
                     fill: false,
                     tension: 0.1,
-                    pointRadius: 0
+                    pointRadius: 0,
+                    hidden: true
                 }
             ]
         },
@@ -836,7 +839,8 @@ function createPaidInShortfallValueChart(dates, shortfallValueEur, shortfallValu
                     backgroundColor: 'rgba(128, 0, 128, 0.1)',
                     fill: false,
                     tension: 0.1,
-                    pointRadius: 0
+                    pointRadius: 0,
+                    hidden: true
                 }
             ]
         },
@@ -932,7 +936,8 @@ function createPercentageChart(dates, netValuesEur, realNettissimoValuesEur, net
                     backgroundColor: 'rgba(107, 248, 107, 0.1)',
                     fill: false,
                     tension: 0.1,
-                    pointRadius: 0
+                    pointRadius: 0,
+                    hidden: true
                 },
                 {
                     label: 'Nettissimo ($)',
