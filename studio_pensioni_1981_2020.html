@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Studio sulla pensione italiana: simulazione dei contributi versati dal 1981 al 2020 e confronto con un investimento privato.">
+  <meta name="description" content="Studio sulla pensione italiana: simulazione dei contributi versati dal 1981 al 2020 con aliquote storiche INPS e confronto con un investimento privato.">
   <title>Studio sulle Pensioni: Quanto si versava davvero?</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,6 +24,8 @@
       --green-soft: #e8f4ef;
       --red: #bd514b;
       --white: #fff;
+      --amber: #9a6b18;
+      --amber-soft: #fff7e5;
     }
 
     * {
@@ -66,7 +68,8 @@
       border: 1px solid rgba(255, 255, 255, .12);
       border-radius: 50%;
       content: "";
-      box-shadow: 0 0 0 42px rgba(255, 255, 255, .025), 0 0 0 84px rgba(255, 255, 255, .02);
+      box-shadow: 0 0 0 42px rgba(255, 255, 255, .025),
+                  0 0 0 84px rgba(255, 255, 255, .02);
       pointer-events: none;
     }
 
@@ -88,7 +91,7 @@
     }
 
     .hero h1 {
-      max-width: 850px;
+      max-width: 900px;
       margin: 0;
       font-size: clamp(2.15rem, 5vw, 3.65rem);
       font-weight: 800;
@@ -158,6 +161,20 @@
       font-size: 1.04rem;
     }
 
+    .info-panel {
+      margin-top: 18px;
+      padding: 20px 22px;
+      border: 1px solid #eadfbd;
+      border-left: 4px solid var(--amber);
+      border-radius: 6px;
+      background: var(--amber-soft);
+      color: #5e522f;
+    }
+
+    .info-panel strong {
+      color: #73500d;
+    }
+
     .table-frame {
       overflow: hidden;
       border: 1px solid var(--line);
@@ -171,7 +188,7 @@
     }
 
     .study-table {
-      min-width: 900px;
+      min-width: 980px;
       margin: 0;
       vertical-align: middle;
     }
@@ -321,6 +338,16 @@
       color: var(--navy);
     }
 
+    .source-box {
+      margin-top: 24px;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f8faf9;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
     footer {
       padding: 22px 0;
       border-top: 1px solid var(--line);
@@ -344,7 +371,8 @@
       }
 
       .intro-panel,
-      .inflation-panel {
+      .inflation-panel,
+      .info-panel {
         padding: 20px;
       }
 
@@ -355,216 +383,639 @@
     }
   </style>
 </head>
+
 <body>
+
   <div class="topline" aria-hidden="true"></div>
 
   <header class="hero">
     <div class="container hero-content">
-      <span class="eyebrow"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Analisi previdenziale · 1981-2020</span>
-      <h1>Studio sulle Pensioni: Quanto si versava davvero? (Simulazione 1981 - 2020)</h1>
+      <span class="eyebrow">
+        <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+        Analisi previdenziale · 1981-2020
+      </span>
+
+      <h1>
+        Studio sulle Pensioni: Quanto si versava davvero?
+        <br>
+        <small style="font-size:.55em; font-weight:600;">
+          Simulazione 1981-2020 con aliquote storiche
+        </small>
+      </h1>
+
       <div class="hero-rule" aria-hidden="true"></div>
     </div>
   </header>
 
   <main class="container">
+
+    <!-- INTRODUZIONE -->
     <section class="content-section" aria-labelledby="introduzione">
+
       <div class="section-heading">
-        <span class="section-icon"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></span>
+        <span class="section-icon">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        </span>
+
         <div>
           <span class="section-kicker">Contesto</span>
           <h2 id="introduzione">Introduzione</h2>
         </div>
       </div>
+
       <div class="intro-panel">
-        Analisi della vita lavorativa di un dipendente andato in pensione a 67 anni nel 2020, con 40 anni di contributi ininterrotti (1981-2020). L'aliquota previdenziale INPS totale è circa il 33%, divisa in: 9,19% a carico del lavoratore e 23,81% a carico del datore di lavoro.
+        Analisi della vita lavorativa di un dipendente andato in pensione a
+        67 anni nel 2020, con 40 anni di contribuzione ininterrotta
+        dal 1981 al 2020.
+
+        <br><br>
+
+        <strong>
+          Un punto fondamentale è che l'aliquota previdenziale non è stata
+          sempre del 33%.
+        </strong>
+
+        Negli anni '80 e '90 l'aliquota IVS del Fondo Pensioni Lavoratori
+        Dipendenti era sensibilmente più bassa e anche la quota direttamente
+        trattenuta al lavoratore era inferiore a quella attuale.
+
+        Per evitare di applicare retroattivamente l'aliquota del 33% a tutta
+        la carriera, la simulazione utilizza le aliquote storiche effettive,
+        aggregate in medie decennali.
       </div>
+
+      <div class="info-panel">
+        <strong>Attenzione alla lettura dei dati:</strong>
+        la quota a carico del lavoratore è la parte che veniva effettivamente
+        trattenuta dalla sua retribuzione. La quota a carico del datore di
+        lavoro è invece un costo previdenziale aggiuntivo sostenuto
+        dall'impresa. Entrambe concorrono alla contribuzione previdenziale,
+        ma non devono essere confuse con la "trattenuta in busta paga".
+      </div>
+
     </section>
 
-    <section class="content-section" aria-labelledby="versamenti">
+
+    <!-- ALIQUOTE STORICHE -->
+    <section class="content-section" aria-labelledby="aliquote">
+
       <div class="section-heading">
-        <span class="section-icon"><i class="fa-solid fa-table-list" aria-hidden="true"></i></span>
+        <span class="section-icon">
+          <i class="fa-solid fa-percent" aria-hidden="true"></i>
+        </span>
+
         <div>
-          <span class="section-kicker">Contributi previdenziali</span>
-          <h2 id="versamenti">I Versamenti Decennio per Decennio</h2>
+          <span class="section-kicker">Dati storici</span>
+          <h2 id="aliquote">Come sono cambiate le aliquote previdenziali</h2>
         </div>
       </div>
+
       <div class="table-frame">
+
         <div class="table-scroll">
+
           <table class="table study-table">
+
             <thead>
               <tr>
-                <th scope="col">Decennio</th>
-                <th scope="col">Stipendio Medio Lordo</th>
-                <th scope="col">Versato dal Dipendente (9,19%)</th>
-                <th scope="col">Versato dal Datore (23,81%)</th>
-                <th scope="col">Totale Nominale (33%)</th>
-                <th scope="col">Valore Rivalutato nel 2020</th>
+                <th scope="col">Periodo</th>
+                <th scope="col">IVS totale medio</th>
+                <th scope="col">Quota lavoratore</th>
+                <th scope="col">Quota datore</th>
+                <th scope="col">Evoluzione</th>
               </tr>
             </thead>
+
             <tbody>
+
+              <tr>
+                <td><strong>1981-1990</strong></td>
+                <td><strong>25,01%</strong></td>
+                <td><strong>7,18%</strong></td>
+                <td>17,83%</td>
+                <td>
+                  Da 24,01% a 25,92% di IVS totale;
+                  quota lavoratore prevalentemente al 7,15%.
+                </td>
+              </tr>
+
+              <tr>
+                <td><strong>1991-2000</strong></td>
+                <td><strong>29,72%</strong></td>
+                <td><strong>8,49%</strong></td>
+                <td>21,23%</td>
+                <td>
+                  Forte aumento soprattutto dal 1996,
+                  quando l'IVS passa al 32,70%.
+                </td>
+              </tr>
+
+              <tr>
+                <td><strong>2001-2010</strong></td>
+                <td><strong>32,82%</strong></td>
+                <td><strong>9,01%</strong></td>
+                <td>23,81%</td>
+                <td>
+                  32,70% fino al 2006; 33,00% dal 2007.
+                </td>
+              </tr>
+
+              <tr>
+                <td><strong>2011-2020</strong></td>
+                <td><strong>33,00%</strong></td>
+                <td><strong>9,19%</strong></td>
+                <td>23,81%</td>
+                <td>
+                  Aliquota ordinaria ormai stabilizzata al 33%.
+                </td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <p class="table-note">
+          Medie decennali calcolate sulle aliquote annuali IVS del FPLD.
+          La quota lavoratore è quella previdenziale a carico del dipendente.
+          Sono escluse eventuali agevolazioni contributive individuali.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- VERSAMENTI -->
+    <section class="content-section" aria-labelledby="versamenti">
+
+      <div class="section-heading">
+        <span class="section-icon">
+          <i class="fa-solid fa-table-list" aria-hidden="true"></i>
+        </span>
+
+        <div>
+          <span class="section-kicker">Contributi previdenziali</span>
+          <h2 id="versamenti">I versamenti decennio per decennio</h2>
+        </div>
+      </div>
+
+      <div class="table-frame">
+
+        <div class="table-scroll">
+
+          <table class="table study-table">
+
+            <thead>
+              <tr>
+                <th scope="col">Periodo</th>
+                <th scope="col">Stipendio medio lordo</th>
+                <th scope="col">Aliquota lavoratore</th>
+                <th scope="col">Quota lavoratore / anno</th>
+                <th scope="col">Aliquota datore</th>
+                <th scope="col">Quota datore / anno</th>
+                <th scope="col">IVS totale / anno</th>
+                <th scope="col">IVS totale 10 anni</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
               <tr>
                 <td>1981-1990</td>
-                <td>15.000.000 Lire (~7.750 €)</td>
-                <td>712 €/anno</td>
-                <td>1.845 €/anno</td>
-                <td>25.570 €</td>
-                <td>~90.000 €</td>
+                <td>7.750 €</td>
+                <td>7,18%</td>
+                <td>~556 €</td>
+                <td>17,83%</td>
+                <td>~1.382 €</td>
+                <td>~1.938 €</td>
+                <td>~19.380 €</td>
               </tr>
+
               <tr>
                 <td>1991-2000</td>
-                <td>32.000.000 Lire (~16.500 €)</td>
-                <td>1.516 €/anno</td>
-                <td>3.929 €/anno</td>
-                <td>54.450 €</td>
-                <td>~112.000 €</td>
+                <td>16.500 €</td>
+                <td>8,49%</td>
+                <td>~1.400 €</td>
+                <td>21,23%</td>
+                <td>~3.503 €</td>
+                <td>~4.903 €</td>
+                <td>~49.035 €</td>
               </tr>
+
               <tr>
                 <td>2001-2010</td>
                 <td>23.000 €</td>
-                <td>2.113 €/anno</td>
-                <td>5.476 €/anno</td>
-                <td>75.890 €</td>
-                <td>~97.000 €</td>
+                <td>9,01%</td>
+                <td>~2.072 €</td>
+                <td>23,81%</td>
+                <td>~5.476 €</td>
+                <td>~7.549 €</td>
+                <td>~75.486 €</td>
               </tr>
+
               <tr>
                 <td>2011-2020</td>
                 <td>28.000 €</td>
-                <td>2.573 €/anno</td>
-                <td>6.666 €/anno</td>
-                <td>92.390 €</td>
-                <td>~99.000 €</td>
+                <td>9,19%</td>
+                <td>~2.573 €</td>
+                <td>23,81%</td>
+                <td>~6.667 €</td>
+                <td>~9.240 €</td>
+                <td>~92.400 €</td>
               </tr>
+
               <tr class="total-row">
                 <td>TOTALE</td>
                 <td>-</td>
-                <td>~69.140 €</td>
-                <td>~179.160 €</td>
-                <td>~248.300 €</td>
-                <td>~398.000 €</td>
+                <td>-</td>
+                <td><strong>~66.018 €</strong></td>
+                <td>-</td>
+                <td><strong>~170.283 €</strong></td>
+                <td>-</td>
+                <td><strong>~236.301 €</strong></td>
               </tr>
+
             </tbody>
+
           </table>
+
         </div>
-        <p class="table-note">Importi espressi in euro, salvo diversa indicazione.</p>
+
+        <p class="table-note">
+          Gli stipendi medi sono quelli ipotizzati nella simulazione originale.
+          I contributi sono ricalcolati applicando le aliquote storiche medie
+          del periodo. Gli importi sono nominali e non rappresentano il
+          montante contributivo INPS effettivamente determinato anno per anno.
+        </p>
+
       </div>
+
     </section>
 
-    <section class="content-section" aria-labelledby="assegno">
+
+    <!-- RISULTATI -->
+    <section class="content-section" aria-labelledby="risultati">
+
       <div class="section-heading">
-        <span class="section-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
+        <span class="section-icon">
+          <i class="fa-solid fa-calculator" aria-hidden="true"></i>
+        </span>
+
         <div>
-          <span class="section-kicker">Il risultato</span>
-          <h2 id="assegno">L'Assegno Pensionistico</h2>
+          <span class="section-kicker">Risultato della simulazione</span>
+          <h2 id="risultati">Quanto è stato effettivamente versato?</h2>
         </div>
       </div>
+
       <div class="row g-3">
+
         <div class="col-12 col-sm-6 col-lg-3">
           <article class="metric-card">
-            <div class="metric-label"><i class="fa-solid fa-piggy-bank" aria-hidden="true"></i> Montante Contributivo Finale</div>
-            <div class="metric-value">398.000 €</div>
+            <div class="metric-label">
+              <i class="fa-solid fa-coins" aria-hidden="true"></i>
+              Contributi IVS complessivi
+            </div>
+            <div class="metric-value">~236.300 €</div>
           </article>
         </div>
+
         <div class="col-12 col-sm-6 col-lg-3">
           <article class="metric-card">
-            <div class="metric-label"><i class="fa-solid fa-percent" aria-hidden="true"></i> Coefficiente di trasformazione (2020, 67 anni)</div>
+            <div class="metric-label">
+              <i class="fa-solid fa-user" aria-hidden="true"></i>
+              Quota a carico lavoratore
+            </div>
+            <div class="metric-value">~66.000 €</div>
+          </article>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+          <article class="metric-card">
+            <div class="metric-label">
+              <i class="fa-solid fa-building" aria-hidden="true"></i>
+              Quota a carico datore
+            </div>
+            <div class="metric-value">~170.300 €</div>
+          </article>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+          <article class="metric-card highlight">
+            <div class="metric-label">
+              <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
+              Quota lavoratore sul totale
+            </div>
+            <div class="metric-value">~28%</div>
+          </article>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ASSEGNO -->
+    <section class="content-section" aria-labelledby="assegno">
+
+      <div class="section-heading">
+        <span class="section-icon">
+          <i class="fa-solid fa-wallet" aria-hidden="true"></i>
+        </span>
+
+        <div>
+          <span class="section-kicker">Simulazione finanziaria</span>
+          <h2 id="assegno">Una stima semplificata del capitale pensionistico</h2>
+        </div>
+      </div>
+
+      <div class="info-panel">
+
+        <strong>Importante:</strong>
+        il seguente calcolo NON è il calcolo della pensione INPS reale.
+
+        Un lavoratore con 40 anni di carriera iniziata nel 1981 non è
+        interamente soggetto al sistema contributivo: la pensione reale
+        dipende dalle quote retributive e contributive, dalla storia
+        retributiva, dalle regole applicabili nei diversi periodi e dalle
+        rivalutazioni previste dalla normativa.
+
+        Per mantenere il confronto finanziario della simulazione originale,
+        si utilizza invece un modello semplificato nel quale il capitale
+        rivalutato viene trasformato in rendita mediante il coefficiente
+        vigente nel 2020 a 67 anni.
+
+      </div>
+
+      <br>
+
+      <div class="row g-3">
+
+        <div class="col-12 col-sm-6 col-lg-3">
+          <article class="metric-card">
+            <div class="metric-label">
+              <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+              Capitale simulato rivalutato
+            </div>
+            <div class="metric-value">~365.000 €</div>
+          </article>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+          <article class="metric-card">
+            <div class="metric-label">
+              <i class="fa-solid fa-percent" aria-hidden="true"></i>
+              Coefficiente 67 anni
+            </div>
             <div class="metric-value">5,575%</div>
           </article>
         </div>
+
         <div class="col-12 col-sm-6 col-lg-3">
           <article class="metric-card">
-            <div class="metric-label"><i class="fa-solid fa-arrow-up-right-dots" aria-hidden="true"></i> Pensione Lorda Annua</div>
-            <div class="metric-value">22.188 €</div>
+            <div class="metric-label">
+              <i class="fa-solid fa-arrow-up-right-dots" aria-hidden="true"></i>
+              Rendita annua simulata
+            </div>
+            <div class="metric-value">~20.300 €</div>
           </article>
         </div>
+
         <div class="col-12 col-sm-6 col-lg-3">
           <article class="metric-card highlight">
-            <div class="metric-label"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Pensione Mensile Lorda (13 mensilità)</div>
-            <div class="metric-value">~1.706 €</div>
+            <div class="metric-label">
+              <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+              Rendita mensile simulata
+            </div>
+            <div class="metric-value">~1.565 €</div>
           </article>
         </div>
+
       </div>
+
     </section>
 
+
+    <!-- INFLAZIONE -->
     <section class="content-section" aria-labelledby="inflazione">
+
       <div class="section-heading">
-        <span class="section-icon"><i class="fa-solid fa-chart-column" aria-hidden="true"></i></span>
+        <span class="section-icon">
+          <i class="fa-solid fa-chart-column" aria-hidden="true"></i>
+        </span>
+
         <div>
           <span class="section-kicker">Potere d'acquisto</span>
-          <h2 id="inflazione">L'Impatto dell'Inflazione</h2>
+          <h2 id="inflazione">L'impatto dell'inflazione</h2>
         </div>
       </div>
+
       <div class="inflation-panel">
-        <p>Tra il 1981 e il 2020 l'inflazione media annua è stata del 4,17% (con picchi del 17% negli anni '80). L'inflazione cumulata è stata superiore al 430%. Il sistema di rivalutazione dell'INPS, legato al PIL, ha quindi gonfiato enormemente il montante rispetto al capitale nominale versato, generando un 'regalo' contabile di circa 150.000 €.</p>
+
+        <p>
+          Tra il 1981 e il 2020 i prezzi sono aumentati enormemente.
+          Per questo motivo il semplice confronto tra euro nominali versati
+          negli anni '80 e euro percepiti nel 2020 può risultare fuorviante.
+
+          <br><br>
+
+          La rivalutazione dei contributi e il metodo di calcolo della
+          pensione hanno quindi un ruolo fondamentale.
+
+          <strong>
+            Non è però corretto definire automaticamente la differenza tra
+            contributi nominali e capitale rivalutato come un "regalo":
+            si tratta di una rivalutazione prevista dal sistema previdenziale,
+            che ha regole differenti da un investimento finanziario privato.
+          </strong>
+        </p>
+
       </div>
+
     </section>
 
+
+    <!-- CONFRONTO -->
     <section class="content-section" aria-labelledby="confronto">
+
       <div class="section-heading">
-        <span class="section-icon"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i></span>
+        <span class="section-icon">
+          <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
+        </span>
+
         <div>
           <span class="section-kicker">Confronto in Euro 2020</span>
-          <h2 id="confronto">Sforzo Reale vs Investimento Privato</h2>
+          <h2 id="confronto">Sforzo reale vs investimento privato</h2>
         </div>
       </div>
+
       <div class="table-frame">
+
         <div class="table-scroll">
+
           <table class="table study-table comparison-table">
+
             <thead>
               <tr>
-                <th scope="col">Metodo di accumulo (40 anni)</th>
-                <th scope="col">Sforzo Mensile Necessario (Euro 2020)</th>
-                <th scope="col">Totale versato di tasca propria</th>
+                <th scope="col">Metodo di accumulo</th>
+                <th scope="col">Sforzo mensile equivalente</th>
+                <th scope="col">Capitale / contributi considerati</th>
               </tr>
             </thead>
+
             <tbody>
+
               <tr>
-                <td>Risparmio puro (0% rendimento reale)</td>
-                <td>829 € al mese</td>
-                <td>398.000 €</td>
+                <td>
+                  Risparmio puro
+                  <br>
+                  <small>0% rendimento reale</small>
+                </td>
+                <td>~760 € al mese</td>
+                <td>~365.000 €</td>
               </tr>
+
               <tr>
-                <td>Investimento prudente (2% rendimento reale)</td>
-                <td>549 € al mese</td>
-                <td>~263.000 € (più 135.000 € di interessi)</td>
+                <td>
+                  Investimento prudente
+                  <br>
+                  <small>2% rendimento reale</small>
+                </td>
+                <td>~503 € al mese</td>
+                <td>~241.000 € + rendimento</td>
               </tr>
+
               <tr class="highlight-row">
-                <td>Realtà storica INPS (solo quota dipendente)</td>
-                <td>~201 € al mese</td>
-                <td>~96.500 €</td>
+                <td>
+                  Quota effettivamente trattenuta al lavoratore
+                  <br>
+                  <small>aliquote storiche 1981-2020</small>
+                </td>
+                <td>~138 € al mese</td>
+                <td>~66.000 €</td>
               </tr>
+
             </tbody>
+
           </table>
+
         </div>
+
+        <p class="table-note">
+          Il confronto è puramente finanziario e non confronta prestazioni
+          previdenziali equivalenti. La pensione pubblica comprende infatti
+          assicurazione sociale, trasferimenti intergenerazionali e prestazioni
+          che non sono presenti in un investimento privato.
+        </p>
+
       </div>
+
     </section>
 
+
+    <!-- CONCLUSIONI -->
     <section class="content-section mb-0" aria-labelledby="conclusioni">
+
       <div class="section-heading">
-        <span class="section-icon"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i></span>
+
+        <span class="section-icon">
+          <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+        </span>
+
         <div>
           <span class="section-kicker">In sintesi</span>
           <h2 id="conclusioni">Conclusioni</h2>
         </div>
+
       </div>
+
       <ul class="conclusion-list">
+
         <li>
           <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-          <div><strong>Break-even fulmineo:</strong> Il pensionato recupera tutti i soldi versati di tasca propria in appena 3 anni e 1 mese di pensione.</div>
+
+          <div>
+            <strong>Il 33% non vale per tutta la carriera.</strong>
+            Applicare il 33% indistintamente dal 1981 al 2020
+            sovrastima i contributi effettivamente versati nei primi decenni.
+          </div>
         </li>
+
         <li>
-          <i class="fa-solid fa-people-arrows-left-right" aria-hidden="true"></i>
-          <div><strong>Lo sconto generazionale:</strong> Il lavoratore ha finanziato di tasca sua solo un quarto/un terzo del costo reale della sua pensione.</div>
+          <i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i>
+
+          <div>
+            <strong>La quota del lavoratore è cresciuta nel tempo.</strong>
+            Dalla quota di circa il 7,15% degli anni '80 si è arrivati
+            all'8,89% dalla metà degli anni '90 e infine al 9,19%
+            dal 2007.
+          </div>
         </li>
+
+        <li>
+          <i class="fa-solid fa-user" aria-hidden="true"></i>
+
+          <div>
+            <strong>La quota direttamente pagata dal lavoratore è circa 66.000 €.</strong>
+            Nella simulazione, a fronte di circa 236.300 € di contributi IVS
+            complessivi, circa 170.300 € sono la quota a carico del datore
+            di lavoro.
+          </div>
+        </li>
+
         <li>
           <i class="fa-solid fa-building-columns" aria-hidden="true"></i>
-          <div><strong>Chi ha pagato il resto?</strong> Il divario è stato colmato dai versamenti aziendali (quasi il triplo di quelli del dipendente) e dal debito demografico/statale dovuto alle regole di rivalutazione e calcolo favorevoli del passato.</div>
+
+          <div>
+            <strong>Il confronto corretto non è "9,19% contro 33%".</strong>
+            Per una carriera iniziata nel 1981 bisogna considerare la storia
+            delle aliquote: il sistema ha progressivamente aumentato sia
+            l'aliquota complessiva sia la quota a carico del lavoratore.
+          </div>
         </li>
+
+        <li>
+          <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+
+          <div>
+            <strong>La pensione reale non si ottiene moltiplicando semplicemente
+            tutti i contributi per il coefficiente del 2020.</strong>
+            Il lavoratore del caso studiato ricade in una situazione
+            retributiva/mista. Il modello finanziario utilizzato qui serve
+            quindi a confrontare ordini di grandezza, non a sostituire
+            il calcolo ufficiale INPS.
+          </div>
+        </li>
+
       </ul>
+
+      <div class="source-box">
+
+        <strong>Fonti e metodologia</strong><br>
+
+        Le aliquote storiche sono ricostruite a partire dalle serie INPS
+        relative al Fondo Pensioni Lavoratori Dipendenti (FPLD), integrate
+        con la serie storica delle aliquote IVS e delle quote a carico
+        del lavoratore.
+
+        <br><br>
+
+        La simulazione utilizza medie decennali delle aliquote annuali,
+        applicate agli stipendi medi ipotizzati nel modello originale.
+        Gli importi non costituiscono un estratto conto contributivo
+        individuale e non sostituiscono il calcolo pensionistico INPS.
+
+      </div>
+
     </section>
+
   </main>
+
 
   <footer>
     Studio sulle pensioni italiane · Simulazione 1981-2020
   </footer>
+
 </body>
 </html>
