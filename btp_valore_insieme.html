@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Valore e BTP Valore Insieme: confronto</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body class="bg-light">
+    <main class="container mt-5 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+
+        <h1 class="text-center">BTP Valore e BTP Valore Insieme</h1>
+        <p class="lead text-center">Due titoli di Stato retail a 5 anni, con modalità diverse di pagamento degli
+            interessi.</p>
+
+        <div class="alert alert-info" role="note">
+            <strong>Attenzione:</strong> il MEF ha annunciato un collocamento congiunto dal 19 al 23 ottobre 2026,
+            salvo chiusura anticipata. I tassi minimi garantiti saranno comunicati il 16 ottobre 2026. I numeri
+            riportati più avanti sono quindi una simulazione modificabile, non i rendimenti definitivi
+            dell'emissione.
+        </div>
+
+        <section class="mt-4" aria-labelledby="confronto">
+            <h2 id="confronto">Le differenze principali</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Caratteristica</th>
+                            <th scope="col">BTP Valore</th>
+                            <th scope="col">BTP Valore Insieme</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Durata</th>
+                            <td>5 anni</td>
+                            <td>5 anni</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Interessi</th>
+                            <td>Cedole trimestrali crescenti nel tempo (step-up); il profilo sarà comunicato prima
+                                dell'emissione.</td>
+                            <td>Un'unica cedola corrisposta alla scadenza.</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Rimborso a scadenza</th>
+                            <td>Rimborso del capitale nominale investito.</td>
+                            <td>Rimborso del capitale nominale investito insieme alla cedola unica.</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Rendimento annunciato</th>
+                            <td colspan="2">Rendimenti equivalenti dal punto di vista finanziario. I tassi definitivi
+                                non sono ancora disponibili.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                Entrambi i titoli sono destinati ai risparmiatori individuali e affini. Secondo il MEF, il taglio
+                minimo è di 1.000 euro e durante il collocamento i titoli saranno acquistabili alla pari, senza
+                commissioni di sottoscrizione (restano possibili i costi del conto o del servizio di trading).
+                Possono essere venduti prima della scadenza alle condizioni di mercato: il prezzo potrebbe essere
+                superiore o inferiore a quello di acquisto.
+            </p>
+        </section>
+
+        <section class="mt-4" aria-labelledby="cedole">
+            <h2 id="cedole">Perché la cedola unica può fare la differenza</h2>
+            <p>
+                Il rendimento a scadenza (yield to maturity, o YTM) è una misura teorica basata sui flussi del titolo.
+                Per confrontare il rendimento composto realizzato con un'obbligazione a cedole, si assume in genere
+                che le cedole siano reinvestite a un tasso coerente con il rendimento calcolato. Chi incassa le
+                cedole e le lascia ferme sul conto non ottiene quel reinvestimento.
+            </p>
+            <p>
+                Con il BTP Valore gli interessi vengono pagati nel tempo; con il BTP Valore Insieme sono invece
+                concentrati in un'unica cedola a scadenza. Perciò gli importi effettivamente accumulati possono
+                divergere anche quando i rendimenti all'emissione sono equivalenti. Il vantaggio dipende dal tasso
+                riconosciuto alle cedole incassate, dalle imposte, dai costi e dall'eventuale necessità di disporre
+                periodicamente del reddito.
+            </p>
+            <div class="alert alert-warning" role="note">
+                <strong>Equivalenza finanziaria non significa identità dei flussi.</strong> Se le cedole del BTP
+                Valore vengono reinvestite alle condizioni ipotizzate dal calcolo del rendimento, il confronto è
+                diverso da quello di chi le spende o le tiene liquide. La cedola unica, inoltre, non è un interesse
+                già disponibile durante la vita del titolo.
+            </div>
+        </section>
+
+        <section class="mt-4" aria-labelledby="esempio">
+            <h2 id="esempio">Esempio puramente illustrativo</h2>
+            <p>
+                Modifica il tasso lordo annuo per aggiornare i risultati. Per semplicità, la simulazione usa un tasso
+                uniforme: sul BTP Valore calcola cedole trimestrali non reinvestite; sul BTP Valore Insieme applica
+                la capitalizzazione annua e tassa gli interessi alla scadenza. Il profilo step-up effettivo del BTP
+                Valore e le convenzioni definitive potranno modificare il confronto.
+            </p>
+            <div class="form-group" style="max-width: 320px;">
+                <label for="annualRate">Tasso lordo annuo ipotizzato (%)</label>
+                <div class="input-group">
+                    <input id="annualRate" class="form-control" type="number" min="0" max="100" step="0.01"
+                        value="4" inputmode="decimal" aria-describedby="rateHelp">
+                    <div class="input-group-append">
+                        <span class="input-group-text">%</span>
+                    </div>
+                </div>
+                <small id="rateHelp" class="form-text text-muted">Investimento: 10.000 euro · Durata: 5 anni ·
+                    Tassazione: 12,5%</small>
+            </div>
+            <p id="rateError" class="text-danger" role="alert" hidden></p>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Stima dell'esempio</th>
+                            <th scope="col">BTP Valore</th>
+                            <th scope="col">BTP Valore Insieme</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Rendimento lordo annuo</th>
+                            <td id="valueGrossRate">4,00%</td>
+                            <td id="togetherGrossRate">4,00%</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Rendimento netto annuo</th>
+                            <td id="valueNetRate">3,50%</td>
+                            <td id="togetherNetRate">3,53%</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Interessi netti complessivi su 10.000 euro</th>
+                            <td id="valueNetInterest">1.750,00 €</td>
+                            <td id="togetherNetInterest">1.895,71 €</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                Con il tasso iniziale del 4%, la simulazione stima una differenza di
+                <strong id="netDifference">145,71 €</strong>
+                (<strong id="netDifferencePercent">8,33%</strong> in più per la cedola unica rispetto agli interessi
+                netti del BTP Valore), sotto le ipotesi indicate.
+            </p>
+            <p>
+                Gli importi sono interessi netti: a scadenza va aggiunto il rimborso del capitale di 10.000 euro.
+            </p>
+        </section>
+
+        <section class="mt-4" aria-labelledby="quando">
+            <h2 id="quando">Quale può essere più adatto?</h2>
+            <ul>
+                <li><strong>BTP Valore:</strong> può essere più adatto a chi desidera ricevere cedole durante
+                    l'investimento.</li>
+                <li><strong>BTP Valore Insieme:</strong> può essere più adatto a chi non ha bisogno di incassare
+                    periodicamente gli interessi e preferisce riceverli a scadenza.</li>
+            </ul>
+            <p>
+                La scelta non dipende soltanto dal rendimento: vanno considerati anche l'orizzonte temporale, la
+                liquidità necessaria e il rischio di prezzo in caso di vendita anticipata. Le caratteristiche
+                fiscali generali indicate dal MEF comprendono l'aliquota agevolata del 12,5% e l'esenzione
+                dall'imposta di successione; per ogni decisione fanno fede la documentazione ufficiale dell'emissione
+                e la normativa vigente.
+            </p>
+        </section>
+
+        <footer class="mt-4 pt-3 border-top">
+            <p class="small text-muted">
+                Fonte per le caratteristiche e le date: <a
+                    href="https://www.dt.mef.gov.it/it/tema_del_mese/tema_mese0046.html" target="_blank"
+                    rel="noopener noreferrer">Ministero dell'Economia e delle Finanze - Dipartimento del Tesoro</a>.
+                I rendimenti futuri non sono garantiti da questo esempio.
+            </p>
+        </footer>
+    </main>
+
+    <script>
+        const annualRateInput = document.getElementById('annualRate');
+        const taxRate = 0.125;
+        const principal = 10000;
+        const durationYears = 5;
+        const euroFormatter = new Intl.NumberFormat('it-IT', {
+            style: 'currency',
+            currency: 'EUR',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        const percentFormatter = new Intl.NumberFormat('it-IT', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        function updateComparison() {
+            const ratePercent = Number(annualRateInput.value);
+            const error = document.getElementById('rateError');
+
+            if (!Number.isFinite(ratePercent) || ratePercent < 0 || ratePercent > 100) {
+                error.textContent = 'Inserisci un tasso compreso tra 0% e 100%.';
+                error.hidden = false;
+                return;
+            }
+
+            error.hidden = true;
+            const annualRate = ratePercent / 100;
+            const valueNetInterest = principal * annualRate * durationYears * (1 - taxRate);
+            const togetherNetInterest = principal
+                * (Math.pow(1 + annualRate, durationYears) - 1)
+                * (1 - taxRate);
+            const valueNetAnnualRate = valueNetInterest / principal / durationYears;
+            const togetherNetAnnualRate = Math.pow(
+                1 + togetherNetInterest / principal,
+                1 / durationYears
+            ) - 1;
+            const difference = togetherNetInterest - valueNetInterest;
+            const differencePercent = valueNetInterest > 0
+                ? difference / valueNetInterest * 100
+                : 0;
+
+            document.getElementById('valueGrossRate').textContent = percentFormatter.format(ratePercent) + '%';
+            document.getElementById('togetherGrossRate').textContent = percentFormatter.format(ratePercent) + '%';
+            document.getElementById('valueNetRate').textContent =
+                percentFormatter.format(valueNetAnnualRate * 100) + '%';
+            document.getElementById('togetherNetRate').textContent =
+                percentFormatter.format(togetherNetAnnualRate * 100) + '%';
+            document.getElementById('valueNetInterest').textContent = euroFormatter.format(valueNetInterest);
+            document.getElementById('togetherNetInterest').textContent = euroFormatter.format(togetherNetInterest);
+            document.getElementById('netDifference').textContent = euroFormatter.format(difference);
+            document.getElementById('netDifferencePercent').textContent =
+                percentFormatter.format(differencePercent) + '%';
+        }
+
+        annualRateInput.addEventListener('input', updateComparison);
+        updateComparison();
+    </script>
+
+    <div id="disclaimer-container"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Errore nel caricamento del disclaimer: ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                })
+                .catch(error => console.error(error));
+        });
+    </script>
+</body>
+
+</html>
