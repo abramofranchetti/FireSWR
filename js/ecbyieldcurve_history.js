@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         fromSelect.add(new Option(date, date));
         toSelect.add(new Option(date, date));
     });
-    fromSelect.selectedIndex = Math.max(0, dates.length - 2);
+    fromSelect.selectedIndex = Math.min(0, dates.length - 2);
     toSelect.selectedIndex = dates.length - 1;
 
     function pointsFor(date, rating, curveType) {
