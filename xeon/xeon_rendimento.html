@@ -383,7 +383,7 @@
 <script>
 "use strict";
 
-const ESTR_DATA_URL = "json/xeon_estr.json";
+const ESTR_DATA_URL = "../json/xeon_estr.json";
 const TAX_DATA_URL = "percentuale_titoli_whitelist.csv";
 
 let estrRate = null;
@@ -711,7 +711,7 @@ function formatDate(dateString) {
 document.addEventListener("DOMContentLoaded", () => {
     loadEstr();
     loadTaxHistory();
-    fetch("html/disclaimer.html")
+    fetch("../html/disclaimer.html")
         .then(response => {
             if (!response.ok) throw new Error("HTTP " + response.status);
             return response.text();
