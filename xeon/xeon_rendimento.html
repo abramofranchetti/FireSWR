@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Calcolatore del rendimento di XEON a partire dall'€STR BCE.">
+<meta name="description" content="Calcolatore del rendimento di XEON LU0290358497 a partire dall'€STR BCE.">
 <title>XEON – Calcolo rendimento</title>
 
 <style>
@@ -170,6 +170,47 @@
         color: inherit;
     }
 
+    .tax-chart {
+        margin-top: 28px;
+    }
+
+    .tax-chart svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    .tax-chart .axis-label {
+        fill: #555;
+        font: 12px Arial, Helvetica, sans-serif;
+    }
+
+    .tax-chart .grid-line {
+        stroke: #ddd;
+        stroke-width: 1;
+    }
+
+    .tax-chart .data-line {
+        fill: none;
+        stroke: #0073e6;
+        stroke-width: 3;
+        stroke-linejoin: round;
+        stroke-linecap: round;
+    }
+
+    .tax-chart .data-point {
+        fill: #0073e6;
+        stroke: #fff;
+        stroke-width: 2;
+    }
+
+    .tax-chart .point-label {
+        fill: #111;
+        font: 12px Arial, Helvetica, sans-serif;
+        font-weight: 600;
+    }
+
     .disclaimer {
         margin-top: 22px;
         padding: 15px 10px 0;
@@ -225,7 +266,7 @@
 
         <div class="row">
             <div>Imposte effettive</div>
-            <div class="value" id="taxRateDisplay">14,19%</div>
+            <div class="value" id="taxRateDisplay">Caricamento…</div>
         </div>
 
         <div class="row highlight">
@@ -305,11 +346,22 @@
 
                 <div>
                     <label for="taxInput">Aliquota effettiva (%)</label>
-                    <input id="taxInput" type="number" step="0.01" value="14.19">
+                    <input id="taxInput" type="number" step="0.01" value="" placeholder="Caricamento…" readonly>
                 </div>
             </div>
-
+            <div class="status" id="taxStatus">Caricamento percentuale titoli White List…</div>
+            <div>nota l'aliquota effettiva è calcolata in base alla percentuale di titoli di stato in white list reperibile qui nel <a href="https://etf.dws.com/it-it/informativa-prodotti/etf-documenti/fiscalita-degli-etf/" target="_blank" rel="noopener noreferrer">Report fiscale</a>.
+            Decreto Ministeriale MEF del 13/12/2011, che regola nello specifico la tassazione degli OICR con % in whitelist. All’art. 1 comma 3 specifica che "La percentuale media di cui ai commi 1 e 2 e' rilevata sulla base degli ultimi due prospetti, semestrali o annuali, redatti entro il semestre solare anteriore alla data di distribuzione dei proventi, di riscatto, cessione o liquidazione delle quote o azioni [...]".</div>
+            </div>
             <button type="button" onclick="calculate()">Ricalcola</button>
+            <div class="tax-chart">
+            <div class="section-title">Andamento dell’aliquota fiscale effettiva</div>
+            <div class="formula">
+                Calcolata per ciascun semestre come: quota White List × 12,5% + quota restante × 26%.
+            </div>
+            <svg id="taxChart" viewBox="0 0 760 340" role="img"
+                 aria-label="Grafico dell’andamento dell’aliquota fiscale effettiva XEON"></svg>
+        </div>
         </div>
 
         <div class="status" id="status">Caricamento ultimo €STR dal portale…</div>
@@ -323,7 +375,7 @@
             Il dato viene scaricato dalla BCE dal portale e aggiornato automaticamente; la data dell'ultima osservazione è indicata sopra.
             Il risultato è una stima: spread, TER e tracking difference possono differire. L'imposta è applicata solo ai rendimenti positivi
             usando l'aliquota effettiva impostata; la fiscalità reale dipende dal regime e dal momento di realizzo.
-        </div>
+        </div>        
     </div>
     <div id="disclaimer-container"></div>
 </div>
@@ -332,8 +384,11 @@
 "use strict";
 
 const ESTR_DATA_URL = "json/xeon_estr.json";
+const TAX_DATA_URL = "percentuale_titoli_whitelist.csv";
 
 let estrRate = null;
+let taxRatePercent = null;
+let taxHistory = [];
 
 function formatPercent(value, decimals = 3) {
     if (!Number.isFinite(value)) return "—";
@@ -353,7 +408,7 @@ function parseNumber(id) {
 }
 
 function calculate() {
-    if (!Number.isFinite(estrRate)) return;
+    if (!Number.isFinite(estrRate) || !Number.isFinite(taxRatePercent)) return;
 
     /*
      * I valori inseriti sono espressi in percentuale:
@@ -361,7 +416,7 @@ function calculate() {
      */
     const spread = parseNumber("spreadInput");
     const ter = parseNumber("terInput");
-    const taxRate = parseNumber("taxInput") / 100;
+    const taxRate = taxRatePercent / 100;
 
     // Tasso nominale annuo.
     const nominal = estrRate + spread - ter;
@@ -414,6 +469,189 @@ function calculate() {
 
     document.getElementById("grossEquivalentDetail").textContent =
         formatPercent(grossEquivalent);
+}
+
+function parseTaxHistory(csvText) {
+    const lines = csvText.replace(/^\uFEFF/, "").split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+
+    if (lines.length === 0) {
+        throw new Error("Il CSV delle percentuali White List è vuoto.");
+    }
+
+    const records = lines.map((line, index) => {
+        const match = line.match(/^(\d{2})-(\d{2})-(\d{4})\s+(\d{1,3}(?:[.,]\d+)?)$/);
+
+        if (!match) {
+            throw new Error("Riga " + (index + 1) + " del CSV White List non valida.");
+        }
+
+        const [, dayText, monthText, yearText, percentageText] = match;
+        const day = Number(dayText);
+        const month = Number(monthText);
+        const year = Number(yearText);
+        const date = new Date(Date.UTC(year, month - 1, day));
+        const whitelistPercent = Number(percentageText.replace(",", "."));
+
+        if (
+            date.getUTCFullYear() !== year ||
+            date.getUTCMonth() !== month - 1 ||
+            date.getUTCDate() !== day ||
+            !Number.isFinite(whitelistPercent) ||
+            whitelistPercent < 0 ||
+            whitelistPercent > 100
+        ) {
+            throw new Error("Data o percentuale White List non valida alla riga " + (index + 1) + ".");
+        }
+
+        return {
+            date: yearText + "-" + monthText + "-" + dayText,
+            whitelistPercent
+        };
+    });
+
+    for (let index = 1; index < records.length; index += 1) {
+        if (records[index].date < records[index - 1].date) {
+            throw new Error("Le date del CSV White List non sono in ordine cronologico.");
+        }
+    }
+
+    return records;
+}
+
+function effectiveTaxPercent(whitelistPercent) {
+    return (whitelistPercent / 100) * 12.5 +
+        ((100 - whitelistPercent) / 100) * 26;
+}
+
+function renderTaxChart() {
+    const svg = document.getElementById("taxChart");
+    const chartWidth = 760;
+    const chartTop = 32;
+    const chartBottom = 270;
+    const chartLeft = 74;
+    const chartRight = 738;
+    const values = taxHistory.map(record => effectiveTaxPercent(record.whitelistPercent));
+    const minimum = Math.min(...values);
+    const maximum = Math.max(...values);
+    const padding = Math.max((maximum - minimum) * 0.2, 0.25);
+    const yMinimum = Math.max(0, minimum - padding);
+    const yMaximum = Math.min(26, maximum + padding);
+    const yRange = yMaximum - yMinimum || 1;
+    const xPosition = index => taxHistory.length === 1
+        ? (chartLeft + chartRight) / 2
+        : chartLeft + (index / (taxHistory.length - 1)) * (chartRight - chartLeft);
+    const yPosition = value =>
+        chartBottom - ((value - yMinimum) / yRange) * (chartBottom - chartTop);
+    const addElement = (tagName, attributes, text) => {
+        const element = document.createElementNS("http://www.w3.org/2000/svg", tagName);
+        Object.entries(attributes).forEach(([name, value]) => element.setAttribute(name, value));
+        if (text !== undefined) element.textContent = text;
+        svg.appendChild(element);
+        return element;
+    };
+
+    svg.replaceChildren();
+
+    for (let tick = 0; tick <= 4; tick += 1) {
+        const value = yMinimum + (yRange * tick) / 4;
+        const y = yPosition(value);
+        addElement("line", {
+            x1: chartLeft,
+            y1: y,
+            x2: chartRight,
+            y2: y,
+            class: "grid-line"
+        });
+        addElement("text", {
+            x: chartLeft - 10,
+            y: y + 4,
+            "text-anchor": "end",
+            class: "axis-label"
+        }, formatPercent(value, 2));
+    }
+
+    const path = values.map((value, index) =>
+        (index === 0 ? "M" : "L") + " " + xPosition(index) + " " + yPosition(value)
+    ).join(" ");
+    addElement("path", { d: path, class: "data-line" });
+
+    const labelInterval = Math.max(1, Math.ceil((taxHistory.length - 1) / 7));
+    taxHistory.forEach((record, index) => {
+        const value = values[index];
+        const x = xPosition(index);
+        const y = yPosition(value);
+        const point = addElement("circle", {
+            cx: x,
+            cy: y,
+            r: 5,
+            class: "data-point"
+        });
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        title.textContent = formatDate(record.date) + ": " + formatPercent(value, 2) +
+            " (White List " + formatPercent(record.whitelistPercent, 2) + ")";
+        point.appendChild(title);
+
+        if (taxHistory.length <= 8) {
+            addElement("text", {
+                x,
+                y: y - 12,
+                "text-anchor": "middle",
+                class: "point-label"
+            }, formatPercent(value, 2));
+        }
+
+        if (
+            index === 0 ||
+            index === taxHistory.length - 1 ||
+            index % labelInterval === 0
+        ) {
+            addElement("text", {
+                x,
+                y: chartBottom + 28,
+                "text-anchor": index === 0 ? "start" :
+                    index === taxHistory.length - 1 ? "end" : "middle",
+                class: "axis-label"
+            }, formatDate(record.date));
+        }
+    });
+
+    addElement("text", {
+        x: chartWidth / 2,
+        y: 330,
+        "text-anchor": "middle",
+        class: "axis-label"
+    }, "Inizio semestre di riferimento");
+}
+
+async function loadTaxHistory() {
+    const status = document.getElementById("taxStatus");
+
+    try {
+        const response = await fetch(TAX_DATA_URL, { cache: "no-store" });
+
+        if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+        }
+
+        taxHistory = parseTaxHistory(await response.text());
+        const latestRecord = taxHistory[taxHistory.length - 1];
+        taxRatePercent = effectiveTaxPercent(latestRecord.whitelistPercent);
+        document.getElementById("taxInput").value = taxRatePercent.toFixed(2);
+        status.textContent = "Ultimo semestre (" + formatDate(latestRecord.date) +
+            "): White List " + formatPercent(latestRecord.whitelistPercent, 2) +
+            "; aliquota effettiva " + formatPercent(taxRatePercent, 2) + ".";
+        status.classList.remove("error");
+        renderTaxChart();
+        calculate();
+    } catch (error) {
+        console.error(error);
+        taxRatePercent = null;
+        document.getElementById("taxInput").value = "";
+        document.getElementById("taxRateDisplay").textContent = "ERRORE";
+        document.getElementById("taxChart").replaceChildren();
+        status.textContent = "Impossibile caricare o leggere le percentuali White List dal CSV.";
+        status.classList.add("error");
+    }
 }
 
 async function loadEstr() {
@@ -472,6 +710,7 @@ function formatDate(dateString) {
 
 document.addEventListener("DOMContentLoaded", () => {
     loadEstr();
+    loadTaxHistory();
     fetch("html/disclaimer.html")
         .then(response => {
             if (!response.ok) throw new Error("HTTP " + response.status);
