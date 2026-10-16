@@ -22,9 +22,11 @@
             interessi.</p>
 
         <div class="alert alert-info" role="note">
-            <strong>Attenzione:</strong> il MEF ha annunciato un collocamento congiunto dal 19 al 23 ottobre 2026,
-            salvo chiusura anticipata. I tassi minimi garantiti saranno comunicati il 16 ottobre 2026. I numeri
-            riportati più avanti sono quindi una simulazione modificabile, non i rendimenti definitivi
+            <strong>Aggiornamento ufficiale:</strong> il MEF ha fissato i tassi minimi garantiti per la nuova
+            emissione retail: <strong>BTP Valore</strong> al <strong>3,70%</strong> nel 1° e 2° anno, al
+            <strong>4,10%</strong> nel 3° e 4° anno e al <strong>4,70%</strong> nel 5° anno; <strong>BTP Valore
+                Insieme</strong> prevede una <strong>cedola unica del 22,25%</strong>. Le simulazioni riportate
+            più avanti mantengono un carattere illustrativo, ma i dati iniziali sono ormai aggiornati ai termini
             dell'emissione.
         </div>
 
@@ -47,9 +49,9 @@
                         </tr>
                         <tr>
                             <th scope="row">Interessi</th>
-                            <td>Cedole trimestrali crescenti nel tempo (step-up); il profilo sarà comunicato prima
-                                dell'emissione.</td>
-                            <td>Un'unica cedola corrisposta alla scadenza.</td>
+                            <td>Cedole trimestrali con step-up: <strong>3,70%</strong> 1°-2° anno, <strong>4,10%</strong>
+                                3°-4° anno, <strong>4,70%</strong> 5° anno.</td>
+                            <td>Un'unica cedola corrisposta alla scadenza pari a <strong>22,25%</strong> del nominale.</td>
                         </tr>
                         <tr>
                             <th scope="row">Rimborso a scadenza</th>
@@ -58,8 +60,9 @@
                         </tr>
                         <tr>
                             <th scope="row">Rendimento annunciato</th>
-                            <td colspan="2">Rendimenti equivalenti dal punto di vista finanziario. I tassi definitivi
-                                non sono ancora disponibili.</td>
+                            <td colspan="2">La struttura finanziaria è definita dal MEF: il BTP Valore prevede
+                                i tassi minimi garantiti sopra indicati, mentre il BTP Valore Insieme offre una sola
+                                cedola finale pari al 22,25%.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -99,60 +102,67 @@
         <section class="mt-4" aria-labelledby="esempio">
             <h2 id="esempio">Esempio puramente illustrativo</h2>
             <p>
-                Modifica il tasso lordo annuo per aggiornare i risultati. Per semplicità, la simulazione usa un tasso
-                uniforme: sul BTP Valore calcola cedole trimestrali non reinvestite; sul BTP Valore Insieme applica
-                la capitalizzazione annua e tassa gli interessi alla scadenza. Il profilo step-up effettivo del BTP
-                Valore e le convenzioni definitive potranno modificare il confronto.
+                Il calcolo applica i tassi ufficiali del BTP Valore a un investimento nominale di 10.000 euro:
+                cedole trimestrali al 3,70% per i primi due anni, al 4,10% per il terzo e quarto anno e al 4,70%
+                per il quinto anno. Per il BTP Valore Insieme considera la cedola unica lorda del 22,25% pagata
+                alla scadenza. Gli interessi del BTP Valore sono considerati non reinvestiti; per entrambi i titoli
+                si applica la tassazione del 12,5%.
             </p>
-            <div class="form-group" style="max-width: 320px;">
-                <label for="annualRate">Tasso lordo annuo ipotizzato (%)</label>
-                <div class="input-group">
-                    <input id="annualRate" class="form-control" type="number" min="0" max="100" step="0.01"
-                        value="4" inputmode="decimal" aria-describedby="rateHelp">
-                    <div class="input-group-append">
-                        <span class="input-group-text">%</span>
-                    </div>
-                </div>
-                <small id="rateHelp" class="form-text text-muted">Investimento: 10.000 euro · Durata: 5 anni ·
-                    Tassazione: 12,5%</small>
-            </div>
-            <p id="rateError" class="text-danger" role="alert" hidden></p>
             <div class="table-responsive">
                 <table class="table table-bordered table-striped">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">Stima dell'esempio</th>
+                            <th scope="col">Calcolo su 10.000 euro nominali</th>
                             <th scope="col">BTP Valore</th>
                             <th scope="col">BTP Valore Insieme</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <th scope="row">Rendimento lordo annuo</th>
-                            <td id="valueGrossRate">4,00%</td>
-                            <td id="togetherGrossRate">4,00%</td>
+                            <th scope="row">Interessi lordi complessivi</th>
+                            <td id="valueGrossInterest">2.030,00 €</td>
+                            <td id="togetherGrossInterest">2.225,00 €</td>
                         </tr>
                         <tr>
-                            <th scope="row">Rendimento netto annuo</th>
-                            <td id="valueNetRate">3,50%</td>
-                            <td id="togetherNetRate">3,53%</td>
+                            <th scope="row">Imposta sugli interessi (12,5%)</th>
+                            <td id="valueTax">253,75 €</td>
+                            <td id="togetherTax">278,13 €</td>
                         </tr>
                         <tr>
                             <th scope="row">Interessi netti complessivi su 10.000 euro</th>
-                            <td id="valueNetInterest">1.750,00 €</td>
-                            <td id="togetherNetInterest">1.895,71 €</td>
+                            <td id="valueNetInterest">1.776,25 €</td>
+                            <td id="togetherNetInterest">1.946,88 €</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <h3 class="mt-4">Flussi di cassa per anno</h3>
             <p>
-                Con il tasso iniziale del 4%, la simulazione stima una differenza di
-                <strong id="netDifference">145,71 €</strong>
-                (<strong id="netDifferencePercent">8,33%</strong> in più per la cedola unica rispetto agli interessi
-                netti del BTP Valore), sotto le ipotesi indicate.
+                Importi riferiti a 10.000 euro nominali. La colonna capitale mostra l'esborso iniziale e il rimborso
+                finale, separati dagli interessi; le imposte sono stime calcolate sul totale annuo.
+            </p>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Periodo</th>
+                            <th scope="col">BTP Valore: cedole trimestrali</th>
+                            <th scope="col">BTP Valore Insieme: interessi</th>
+                            <th scope="col">Flusso di capitale per ciascun titolo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cashFlowRows"></tbody>
+                </table>
+            </div>
+            <p>
+                Con queste ipotesi, la cedola unica del BTP Valore Insieme produce
+                <strong id="netDifference">170,63 €</strong> di interessi netti in più
+                (<strong id="netDifferencePercent">9,61%</strong>) rispetto al totale delle cedole nette del BTP Valore.
             </p>
             <p>
-                Gli importi sono interessi netti: a scadenza va aggiunto il rimborso del capitale di 10.000 euro.
+                Gli importi sono interessi netti complessivi sull'intera durata, non rendimenti annui. Il capitale di
+                10.000 euro va aggiunto al rimborso a scadenza; le cedole del BTP Valore sono invece incassate nel
+                corso dei cinque anni.
             </p>
         </section>
 
@@ -160,9 +170,11 @@
             <h2 id="quando">Quale può essere più adatto?</h2>
             <ul>
                 <li><strong>BTP Valore:</strong> può essere più adatto a chi desidera ricevere cedole durante
-                    l'investimento.</li>
+                    l'investimento; la struttura ufficiale prevede <strong>3,70%</strong> nel 1°-2° anno,
+                    <strong>4,10%</strong> nel 3°-4° anno e <strong>4,70%</strong> nel 5° anno.</li>
                 <li><strong>BTP Valore Insieme:</strong> può essere più adatto a chi non ha bisogno di incassare
-                    periodicamente gli interessi e preferisce riceverli a scadenza.</li>
+                    periodicamente gli interessi e preferisce riceverli a scadenza, in una cedola unica del
+                    <strong>22,25%</strong>.</li>
             </ul>
             <p>
                 La scelta non dipende soltanto dal rendimento: vanno considerati anche l'orizzonte temporale, la
@@ -175,19 +187,19 @@
 
         <footer class="mt-4 pt-3 border-top">
             <p class="small text-muted">
-                Fonte per le caratteristiche e le date: <a
-                    href="https://www.dt.mef.gov.it/it/tema_del_mese/tema_mese0046.html" target="_blank"
-                    rel="noopener noreferrer">Ministero dell'Economia e delle Finanze - Dipartimento del Tesoro</a>.
+                Fonte ufficiale: <a href="https://www.mef.gov.it/ufficio-stampa/comunicati/2026/BTP-Valore-fissati-i-tassi-minimi-garantiti-del-doppio-collocamento-retail-al-via-lunedi-19-ottobre/"
+                    target="_blank" rel="noopener noreferrer">MEF - BTP Valore: tassi minimi garantiti della nuova
+                    emissione retail</a>.
                 I rendimenti futuri non sono garantiti da questo esempio.
             </p>
         </footer>
     </main>
 
     <script>
-        const annualRateInput = document.getElementById('annualRate');
         const taxRate = 0.125;
         const principal = 10000;
-        const durationYears = 5;
+        const valueAnnualRatesBasisPoints = [370, 370, 410, 410, 470];
+        const togetherCouponBasisPoints = 2225;
         const euroFormatter = new Intl.NumberFormat('it-IT', {
             style: 'currency',
             currency: 'EUR',
@@ -200,45 +212,70 @@
         });
 
         function updateComparison() {
-            const ratePercent = Number(annualRateInput.value);
-            const error = document.getElementById('rateError');
-
-            if (!Number.isFinite(ratePercent) || ratePercent < 0 || ratePercent > 100) {
-                error.textContent = 'Inserisci un tasso compreso tra 0% e 100%.';
-                error.hidden = false;
-                return;
-            }
-
-            error.hidden = true;
-            const annualRate = ratePercent / 100;
-            const valueNetInterest = principal * annualRate * durationYears * (1 - taxRate);
-            const togetherNetInterest = principal
-                * (Math.pow(1 + annualRate, durationYears) - 1)
-                * (1 - taxRate);
-            const valueNetAnnualRate = valueNetInterest / principal / durationYears;
-            const togetherNetAnnualRate = Math.pow(
-                1 + togetherNetInterest / principal,
-                1 / durationYears
-            ) - 1;
+            const valueGrossInterest = principal
+                * valueAnnualRatesBasisPoints.reduce((total, rate) => total + rate, 0) / 10000;
+            const togetherGrossInterest = principal * togetherCouponBasisPoints / 10000;
+            const valueTax = valueGrossInterest * taxRate;
+            const togetherTax = togetherGrossInterest * taxRate;
+            const valueNetInterest = valueGrossInterest - valueTax;
+            const togetherNetInterest = togetherGrossInterest - togetherTax;
             const difference = togetherNetInterest - valueNetInterest;
-            const differencePercent = valueNetInterest > 0
-                ? difference / valueNetInterest * 100
-                : 0;
 
-            document.getElementById('valueGrossRate').textContent = percentFormatter.format(ratePercent) + '%';
-            document.getElementById('togetherGrossRate').textContent = percentFormatter.format(ratePercent) + '%';
-            document.getElementById('valueNetRate').textContent =
-                percentFormatter.format(valueNetAnnualRate * 100) + '%';
-            document.getElementById('togetherNetRate').textContent =
-                percentFormatter.format(togetherNetAnnualRate * 100) + '%';
+            document.getElementById('valueGrossInterest').textContent = euroFormatter.format(valueGrossInterest);
+            document.getElementById('togetherGrossInterest').textContent =
+                euroFormatter.format(togetherGrossInterest);
+            document.getElementById('valueTax').textContent = euroFormatter.format(valueTax);
+            document.getElementById('togetherTax').textContent = euroFormatter.format(togetherTax);
             document.getElementById('valueNetInterest').textContent = euroFormatter.format(valueNetInterest);
             document.getElementById('togetherNetInterest').textContent = euroFormatter.format(togetherNetInterest);
             document.getElementById('netDifference').textContent = euroFormatter.format(difference);
             document.getElementById('netDifferencePercent').textContent =
-                percentFormatter.format(differencePercent) + '%';
+                percentFormatter.format(difference / valueNetInterest * 100) + '%';
+
+            const cashFlowRows = [
+                `<tr>
+                    <th scope="row">Sottoscrizione</th>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>−${euroFormatter.format(principal)} per ciascun titolo</td>
+                </tr>`
+            ];
+
+            valueAnnualRatesBasisPoints.forEach((rateBasisPoints, index) => {
+                const year = index + 1;
+                const grossInterest = principal * rateBasisPoints / 10000;
+                const tax = grossInterest * taxRate;
+                const netInterest = grossInterest - tax;
+                const quarterlyGrossCoupon = grossInterest / 4;
+                const quarterlyNetCoupon = netInterest / 4;
+                const isTogetherMaturity = year === valueAnnualRatesBasisPoints.length;
+                const togetherYearGrossInterest = isTogetherMaturity ? togetherGrossInterest : 0;
+                const togetherYearTax = togetherYearGrossInterest * taxRate;
+                const togetherYearNetInterest = togetherYearGrossInterest - togetherYearTax;
+
+                cashFlowRows.push(`<tr>
+                    <th scope="row">Anno ${year}${isTogetherMaturity ? ' (scadenza)' : ''}</th>
+                    <td>
+                        4 cedole da ${euroFormatter.format(quarterlyGrossCoupon)} lordi
+                        (${euroFormatter.format(quarterlyNetCoupon)} netti ciascuna)<br>
+                        Totale: ${euroFormatter.format(grossInterest)} lordi,
+                        ${euroFormatter.format(tax)} imposta,
+                        ${euroFormatter.format(netInterest)} netti
+                    </td>
+                    <td>${isTogetherMaturity
+                        ? `Cedola unica: ${euroFormatter.format(togetherYearGrossInterest)} lordi,
+                            ${euroFormatter.format(togetherYearTax)} imposta,
+                            ${euroFormatter.format(togetherYearNetInterest)} netti`
+                        : '—'}</td>
+                    <td>${isTogetherMaturity
+                        ? `+${euroFormatter.format(principal)} rimborsati per ciascun titolo`
+                        : '—'}</td>
+                </tr>`);
+            });
+
+            document.getElementById('cashFlowRows').innerHTML = cashFlowRows.join('');
         }
 
-        annualRateInput.addEventListener('input', updateComparison);
         updateComparison();
     </script>
 
