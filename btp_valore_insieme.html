@@ -149,11 +149,23 @@
                             <th scope="col">BTP Valore: cedole trimestrali</th>
                             <th scope="col">BTP Valore Insieme: interessi</th>
                             <th scope="col">Flusso di capitale per ciascun titolo</th>
+                            <th scope="col">Flusso netto BTP Valore</th>
+                            <th scope="col">Flusso netto BTP Valore Insieme</th>
                         </tr>
                     </thead>
                     <tbody id="cashFlowRows"></tbody>
                 </table>
             </div>
+            <p>
+                TIR netta equivalente annua, calcolata sui flussi trimestrali dopo le imposte:
+                <strong>BTP Valore <span id="valueNetIrr">—</span></strong>;
+                <strong>BTP Valore Insieme <span id="togetherNetIrr">—</span></strong>.
+                Differenza: <strong id="irrDifference">—</strong>.
+            </p>
+            <p>
+                La TIR è annualizzata in termini effettivi e presuppone il mantenimento dei titoli fino a scadenza;
+                non include costi e non presuppone il reinvestimento delle cedole incassate.
+            </p>
             <p>
                 Con queste ipotesi, la cedola unica del BTP Valore Insieme produce
                 <strong id="netDifference">170,63 €</strong> di interessi netti in più
@@ -211,6 +223,37 @@
             maximumFractionDigits: 2
         });
 
+        function calculatePeriodicIrr(cashFlows) {
+            if (cashFlows.length < 2 || cashFlows[0] >= 0 || !cashFlows.some(flow => flow > 0)) {
+                throw new Error('Flussi di cassa non validi per il calcolo della TIR.');
+            }
+
+            const netPresentValue = rate => cashFlows.reduce(
+                (total, flow, period) => total + flow / (1 + rate) ** period,
+                0
+            );
+            let lowerRate = -0.999999999;
+            let upperRate = 1;
+
+            while (netPresentValue(upperRate) > 0 && upperRate < 1e6) {
+                upperRate = upperRate * 2 + 1;
+            }
+            if (netPresentValue(lowerRate) <= 0 || netPresentValue(upperRate) >= 0) {
+                throw new Error('Impossibile determinare la TIR dei flussi di cassa.');
+            }
+
+            for (let iteration = 0; iteration < 100; iteration += 1) {
+                const midpointRate = (lowerRate + upperRate) / 2;
+                if (netPresentValue(midpointRate) > 0) {
+                    lowerRate = midpointRate;
+                } else {
+                    upperRate = midpointRate;
+                }
+            }
+
+            return (1 + (lowerRate + upperRate) / 2) ** 4 - 1;
+        }
+
         function updateComparison() {
             const valueGrossInterest = principal
                 * valueAnnualRatesBasisPoints.reduce((total, rate) => total + rate, 0) / 10000;
@@ -232,12 +275,17 @@
             document.getElementById('netDifferencePercent').textContent =
                 percentFormatter.format(difference / valueNetInterest * 100) + '%';
 
+            const valueCashFlows = [-principal];
+            const togetherCashFlows = Array(valueAnnualRatesBasisPoints.length * 4 + 1).fill(0);
+            togetherCashFlows[0] = -principal;
             const cashFlowRows = [
                 `<tr>
                     <th scope="row">Sottoscrizione</th>
                     <td>—</td>
                     <td>—</td>
                     <td>−${euroFormatter.format(principal)} per ciascun titolo</td>
+                    <td>−${euroFormatter.format(principal)}</td>
+                    <td>−${euroFormatter.format(principal)}</td>
                 </tr>`
             ];
 
@@ -249,9 +297,21 @@
                 const quarterlyGrossCoupon = grossInterest / 4;
                 const quarterlyNetCoupon = netInterest / 4;
                 const isTogetherMaturity = year === valueAnnualRatesBasisPoints.length;
+                const firstQuarterIndex = (year - 1) * 4 + 1;
+                for (let quarter = 0; quarter < 4; quarter += 1) {
+                    valueCashFlows.push(quarterlyNetCoupon);
+                    if (isTogetherMaturity && quarter === 3) {
+                        valueCashFlows[valueCashFlows.length - 1] += principal;
+                    }
+                }
                 const togetherYearGrossInterest = isTogetherMaturity ? togetherGrossInterest : 0;
                 const togetherYearTax = togetherYearGrossInterest * taxRate;
                 const togetherYearNetInterest = togetherYearGrossInterest - togetherYearTax;
+                if (isTogetherMaturity) {
+                    togetherCashFlows[firstQuarterIndex + 3] = principal + togetherYearNetInterest;
+                }
+                const valueNetCashFlow = netInterest + (isTogetherMaturity ? principal : 0);
+                const togetherNetCashFlow = togetherYearNetInterest + (isTogetherMaturity ? principal : 0);
 
                 cashFlowRows.push(`<tr>
                     <th scope="row">Anno ${year}${isTogetherMaturity ? ' (scadenza)' : ''}</th>
@@ -270,10 +330,29 @@
                     <td>${isTogetherMaturity
                         ? `+${euroFormatter.format(principal)} rimborsati per ciascun titolo`
                         : '—'}</td>
+                    <td>${euroFormatter.format(valueNetCashFlow)}</td>
+                    <td>${euroFormatter.format(togetherNetCashFlow)}</td>
                 </tr>`);
             });
 
+            cashFlowRows.push(`<tr class="font-weight-bold">
+                <th scope="row">Totale netto dell'investimento</th>
+                <td>${euroFormatter.format(valueNetInterest)} di interessi netti</td>
+                <td>${euroFormatter.format(togetherNetInterest)} di interessi netti</td>
+                <td>—</td>
+                <td>${euroFormatter.format(valueNetInterest)}</td>
+                <td>${euroFormatter.format(togetherNetInterest)}</td>
+            </tr>`);
             document.getElementById('cashFlowRows').innerHTML = cashFlowRows.join('');
+
+            const valueNetIrr = calculatePeriodicIrr(valueCashFlows);
+            const togetherNetIrr = calculatePeriodicIrr(togetherCashFlows);
+            const irrDifference = togetherNetIrr - valueNetIrr;
+            document.getElementById('valueNetIrr').textContent = percentFormatter.format(valueNetIrr * 100) + '%';
+            document.getElementById('togetherNetIrr').textContent =
+                percentFormatter.format(togetherNetIrr * 100) + '%';
+            document.getElementById('irrDifference').textContent =
+                `${irrDifference >= 0 ? '+' : ''}${percentFormatter.format(irrDifference * 100)} punti percentuali`;
         }
 
         updateComparison();
