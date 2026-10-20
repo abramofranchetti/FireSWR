@@ -79,6 +79,13 @@
               </span>
               <input id="commissionInput" type="range" min="0" max="1" step="0.01" value="0.2" class="mt-3 w-full accent-blue-700" />
             </label>
+
+            <label class="block">
+              <span class="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                Commissione massima per vendita <span id="commissionCapValue" class="text-blue-700">19 EUR</span>
+              </span>
+              <input id="commissionCapInput" type="range" min="0" max="100" step="1" value="19" class="mt-3 w-full accent-blue-700" />
+            </label>
           </div>
         </section>
 
@@ -166,7 +173,8 @@
           per costruzione. Se alla fine liquidi tutto e applichi la stessa aliquota a ogni plusvalenza, parte del
           vantaggio diventa differimento fiscale; il vantaggio immediato e' nei flussi: a parita' di lordo venduto
           incassi piu' netto, oppure a parita' di netto vendi meno lordo. Le commissioni sulle vendite quote sono
-          sottratte dal netto della strategia ad accumulazione.
+          sottratte dal netto della strategia ad accumulazione e sono calcolate come percentuale della vendita,
+          fino al tetto massimo impostato.
         </div>
       </section>
     </div>
@@ -185,6 +193,7 @@
       dividendTaxInput: document.getElementById('dividendTaxInput'),
       gainTaxInput: document.getElementById('gainTaxInput'),
       commissionInput: document.getElementById('commissionInput'),
+      commissionCapInput: document.getElementById('commissionCapInput'),
       capitalValue: document.getElementById('capitalValue'),
       yearsValue: document.getElementById('yearsValue'),
       returnValue: document.getElementById('returnValue'),
@@ -192,6 +201,7 @@
       dividendTaxValue: document.getElementById('dividendTaxValue'),
       gainTaxValue: document.getElementById('gainTaxValue'),
       commissionValue: document.getElementById('commissionValue'),
+      commissionCapValue: document.getElementById('commissionCapValue'),
       summaryText: document.getElementById('summaryText'),
       sharesMetric: document.getElementById('sharesMetric'),
       advantageLabel: document.getElementById('advantageLabel'),
@@ -222,6 +232,7 @@
         dividendTax: readNumber(els.dividendTaxInput, 0, 43, 26) / 100,
         gainTax: readNumber(els.gainTaxInput, 0, 43, 26) / 100,
         commission: readNumber(els.commissionInput, 0, 1, 0.2) / 100,
+        commissionCap: readNumber(els.commissionCapInput, 0, 100, 19),
         mode: document.querySelector('input[name="mode"]:checked').value,
         saleUnit: document.querySelector('input[name="saleUnit"]:checked').value
       };
@@ -235,28 +246,29 @@
       els.dividendTaxValue.textContent = formatterPercent.format(p.dividendTax);
       els.gainTaxValue.textContent = formatterPercent.format(p.gainTax);
       els.commissionValue.textContent = formatterPercent.format(p.commission);
+      els.commissionCapValue.textContent = formatterEuro.format(p.commissionCap);
     }
 
-    function saleNetForGross(grossSale, price, costPerShare, gainTax, commissionRate) {
+    function saleNetForGross(grossSale, price, costPerShare, gainTax, commissionRate, commissionCap) {
       if (grossSale <= 0 || price <= 0) return { gross: 0, net: 0, tax: 0, commission: 0, shares: 0 };
       const shares = grossSale / price;
       const gainPerShare = Math.max(0, price - costPerShare);
       const tax = gainPerShare * shares * gainTax;
-      const commission = grossSale * commissionRate;
+      const commission = Math.min(grossSale * commissionRate, commissionCap);
       return { gross: grossSale, net: grossSale - tax - commission, tax, commission, shares };
     }
 
-    function grossForTargetNet(targetNet, price, costPerShare, gainTax, commissionRate) {
+    function grossForTargetNet(targetNet, price, costPerShare, gainTax, commissionRate, commissionCap) {
       if (targetNet <= 0) return 0;
       let low = 0;
       let high = targetNet;
-      while (saleNetForGross(high, price, costPerShare, gainTax, commissionRate).net < targetNet) {
+      while (saleNetForGross(high, price, costPerShare, gainTax, commissionRate, commissionCap).net < targetNet) {
         high *= 1.5;
         if (high > 1e12) break;
       }
       for (let i = 0; i < 80; i += 1) {
         const mid = (low + high) / 2;
-        if (saleNetForGross(mid, price, costPerShare, gainTax, commissionRate).net >= targetNet) {
+        if (saleNetForGross(mid, price, costPerShare, gainTax, commissionRate, commissionCap).net >= targetNet) {
           high = mid;
         } else {
           low = mid;
@@ -316,21 +328,21 @@
         const costPerAccShare = accShares > 0 ? accCostBasis / accShares : 0;
         const targetNetFlow = p.mode === 'sameNet'
           ? netDividend
-          : saleNetForGross(grossDividend, accPrice, costPerAccShare, p.gainTax, p.commission).net;
+          : saleNetForGross(grossDividend, accPrice, costPerAccShare, p.gainTax, p.commission, p.commissionCap).net;
         const requestedGrossSale = p.mode === 'sameNet'
-          ? grossForTargetNet(netDividend, accPrice, costPerAccShare, p.gainTax, p.commission)
+          ? grossForTargetNet(netDividend, accPrice, costPerAccShare, p.gainTax, p.commission, p.commissionCap)
           : grossDividend;
         let grossSale = 0;
-        let sale = saleNetForGross(0, accPrice, costPerAccShare, p.gainTax, p.commission);
+        let sale = saleNetForGross(0, accPrice, costPerAccShare, p.gainTax, p.commission, p.commissionCap);
         let paidNetFlow = 0;
 
         if (p.saleUnit === 'integer') {
           const shortfall = Math.max(0, targetNetFlow - accCashBuffer);
           if (shortfall > 0 && accShares > 0) {
-            const grossNeeded = grossForTargetNet(shortfall, accPrice, costPerAccShare, p.gainTax, p.commission);
+            const grossNeeded = grossForTargetNet(shortfall, accPrice, costPerAccShare, p.gainTax, p.commission, p.commissionCap);
             const sharesToSell = Math.min(accShares, Math.ceil(grossNeeded / accPrice));
             grossSale = sharesToSell * accPrice;
-            sale = saleNetForGross(grossSale, accPrice, costPerAccShare, p.gainTax, p.commission);
+            sale = saleNetForGross(grossSale, accPrice, costPerAccShare, p.gainTax, p.commission, p.commissionCap);
           }
           accCashBuffer += sale.net;
           paidNetFlow = Math.min(targetNetFlow, accCashBuffer);
@@ -338,7 +350,7 @@
         } else {
           const maxGrossSale = accShares * accPrice;
           grossSale = Math.min(requestedGrossSale, maxGrossSale);
-          sale = saleNetForGross(grossSale, accPrice, costPerAccShare, p.gainTax, p.commission);
+          sale = saleNetForGross(grossSale, accPrice, costPerAccShare, p.gainTax, p.commission, p.commissionCap);
           paidNetFlow = sale.net;
         }
 
@@ -511,6 +523,7 @@
         els.summaryText.innerHTML = `
           In questo scenario la vendita quote cerca lo stesso netto del dividendo. Poiche' sulla vendita si tassa solo
           la plusvalenza, al netto della commissione del <strong>${formatterPercent.format(p.commission)}</strong>
+          (massimo <strong>${formatterEuro.format(p.commissionCap)}</strong> per vendita)
           il lordo cumulato da vendere e' <strong>${formatterEuro.format(data.accGrossCash[last])}</strong>
           invece di <strong>${formatterEuro.format(data.distGrossCash[last])}</strong>: una riduzione del
           <strong>${formatterPercent.format(totalGrossReduction)}</strong>. Le quote finali sono
@@ -523,7 +536,9 @@
         In questo scenario la vendita cerca di replicare il lordo del dividendo distribuito. ${grossFlowText}${grossShortfallText}
         I flussi netti cumulati dell'accumulazione sono <strong>${formatterEuro.format(data.accNetCash[last])}</strong>
         contro <strong>${formatterEuro.format(data.distNetCash[last])}</strong> della distribuzione: un vantaggio di
-        <strong>${formatterEuro.format(netFlowAdvantage)}</strong> dopo commissioni di vendita. Il motivo e' fiscale:
+        <strong>${formatterEuro.format(netFlowAdvantage)}</strong> dopo commissioni di vendita del
+        <strong>${formatterPercent.format(p.commission)}</strong> (massimo
+        <strong>${formatterEuro.format(p.commissionCap)}</strong> per vendita). Il motivo e' fiscale:
         il dividendo e' tassato interamente, mentre la vendita quote tassa solo la quota di plusvalenza.${bufferText}
         Le quote residue finali sono <strong>${formatterNumber.format(finalShares)}</strong>. ${shareStatusText}
       `;
@@ -549,6 +564,7 @@
       els.dividendTaxInput,
       els.gainTaxInput,
       els.commissionInput,
+      els.commissionCapInput,
       ...document.querySelectorAll('input[name="mode"]'),
       ...document.querySelectorAll('input[name="saleUnit"]')
     ].forEach((input) => input.addEventListener('input', update));
