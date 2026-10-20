@@ -343,6 +343,7 @@
         }
 
         const soldCostBasis = costPerAccShare * sale.shares;
+        const soldAllShares = accShares > 0 && sale.shares >= accShares;
 
         accShares = Math.max(0, accShares - sale.shares);
         accCostBasis = Math.max(0, accCostBasis - soldCostBasis);
@@ -351,7 +352,7 @@
         distNetCash += netDividend;
         distGrossCash += grossDividend;
 
-        if (ruinYear == null && accShares <= 0.000001) {
+        if (ruinYear == null && soldAllShares) {
           ruinYear = year;
         }
 
@@ -484,6 +485,14 @@
       const bufferText = p.saleUnit === 'integer'
         ? ` La cassa di arrotondamento non distribuita e' <strong>${formatterEuro.format(data.accCashBuffer[last])}</strong>.`
         : '';
+      const shareStatusText = data.ruinYear == null
+        ? "Le quote non si esauriscono nell'orizzonte selezionato."
+        : `Il modello segnala l'esaurimento delle quote nell'anno ${data.ruinYear}.`;
+      const grossFlowText = `Il lordo effettivamente venduto e' <strong>${formatterEuro.format(data.accGrossCash[last])}</strong>, contro <strong>${formatterEuro.format(data.distGrossCash[last])}</strong> di dividendi distribuiti.`;
+      const grossShortfall = data.distGrossCash[last] - data.accGrossCash[last];
+      const grossShortfallText = grossShortfall > 0.01
+        ? ` Il portafoglio non ha potuto sostenere tutto il lordo richiesto: lo scarto e' <strong>${formatterEuro.format(grossShortfall)}</strong>.`
+        : '';
 
       els.sharesMetric.textContent = formatterNumber.format(finalShares);
       els.ruinLabel.textContent = p.saleUnit === 'integer' ? 'Cassa di arrotondamento' : 'Anno esaurimento quote';
@@ -504,21 +513,19 @@
           la plusvalenza, al netto della commissione del <strong>${formatterPercent.format(p.commission)}</strong>
           il lordo cumulato da vendere e' <strong>${formatterEuro.format(data.accGrossCash[last])}</strong>
           invece di <strong>${formatterEuro.format(data.distGrossCash[last])}</strong>: una riduzione del
-          <strong>${formatterPercent.format(totalGrossReduction)}</strong>. Le quote finali restano
-          <strong>${formatterNumber.format(finalShares)}</strong>: non finiscono automaticamente, finiscono solo se il
-          prelievo e' eccessivo rispetto alla crescita.${bufferText}
+          <strong>${formatterPercent.format(totalGrossReduction)}</strong>. Le quote finali sono
+          <strong>${formatterNumber.format(finalShares)}</strong>. ${shareStatusText}${bufferText}
         `;
         return;
       }
 
       els.summaryText.innerHTML = `
-        In questo scenario vendi lo stesso lordo del dividendo distribuito. Il totale lordo resta allineato per
-        costruzione, ma i flussi netti cumulati dell'accumulazione sono <strong>${formatterEuro.format(data.accNetCash[last])}</strong>
+        In questo scenario la vendita cerca di replicare il lordo del dividendo distribuito. ${grossFlowText}${grossShortfallText}
+        I flussi netti cumulati dell'accumulazione sono <strong>${formatterEuro.format(data.accNetCash[last])}</strong>
         contro <strong>${formatterEuro.format(data.distNetCash[last])}</strong> della distribuzione: un vantaggio di
         <strong>${formatterEuro.format(netFlowAdvantage)}</strong> dopo commissioni di vendita. Il motivo e' fiscale:
         il dividendo e' tassato interamente, mentre la vendita quote tassa solo la quota di plusvalenza.${bufferText}
-        Con quote frazionate il numero di quote scende sempre meno perche' ogni vendita e' una frazione geometrica:
-        tende a zero solo al limite infinito, non in un anno finito.
+        Le quote residue finali sono <strong>${formatterNumber.format(finalShares)}</strong>. ${shareStatusText}
       `;
     }
 
