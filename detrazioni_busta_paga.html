@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcolo Busta Paga e Detrazioni</title>
+    <title>Stima Busta Paga Metalmeccanico 2026</title>
     <!-- Libreria Google Charts -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
@@ -19,28 +19,31 @@
             background-color: var(--background);
             color: var(--text-main);
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
+            padding: 0;
         }
         .container {
             background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
+            box-sizing: border-box;
+            min-height: 100vh;
             width: 100%;
+            padding: 18px 24px 28px;
         }
         h2 {
             text-align: center;
-            margin-top: 0;
+            margin: 8px 0 18px;
             color: var(--primary);
+        }
+        .workbench {
+            display: grid;
+            grid-template-columns: minmax(300px, 350px) minmax(0, 1fr);
+            align-items: stretch;
+            gap: 20px;
         }
         .controls {
             background-color: #f1f5f9;
             padding: 20px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin: 0;
         }
         .control-group {
             margin-bottom: 15px;
@@ -64,14 +67,17 @@
         }
         .summary {
             display: flex;
-            justify-content: space-around;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 18px;
             text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
+            margin: 20px 0;
+            padding: 18px 0;
+            border-top: 1px solid #e2e8f0;
             border-bottom: 1px solid #e2e8f0;
         }
         .summary-box h4 {
-            margin: 0 0 5px 0;
+            margin: 0 0 8px 0;
             color: var(--text-muted);
             font-weight: normal;
             font-size: 0.9em;
@@ -80,11 +86,67 @@
             font-size: 1.4em;
             font-weight: bold;
         }
+        .summary-box {
+            flex: 1 1 150px;
+            min-width: 145px;
+        }
+        .control-group select,
+        .control-group input[type=number] {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 9px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #fff;
+            color: var(--text-main);
+            font: inherit;
+        }
+        .control-help, .estimate-note {
+            color: var(--text-muted);
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        .estimate-note {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 12px 16px;
+            margin: 20px 0 0;
+        }
         .text-green { color: #16a34a; }
         .text-red { color: #dc2626; }
         #sankey_chart {
             width: 100%;
-            height: 400px;
+            height: min(72vh, 760px);
+            min-height: 480px;
+        }
+        .chart-panel {
+            min-width: 0;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+        }
+        .chart-panel h3 {
+            margin: 4px 8px;
+            color: var(--text-main);
+        }
+        .chart-caption {
+            margin: 0 8px;
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+        @media (max-width: 850px) {
+            .container { padding: 14px; }
+            .workbench { grid-template-columns: minmax(0, 1fr); }
+            .controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+            .control-group:last-child { margin-bottom: 15px; }
+            #sankey_chart { height: 58vh; min-height: 360px; }
+        }
+        @media (max-width: 600px) {
+            .controls { display: block; }
+            .control-group:last-child { margin-bottom: 0; }
+            #sankey_chart { height: 420px; min-height: 360px; }
+            label { gap: 12px; }
         }
     </style>
 </head>
@@ -96,164 +158,267 @@
     </div>
     <h2>Simulatore Busta Paga e Detrazioni</h2>
 
-    <div class="controls">
+    <div class="workbench">
+      <section class="controls" aria-label="Parametri del calcolo">
         <div class="control-group">
             <label>
-                Reddito Annuo Lordo (RAL)
+                RAL lorda annua (rapporto attivo tutto l'anno)
                 <span class="val-display"><span id="ral-val">15.000</span> €</span>
             </label>
-            <input type="range" id="ral-slider" min="10000" max="70000" step="100" value="15000">
+            <input type="range" id="ral-slider" min="0" max="100000" step="100" value="15000">
         </div>
         <div class="control-group">
             <label>
-                Giorni Lavorati nell'anno
+                Giorni di lavoro retribuiti nell'anno
                 <span class="val-display"><span id="giorni-val">365</span> gg</span>
             </label>
             <input type="range" id="giorni-slider" min="1" max="365" step="1" value="365">
+            <div class="control-help">La RAL e il reddito lordo annuo stimato vengono riproporzionati in base ai giorni indicati.</div>
+        </div>
+        <div class="control-group">
+            <label for="contratto">Tipo di contratto</label>
+            <select id="contratto">
+                <option value="permanente">Tempo indeterminato</option>
+                <option value="determinato">Tempo determinato</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label for="inps-rate">Aliquota contributiva dipendente stimata (%)</label>
+            <input type="number" id="inps-rate" min="0" max="15" step="0.01" value="9.19">
+            <div class="control-help">Il 9,19% è un'ipotesi comune, non un'aliquota universale: verifica il cedolino.</div>
+        </div>
+        <div class="control-group">
+            <label for="addizionali-rate">Addizionali regionali e comunali stimate (%)</label>
+            <input type="number" id="addizionali-rate" min="0" max="5" step="0.01" value="0">
+            <div class="control-help">Dipendono da residenza e scaglioni locali. Lasciando 0%, il calcolo le esclude.</div>
+        </div>
+      </section>
+      <section class="chart-panel" aria-label="Grafico del reddito e delle trattenute">
+        <h3>Ripartizione del reddito annuo</h3>
+        <p class="chart-caption">Il grafico si aggiorna mentre modifichi i parametri.</p>
+        <div id="sankey_chart"></div>
+      </section>
+    </div>
+
+    <div class="summary" aria-label="Riepilogo della stima">
+        <div class="summary-box">
+            <h4>Reddito lordo stimato nell'anno</h4>
+            <div class="amount" id="lordo-display">-</div>
+        </div>
+        <div class="summary-box">
+            <h4>Imposte e contributi stimati</h4>
+            <div class="amount text-red" id="prelievi-display">-</div>
+        </div>
+        <div class="summary-box">
+            <h4>Contributi INPS stimati</h4>
+            <div class="amount text-red" id="inps-display">-</div>
+        </div>
+        <div class="summary-box">
+            <h4>IRPEF netta stimata</h4>
+            <div class="amount text-red" id="irpef-display">-</div>
+        </div>
+        <div class="summary-box">
+            <h4>Addizionali stimate</h4>
+            <div class="amount text-red" id="addizionali-display">-</div>
+        </div>
+        <div class="summary-box">
+            <h4>Detrazioni e crediti stimati</h4>
+            <div class="amount text-green" id="agevolazioni-display">-</div>
+        </div>
+        <div class="summary-box">
+            <h4>Netto annuo stimato</h4>
+            <div class="amount text-green" id="netto-display">-</div>
+        </div>
+        <div class="summary-box">
+            <h4>Netto medio mensile (12 mensilità)</h4>
+            <div class="amount text-green" id="netto-12-display">-</div>
+        </div>
+        <div class="summary-box">
+            <h4>Netto medio per mensilità (13 mensilità)</h4>
+            <div class="amount text-green" id="netto-13-display">-</div>
         </div>
     </div>
 
-    <div class="summary">
-        <div class="summary-box">
-            <h4>Detrazioni Applicate</h4>
-            <div class="amount text-green" id="detrazioni-display">2.395 €</div>
-        </div>
-        <div class="summary-box">
-            <h4>Tasse Totali (INPS + IRPEF)</h4>
-            <div class="amount text-red" id="tasse-display">5.126 €</div>
-        </div>
-        <div class="summary-box">
-            <h4>Netto in Tasca</h4>
-            <div class="amount text-green" id="netto-display">19.874 €</div>
-        </div>
-    </div>
+    <p class="estimate-note">
+        Stima indicativa 2026, non è un cedolino. Assume un solo reddito da lavoro dipendente e non include
+        familiari a carico, altri redditi, welfare, premi, straordinari, fondi pensione o detrazioni personali.
+        Il netto su 12 o 13 mensilità è una media aritmetica: la tredicesima reale può avere un netto diverso.
+        Non stima il trattamento integrativo per redditi oltre 15.000 euro, che dipende anche da altre detrazioni.
+        Non verifica i minimi retributivi del CCNL: inserisci una RAL corretta per livello e orario.
+        Verifica l'aliquota INPS e inserisci le addizionali locali per una stima più vicina al tuo caso.
+        Riferimenti: <a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:legge:2025-12-30;212">Legge 30 dicembre 2025, n. 212</a>
+        e <a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:legge:2024-12-30;207">Legge 30 dicembre 2024, n. 207</a>.
+    </p>
 
-    <div id="sankey_chart"></div>
     <!-- Disclaimer -->
      <div id="disclaimer-container"></div>
 
      <script>
          document.addEventListener('DOMContentLoaded', function () {
              fetch('html/disclaimer.html')
-                 .then(response => response.text())
+                 .then(response => {
+                     if (!response.ok) throw new Error('Disclaimer non disponibile');
+                     return response.text();
+                 })
                  .then(data => {
                      document.getElementById('disclaimer-container').innerHTML = data;
+                 })
+                 .catch(() => {
+                     document.getElementById('disclaimer-container').innerText =
+                         'Disclaimer generale non disponibile; questa pagina fornisce comunque solo una stima indicativa.';
                  });
          });
      </script>
 </div>
 
 <script type="text/javascript">
-    google.charts.load('current', {'packages':['sankey']});
-    google.charts.setOnLoadCallback(init);
-
-    let chart, data, options;
+    let chart;
+    let chartReady = false;
 
     const ralSlider = document.getElementById('ral-slider');
     const giorniSlider = document.getElementById('giorni-slider');
+    const contractSelect = document.getElementById('contratto');
+    const inpsRateInput = document.getElementById('inps-rate');
+    const addizionaliRateInput = document.getElementById('addizionali-rate');
+    const euro = value => Math.round(value).toLocaleString('it-IT') + ' €';
 
-    // Funzione per calcolare le tasse e le detrazioni
-    function calcolaBustaPaga(ral, giorni) {
-        // 1. Contributi INPS (Circa 9.19%)
-        const inps = ral * 0.0919;
-        
-        // 2. Imponibile IRPEF
-        const imponibile = ral - inps;
+    function calcolaBustaPaga(ral, giorni, tipoContratto, aliquotaInps, aliquotaAddizionali) {
+        const fattoreGiorni = giorni / 365;
+        const lordo = ral * fattoreGiorni;
+        const inps = lordo * aliquotaInps / 100;
+        const imponibile = Math.max(0, lordo - inps);
 
-        // 3. IRPEF Lorda (Scaglioni 2024: 23% fino a 28k, 35% tra 28k e 50k, 43% oltre 50k)
-        let irpefLorda = 0;
+        let irpefLorda;
         if (imponibile <= 28000) {
             irpefLorda = imponibile * 0.23;
         } else if (imponibile <= 50000) {
-            irpefLorda = (28000 * 0.23) + ((imponibile - 28000) * 0.35);
+            irpefLorda = 28000 * 0.23 + (imponibile - 28000) * 0.33;
         } else {
-            irpefLorda = (28000 * 0.23) + (22000 * 0.35) + ((imponibile - 50000) * 0.43);
+            irpefLorda = 28000 * 0.23 + 22000 * 0.33 + (imponibile - 50000) * 0.43;
         }
 
-        // 4. Detrazioni Lavoro Dipendente
-        let detrazione = 0;
-        if (ral <= 15000) {
-            detrazione = 1955 * (giorni / 365);
-            if (detrazione < 690) detrazione = 690; // Minimo garantito
-        } else if (ral <= 28000) {
-            detrazione = (1910 + 1190 * ((28000 - ral) / 13000)) * (giorni / 365);
-        } else if (ral <= 50000) {
-            detrazione = (1910 * ((50000 - ral) / 22000)) * (giorni / 365);
-        } else {
-            detrazione = 0;
+        let detrazioneLavoro = 0;
+        if (imponibile <= 15000) {
+            const minimo = tipoContratto === 'determinato' ? 1380 : 690;
+            detrazioneLavoro = Math.max(1955 * fattoreGiorni, minimo);
+        } else if (imponibile <= 28000) {
+            detrazioneLavoro = (1910 + 1190 * (28000 - imponibile) / 13000) * fattoreGiorni;
+        } else if (imponibile <= 50000) {
+            detrazioneLavoro = (1910 * (50000 - imponibile) / 22000) * fattoreGiorni;
+        }
+        if (imponibile >= 25000 && imponibile <= 35000) {
+            detrazioneLavoro += 65 * fattoreGiorni;
         }
 
-        // 5. IRPEF Netta e Stipendio Netto
-        let irpefNetta = irpefLorda - detrazione;
-        if (irpefNetta < 0) irpefNetta = 0; 
-        
-        const netto = ral - inps - irpefNetta;
+        let ulterioreDetrazione = 0;
+        if (imponibile > 20000 && imponibile <= 32000) {
+            ulterioreDetrazione = 1000 * fattoreGiorni;
+        } else if (imponibile > 32000 && imponibile <= 40000) {
+            ulterioreDetrazione = 1000 * (40000 - imponibile) / 8000 * fattoreGiorni;
+        }
+
+        const irpefNetta = Math.max(0, irpefLorda - detrazioneLavoro - ulterioreDetrazione);
+        const addizionali = imponibile * aliquotaAddizionali / 100;
+
+        let sommaIntegrativa = 0;
+        if (imponibile <= 8500) {
+            sommaIntegrativa = lordo * 0.071;
+        } else if (imponibile <= 15000) {
+            sommaIntegrativa = lordo * 0.053;
+        } else if (imponibile <= 20000) {
+            sommaIntegrativa = lordo * 0.048;
+        }
+
+        const impostaNettaPrimaDelBonus = irpefLorda - detrazioneLavoro;
+        const trattamentoIntegrativo = imponibile <= 15000 &&
+            impostaNettaPrimaDelBonus > 75 * fattoreGiorni
+            ? 1200 * fattoreGiorni
+            : 0;
+        const netto = Math.max(0, lordo - inps - irpefNetta - addizionali +
+            sommaIntegrativa + trattamentoIntegrativo);
 
         return {
-            ral: Math.round(ral),
-            inps: Math.round(inps),
-            irpefLorda: Math.round(irpefLorda),
-            detrazione: Math.round(detrazione),
-            irpefNetta: Math.round(irpefNetta),
-            netto: Math.round(netto)
+            lordo, inps, imponibile, irpefLorda, detrazioneLavoro, ulterioreDetrazione,
+            irpefNetta, addizionali, sommaIntegrativa, trattamentoIntegrativo, netto
         };
     }
 
     function drawChart() {
-        const ral = parseFloat(ralSlider.value);
-        const giorni = parseFloat(giorniSlider.value);
-        
-        // Aggiorna i testi a schermo
-        document.getElementById('ral-val').innerText = ral.toLocaleString('it-IT');
+        const ral = Number(ralSlider.value);
+        const giorni = Number(giorniSlider.value);
+        const aliquotaInps = Number(inpsRateInput.value);
+        const aliquotaAddizionali = Number(addizionaliRateInput.value);
+        const calc = calcolaBustaPaga(ral, giorni, contractSelect.value, aliquotaInps, aliquotaAddizionali);
+        const agevolazioni = calc.detrazioneLavoro + calc.ulterioreDetrazione +
+            calc.sommaIntegrativa + calc.trattamentoIntegrativo;
+
+        document.getElementById('ral-val').innerText = euro(ral).replace(' €', '');
         document.getElementById('giorni-val').innerText = giorni;
+        document.getElementById('lordo-display').innerText = euro(calc.lordo);
+        document.getElementById('prelievi-display').innerText =
+            euro(calc.inps + calc.irpefNetta + calc.addizionali);
+        document.getElementById('inps-display').innerText = euro(calc.inps);
+        document.getElementById('irpef-display').innerText = euro(calc.irpefNetta);
+        document.getElementById('addizionali-display').innerText = euro(calc.addizionali);
+        document.getElementById('agevolazioni-display').innerText = euro(agevolazioni);
+        document.getElementById('netto-display').innerText = euro(calc.netto);
+        document.getElementById('netto-12-display').innerText = euro(calc.netto / 12);
+        document.getElementById('netto-13-display').innerText = euro(calc.netto / 13);
 
-        // Esegui i calcoli matematici
-        const calc = calcolaBustaPaga(ral, giorni);
+        if (!chartReady) return;
 
-        document.getElementById('detrazioni-display').innerText = calc.detrazione.toLocaleString('it-IT') + ' €';
-        document.getElementById('tasse-display').innerText = (calc.inps + calc.irpefNetta).toLocaleString('it-IT') + ' €';
-        document.getElementById('netto-display').innerText = calc.netto.toLocaleString('it-IT') + ' €';
-
-        // Prepara i dati per il grafico visivo (Sankey)
-        data = new google.visualization.DataTable();
+        const data = new google.visualization.DataTable();
         data.addColumn('string', 'Da');
         data.addColumn('string', 'A');
         data.addColumn('number', 'Euro (€)');
-
-        const titoloLordo = `RAL (${calc.ral.toLocaleString()} €)`;
-
-        data.addRows([
-            [titoloLordo, 'Totale Entrate', calc.ral],
-            ['Totale Entrate', 'Contributi INPS', calc.inps],
-            ['Totale Entrate', 'IRPEF Netta', calc.irpefNetta],
-            ['Totale Entrate', 'Netto in Tasca', calc.netto]
-        ]);
-
-        options = {
+        const nettoRetribuzione = Math.max(0, calc.lordo - calc.inps - calc.irpefNetta - calc.addizionali);
+        const bonusNetto = calc.sommaIntegrativa + calc.trattamentoIntegrativo;
+        const rows = [
+            ['Retribuzione lorda', 'Ripartizione retribuzione', calc.lordo],
+            ['Ripartizione retribuzione', 'Contributi INPS', calc.inps],
+            ['Ripartizione retribuzione', 'IRPEF netta', calc.irpefNetta],
+            ['Ripartizione retribuzione', 'Addizionali', calc.addizionali],
+            ['Ripartizione retribuzione', 'Netto da retribuzione', nettoRetribuzione],
+            ['Agevolazioni fiscali', 'Netto in tasca', bonusNetto],
+            ['Netto da retribuzione', 'Netto in tasca', nettoRetribuzione]
+        ].filter(row => row[2] > 0);
+        data.addRows(rows);
+        const options = {
             sankey: {
                 node: {
                     label: { fontSize: 13, bold: true },
-                    nodePadding: 40,
-                    colors: ['#3b82f6', '#94a3b8', '#dc2626', '#dc2626', '#16a34a']
+                    nodePadding: 30,
+                    colors: ['#3b82f6', '#94a3b8', '#dc2626', '#dc2626', '#64748b', '#16a34a', '#f59e0b']
                 },
                 link: { colorMode: 'gradient', fillOpacity: 0.8 }
             }
         };
 
-        if(!chart) {
+        if (!chart) {
             chart = new google.visualization.Sankey(document.getElementById('sankey_chart'));
         }
         chart.draw(data, options);
     }
 
-    function init() {
-        // Disegna al caricamento
-        drawChart();
+    [ralSlider, giorniSlider, inpsRateInput, addizionaliRateInput]
+        .forEach(input => input.addEventListener('input', drawChart));
+    contractSelect.addEventListener('change', drawChart);
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (chartReady) drawChart();
+        }, 150);
+    });
 
-        // Ridisegna quando gli slider cambiano
-        ralSlider.addEventListener('input', drawChart);
-        giorniSlider.addEventListener('input', drawChart);
+    if (window.google && google.charts) {
+        google.charts.load('current', { packages: ['sankey'] });
+        google.charts.setOnLoadCallback(() => {
+            chartReady = true;
+            drawChart();
+        });
     }
-</script>  
+    drawChart();
+</script>
 </body>
 </html>
