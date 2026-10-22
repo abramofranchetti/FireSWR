@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Genera un codice fiscale italiano casuale o calcolalo dai dati anagrafici.">
+    <title>Generatore di codice fiscale casuale</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f5f6f8;
+            color: #222;
+            font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+        }
+        main {
+            max-width: 620px;
+            margin: 24px auto;
+            padding: 24px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 3px 14px #00000012;
+        }
+        .home { display: inline-block; margin-bottom: 16px; color: #075fbd; }
+        h1 { margin: 0 0 8px; font-size: 1.7rem; }
+        .intro, .hint, .disclaimer { color: #555; }
+        .result {
+            display: flex;
+            gap: 8px;
+            margin: 20px 0 24px;
+        }
+        .result input {
+            min-width: 0;
+            flex: 1;
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        input, select, button {
+            min-height: 44px;
+            padding: 9px 11px;
+            border: 1px solid #c8cdd3;
+            border-radius: 6px;
+            font: inherit;
+        }
+        button { cursor: pointer; }
+        button:focus-visible, input:focus-visible, select:focus-visible {
+            outline: 3px solid #9ccaff;
+            outline-offset: 2px;
+        }
+        .primary { border-color: #075fbd; background: #075fbd; color: #fff; }
+        .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+        h2 { margin: 24px 0 12px; font-size: 1.2rem; }
+        form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        label { display: grid; gap: 5px; font-weight: 600; }
+        label input, label select { width: 100%; }
+        .full { grid-column: 1 / -1; }
+        .hint { margin: 0; font-size: .9rem; }
+        .status { min-height: 1.5em; margin: 12px 0 0; color: #444; }
+        .disclaimer { margin: 22px 0 0; border-top: 1px solid #ddd; padding-top: 14px; font-size: .9rem; }
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            main { margin: 8px auto; padding: 18px; }
+            form { grid-template-columns: 1fr; }
+            .full { grid-column: auto; }
+            .result { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <a class="home" href="/FireSWR">🏠 Home</a>
+        <h1>Generatore di codice fiscale casuale</h1>
+        <p class="intro">Genera un codice casuale oppure calcolalo inserendo i dati anagrafici.</p>
+
+        <div class="result">
+            <input id="result" aria-label="Codice fiscale generato" readonly autocomplete="off">
+            <button id="copy" type="button">Copia</button>
+        </div>
+        <div class="actions">
+            <button id="random" class="primary" type="button">Genera codice casuale</button>
+        </div>
+
+        <h2>Calcola dai dati</h2>
+        <form id="details-form">
+            <label>
+                Cognome
+                <input name="surname" autocomplete="family-name" required>
+            </label>
+            <label>
+                Nome
+                <input name="given-name" autocomplete="given-name" required>
+            </label>
+            <label>
+                Data di nascita
+                <input name="birthdate" type="date" required>
+            </label>
+            <label>
+                Sesso
+                <select name="sex" required>
+                    <option value="M">Maschile</option>
+                    <option value="F">Femminile</option>
+                </select>
+            </label>
+            <label class="full">
+                Codice catastale del comune di nascita
+                <input name="place" maxlength="4" pattern="[A-Za-z][0-9]{3}[A-Za-z]" placeholder="Es. H501 per Roma" required>
+            </label>
+            <p class="hint full">Inserisci il codice catastale di 4 caratteri, non il CAP. Per nascita all'estero si usa il codice del paese.</p>
+            <button class="primary full" type="submit">Calcola codice fiscale</button>
+        </form>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+        <p class="disclaimer">I codici casuali sono fittizi e non verificano l'esistenza dei dati o l'attribuzione ufficiale del codice. Il risultato non sostituisce quello rilasciato dall'Agenzia delle Entrate.</p>
+    </main>
+
+    <script>
+        const months = "ABCDEHLMPRST";
+        const oddValues = {
+            "0": 1, "1": 0, "2": 5, "3": 7, "4": 9, "5": 13, "6": 15, "7": 17, "8": 19, "9": 21,
+            A: 1, B: 0, C: 5, D: 7, E: 9, F: 13, G: 15, H: 17, I: 19, J: 21,
+            K: 2, L: 4, M: 18, N: 20, O: 11, P: 3, Q: 6, R: 8, S: 12, T: 14,
+            U: 16, V: 10, W: 22, X: 25, Y: 24, Z: 23
+        };
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const result = document.getElementById("result");
+        const status = document.getElementById("status");
+
+        function cleanName(value) {
+            return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z]/g, "");
+        }
+
+        function nameCode(value, isGivenName) {
+            const name = cleanName(value);
+            const consonants = name.replace(/[AEIOU]/g, "");
+            const vowels = name.replace(/[^AEIOU]/g, "");
+            const selected = isGivenName && consonants.length > 3
+                ? consonants[0] + consonants[2] + consonants[3]
+                : consonants.slice(0, 3);
+            return (selected + vowels + "XXX").slice(0, 3);
+        }
+
+        function checkCharacter(code) {
+            let sum = 0;
+            for (let i = 0; i < code.length; i++) {
+                const character = code[i];
+                if (i % 2 === 0) {
+                    sum += oddValues[character];
+                } else {
+                    sum += /\d/.test(character) ? Number(character) : character.charCodeAt(0) - 65;
+                }
+            }
+            return alphabet[sum % 26];
+        }
+
+        function buildCode(surname, givenName, birthdate, sex, place) {
+            const [year, month, day] = birthdate.split("-").map(Number);
+            const dayCode = day + (sex === "F" ? 40 : 0);
+            const partial = nameCode(surname, false) + nameCode(givenName, true) +
+                String(year).slice(-2) + months[month - 1] + String(dayCode).padStart(2, "0") +
+                place.toUpperCase();
+            return partial + checkCharacter(partial);
+        }
+
+        function showCode(code) {
+            result.value = code;
+            status.textContent = "";
+        }
+
+        function randomItem(items) {
+            return items[Math.floor(Math.random() * items.length)];
+        }
+
+        function generateRandomCode() {
+            const surnames = ["Rossi", "Bianchi", "Romano", "Ricci", "Marino", "Greco", "Bruno", "Gallo"];
+            const givenNames = ["Marco", "Luca", "Giulia", "Anna", "Francesco", "Sara", "Andrea", "Maria"];
+            const places = ["H501", "F205", "L219", "D612", "A944", "F839", "L736", "A662", "D969", "G273", "C351"];
+            const year = 1940 + Math.floor(Math.random() * 66);
+            const month = 1 + Math.floor(Math.random() * 12);
+            const day = 1 + Math.floor(Math.random() * new Date(year, month, 0).getDate());
+            const date = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+            const sex = Math.random() < 0.5 ? "M" : "F";
+            showCode(buildCode(randomItem(surnames), randomItem(givenNames), date, sex, randomItem(places)));
+        }
+
+        document.getElementById("random").addEventListener("click", generateRandomCode);
+        document.getElementById("details-form").addEventListener("submit", event => {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            const surname = String(data.get("surname")).trim();
+            const givenName = String(data.get("given-name")).trim();
+            const birthdate = String(data.get("birthdate"));
+            const place = String(data.get("place")).trim().toUpperCase();
+            if (!cleanName(surname) || !cleanName(givenName)) {
+                status.textContent = "Nome e cognome devono contenere almeno una lettera.";
+                return;
+            }
+            showCode(buildCode(surname, givenName, birthdate, String(data.get("sex")), place));
+        });
+        document.getElementById("copy").addEventListener("click", async () => {
+            if (!result.value) return;
+            try {
+                await navigator.clipboard.writeText(result.value);
+                status.textContent = "Codice copiato.";
+            } catch {
+                status.textContent = "Copia non disponibile: seleziona il codice e copialo manualmente.";
+            }
+        });
+
+        generateRandomCode();
+    </script>
+</body>
+</html>
