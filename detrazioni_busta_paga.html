@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolo Busta Paga e Detrazioni</title>
+    <!-- Libreria Google Charts -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 0;
+            color: var(--primary);
+        }
+        .controls {
+            background-color: #f1f5f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+        label {
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .val-display {
+            color: var(--primary);
+            font-size: 1.1em;
+        }
+        input[type=range] {
+            width: 100%;
+            cursor: pointer;
+        }
+        .summary {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .summary-box h4 {
+            margin: 0 0 5px 0;
+            color: var(--text-muted);
+            font-weight: normal;
+            font-size: 0.9em;
+        }
+        .summary-box .amount {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+        .text-green { color: #16a34a; }
+        .text-red { color: #dc2626; }
+        #sankey_chart {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div>
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+    </div>
+    <h2>Simulatore Busta Paga e Detrazioni</h2>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>
+                Reddito Annuo Lordo (RAL)
+                <span class="val-display"><span id="ral-val">15.000</span> €</span>
+            </label>
+            <input type="range" id="ral-slider" min="10000" max="70000" step="100" value="15000">
+        </div>
+        <div class="control-group">
+            <label>
+                Giorni Lavorati nell'anno
+                <span class="val-display"><span id="giorni-val">365</span> gg</span>
+            </label>
+            <input type="range" id="giorni-slider" min="1" max="365" step="1" value="365">
+        </div>
+    </div>
+
+    <div class="summary">
+        <div class="summary-box">
+            <h4>Detrazioni Applicate</h4>
+            <div class="amount text-green" id="detrazioni-display">2.395 €</div>
+        </div>
+        <div class="summary-box">
+            <h4>Tasse Totali (INPS + IRPEF)</h4>
+            <div class="amount text-red" id="tasse-display">5.126 €</div>
+        </div>
+        <div class="summary-box">
+            <h4>Netto in Tasca</h4>
+            <div class="amount text-green" id="netto-display">19.874 €</div>
+        </div>
+    </div>
+
+    <div id="sankey_chart"></div>
+    <!-- Disclaimer -->
+     <div id="disclaimer-container"></div>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', function () {
+             fetch('html/disclaimer.html')
+                 .then(response => response.text())
+                 .then(data => {
+                     document.getElementById('disclaimer-container').innerHTML = data;
+                 });
+         });
+     </script>
+</div>
+
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['sankey']});
+    google.charts.setOnLoadCallback(init);
+
+    let chart, data, options;
+
+    const ralSlider = document.getElementById('ral-slider');
+    const giorniSlider = document.getElementById('giorni-slider');
+
+    // Funzione per calcolare le tasse e le detrazioni
+    function calcolaBustaPaga(ral, giorni) {
+        // 1. Contributi INPS (Circa 9.19%)
+        const inps = ral * 0.0919;
+        
+        // 2. Imponibile IRPEF
+        const imponibile = ral - inps;
+
+        // 3. IRPEF Lorda (Scaglioni 2024: 23% fino a 28k, 35% tra 28k e 50k, 43% oltre 50k)
+        let irpefLorda = 0;
+        if (imponibile <= 28000) {
+            irpefLorda = imponibile * 0.23;
+        } else if (imponibile <= 50000) {
+            irpefLorda = (28000 * 0.23) + ((imponibile - 28000) * 0.35);
+        } else {
+            irpefLorda = (28000 * 0.23) + (22000 * 0.35) + ((imponibile - 50000) * 0.43);
+        }
+
+        // 4. Detrazioni Lavoro Dipendente
+        let detrazione = 0;
+        if (ral <= 15000) {
+            detrazione = 1955 * (giorni / 365);
+            if (detrazione < 690) detrazione = 690; // Minimo garantito
+        } else if (ral <= 28000) {
+            detrazione = (1910 + 1190 * ((28000 - ral) / 13000)) * (giorni / 365);
+        } else if (ral <= 50000) {
+            detrazione = (1910 * ((50000 - ral) / 22000)) * (giorni / 365);
+        } else {
+            detrazione = 0;
+        }
+
+        // 5. IRPEF Netta e Stipendio Netto
+        let irpefNetta = irpefLorda - detrazione;
+        if (irpefNetta < 0) irpefNetta = 0; 
+        
+        const netto = ral - inps - irpefNetta;
+
+        return {
+            ral: Math.round(ral),
+            inps: Math.round(inps),
+            irpefLorda: Math.round(irpefLorda),
+            detrazione: Math.round(detrazione),
+            irpefNetta: Math.round(irpefNetta),
+            netto: Math.round(netto)
+        };
+    }
+
+    function drawChart() {
+        const ral = parseFloat(ralSlider.value);
+        const giorni = parseFloat(giorniSlider.value);
+        
+        // Aggiorna i testi a schermo
+        document.getElementById('ral-val').innerText = ral.toLocaleString('it-IT');
+        document.getElementById('giorni-val').innerText = giorni;
+
+        // Esegui i calcoli matematici
+        const calc = calcolaBustaPaga(ral, giorni);
+
+        document.getElementById('detrazioni-display').innerText = calc.detrazione.toLocaleString('it-IT') + ' €';
+        document.getElementById('tasse-display').innerText = (calc.inps + calc.irpefNetta).toLocaleString('it-IT') + ' €';
+        document.getElementById('netto-display').innerText = calc.netto.toLocaleString('it-IT') + ' €';
+
+        // Prepara i dati per il grafico visivo (Sankey)
+        data = new google.visualization.DataTable();
+        data.addColumn('string', 'Da');
+        data.addColumn('string', 'A');
+        data.addColumn('number', 'Euro (€)');
+
+        const titoloLordo = `RAL (${calc.ral.toLocaleString()} €)`;
+
+        data.addRows([
+            [titoloLordo, 'Totale Entrate', calc.ral],
+            ['Totale Entrate', 'Contributi INPS', calc.inps],
+            ['Totale Entrate', 'IRPEF Netta', calc.irpefNetta],
+            ['Totale Entrate', 'Netto in Tasca', calc.netto]
+        ]);
+
+        options = {
+            sankey: {
+                node: {
+                    label: { fontSize: 13, bold: true },
+                    nodePadding: 40,
+                    colors: ['#3b82f6', '#94a3b8', '#dc2626', '#dc2626', '#16a34a']
+                },
+                link: { colorMode: 'gradient', fillOpacity: 0.8 }
+            }
+        };
+
+        if(!chart) {
+            chart = new google.visualization.Sankey(document.getElementById('sankey_chart'));
+        }
+        chart.draw(data, options);
+    }
+
+    function init() {
+        // Disegna al caricamento
+        drawChart();
+
+        // Ridisegna quando gli slider cambiano
+        ralSlider.addEventListener('input', drawChart);
+        giorniSlider.addEventListener('input', drawChart);
+    }
+</script>  
+</body>
+</html>
