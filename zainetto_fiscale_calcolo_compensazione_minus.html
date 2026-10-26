@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Simula imposte, plusvalenze e minusvalenze su azioni, obbligazioni ed ETF. Calcola l'effetto dello zainetto fiscale e delle commissioni in una vendita.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://abramofranchetti.github.io/FireSWR/zainetto_fiscale_calcolo_compensazione_minus.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="it_IT">
+    <meta property="og:title" content="Calcolatore zainetto fiscale e minusvalenze">
+    <meta property="og:description" content="Simula plusvalenze, imposte e compensazione delle minusvalenze per azioni, obbligazioni ed ETF.">
+    <meta property="og:url" content="https://abramofranchetti.github.io/FireSWR/zainetto_fiscale_calcolo_compensazione_minus.html">
+    <title>Calcolatore zainetto fiscale e minusvalenze | FireSWR</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body { background: linear-gradient(135deg, #f5e3c8, #f7e9d4); padding: 20px 0; }
+        .page-container { max-width: 1100px; margin: 0 auto; padding: 0 15px; }
+        .page-header, .page-footer, .intro-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+        .page-header { padding: 20px; margin-bottom: 20px; }
+        .page-header h1 { color: #333; font-size: clamp(1.7rem, 4vw, 2.3rem); }
+        .page-header p, .page-footer { color: #666; }
+        .page-header .home-button { float: none; display: inline-block; }
+        .intro-card { padding: 24px; margin-bottom: 20px; line-height: 1.65; }
+        .card { box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .result-box { font-size: 1.2rem; font-weight: bold; }
+        .plus { color: #198754; }
+        .minus { color: #dc3545; }
+        .page-footer { padding: 24px; margin: 24px 0; text-align: center; }
+        @media (max-width: 575px) { body { padding: 10px 0; } .intro-card { padding: 18px; } }
+    </style>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Calcolatore zainetto fiscale e minusvalenze",
+            "url": "https://abramofranchetti.github.io/FireSWR/zainetto_fiscale_calcolo_compensazione_minus.html",
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Any",
+            "inLanguage": "it",
+            "description": "Simulatore gratuito per stimare imposte, plusvalenze e compensazione delle minusvalenze su azioni, obbligazioni ed ETF."
+        }
+    </script>
+</head>
+<body>
+
+<div class="page-container">
+    <header class="page-header text-center">
+        <a href="/FireSWR/" class="home-button" aria-label="Torna alla pagina iniziale">🏠 Home</a>
+        <h1 class="mt-3 mb-2">Calcolatore zainetto fiscale e minusvalenze</h1>
+        <p class="mb-0">Stima l'impatto fiscale di un'operazione di vendita e l'utilizzo delle minusvalenze pregresse.</p>
+    </header>
+
+    <main>
+    <section class="intro-card" aria-labelledby="come-funziona">
+        <h2 id="come-funziona" class="h4">Simula plusvalenze, imposte e compensazioni</h2>
+        <p class="mb-2">Inserisci strumento finanziario, quantità, prezzi di acquisto e vendita, commissioni e minusvalenze disponibili nello zainetto fiscale. Il calcolatore mostra il controvalore dell'operazione, il guadagno o la perdita fiscale, le minusvalenze utilizzate e l'imposta stimata.</p>
+        <p class="mb-0">Puoi confrontare azioni, obbligazioni, titoli di Stato ed ETF, indicando anche la quota di titoli di Stato presente in un ETF obbligazionario. I risultati sono simulazioni indicative: il trattamento fiscale dipende dalle caratteristiche dello strumento e dalla normativa applicabile.</p>
+    </section>
+
+    <div class="row">
+        <!-- Input Form -->
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h5 class="card-title mb-3">Dati Operazione</h5>
+                <form id="calcForm">
+                    <div class="mb-3">
+                        <label for="strumento" class="form-label">Strumento finanziario</label>
+                        <select id="strumento" class="form-select" onchange="toggleFields()">
+                            <option value="azione">Azione (26%)</option>
+                            <option value="obb_corp">Obbligazione Corporate (26%)</option>
+                            <option value="tds">Titolo di Stato (12.5%)</option>
+                            <option value="etf_az">ETF Azionario (26%)</option>
+                            <option value="etf_obb">ETF Obbligazionario (Misto)</option>
+                            <option value="etc">ETC Materie Prime (26%)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="whitelist-container" style="display: none;">
+                        <label for="whitelist" class="form-label">% di titoli di Stato nell'ETF</label>
+                        <input type="number" id="whitelist" class="form-control" value="0" min="0" max="100" step="0.01">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="qta" class="form-label">Quantità o valore nominale</label>
+                        <input type="number" id="qta" class="form-control" value="1000" min="0">
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="pAcq" class="form-label">Prezzo di acquisto</label>
+                            <input type="number" id="pAcq" class="form-control" value="10" step="0.01">
+                        </div>
+                        <div class="col-6">
+                            <label for="cAcq" class="form-label">Commissioni di acquisto (€)</label>
+                            <input type="number" id="cAcq" class="form-control" value="5" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="pVen" class="form-label">Prezzo di vendita</label>
+                            <input type="number" id="pVen" class="form-control" value="12" step="0.01">
+                        </div>
+                        <div class="col-6">
+                            <label for="cVen" class="form-label">Commissioni di vendita (€)</label>
+                            <input type="number" id="cVen" class="form-control" value="5" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="minus" class="form-label">Minusvalenze pregresse nello zainetto fiscale (€)</label>
+                        <input type="number" id="minus" class="form-control" value="0" step="0.01">
+                    </div>
+
+                    <button type="button" class="btn btn-primary w-100" onclick="calcola()">Calcola Impatto</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Output Results -->
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h5 class="card-title mb-3">Risultati Simulazione</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Controvalore Acquisto
+                        <span id="resCvAcq">0,00 €</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Controvalore Vendita
+                        <span id="resCvVen">0,00 €</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Utile/Perdita Lorda
+                        <span id="resPlLorda" class="result-box">0,00 €</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Guadagno Fiscale Ponderato
+                        <span id="resPlFisc">0,00 €</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Minusvalenze Utilizzate
+                        <span id="resMinusUsate" class="text-success">0,00 €</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
+                        <strong>Imposta da Pagare</strong>
+                        <strong id="resImposta" class="text-danger result-box">0,00 €</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center mt-3 border-top">
+                        Nuovo Zainetto Fiscale
+                        <span id="resNuovoZainetto" class="fw-bold">0,00 €</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="alert alert-info">
+                <small><strong>Nota Fiscale:</strong> Le plusvalenze su ETF sono Redditi di Capitale e non possono essere compensate con lo zainetto fiscale preesistente. Le minusvalenze su ETF, invece, alimentano lo zainetto fiscale.</small>
+            </div>
+        </div>
+    </div>
+    </main>
+
+    <footer class="page-footer">
+        <p class="mb-2">Strumento gratuito di FireSWR per la pianificazione e l'analisi finanziaria personale.</p>
+        <a href="/FireSWR/">Torna a tutti i calcolatori finanziari</a>
+    </footer>
+
+    <div id="disclaimer-container"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('html/disclaimer.html')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Impossibile caricare il disclaimer: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                document.getElementById('disclaimer-container').innerHTML = data;
+            })
+            .catch(error => console.error(error));
+    });
+</script>
+
+<script>
+    function toggleFields() {
+        let str = document.getElementById("strumento").value;
+        document.getElementById("whitelist-container").style.display = (str === "etf_obb") ? "block" : "none";
+    }
+
+    function calcola() {
+        // Recupero Valori
+        let strumento = document.getElementById("strumento").value;
+        let qta = parseFloat(document.getElementById("qta").value) || 0;
+        let pAcq = parseFloat(document.getElementById("pAcq").value) || 0;
+        let cAcq = parseFloat(document.getElementById("cAcq").value) || 0;
+        let pVen = parseFloat(document.getElementById("pVen").value) || 0;
+        let cVen = parseFloat(document.getElementById("cVen").value) || 0;
+        let minusPregresse = parseFloat(document.getElementById("minus").value) || 0;
+        let pctWhiteList = parseFloat(document.getElementById("whitelist").value) || 0;
+
+        // Logica Prezzi: 100 based per Obbligazioni e TdS
+        let isBond = (strumento === "obb_corp" || strumento === "tds");
+        
+        let cvAcq = isBond ? (qta * pAcq)/100 + cAcq : (qta * pAcq) + cAcq;
+        let cvVen = isBond ? (qta * pVen)/100 - cVen : (qta * pVen) - cVen;
+        let plLorda = cvVen - cvAcq;
+
+        // Calcolo Peso Fiscale
+        let taxWeight = 1; // Default 26%
+        if (strumento === "tds") {
+            taxWeight = 12.5 / 26; // 0.4808
+        } else if (strumento === "etf_obb") {
+            let weightWL = pctWhiteList / 100;
+            taxWeight = (weightWL * (12.5/26)) + ((1 - weightWL) * 1);
+        }
+
+        let isETF = (strumento === "etf_az" || strumento === "etf_obb");
+        
+        let plFiscale = Math.abs(plLorda) * taxWeight;
+        let imposta = 0;
+        let minusUsate = 0;
+        let nuovoZainetto = minusPregresse;
+
+        if (plLorda > 0) {
+            // È una Plusvalenza
+            if (isETF) {
+                // ETF in gain non compensano
+                imposta = plFiscale * 0.26;
+            } else {
+                // Altri strumenti compensano
+                if (minusPregresse >= plFiscale) {
+                    minusUsate = plFiscale;
+                    nuovoZainetto = minusPregresse - plFiscale;
+                    imposta = 0;
+                } else {
+                    minusUsate = minusPregresse;
+                    nuovoZainetto = 0;
+                    imposta = (plFiscale - minusUsate) * 0.26;
+                }
+            }
+        } else if (plLorda < 0) {
+            // È una Minusvalenza
+            nuovoZainetto = minusPregresse + plFiscale;
+        }
+
+        // Formattazione Numeri
+        const fmt = (num) => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(num);
+
+        document.getElementById("resCvAcq").innerText = fmt(cvAcq);
+        document.getElementById("resCvVen").innerText = fmt(cvVen);
+        
+        let elPl = document.getElementById("resPlLorda");
+        elPl.innerText = fmt(plLorda);
+        elPl.className = "result-box " + (plLorda >= 0 ? "plus" : "minus");
+
+        document.getElementById("resPlFisc").innerText = fmt(plFiscale);
+        document.getElementById("resMinusUsate").innerText = fmt(minusUsate);
+        document.getElementById("resImposta").innerText = fmt(imposta);
+        document.getElementById("resNuovoZainetto").innerText = fmt(nuovoZainetto);
+    }
+    
+    // Inizializzazione
+    toggleFields();
+</script>
+</body>
+</html>
