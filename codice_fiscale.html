@@ -59,6 +59,44 @@
         label input, label select { width: 100%; }
         .full { grid-column: 1 / -1; }
         .hint { margin: 0; font-size: .9rem; }
+        .municipality-picker { position: relative; }
+        .municipality-options {
+            position: absolute;
+            z-index: 10;
+            top: calc(100% + 4px);
+            right: 0;
+            left: 0;
+            max-height: 240px;
+            overflow-y: auto;
+            padding: 4px;
+            border: 1px solid #c8cdd3;
+            border-radius: 6px;
+            background: #fff;
+            box-shadow: 0 4px 12px #00000018;
+        }
+        .municipality-option {
+            display: block;
+            width: 100%;
+            min-height: 40px;
+            padding: 8px 10px;
+            border: 0;
+            border-radius: 4px;
+            background: #fff;
+            text-align: left;
+        }
+        .municipality-option:hover, .municipality-option[aria-selected="true"] {
+            background: #eaf3ff;
+        }
+        .manual-code-toggle {
+            min-height: 0;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #075fbd;
+            text-align: left;
+            text-decoration: underline;
+        }
+        .manual-code { margin-top: 10px; }
         .status { min-height: 1.5em; margin: 12px 0 0; color: #444; }
         .disclaimer { margin: 22px 0 0; border-top: 1px solid #ddd; padding-top: 14px; font-size: .9rem; }
         @media (max-width: 480px) {
@@ -105,11 +143,25 @@
                     <option value="F">Femminile</option>
                 </select>
             </label>
-            <label class="full">
-                Codice catastale del comune di nascita
-                <input name="place" maxlength="4" pattern="[A-Za-z][0-9]{3}[A-Za-z]" placeholder="Es. H501 per Roma" required>
-            </label>
-            <p class="hint full">Inserisci il codice catastale di 4 caratteri, non il CAP. Per nascita all'estero si usa il codice del paese.</p>
+            <div class="full">
+                <label for="municipality-search">Comune di nascita</label>
+                <div class="municipality-picker">
+                    <input id="municipality-search" type="search" role="combobox" aria-autocomplete="list"
+                        aria-controls="municipality-options" aria-expanded="false" autocomplete="off"
+                        placeholder="Cerca un comune italiano...">
+                    <div id="municipality-options" class="municipality-options" role="listbox" hidden></div>
+                </div>
+                <p id="municipality-status" class="hint" aria-live="polite">Inizia a digitare il comune; l'elenco viene caricato quando serve.</p>
+                <button id="manual-code-toggle" class="manual-code-toggle" type="button" aria-expanded="false"
+                    aria-controls="manual-code-container">Comune estero o non presente? Inserisci il codice manualmente.</button>
+                <div id="manual-code-container" class="manual-code" hidden>
+                    <label for="manual-place">Codice catastale del comune o dello Stato estero</label>
+                    <input id="manual-place" type="text" maxlength="4" pattern="[A-Za-z][0-9]{3}"
+                        title="Inserisci un codice di 4 caratteri: una lettera seguita da tre cifre, ad esempio H501."
+                        placeholder="Es. H501">
+                </div>
+            </div>
+            <p class="hint full">L'elenco locale contiene i comuni italiani con i relativi codici catastali. Puoi anche cercare per provincia o codice.</p>
             <button class="primary full" type="submit">Calcola codice fiscale</button>
         </form>
         <p id="status" class="status" role="status" aria-live="polite"></p>
@@ -127,6 +179,17 @@
         const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         const result = document.getElementById("result");
         const status = document.getElementById("status");
+        const municipalitySearch = document.getElementById("municipality-search");
+        const municipalityOptions = document.getElementById("municipality-options");
+        const municipalityStatus = document.getElementById("municipality-status");
+        const manualCodeToggle = document.getElementById("manual-code-toggle");
+        const manualCodeContainer = document.getElementById("manual-code-container");
+        const manualPlace = document.getElementById("manual-place");
+        const MAX_MUNICIPALITY_RESULTS = 30;
+        let municipalitiesPromise;
+        let municipalities = [];
+        let activeMunicipalityIndex = -1;
+        let selectedMunicipality = null;
 
         function cleanName(value) {
             return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z]/g, "");
@@ -173,6 +236,205 @@
             return items[Math.floor(Math.random() * items.length)];
         }
 
+        function normalizeSearch(value) {
+            return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("it");
+        }
+
+        function closeMunicipalityOptions() {
+            municipalityOptions.hidden = true;
+            municipalitySearch.setAttribute("aria-expanded", "false");
+            municipalitySearch.removeAttribute("aria-activedescendant");
+            activeMunicipalityIndex = -1;
+        }
+
+        function chooseMunicipality(municipality) {
+            selectedMunicipality = municipality;
+            municipalitySearch.value = `${municipality.nome} (${municipality.sigla}) — ${municipality.codiceCatastale}`;
+            municipalityStatus.textContent = `Codice catastale selezionato: ${municipality.codiceCatastale}.`;
+            closeMunicipalityOptions();
+        }
+
+        function renderMunicipalityOptions(query) {
+            const normalizedQuery = normalizeSearch(query.trim());
+            municipalityOptions.replaceChildren();
+            activeMunicipalityIndex = -1;
+
+            if (!normalizedQuery) {
+                municipalityStatus.textContent = "Digita almeno una parte del nome del comune, della provincia o del codice.";
+                closeMunicipalityOptions();
+                return;
+            }
+
+            const matches = {
+                exact: [],
+                namePrefix: [],
+                codePrefix: [],
+                provincePrefix: [],
+                other: []
+            };
+            for (const municipality of municipalities) {
+                if (municipality.normalizedName === normalizedQuery ||
+                    municipality.normalizedCode === normalizedQuery) {
+                    matches.exact.push(municipality);
+                } else if (municipality.normalizedName.startsWith(normalizedQuery)) {
+                    matches.namePrefix.push(municipality);
+                } else if (municipality.normalizedCode.startsWith(normalizedQuery)) {
+                    matches.codePrefix.push(municipality);
+                } else if (municipality.normalizedProvince.startsWith(normalizedQuery) ||
+                    municipality.normalizedSigla === normalizedQuery) {
+                    matches.provincePrefix.push(municipality);
+                } else if (municipality.searchText.includes(normalizedQuery)) {
+                    matches.other.push(municipality);
+                }
+            }
+            const results = [
+                ...matches.exact,
+                ...matches.namePrefix,
+                ...matches.codePrefix,
+                ...matches.provincePrefix,
+                ...matches.other
+            ].slice(0, MAX_MUNICIPALITY_RESULTS);
+
+            for (const municipality of results) {
+                const option = document.createElement("button");
+                option.type = "button";
+                option.className = "municipality-option";
+                option.id = `municipality-option-${municipality.codiceCatastale}`;
+                option.setAttribute("role", "option");
+                option.setAttribute("aria-selected", "false");
+                option.textContent = `${municipality.nome} (${municipality.sigla}) — ${municipality.codiceCatastale}`;
+                option.addEventListener("click", () => chooseMunicipality(municipality));
+                municipalityOptions.append(option);
+            }
+
+            if (!results.length) {
+                municipalityStatus.textContent = "Nessun comune trovato. Controlla il testo o inserisci il codice manualmente.";
+                closeMunicipalityOptions();
+                return;
+            }
+
+            municipalityStatus.textContent = results.length === MAX_MUNICIPALITY_RESULTS
+                ? `Mostrati i primi ${MAX_MUNICIPALITY_RESULTS} risultati: aggiungi altre lettere per restringere la ricerca.`
+                : `${results.length} ${results.length === 1 ? "comune trovato" : "comuni trovati"}.`;
+            municipalityOptions.hidden = false;
+            municipalitySearch.setAttribute("aria-expanded", "true");
+        }
+
+        async function loadMunicipalities() {
+            if (!municipalitiesPromise) {
+                municipalityStatus.textContent = "Caricamento dell'elenco dei comuni...";
+                municipalitiesPromise = fetch("json/comuni.json")
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Caricamento elenco comuni non riuscito (${response.status}).`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (!Array.isArray(data)) {
+                            throw new Error("Il file dei comuni non contiene un elenco valido.");
+                        }
+                        municipalities = data
+                            .filter(item => item && item.nome && item.provincia && item.sigla &&
+                                /^[A-Z][0-9]{3}$/i.test(item.codiceCatastale || ""))
+                            .map(item => ({
+                                nome: item.nome,
+                                sigla: item.sigla,
+                                provincia: item.provincia.nome || "",
+                                codiceCatastale: item.codiceCatastale.toUpperCase(),
+                                normalizedName: normalizeSearch(item.nome),
+                                normalizedProvince: normalizeSearch(item.provincia.nome || ""),
+                                normalizedSigla: normalizeSearch(item.sigla),
+                                normalizedCode: normalizeSearch(item.codiceCatastale),
+                                searchText: normalizeSearch(
+                                    `${item.nome} ${item.provincia.nome || ""} ${item.sigla} ${item.codiceCatastale}`
+                                )
+                            }));
+                        if (!municipalities.length) {
+                            throw new Error("L'elenco caricato non contiene comuni validi.");
+                        }
+                    })
+                    .catch(error => {
+                        municipalitiesPromise = null;
+                        throw error;
+                    });
+            }
+            return municipalitiesPromise;
+        }
+
+        municipalitySearch.addEventListener("focus", async () => {
+            if (manualCodeContainer.hidden && !municipalities.length) {
+                try {
+                    await loadMunicipalities();
+                    municipalityStatus.textContent = "Elenco pronto. Cerca per comune, provincia o codice catastale.";
+                    if (municipalitySearch.value) renderMunicipalityOptions(municipalitySearch.value);
+                } catch (error) {
+                    municipalityStatus.textContent = `${error.message} Puoi inserire il codice manualmente.`;
+                }
+            }
+        });
+
+        municipalitySearch.addEventListener("input", async () => {
+            selectedMunicipality = null;
+            if (!municipalitySearch.value.trim()) {
+                closeMunicipalityOptions();
+                municipalityStatus.textContent = "Inizia a digitare il comune; l'elenco viene caricato quando serve.";
+                return;
+            }
+            try {
+                await loadMunicipalities();
+                renderMunicipalityOptions(municipalitySearch.value);
+            } catch (error) {
+                municipalityStatus.textContent = `${error.message} Puoi inserire il codice manualmente.`;
+            }
+        });
+
+        municipalitySearch.addEventListener("keydown", event => {
+            const options = municipalityOptions.querySelectorAll('[role="option"]');
+            if (event.key === "ArrowDown" && options.length) {
+                event.preventDefault();
+                activeMunicipalityIndex = (activeMunicipalityIndex + 1) % options.length;
+            } else if (event.key === "ArrowUp" && options.length) {
+                event.preventDefault();
+                activeMunicipalityIndex = (activeMunicipalityIndex - 1 + options.length) % options.length;
+            } else if (event.key === "Enter" && activeMunicipalityIndex >= 0) {
+                event.preventDefault();
+                options[activeMunicipalityIndex].click();
+            } else if (event.key === "Escape") {
+                closeMunicipalityOptions();
+            } else {
+                return;
+            }
+
+            options.forEach((option, index) => {
+                const isActive = index === activeMunicipalityIndex;
+                option.setAttribute("aria-selected", String(isActive));
+                if (isActive) {
+                    municipalitySearch.setAttribute("aria-activedescendant", option.id);
+                    option.scrollIntoView({ block: "nearest" });
+                }
+            });
+        });
+
+        document.addEventListener("click", event => {
+            if (!event.target.closest(".municipality-picker")) closeMunicipalityOptions();
+        });
+
+        manualCodeToggle.addEventListener("click", () => {
+            const showManualCode = manualCodeContainer.hidden;
+            manualCodeContainer.hidden = !showManualCode;
+            manualCodeToggle.setAttribute("aria-expanded", String(showManualCode));
+            selectedMunicipality = null;
+            municipalitySearch.value = "";
+            closeMunicipalityOptions();
+            if (showManualCode) {
+                municipalityStatus.textContent = "Inserisci il codice catastale di 4 caratteri.";
+                manualPlace.focus();
+            } else {
+                manualPlace.value = "";
+            }
+        });
+
         function generateRandomCode() {
             const surnames = ["Rossi", "Bianchi", "Romano", "Ricci", "Marino", "Greco", "Bruno", "Gallo"];
             const givenNames = ["Marco", "Luca", "Giulia", "Anna", "Francesco", "Sara", "Andrea", "Maria"];
@@ -192,9 +454,17 @@
             const surname = String(data.get("surname")).trim();
             const givenName = String(data.get("given-name")).trim();
             const birthdate = String(data.get("birthdate"));
-            const place = String(data.get("place")).trim().toUpperCase();
+            const place = manualCodeContainer.hidden
+                ? selectedMunicipality?.codiceCatastale
+                : manualPlace.value.trim().toUpperCase();
             if (!cleanName(surname) || !cleanName(givenName)) {
                 status.textContent = "Nome e cognome devono contenere almeno una lettera.";
+                return;
+            }
+            if (!place || !/^[A-Z][0-9]{3}$/.test(place)) {
+                status.textContent = manualCodeContainer.hidden
+                    ? "Seleziona il comune dall'elenco oppure inserisci il codice catastale manualmente."
+                    : "Inserisci un codice catastale valido di 4 caratteri, per esempio H501.";
                 return;
             }
             showCode(buildCode(surname, givenName, birthdate, String(data.get("sex")), place));
