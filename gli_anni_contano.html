@@ -239,6 +239,22 @@
                     fill: false,
                     tension: 0.2,
                     pointRadius: 0
+                }, {
+                    label: 'Capitale versato scenario A',
+                    borderColor: 'rgba(27, 119, 153, 0.45)',
+                    data: [],
+                    fill: false,
+                    tension: 0.2,
+                    pointRadius: 0,
+                    borderWidth: 2,                    
+                }, {
+                    label: 'Capitale versato scenario B',
+                    borderColor: 'rgba(255, 153, 0, 0.45)',
+                    data: [],
+                    fill: false,
+                    tension: 0.2,
+                    pointRadius: 0,
+                    borderWidth: 2,                    
                 }]
             }
         });
@@ -318,6 +334,8 @@
             let labels = [];
             let datiA = [];
             let datiB = [];
+            let capitaleVersatoA = [];
+            let capitaleVersatoB = [];
 
             // Anni totali nel grafico = anni passati + anni fino al pareggio + 10 anni extra
             const anniExtraDopoIncontro = estendi10Anni ? 10 : 0;
@@ -335,9 +353,12 @@
                 if (anniDopoOggi <= 0) {
                     const valoreA = calcolaMontante(versamento, i, rendimento);
                     datiA.push(mostraReale ? valoreRealeOggi(valoreA, anniDopoOggi, inflazione) : valoreA);
+                    capitaleVersatoA.push(versamento * i * 12);
                 } else {
                     const valoreA = calcolaValoreScenarioA(versamento, anniFa, anniDopoOggi, rendimento, continuaPAC_A);
                     datiA.push(mostraReale ? valoreRealeOggi(valoreA, anniDopoOggi, inflazione) : valoreA);
+                    const mesiVersatiA = (continuaPAC_A ? i : anniFa) * 12;
+                    capitaleVersatoA.push(versamento * Math.max(0, mesiVersatiA));
                 }
 
                 // Scenario B:
@@ -345,8 +366,10 @@
                 if (anniDopoOggi >= 0) {
                     const valoreB = calcolaValoreScenarioB(versamentoB, anniDopoOggi, anniFuturi, rendimento);
                     datiB.push(mostraReale ? valoreRealeOggi(valoreB, anniDopoOggi, inflazione) : valoreB);
+                    capitaleVersatoB.push(versamentoB * (i - anniFa) * 12);
                 } else {
                     datiB.push(null); // nessun punto mostrato
+                    capitaleVersatoB.push(null);
                 }
 
 
@@ -355,6 +378,8 @@
             grafico.data.labels = labels;
             grafico.data.datasets[0].data = datiA;
             grafico.data.datasets[1].data = datiB;
+            grafico.data.datasets[2].data = capitaleVersatoA;
+            grafico.data.datasets[3].data = capitaleVersatoB;
             grafico.options.plugins.lineaVerticale = { posizione: anniFa };
             grafico.update();
         }
