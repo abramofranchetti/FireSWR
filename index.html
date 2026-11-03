@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fire SWR e Die With Zero</title>
+    <title>Investire Male | Calcolatori finanziari FIRE e investimenti</title>
+    <link rel="icon" type="image/png" href="img/InvestireMaleWatermarkGit.png">
     <link rel="canonical" href="https://abramofranchetti.github.io/FireSWR/">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -54,19 +55,29 @@
             text-align: center;
             margin-bottom: 50px;
             padding: 40px 20px;
-            background: white;
+            background: #071624 url("img/InvestireMaleSfondo.png") center / cover;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
         }
 
+        .brand-banner {
+            display: block;
+            width: min(100%, 1100px);
+            height: auto;
+            margin: 0 auto 24px;
+            -webkit-mask-image: radial-gradient(ellipse at center, #000 68%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, #000 68%, transparent 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
         h1 {
-            color: #333;
+            color: white;
             font-size: clamp(1.8rem, 5vw, 2.5rem);
             margin-bottom: 10px;
         }
 
         .subtitle {
-            color: var(--text-light);
+            color: rgba(255, 255, 255, 0.82);
             font-size: 1.1rem;
         }
 
@@ -558,6 +569,58 @@
             margin: 10px 0;
         }
 
+        .social-section {
+            margin: 40px 0;
+            padding: 30px 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .social-section h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            text-align: center;
+        }
+
+        .social-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 14px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 64px;
+            padding: 14px 18px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            color: #17212b;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-links a:focus-visible {
+            outline: 3px solid var(--color-primary);
+            outline-offset: 3px;
+        }
+
+        .social-links i {
+            width: 24px;
+            color: var(--color-primary);
+            font-size: 1.35rem;
+            text-align: center;
+        }
+
         .disclaimer-section {
             margin-top: 60px;
             padding: 30px 20px;
@@ -680,7 +743,9 @@
     <div class="container">
         <!-- Header -->
         <header>
-            <h1>🎯 Calcolatori Finanziari</h1>
+            <img class="brand-banner" src="img/InvestireMaleBannerPC.png"
+                alt="Investire Male — dove gli investimenti vanno sempre nella direzione sbagliata">
+            <h1>Calcolatori Finanziari</h1>
             <p class="subtitle">Strumenti per l'analisi di investimenti, FIRE e pianificazione finanziaria</p>
             <div class="search-container">
                 <input id="search-box" type="search" placeholder="Cerca calcolatore (es. SWR, PAC, TFR...)"
@@ -1726,6 +1791,30 @@
 
         <!-- Disclaimer -->
         <div class="disclaimer-section" id="disclaimer-container"></div>
+
+        <section class="social-section" aria-labelledby="social-title">
+            <h2 id="social-title">Seguici anche su</h2>
+            <div class="social-links">
+                <a href="https://www.facebook.com/groups/1452814890118179" target="_blank"
+                    rel="noopener noreferrer">
+                    <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                    <span>Gruppo Facebook Investire Male</span>
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61595901422466&amp;sk=directory_links"
+                    target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                    <span>Pagina Facebook Investire Male</span>
+                </a>
+                <a href="https://www.reddit.com/r/InvestireMale/" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-reddit-alien" aria-hidden="true"></i>
+                    <span>Reddit r/InvestireMale</span>
+                </a>
+                <a href="https://www.youtube.com/@abramofranchetti" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-youtube" aria-hidden="true"></i>
+                    <span>Canale YouTube Investire Male</span>
+                </a>
+            </div>
+        </section>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
