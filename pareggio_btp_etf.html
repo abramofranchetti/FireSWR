@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BTP vs ETF ad accumulazione — il punto di pareggio fiscale</title>
+    <meta name="description"
+        content="Simulatore didattico: confronto tra BTP acquistato alla pari ed ETF ad accumulazione, tassazione, interesse semplice e composto.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --ink: #20242b;
+            --muted: #69717d;
+            --line: #e7e9ed;
+            --paper: #f7f8fa;
+            --orange: #ff7e5f;
+            --blue: #4169a8;
+            --green: #25856a
+        }
+
+        body {
+            font-family: "DM Sans", sans-serif;
+            background: var(--paper);
+            color: var(--ink)
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand {
+            font-family: Manrope, sans-serif;
+            letter-spacing: -.035em
+        }
+
+        .hero {
+            background: #202a36;
+            color: white;
+            border-radius: 22px;
+            padding: clamp(24px, 5vw, 48px);
+            position: relative;
+            overflow: hidden
+        }
+
+        .hero:after {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border: 1px solid #ffffff22;
+            border-radius: 50%;
+            right: -70px;
+            top: -100px;
+            box-shadow: 0 0 0 35px #ffffff08, 0 0 0 70px #ffffff06
+        }
+
+        .eyebrow {
+            font-size: .75rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: #ffb39f;
+            font-weight: 700
+        }
+
+        .hero p {
+            color: #d5dbe2;
+            max-width: 760px
+        }
+
+        .card {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: 0 5px 20px #17202b08
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid var(--line);
+            font-weight: 700;
+            padding: 16px 20px
+        }
+
+        .card-body {
+            padding: 20px
+        }
+
+        .form-label {
+            font-size: .85rem;
+            font-weight: 600;
+            color: #4c5561
+        }
+
+        .form-control {
+            border-color: #d9dee5;
+            padding: .65rem .8rem
+        }
+
+        .form-control:focus {
+            border-color: var(--orange);
+            box-shadow: 0 0 0 .2rem #ff7e5f22
+        }
+
+        .metric {
+            font-size: clamp(1.45rem, 3vw, 2rem);
+            font-family: Manrope;
+            font-weight: 800;
+            letter-spacing: -.05em
+        }
+
+        .metric-label {
+            font-size: .78rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .07em
+        }
+
+        .pill {
+            display: inline-block;
+            border-radius: 99px;
+            padding: 5px 10px;
+            font-size: .75rem;
+            font-weight: 700;
+            background: #f0f2f5;
+            color: #4e5966
+        }
+
+        .btp {
+            color: var(--blue)
+        }
+
+        .etf {
+            color: var(--orange)
+        }
+
+        .note {
+            border-left: 3px solid var(--orange);
+            padding: 12px 15px;
+            background: #fff8f5;
+            border-radius: 0 10px 10px 0
+        }
+
+        .formula {
+            font-family: ui-monospace, Consolas, monospace;
+            background: #f4f5f7;
+            padding: 12px;
+            border-radius: 9px;
+            font-size: .9rem;
+            overflow-wrap: anywhere
+        }
+
+        .table>:not(caption)>*>* {
+            padding: .75rem .65rem
+        }
+
+        .small-muted {
+            font-size: .84rem;
+            color: var(--muted)
+        }
+
+        .section-number {
+            font-family: Manrope;
+            color: var(--orange);
+            font-weight: 800
+        }
+
+        footer {
+            color: var(--muted);
+            font-size: .8rem
+        }
+
+        .home-button {
+            display: inline-block;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #0073e6;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background-color 0.3s ease
+        }
+
+        .home-button:hover {
+            color: #ffffff;
+            background-color: #005bb5
+        }
+
+        @media(max-width:576px) {
+            .card-body {
+                padding: 16px
+            }
+
+            .hero {
+                border-radius: 16px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-4 py-lg-5" style="max-width:1120px">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <header class="hero mb-4 mb-lg-5">
+            <div class="eyebrow mb-3">Educazione finanziaria · Fiscalità italiana</div>
+            <h1 class="display-5 fw-bold mb-3">BTP o ETF ad accumulazione?</h1>
+            <p class="fs-5 mb-4">Due strumenti, due regole fiscali e soprattutto due modi diversi di far crescere il
+                capitale. Quanto pesa l'aliquota ridotta del BTP e quanto vale il differimento fiscale dell'ETF?</p>
+            <span class="pill">Simulazione modificabile</span>
+        </header>
+
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <section class="card h-100">
+                    <div class="card-header">1. Imposta i parametri</div>
+                    <div class="card-body">
+                        <div class="mb-3"><label class="form-label" for="capital">Capitale iniziale (€)</label><input
+                                class="form-control" id="capital" type="number" min="1" step="100" value="10000"></div>
+                        <div class="mb-3"><label class="form-label" for="years">Durata (anni)</label><input
+                                class="form-control" id="years" type="number" min="1" max="50" step="1" value="20">
+                        </div>
+                        <hr>
+                        <div class="mb-3"><label class="form-label" for="btpRate">Rendimento annuo lordo BTP
+                                (%)</label><input class="form-control" id="btpRate" type="number" min="0" max="30"
+                                step=".1" value="3.5">
+                            <div class="form-text">Ipotesi semplificata: acquisto alla pari e cedola annua pari al
+                                rendimento.</div>
+                        </div>
+                        <div class="mb-3"><label class="form-label" for="etfRate">Rendimento annuo ETF (%)</label><input
+                                class="form-control" id="etfRate" type="number" min="-50" max="50" step=".1" value="5">
+                        </div>
+                        <hr>
+                        <div class="row g-2">
+                            <div class="col-6"><label class="form-label" for="btpTax">Aliquota BTP (%)</label><input
+                                    class="form-control" id="btpTax" type="number" min="0" max="100" step=".1"
+                                    value="12.5"></div>
+                            <div class="col-6"><label class="form-label" for="etfTax">Aliquota ETF (%)</label><input
+                                    class="form-control" id="etfTax" type="number" min="0" max="100" step=".1"
+                                    value="26"></div>
+                        </div>
+                        <div class="form-text mt-2">Aliquote modificabili per adattare il confronto al caso concreto.
+                        </div>
+                        <button class="btn btn-dark w-100 mt-4" id="reset">Ripristina valori iniziali</button>
+                    </div>
+                </section>
+            </div>
+
+            <div class="col-lg-8">
+                <section class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center"><span>2. Il risultato
+                            dopo le imposte</span><span class="pill">Valori nominali</span></div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3" style="background:#f1f5fb">
+                                    <div class="metric-label btp">BTP · cedole non reinvestite</div>
+                                    <div class="metric btp" id="btpSimple">—</div>
+                                    <div class="small-muted">Capitale finale netto</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3" style="background:#fff3ef">
+                                    <div class="metric-label etf">ETF · accumulazione</div>
+                                    <div class="metric etf" id="etfFinal">—</div>
+                                    <div class="small-muted">Capitale finale netto, dopo vendita</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="note mb-4" id="winner">—</div>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th class="btp">BTP</th>
+                                        <th class="etf">ETF</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th>Guadagno lordo maturato</th>
+                                        <td id="btpGross">—</td>
+                                        <td id="etfGross">—</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Imposte</th>
+                                        <td id="btpTaxAmount">—</td>
+                                        <td id="etfTaxAmount">—</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Guadagno netto</th>
+                                        <td id="btpNetGain">—</td>
+                                        <td id="etfNetGain">—</td>
+                                    </tr>
+                                    <tr class="fw-bold">
+                                        <th>Capitale finale netto</th>
+                                        <td id="btpFinalTable">—</td>
+                                        <td id="etfFinalTable">—</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="small-muted mt-3">Nel caso BTP, le cedole nette vengono incassate e conservate senza
+                            rendimento. Nell'ETF, i proventi restano investiti e si capitalizzano; l'imposta è pagata
+                            soltanto alla vendita finale.</div>
+                    </div>
+                </section>
+                <section class="card">
+                    <div class="card-header">3. Come cresce il capitale nel tempo</div>
+                    <div class="card-body">
+                        <div style="height:300px"><canvas id="growthChart"
+                                aria-label="Grafico crescita capitale netto"></canvas></div>
+                        <div class="small-muted mt-3">Il grafico confronta il capitale BTP con cedole nette accantonate
+                            (senza reinvestimento) e il valore netto liquidabile dell'ETF. Il valore ETF mostrato prima
+                            della scadenza è una stima dell'imposta latente in caso di vendita in quell'anno.</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <section class="card mt-4">
+            <div class="card-header"><span class="section-number">4.</span> Il «conto della serva» e l'interesse
+                composto</div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h3 class="h5 fw-bold">Interesse semplice: la scorciatoia mentale</h3>
+                        <p>Si calcola ogni anno il rendimento sempre sul capitale iniziale. Le cedole nette vengono
+                            sommate, ma non producono a loro volta interessi.</p>
+                        <div class="formula">Capitale finale = P × [1 + r × n]</div>
+                        <p class="small-muted mt-2">Esempio: 10.000 € al 3% netto per 20 anni → 16.000 €. Ogni anno si
+                            aggiungono sempre 300 €.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="h5 fw-bold">Interesse composto: rendimento sul rendimento</h3>
+                        <p>Quando gli interessi vengono reinvestiti, anche loro iniziano a generare rendimento. La
+                            crescita non è più lineare, ma esponenziale.</p>
+                        <div class="formula">Capitale finale = P × (1 + r)<sup>n</sup></div>
+                        <p class="small-muted mt-2">Esempio: 10.000 € al 3% per 20 anni → circa 18.061 €. Il rendimento
+                            si applica ogni anno a un capitale progressivamente maggiore.</p>
+                    </div>
+                </div>
+                <div class="alert alert-light border mt-2 mb-0"><strong>Il punto didattico:</strong> il vantaggio
+                    dell'ETF ad accumulazione non è soltanto pagare le imposte alla fine. È anche lasciare investita,
+                    per tutta la durata, la quota di rendimento che non è stata ancora versata al fisco. Il BTP paga
+                    invece le imposte sulle cedole man mano che vengono incassate.</div>
+            </div>
+        </section>
+
+        <section class="card mt-4">
+            <div class="card-header"><span class="section-number">5.</span> Il pareggio: quale rendimento deve fare
+                l'ETF?</div>
+            <div class="card-body">
+                <p>Il simulatore cerca il rendimento annuo dell'ETF che, dopo la tassazione del 26% sulla plusvalenza
+                    finale, produce lo stesso capitale netto del BTP con cedole non reinvestite.</p>
+                <div class="row align-items-center g-3">
+                    <div class="col-md-6">
+                        <div class="metric etf" id="breakEven">—</div>
+                        <div class="metric-label">Rendimento annuo ETF di pareggio</div>
+                    </div>
+                    <div class="col-md-6 small-muted" id="breakEvenExplain">—</div>
+                </div>
+                <div class="formula mt-3">ETF netto = P + [P × ((1 + r)<sup>n</sup> − 1) × (1 − aliquota ETF)]</div>
+                <div class="small-muted mt-2">Il pareggio è calcolato rispetto al BTP con cedole nette accantonate senza
+                    rendimento. Non è un confronto tra rendimenti a scadenza di due strumenti reali: è un modello
+                    didattico per isolare l'effetto delle imposte e della capitalizzazione.</div>
+            </div>
+        </section>
+
+        <section class="mt-4">
+            <h2 class="h4 fw-bold">Come leggere correttamente il confronto</h2>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="section-number mb-2">01</div>
+                            <h3 class="h6 fw-bold">Il BTP non tassa il capitale</h3>
+                            <p class="small-muted mb-0">Se acquistato alla pari e rimborsato alla pari, il capitale
+                                nominale restituito non è un reddito. Il 12,5% colpisce le cedole e l'eventuale
+                                componente imponibile di plusvalenza.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="section-number mb-2">02</div>
+                            <h3 class="h6 fw-bold">L'ETF tassa il guadagno realizzato</h3>
+                            <p class="small-muted mb-0">Per un ETF azionario UCITS ordinario, in via generale il 26% si
+                                applica alla plusvalenza realizzata alla vendita, non all'intero controvalore. La
+                                composizione fiscale del fondo può però cambiare l'aliquota effettiva.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="section-number mb-2">03</div>
+                            <h3 class="h6 fw-bold">Rendimento e rischio non sono uguali</h3>
+                            <p class="small-muted mb-0">Un BTP detenuto a scadenza ha flussi contrattuali, salvo rischio
+                                emittente. Un ETF azionario ha rendimenti incerti, volatilità e rischio di perdita. Il
+                                confronto fiscale non rende equivalenti i due investimenti.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="mt-5 pt-3 border-top">
+            <p><strong>Avvertenza metodologica.</strong> Simulazione semplificata e a fini esclusivamente didattici. Non
+                considera commissioni, spread, inflazione, bollo, minusvalenze, eventuale tassazione diversa della
+                componente obbligazionaria degli ETF, variazioni di prezzo, ratei, calendario cedolare, reinvestimento a
+                tassi diversi o fiscalità specifica del singolo fondo. Il BTP è ipotizzato acquistato alla pari, con
+                cedola annuale costante e rimborso alla pari; l'ETF è ipotizzato ad accumulazione, con rendimento annuo
+                costante e tassazione della plusvalenza solo alla vendita. Verificare la normativa e la propria
+                situazione fiscale.</p>
+            <p class="mb-0">Strumento di educazione finanziaria · Non costituisce consulenza finanziaria o fiscale.</p>
+        </footer>
+    </div>
+    <div id="disclaimer-container"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                })
+                .catch(error => console.error('Impossibile caricare il disclaimer:', error));
+        });
+    </script>
+    <script>
+        const ids = ['capital', 'years', 'btpRate', 'etfRate', 'btpTax', 'etfTax'];
+        const $ = id => document.getElementById(id);
+        const euro = v => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v);
+        const pct = v => new Intl.NumberFormat('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v) + '%';
+        function num(id) { return Number($(id).value) }
+        function valid() {
+            for (const id of ids) { if (!Number.isFinite(num(id))) return false; }
+            return num('capital') > 0 && num('years') >= 1 && num('years') <= 50 && num('btpRate') >= 0 && num('etfRate') >= -50 && num('btpTax') >= 0 && num('btpTax') <= 100 && num('etfTax') >= 0 && num('etfTax') <= 100;
+        }
+        const ctx = $('growthChart');
+        let chart = new Chart(ctx, {
+            type: 'line', data: {
+                labels: [], datasets: [
+                    { label: 'BTP · cedole nette accantonate', data: [], borderColor: '#4169a8', backgroundColor: '#4169a8', tension: .15 },
+                    { label: 'ETF · valore netto liquidabile', data: [], borderColor: '#ff7e5f', backgroundColor: '#ff7e5f', tension: .15 }
+                ]
+            }, options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: c => c.dataset.label + ': ' + euro(c.parsed.y) } } }, scales: { y: { ticks: { callback: v => new Intl.NumberFormat('it-IT', { notation: 'compact', maximumFractionDigits: 1 }).format(v) + ' €' } } } }
+        });
+        function calculate() {
+            if (!valid()) { $('winner').textContent = 'Controlla i parametri inseriti: capitale e durata devono essere positivi e le aliquote comprese tra 0 e 100%.'; return; }
+            const P = num('capital'), n = Math.round(num('years')), cb = num('btpRate') / 100, re = num('etfRate') / 100, tb = num('btpTax') / 100, te = num('etfTax') / 100;
+            const annualCouponNet = P * cb * (1 - tb);
+            const btpGain = annualCouponNet * n, btpFinal = P + btpGain;
+            const etfPre = P * Math.pow(1 + re, n), etfGain = Math.max(0, etfPre - P), etfTax = etfGain * te, etfFinal = etfPre - etfTax;
+            $('btpSimple').textContent = euro(btpFinal); $('etfFinal').textContent = euro(etfFinal);
+            $('btpGross').textContent = euro(P * cb * n); $('etfGross').textContent = euro(etfPre - P);
+            $('btpTaxAmount').textContent = euro(P * cb * n * tb); $('etfTaxAmount').textContent = euro(etfTax);
+            $('btpNetGain').textContent = euro(btpGain); $('etfNetGain').textContent = euro(etfFinal - P);
+            $('btpFinalTable').textContent = euro(btpFinal); $('etfFinalTable').textContent = euro(etfFinal);
+            const diff = etfFinal - btpFinal;
+            $('winner').innerHTML = diff > 0 ? '<strong>ETF avanti di ' + euro(diff) + '.</strong> Con queste ipotesi, il differimento fiscale e la capitalizzazione compensano l’aliquota più alta.' : diff < 0 ? '<strong>BTP avanti di ' + euro(-diff) + '.</strong> Con queste ipotesi, il rendimento netto delle cedole supera il risultato netto dell’ETF.' : '<strong>Pareggio:</strong> i due investimenti terminano con lo stesso capitale netto.';
+            let labels = [], bdata = [], edata = [];
+            for (let y = 0; y <= n; y++) { labels.push('Anno ' + y); bdata.push(P + annualCouponNet * y); let v = P * Math.pow(1 + re, y); edata.push(v - Math.max(0, v - P) * te); }
+            chart.data.labels = labels; chart.data.datasets[0].data = bdata; chart.data.datasets[1].data = edata; chart.update();
+            // Solve P + P*((1+r)^n-1)*(1-te) = BTP final
+            const targetGain = (btpFinal / P - 1) / (1 - te);
+            let be = (te === 1) ? NaN : (Math.pow(1 + targetGain, 1 / n) - 1) * 100;
+            $('breakEven').textContent = Number.isFinite(be) ? pct(be) : 'Non calcolabile';
+            $('breakEvenExplain').textContent = Number.isFinite(be) ? 'Con un rendimento costante di circa ' + pct(be) + ' annuo, l’ETF raggiungerebbe lo stesso capitale finale netto del BTP in ' + n + ' anni. Il risultato dipende dalle ipotesi inserite.' : 'Con aliquota ETF del 100%, non è possibile ricavare un rendimento di pareggio finito in questo modello.';
+        }
+        ids.forEach(id => $(id).addEventListener('input', calculate));
+        $('reset').addEventListener('click', () => { ['10000', '20', '3.5', '5', '12.5', '26'].forEach((v, i) => $(ids[i]).value = v); calculate(); });
+        calculate();
+    </script>
+</body>
+
+</html>
