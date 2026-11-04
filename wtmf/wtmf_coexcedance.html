@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ACWI e WTMF — Pearson e co-exceedance</title>
+    <meta name="description"
+        content="Confronto tra (MSCI ACWI) e WTMF (managed futures): correlazione di Pearson e co-exceedance sui rendimenti TR nelle sole date comuni.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #20242b;
+            --muted: #69717d;
+            --line: #e7e9ed;
+            --paper: #f7f8fa
+        }
+
+        body {
+            background: var(--paper);
+            color: var(--ink)
+        }
+
+        h1,
+        h2,
+        h3 {
+            letter-spacing: -.025em
+        }
+
+        .hero {
+            background: #202a36;
+            color: #fff;
+            border-radius: 20px;
+            padding: clamp(24px, 5vw, 44px)
+        }
+
+        .hero p {
+            color: #d5dbe2;
+            max-width: 850px
+        }
+
+        .card {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: 0 5px 20px #17202b08
+        }
+
+        .card-header {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            font-weight: 700
+        }
+
+        .metric {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 800;
+            letter-spacing: -.04em
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: .9rem
+        }
+
+        .chart-wrap {
+            position: relative;
+            height: 340px
+        }
+
+        .note {
+            border-left: 3px solid #e1764f;
+            background: #fff8f5;
+            border-radius: 0 10px 10px 0;
+            padding: 14px 16px
+        }
+
+        #error {
+            display: none
+        }
+
+        @media(max-width:576px) {
+            .chart-wrap {
+                height: 290px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container py-4 py-lg-5" style="max-width:1180px">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <br>
+
+        <header class="hero mb-4">
+            <div class="text-uppercase small fw-bold mb-2" style="color:#ffb39f;letter-spacing:.1em">
+                Studio di correlazione e rischio di coda
+            </div>
+            <h1 class="display-6 fw-bold mb-3">ACWI (MSCI ACWI) e WTMF (Managed Futures)</h1>
+            <p class="mb-0">Confronta la correlazione lineare di Pearson con la frequenza con cui i due strumenti
+                registrano insieme rendimenti nella propria coda peggiore. I prezzi sono letti da <code>TR</code>
+                in USD e allineati sulle date comuni misurato sugli stessi intervalli.</p>
+        </header>
+
+        <div id="error" class="alert alert-danger" role="alert"></div>
+        <div id="loading" class="alert alert-info" role="status">Caricamento dei dati ACWI e WTMF…</div>
+
+        <section class="card mb-4">
+            <div class="card-body">
+                <div class="row align-items-end g-3">
+                    <div class="col-md-5">
+                        <label for="quantile" class="form-label fw-semibold">Soglia di coda negativa (%)</label>
+                        <input id="quantile" class="form-control" type="number" min="1" max="20" step="0.5"
+                            value="5">
+                        <div class="form-text">Ad esempio, 5% considera i rendimenti peggiori di ciascuno strumento.</div>
+                    </div>
+                    <div class="col-md-7">
+                        <div id="period" class="muted">In attesa dei dati…</div>
+                    </div>
+                </div>
+                <div id="dataNote" class="alert alert-warning mt-3 mb-0 d-none" role="note"></div>
+            </div>
+        </section>
+
+        <section class="row g-3 mb-4" aria-label="Metriche principali">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="muted">Correlazione di Pearson</div>
+                        <div class="metric" id="pearson">—</div>
+                        <div class="muted">Rendimenti sugli stessi intervalli ACWI</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="muted">Co-exceedance osservata</div>
+                        <div class="metric" id="coexceedance">—</div>
+                        <div class="muted" id="coexceedanceNote">Entrambi nella rispettiva coda negativa</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="muted">Conditional co-exceedance</div>
+                        <div class="metric" id="conditional">—</div>
+                        <div class="muted" id="conditionalNote">WTMF in coda, dato ACWI in coda</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card mb-4">
+            <div class="card-header">Valori osservati e riferimenti teorici</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Misura</th>
+                                <th>Osservata</th>
+                                <th>Indipendenza</th>
+                                <th>Solo Pearson (gaussiana)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="metricsTable"></tbody>
+                    </table>
+                </div>
+                <p class="muted mt-3 mb-0" id="eventCounts"></p>
+            </div>
+        </section>
+
+        <section class="card mb-4">
+            <div class="card-header">Valore normalizzato degli strumenti (TR in USD)</div>
+            <div class="card-body">
+                <div class="chart-wrap"><canvas id="priceChart" aria-label="Prezzi TR normalizzati a 100"></canvas></div>
+            </div>
+        </section>
+
+        <section class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">Co-exceedance al quantile selezionato</div>
+                    <div class="card-body">
+                        <div class="chart-wrap"><canvas id="barChart" aria-label="Confronto co-exceedance osservata e attesa"></canvas></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">Eccesso rispetto all'indipendenza</div>
+                    <div class="card-body">
+                        <div class="chart-wrap"><canvas id="curveChart" aria-label="Rapporto tra co-exceedance osservata e attesa al variare del quantile"></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card mb-4">
+            <div class="card-body">
+                <h2 class="h5 fw-bold">Come leggere i risultati</h2>
+                <p><strong>Pearson</strong> riassume la relazione lineare media tra i rendimenti e non descrive da solo
+                    cosa accade nelle giornate peggiori. La <strong>co-exceedance</strong> è la quota di osservazioni in
+                    cui entrambi i rendimenti sono contemporaneamente sotto il proprio quantile di coda.</p>
+                <p><strong>Conditional co-exceedance</strong> indica la probabilità che uno strumento sia in coda sapendo
+                    che l'altro è già in coda. La tabella riporta entrambe le direzioni perché il denominatore può
+                    variare tra gli strumenti.</p>
+                <p class="mb-0">Il riferimento “solo Pearson” assume rendimenti congiuntamente normali con la
+                    correlazione osservata: la differenza dall'osservato aiuta a valutare se la dipendenza di coda sia
+                    più o meno forte di quella suggerita dalla sola correlazione lineare.</p>
+            </div>
+        </section>
+
+        <div class="note mb-4 small">
+            Analisi storica a fini didattici, non costituisce consulenza finanziaria. <code>TR</code> è utilizzato
+            come serie aggiustata per il total return. Poiché le osservazioni ACWI sono poco frequenti o ripetute,
+            queste metriche non sono giornaliere: ogni rendimento WTMF è composto sul medesimo intervallo tra due
+            aggiornamenti ACWI. Il numero contenuto di intervalli rende le metriche di coda sensibili ai singoli
+            eventi.
+        </div>
+
+        <footer class="muted border-top pt-3">
+            Studio su dati storici in USD. Le correlazioni e le dipendenze di coda possono cambiare nel tempo e non
+            garantiscono risultati futuri.
+        </footer>
+    </main>
+
+    <div id="disclaimer-container"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('../html/disclaimer.html')
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                })
+                .catch(error => console.error('Impossibile caricare il disclaimer:', error));
+        });
+    </script>
+    <script>
+        const ASSETS = [
+            { name: 'ACWI · MSCI ACWI', file: 'ACWI.json', color: '#4169a8' },
+            { name: 'WTMF · Managed Futures', file: 'WTMF.json', color: '#e1764f' }
+        ];
+        const numberFormat = new Intl.NumberFormat('it-IT', { maximumFractionDigits: 2 });
+        const percent = value => `${numberFormat.format(value * 100)}%`;
+        const charts = {};
+        let aligned = null;
+
+        function parsePrices(rows, filename) {
+            if (!Array.isArray(rows)) throw new Error(`${filename}: il JSON deve contenere un array.`);
+            const prices = new Map();
+            rows.forEach((row, index) => {
+                const date = row?.Date;
+                const price = Number(row?.AdjClose);
+                if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(price) || price <= 0) {
+                    throw new Error(`${filename}: dato non valido alla riga ${index + 1} (Date/AdjClose).`);
+                }
+                prices.set(date, price);
+            });
+            return prices;
+        }
+
+        async function loadData() {
+            const results = await Promise.all(ASSETS.map(async asset => {
+                const response = await fetch(asset.file);
+                if (!response.ok) throw new Error(`Caricamento di ${asset.file} non riuscito (HTTP ${response.status}).`);
+                return parsePrices(await response.json(), asset.file);
+            }));
+
+            const commonDates = [...results[0].keys()].filter(date => results[1].has(date)).sort();
+            if (commonDates.length < 3) throw new Error('Dati insufficienti: servono almeno tre date in comune.');
+
+            const prices = results.map(priceMap => commonDates.map(date => priceMap.get(date)));
+            const returns = [[], []];
+            const returnDates = [];
+            const intervalDays = [];
+            let previousUpdateIndex = 0;
+            for (let i = 1; i < commonDates.length; i++) {
+                if (prices[0][i] === prices[0][previousUpdateIndex]) continue;
+                returnDates.push(commonDates[i]);
+                returns[0].push(prices[0][i] / prices[0][previousUpdateIndex] - 1);
+                returns[1].push(prices[1][i] / prices[1][previousUpdateIndex] - 1);
+                intervalDays.push((Date.parse(commonDates[i]) - Date.parse(commonDates[previousUpdateIndex])) / 86400000);
+                previousUpdateIndex = i;
+            }
+            if (returnDates.length < 3) throw new Error('Dati insufficienti: servono almeno tre intervalli con aggiornamento ACWI.');
+
+            aligned = { commonDates, prices, returnDates, returns, intervalDays };
+            document.getElementById('loading').style.display = 'none';
+            const flatIntervals = commonDates.length - 1 - returnDates.length;
+            const averageIntervalDays = intervalDays.reduce((sum, days) => sum + days, 0) / intervalDays.length;
+            document.getElementById('period').textContent =
+                `${commonDates.length.toLocaleString('it-IT')} date di prezzo comuni · ` +
+                `${returnDates.length.toLocaleString('it-IT')} intervalli aggiornati · ` +
+                `media ${numberFormat.format(averageIntervalDays)} giorni · ` +
+                `${commonDates[0]} – ${returnDates[returnDates.length - 1]} · USD`;
+            document.getElementById('dataNote').textContent =
+                `ACWI AdjClose è rimasto invariato in ${flatIntervals} dei ${commonDates.length - 1} intervalli comuni. ` +
+                `Sono esclusi questi intervalli; i ${returnDates.length} rendimenti analizzati coprono periodi di più giorni, ` +
+                `con WTMF calcolato tra le stesse date. I risultati non rappresentano correlazioni giornaliere.`;
+            document.getElementById('dataNote').classList.remove('d-none');
+            renderPriceChart();
+            updateAnalysis();
+        }
+
+        function pearson(x, y) {
+            const meanX = x.reduce((sum, value) => sum + value, 0) / x.length;
+            const meanY = y.reduce((sum, value) => sum + value, 0) / y.length;
+            let covariance = 0, varianceX = 0, varianceY = 0;
+            for (let i = 0; i < x.length; i++) {
+                const dx = x[i] - meanX;
+                const dy = y[i] - meanY;
+                covariance += dx * dy;
+                varianceX += dx * dx;
+                varianceY += dy * dy;
+            }
+            if (varianceX === 0 || varianceY === 0) throw new Error('Pearson non calcolabile: varianza nulla.');
+            return covariance / Math.sqrt(varianceX * varianceY);
+        }
+
+        function quantile(values, probability) {
+            const sorted = [...values].sort((a, b) => a - b);
+            const position = (sorted.length - 1) * probability;
+            const lower = Math.floor(position);
+            const fraction = position - lower;
+            return sorted[lower] + (sorted[Math.min(lower + 1, sorted.length - 1)] - sorted[lower]) * fraction;
+        }
+
+        function erfApprox(x) {
+            const sign = x < 0 ? -1 : 1;
+            const z = Math.abs(x);
+            const t = 1 / (1 + 0.3275911 * z);
+            const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-z * z);
+            return sign * y;
+        }
+
+        function normalCdf(x) {
+            return 0.5 * (1 + erfApprox(x / Math.SQRT2));
+        }
+
+        function inverseNormalCdf(p) {
+            const a = [-39.6968302866538, 220.946098424521, -275.928510446969, 138.357751867269, -30.6647980661472, 2.50662827745924];
+            const b = [-54.4760987982241, 161.585836858041, -155.698979859887, 66.8013118877197, -13.2806815528857];
+            const c = [-0.00778489400243029, -0.322396458041136, -2.40075827716184, -2.54973253934373, 4.37466414146497, 2.93816398269878];
+            const d = [0.00778469570904146, 0.32246712907004, 2.445134137143, 3.75440866190742];
+            const plow = 0.02425;
+            const phigh = 1 - plow;
+            let q, r;
+            if (p < plow) {
+                q = Math.sqrt(-2 * Math.log(p));
+                return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+                    ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+            }
+            if (p > phigh) {
+                q = Math.sqrt(-2 * Math.log(1 - p));
+                return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+                    ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+            }
+            q = p - 0.5;
+            r = q * q;
+            return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q /
+                (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+        }
+
+        function bivariateNormalCdf(a, b, rho) {
+            if (rho >= 0.9999) return normalCdf(Math.min(a, b));
+            if (rho <= -0.9999) return Math.max(0, normalCdf(a) - normalCdf(-b));
+            const lower = -10;
+            const steps = 240;
+            const h = (a - lower) / steps;
+            const denom = Math.sqrt(1 - rho * rho);
+            let sum = 0;
+            for (let i = 0; i <= steps; i++) {
+                const x = lower + i * h;
+                const pdf = Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+                const weight = i === 0 || i === steps ? 1 : (i % 2 === 0 ? 2 : 4);
+                sum += weight * pdf * normalCdf((b - rho * x) / denom);
+            }
+            return Math.max(0, Math.min(1, sum * h / 3));
+        }
+
+        function calculateMetrics(x, y, quantileLevel, corr) {
+            const thresholdX = quantile(x, quantileLevel);
+            const thresholdY = quantile(y, quantileLevel);
+            let xTail = 0, yTail = 0, bothTail = 0;
+            for (let i = 0; i < x.length; i++) {
+                const isXTail = x[i] <= thresholdX;
+                const isYTail = y[i] <= thresholdY;
+                if (isXTail) xTail++;
+                if (isYTail) yTail++;
+                if (isXTail && isYTail) bothTail++;
+            }
+            const normalThreshold = inverseNormalCdf(quantileLevel);
+            const gaussianJoint = bivariateNormalCdf(normalThreshold, normalThreshold, corr);
+            return {
+                thresholdX,
+                thresholdY,
+                xTail,
+                yTail,
+                bothTail,
+                observedJoint: bothTail / x.length,
+                observedGivenX: xTail ? bothTail / xTail : 0,
+                observedGivenY: yTail ? bothTail / yTail : 0,
+                independentJoint: quantileLevel ** 2,
+                independentConditional: quantileLevel,
+                gaussianJoint,
+                gaussianConditional: gaussianJoint / quantileLevel
+            };
+        }
+
+        function renderPriceChart() {
+            if (charts.prices) charts.prices.destroy();
+            charts.prices = new Chart(document.getElementById('priceChart'), {
+                type: 'line',
+                data: {
+                    labels: aligned.commonDates,
+                    datasets: ASSETS.map((asset, index) => ({
+                        label: asset.name,
+                        data: aligned.prices[index].map(price => price / aligned.prices[index][0] * 100),
+                        borderColor: asset.color,
+                        backgroundColor: asset.color,
+                        pointRadius: 0,
+                        borderWidth: 2,
+                        tension: 0.12
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        tooltip: { callbacks: { label: context => `${context.dataset.label}: ${numberFormat.format(context.parsed.y)}` } }
+                    },
+                    scales: {
+                        x: { ticks: { maxTicksLimit: 8, maxRotation: 0 } },
+                        y: { title: { display: true, text: 'Valore (prima data comune = 100)' } }
+                    }
+                }
+            });
+        }
+
+        function renderMetricCharts(metric, curve) {
+            if (charts.bar) charts.bar.destroy();
+            if (charts.curve) charts.curve.destroy();
+            charts.bar = new Chart(document.getElementById('barChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Congiunta', 'WTMF | ACWI', 'ACWI | WTMF'],
+                    datasets: [
+                        { label: 'Osservata', data: [metric.observedJoint, metric.observedGivenX, metric.observedGivenY].map(value => value * 100), backgroundColor: '#2563eb' },
+                        { label: 'Indipendenza', data: [metric.independentJoint, metric.independentConditional, metric.independentConditional].map(value => value * 100), backgroundColor: '#94a3b8' },
+                        { label: 'Solo Pearson', data: [metric.gaussianJoint, metric.gaussianConditional, metric.gaussianConditional].map(value => value * 100), backgroundColor: '#f59e0b' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { tooltip: { callbacks: { label: context => `${context.dataset.label}: ${percent(context.raw / 100)}` } } },
+                    scales: { y: { beginAtZero: true, ticks: { callback: value => `${value}%` } } }
+                }
+            });
+            charts.curve = new Chart(document.getElementById('curveChart'), {
+                type: 'line',
+                data: {
+                    labels: curve.map(point => `${numberFormat.format(point.quantile * 100)}%`),
+                    datasets: [
+                        { label: 'Congiunta / indipendenza', data: curve.map(point => point.jointRatio), borderColor: '#2563eb', tension: 0.2 },
+                        { label: 'Conditional WTMF | ACWI / indipendenza', data: curve.map(point => point.conditionalXRatio), borderColor: '#e1764f', tension: 0.2 },
+                        { label: 'Conditional ACWI | WTMF / indipendenza', data: curve.map(point => point.conditionalYRatio), borderColor: '#25856a', tension: 0.2 },
+                        { label: 'Indipendenza', data: curve.map(() => 1), borderColor: '#64748b', borderDash: [6, 4], pointRadius: 0 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { tooltip: { callbacks: { label: context => `${context.dataset.label}: ${numberFormat.format(context.raw)}x` } } },
+                    scales: { y: { beginAtZero: true, title: { display: true, text: 'Multiplo' } } }
+                }
+            });
+        }
+
+        function updateAnalysis() {
+            if (!aligned) return;
+            const level = Number(document.getElementById('quantile').value) / 100;
+            const error = document.getElementById('error');
+            if (!Number.isFinite(level) || level < 0.01 || level > 0.2) {
+                error.textContent = 'Inserisci una soglia tra 1% e 20%.';
+                error.style.display = 'block';
+                return;
+            }
+            error.style.display = 'none';
+
+            try {
+                const [x, y] = aligned.returns;
+                const corr = pearson(x, y);
+                const metrics = calculateMetrics(x, y, level, corr);
+                document.getElementById('pearson').textContent = corr.toFixed(4);
+                document.getElementById('coexceedance').textContent = percent(metrics.observedJoint);
+                document.getElementById('conditional').textContent = percent(metrics.observedGivenX);
+                document.getElementById('coexceedanceNote').textContent =
+                    `Entrambi sotto il proprio quantile ${numberFormat.format(level * 100)}%`;
+                document.getElementById('conditionalNote').textContent =
+                    'Probabilità che WTMF sia in coda dato ACWI in coda';
+                const rows = [
+                    ['Co-exceedance congiunta', metrics.observedJoint, metrics.independentJoint, metrics.gaussianJoint],
+                    ['P(WTMF in coda | ACWI in coda)', metrics.observedGivenX, metrics.independentConditional, metrics.gaussianConditional],
+                    ['P(ACWI in coda | WTMF in coda)', metrics.observedGivenY, metrics.independentConditional, metrics.gaussianConditional]
+                ];
+                document.getElementById('metricsTable').innerHTML = rows.map(([label, observed, independent, gaussian]) =>
+                    `<tr><th>${label}</th><td>${percent(observed)}</td><td>${percent(independent)}</td><td>${percent(gaussian)}</td></tr>`
+                ).join('');
+                document.getElementById('eventCounts').textContent =
+                    `Osservazioni di coda: ACWI ${metrics.xTail}, WTMF ${metrics.yTail}; ` +
+                    `eventi congiunti ${metrics.bothTail} su ${x.length} rendimenti. ` +
+                    `Soglie: ACWI ${percent(metrics.thresholdX)}, WTMF ${percent(metrics.thresholdY)}.`;
+
+                const curveQuantiles = [0.01, 0.02, 0.03, 0.05, 0.075, 0.10, 0.15, 0.20];
+                const curve = curveQuantiles.map(quantileLevel => {
+                    const item = calculateMetrics(x, y, quantileLevel, corr);
+                    return {
+                        quantile: quantileLevel,
+                        jointRatio: item.observedJoint / item.independentJoint,
+                        conditionalXRatio: item.observedGivenX / item.independentConditional,
+                        conditionalYRatio: item.observedGivenY / item.independentConditional
+                    };
+                });
+                renderMetricCharts(metrics, curve);
+            } catch (calculationError) {
+                error.textContent = calculationError.message || 'Errore nel calcolo delle metriche.';
+                error.style.display = 'block';
+            }
+        }
+
+        document.getElementById('quantile').addEventListener('input', updateAnalysis);
+        loadData().catch(error => {
+            document.getElementById('loading').style.display = 'none';
+            const message = document.getElementById('error');
+            message.textContent = `Non è stato possibile caricare i dati: ${error.message}`;
+            message.style.display = 'block';
+        });
+    </script>
+</body>
+
+</html>
