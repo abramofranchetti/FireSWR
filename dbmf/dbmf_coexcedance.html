@@ -155,6 +155,25 @@
             </div>
         </section>
 
+        <section class="card mb-4" aria-label="Rendimenti medi negli eventi di coda congiunti">
+            <div class="card-header">Rendimento medio negli eventi congiunti di coda</div>
+            <div class="card-body">
+                <p class="muted">Media dei rendimenti ACWI e DBMF nei soli intervalli in cui entrambi sono sotto la
+                    rispettiva soglia di coda. Un valore negativo indica una perdita media per intervallo.</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="muted">ACWI</div>
+                        <div class="metric" id="jointTailAverageX">—</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="muted">DBMF</div>
+                        <div class="metric" id="jointTailAverageY">—</div>
+                    </div>
+                </div>
+                <div class="muted mt-2" id="jointTailAverageNote"></div>
+            </div>
+        </section>
+
         <section class="card mb-4">
             <div class="card-header">Valori osservati e riferimenti teorici</div>
             <div class="card-body">
@@ -391,12 +410,17 @@
             const thresholdX = quantile(x, quantileLevel);
             const thresholdY = quantile(y, quantileLevel);
             let xTail = 0, yTail = 0, bothTail = 0;
+            let jointTailSumX = 0, jointTailSumY = 0;
             for (let i = 0; i < x.length; i++) {
                 const isXTail = x[i] <= thresholdX;
                 const isYTail = y[i] <= thresholdY;
                 if (isXTail) xTail++;
                 if (isYTail) yTail++;
-                if (isXTail && isYTail) bothTail++;
+                if (isXTail && isYTail) {
+                    bothTail++;
+                    jointTailSumX += x[i];
+                    jointTailSumY += y[i];
+                }
             }
             const normalThreshold = inverseNormalCdf(quantileLevel);
             const gaussianJoint = bivariateNormalCdf(normalThreshold, normalThreshold, corr);
@@ -409,6 +433,8 @@
                 observedJoint: bothTail / x.length,
                 observedGivenX: xTail ? bothTail / xTail : 0,
                 observedGivenY: yTail ? bothTail / yTail : 0,
+                meanXOnJointTail: bothTail ? jointTailSumX / bothTail : null,
+                meanYOnJointTail: bothTail ? jointTailSumY / bothTail : null,
                 independentJoint: quantileLevel ** 2,
                 independentConditional: quantileLevel,
                 gaussianJoint,
@@ -509,6 +535,14 @@
                     `Entrambi sotto il proprio quantile ${numberFormat.format(level * 100)}%`;
                 document.getElementById('conditionalNote').textContent =
                     'Probabilità che DBMF sia in coda dato ACWI in coda';
+                document.getElementById('jointTailAverageX').textContent =
+                    metrics.bothTail ? percent(metrics.meanXOnJointTail) : '—';
+                document.getElementById('jointTailAverageY').textContent =
+                    metrics.bothTail ? percent(metrics.meanYOnJointTail) : '—';
+                document.getElementById('jointTailAverageNote').textContent =
+                    metrics.bothTail
+                        ? `Media su ${metrics.bothTail} intervalli congiunti di coda, alla soglia ${numberFormat.format(level * 100)}%.`
+                        : `Nessun intervallo congiunto di coda alla soglia ${numberFormat.format(level * 100)}%.`;
                 const rows = [
                     ['Co-exceedance congiunta', metrics.observedJoint, metrics.independentJoint, metrics.gaussianJoint],
                     ['P(DBMF in coda | ACWI in coda)', metrics.observedGivenX, metrics.independentConditional, metrics.gaussianConditional],
