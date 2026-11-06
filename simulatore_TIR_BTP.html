@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulatore TIR BTP – effetto della tassazione e del reinvestimento</title>
+  <link href="css/style.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --ink: #20252d;
+      --muted: #697386;
+      --line: #e5e8ee;
+      --bg: #f5f6f8;
+      --card: #fff;
+      --accent: #f07852;
+      --blue: #3976b9;
+      --green: #27836b;
+      --red: #c65b5b
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 32px auto;
+      padding: 0 20px 50px
+    }
+
+    header {
+      margin-bottom: 24px
+    }
+
+    h1 {
+      font-size: clamp(27px, 4vw, 38px);
+      line-height: 1.12;
+      margin: 0 0 10px;
+      letter-spacing: -.8px
+    }
+
+    h2 {
+      font-size: 19px;
+      margin: 0 0 16px
+    }
+
+    h3 {
+      font-size: 15px;
+      margin: 0 0 8px
+    }
+
+    .sub {
+      color: var(--muted);
+      max-width: 850px;
+      margin: 0
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+      align-items: start
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 2px 8px #18202b08
+    }
+
+    .controls {
+      position: sticky;
+      top: 16px
+    }
+
+    .field {
+      margin: 0 0 17px
+    }
+
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 650;
+      margin-bottom: 7px
+    }
+
+    .field small {
+      display: block;
+      color: var(--muted);
+      font-weight: 400;
+      margin-top: 5px
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid #cfd5df;
+      border-radius: 8px;
+      padding: 10px 11px;
+      font: inherit;
+      background: #fff;
+      color: var(--ink)
+    }
+
+    input:focus,
+    select:focus {
+      outline: 2px solid #f0785233;
+      border-color: var(--accent)
+    }
+
+    .suffix {
+      color: var(--muted);
+      font-weight: 500
+    }
+
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 10px 14px;
+      background: var(--ink);
+      color: #fff;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+      width: 100%
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 12px
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 18px
+    }
+
+    .metric {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 15px
+    }
+
+    .metric .k {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+      text-transform: uppercase;
+      letter-spacing: .4px
+    }
+
+    .metric .v {
+      font-size: 25px;
+      font-weight: 750;
+      letter-spacing: -.5px;
+      margin-top: 5px;
+      font-variant-numeric: tabular-nums
+    }
+
+    .metric .d {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px
+    }
+
+    .content {
+      display: grid;
+      gap: 18px
+    }
+
+    .chart-wrap {
+      height: 330px;
+      position: relative
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px
+    }
+
+    th,
+    td {
+      padding: 11px 9px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      font-variant-numeric: tabular-nums
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 650;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .3px
+    }
+
+    tr:last-child td {
+      border-bottom: 0
+    }
+
+    .scenario {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex: 0 0 9px
+    }
+
+    .positive {
+      color: var(--green)
+    }
+
+    .negative {
+      color: var(--red)
+    }
+
+    .twocol {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px
+    }
+
+    .explain {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .explain strong {
+      color: var(--ink)
+    }
+
+    .formula {
+      background: #f7f8fa;
+      border-radius: 9px;
+      padding: 12px 14px;
+      font-size: 13px;
+      margin-top: 12px
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 20px
+    }
+
+    .home-link {
+      display: flow-root;
+      margin-bottom: 18px
+    }
+
+    .scenario-guide p {
+      margin: 8px 0
+    }
+
+    @media(max-width:850px) {
+      .layout {
+        grid-template-columns: 1fr
+      }
+
+      .controls {
+        position: static
+      }
+
+      .results {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .twocol {
+        grid-template-columns: 1fr
+      }
+    }
+
+    @media(max-width:480px) {
+      main {
+        padding: 0 12px 30px;
+        margin-top: 20px
+      }
+
+      .card {
+        padding: 15px
+      }
+
+      .results {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .metric .v {
+        font-size: 21px
+      }
+
+      table {
+        font-size: 11px
+      }
+
+      th,
+      td {
+        padding: 9px 5px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <div class="home-link"><a href="/FireSWR" class="home-button">🏠 Home</a></div>
+    <header>
+      <h1>Il TIR dei BTP, oltre la cedola</h1>
+      <p class="sub">Confronta l'effetto delle imposte e del lotto minimo di 1.000 € sul rendimento di un BTP.
+        Le simulazioni assumono acquisto e rimborso alla pari, cedole costanti e nessun costo.</p>
+    </header>
+    <div class="layout">
+      <aside class="card controls">
+        <h2>Parametri dell'investimento</h2>
+        <div class="field"><label for="type">Tipologia BTP</label>
+          <select id="type">
+            <option value="2">Cedola semestrale (2 volte l'anno)</option>
+            <option value="4">Cedola trimestrale (4 volte l'anno)</option>
+          </select>
+        </div>
+        <div class="field"><label for="years">Durata <span class="suffix">anni</span></label><input id="years"
+            type="number" min="1" max="50" step="1" value="10"></div>
+        <div class="field"><label for="coupon">Tasso cedolare annuo <span class="suffix">%</span></label><input
+            id="coupon" type="number" min="0" max="20" step="0.05" value="3.5"></div>
+        <div class="field"><label for="lots">Lotti iniziali da 1.000 €</label><input id="lots" type="number" min="1"
+            max="1000000" step="1" value="10"></div>
+        <div class="field"><label for="tax">Aliquota fiscale cedole <span class="suffix">%</span></label><input id="tax"
+            type="number" min="0" max="100" step="0.1" value="12.5"></div>
+        <button id="reset" type="button">Ripristina valori iniziali</button>
+        <p class="note">Prezzo di acquisto e rimborso: 100. Capitale iniziale: numero di lotti × 1.000 €. Nessuna
+          commissione, rateo, inflazione o variazione del prezzo.</p>
+      </aside>
+      <section class="content">
+        <div class="results">
+          <div class="metric">
+            <div class="k">Capitale investito</div>
+            <div class="v" id="capital">—</div>
+            <div class="d">Acquisto alla pari</div>
+          </div>
+          <div class="metric">
+            <div class="k">Cedola netta per periodo</div>
+            <div class="v" id="couponNet">—</div>
+            <div class="d" id="couponFreq">—</div>
+          </div>
+          <div class="metric">
+            <div class="k">Differenza rendimento</div>
+            <div class="v" id="tirGap">—</div>
+            <div class="d">Reinvestimento netto a lotti vs teorico lordo</div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Crescita annua equivalente del capitale finale</h2>
+          <div class="chart-wrap"><canvas id="tirChart"></canvas></div>
+          <p class="explain">La percentuale annualizza il rapporto tra capitale finale e capitale iniziale. Senza
+            reinvestimento, le cedole nette incassate sono considerate liquidità ferma (rendimento 0%) fino alla
+            scadenza. Non è il TIR dei flussi periodici, che viene mostrato separatamente.</p>
+        </div>
+        <div class="card">
+          <h2>Risultati dei quattro scenari</h2>
+          <div class="scenario-guide explain">
+            <p><strong>Cedole lorde reinvestite (teorico):</strong> riferimento senza imposte e senza lotto minimo;
+              ogni cedola viene reinvestita, anche se inferiore a 1.000 €.</p>
+            <p><strong>Cedole nette reinvestite (frazioni):</strong> misura l'effetto delle imposte, ipotizzando di
+              poter reinvestire qualsiasi importo.</p>
+            <p><strong>Cedole nette reinvestite (lotti da 1.000 €):</strong> le cedole nette restano liquide finché
+              bastano ad acquistare un nuovo lotto; è il caso che considera il vincolo del taglio minimo.</p>
+            <p><strong>Cedole nette non reinvestite:</strong> le cedole nette sono incassate e tenute ferme senza
+              interessi; il capitale finale è il rimborso più tutte le cedole. La crescita annua equivalente
+              annualizza questo totale, mentre il TIR dei flussi (riportato sotto) considera le date di incasso.</p>
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Scenario</th>
+                  <th>Crescita annua equivalente</th>
+                  <th>Capitale finale</th>
+                  <th>Guadagno</th>
+                  <th>Differenza vs lordo reinvestito</th>
+                </tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="twocol">
+          <div class="card">
+            <h2>Il costo della fiscalità e del lotto minimo</h2>
+            <div id="lossDetails" class="explain"></div>
+          </div>
+          <div class="card">
+            <h2>Incasso delle cedole nette senza reinvestimento</h2>
+            <div id="cashDetails" class="explain"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Come funziona il calcolo</h2>
+          <div class="explain">
+            <p><strong>Reinvestimento teorico:</strong> ogni cedola viene reinvestita immediatamente al valore nominale,
+              anche quando non raggiunge 1.000 €. Nel caso lordo non si applicano imposte; nel caso netto viene
+              reinvestita la cedola dopo l'aliquota impostata.</p>
+            <p><strong>Reinvestimento a lotti:</strong> le cedole nette confluiscono in un borsellino. Quando raggiunge
+              1.000 €, viene acquistato un nuovo lotto. Il lotto acquistato in una data di stacco produce cedole a
+              partire dal periodo successivo. Alla scadenza si sommano il rimborso di tutti i lotti e la liquidità
+              rimasta nel borsellino.</p>
+            <p><strong>Senza reinvestimento:</strong> le cedole vengono incassate e non producono altri interessi. Il
+              capitale finale è la somma nominale di capitale rimborsato e cedole incassate, considerate liquidità
+              ferma. La tabella mostra la crescita annua equivalente di tale totale, non il TIR dei flussi.</p>
+            <p><strong>Imposte:</strong> l'aliquota impostata si applica alle cedole quando vengono pagate, anche
+              quelle generate dai lotti acquistati con il reinvestimento. Non viene applicata una seconda imposta al
+              capitale finale. Poiché il modello compra e rimborsa ogni lotto a 100, non genera plusvalenze o
+              minusvalenze sul prezzo e quindi non simula la relativa tassazione.</p>
+            <div class="formula">Il TIR periodico è il tasso che azzera il valore attuale netto dei flussi. Il
+              suo valore annuo effettivo è (1 + TIR periodico)<sup>frequenza annua</sup> − 1. La crescita annua
+              equivalente del capitale finale è invece (capitale finale / capitale iniziale)<sup>1 / anni</sup> − 1.</div>
+            <p><strong>Ipotesi semplificatrice:</strong> i nuovi lotti sono acquistati alla pari e hanno la stessa data
+              di rimborso dell'investimento iniziale. Il tasso di reinvestimento è quindi uguale al tasso cedolare. Il
+              modello isola l'effetto di imposte e soglia minima, non simula l'acquisto di BTP reali sul mercato
+              secondario.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+    <p class="footer">Simulatore didattico. I risultati sono stime matematiche basate sulle ipotesi indicate e non
+      costituiscono una previsione del rendimento di uno specifico titolo di Stato.</p>
+  </main>
+  <div id="disclaimer-container"></div>
+  <script>
+    const $ = id => document.getElementById(id);
+    const euro = n => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 }).format(n);
+    const pct = n => (n * 100).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+    const pp = n => (n * 100).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' p.p.';
+    let chart;
+
+    function periodicIRR(flows) {
+      // Bisezione robusta: per questi flussi convenzionali esiste una sola radice economicamente rilevante.
+      const npv = r => flows.reduce((s, cf, t) => s + cf / Math.pow(1 + r, t), 0);
+      let lo = -0.9999, hi = 2;
+      for (let i = 0; i < 220; i++) {
+        const mid = (lo + hi) / 2;
+        if (npv(mid) > 0) lo = mid; else hi = mid;
+      }
+      return (lo + hi) / 2;
+    }
+    function effectiveAnnualRate(periodicRate, frequency) {
+      return Math.pow(1 + periodicRate, frequency) - 1;
+    }
+    function calc() {
+      const freq = +$('type').value, years = Math.max(1, Math.min(50, Math.floor(+$('years').value || 1)));
+      const rate = Math.max(0, (+$('coupon').value || 0) / 100), lots = Math.max(1, Math.floor(+$('lots').value || 1));
+      const tax = Math.max(0, Math.min(1, (+$('tax').value || 0) / 100));
+      const periods = years * freq, nominal = lots * 1000, cpnRate = rate / freq;
+      const grossCoupon = nominal * cpnRate, netCoupon = grossCoupon * (1 - tax);
+      const initial = nominal;
+
+      // Reinvestimento frazionario: i nuovi nominali acquistati a ogni stacco generano cedole dal periodo seguente.
+      function fractionalReinvest(net) {
+        let units = lots, wallet = 0;
+        for (let p = 1; p <= periods; p++) {
+          const coupon = units * 1000 * cpnRate * (net ? (1 - tax) : 1);
+          wallet += coupon;
+          // Al rimborso finale l'acquisto e il rimborso immediato sono equivalenti a lasciare la somma liquida.
+          if (p < periods) { units += wallet / 1000; wallet = 0; }
+        }
+        return units * 1000 + wallet;
+      }
+      function lotReinvest() {
+        let units = lots, wallet = 0, bought = 0;
+        for (let p = 1; p <= periods; p++) {
+          wallet += units * 1000 * cpnRate * (1 - tax);
+          const newLots = Math.floor((wallet + 1e-8) / 1000);
+          if (newLots > 0 && p < periods) {
+            units += newLots; bought += newLots; wallet -= newLots * 1000;
+          }
+        }
+        return { final: units * 1000 + wallet, units, wallet, bought };
+      }
+      const grossFinal = fractionalReinvest(false);
+      const netFinal = fractionalReinvest(true);
+      const lot = lotReinvest();
+      const netFlows = [-initial];
+      for (let p = 1; p <= periods; p++) {
+        netFlows.push(netCoupon + (p === periods ? initial : 0));
+      }
+      const tirNetNo = effectiveAnnualRate(periodicIRR(netFlows), freq);
+      const tirGross = Math.pow(grossFinal / initial, 1 / years) - 1;
+      const tirNet = Math.pow(netFinal / initial, 1 / years) - 1;
+      const tirLot = Math.pow(lot.final / initial, 1 / years) - 1;
+      const netCashFinal = initial + netCoupon * periods;
+      const netCashGrowth = Math.pow(netCashFinal / initial, 1 / years) - 1;
+      const scenarios = [
+        { name: 'Cedole lorde reinvestite', tir: tirGross, final: grossFinal, color: '#3976b9' },
+        { name: 'Cedole nette reinvestite (frazioni)', tir: tirNet, final: netFinal, color: '#27836b' },
+        { name: 'Cedole nette reinvestite (lotti da 1.000 €)', tir: tirLot, final: lot.final, color: '#f07852' },
+        { name: 'Cedole nette non reinvestite', tir: netCashGrowth, final: netCashFinal, color: '#b36c9b' }
+      ];
+      $('capital').textContent = euro(initial);
+      $('couponNet').textContent = euro(netCoupon);
+      $('couponFreq').textContent = `${freq === 2 ? 'Ogni semestre' : 'Ogni trimestre'} · ${periods} pagamenti`;
+      $('tirGap').textContent = pp(tirGross - tirLot);
+      $('tirGap').className = 'v ' + (tirGross - tirLot >= 0 ? 'negative' : 'positive');
+
+      $('rows').innerHTML = scenarios.map((s, i) => {
+        const loss = tirGross - s.tir;
+        return `<tr><td><span class="scenario"><span class="dot" style="background:${s.color}"></span>${s.name}</span></td>
+      <td><strong>${pct(s.tir)}</strong></td><td>${euro(s.final)}</td><td>${euro(s.final - initial)}</td>
+      <td class="${loss >= 0 ? 'negative' : 'positive'}">${i === 0 ? '—' : pp(loss)}</td></tr>`;
+      }).join('');
+
+      const taxLoss = tirGross - tirNet, lotLoss = tirNet - tirLot;
+      $('lossDetails').innerHTML = `
+    <p>Rispetto al reinvestimento lordo, la sola tassazione riduce la crescita annua equivalente di <strong class="negative">${pp(taxLoss)}</strong>.</p>
+    <p>Il vincolo dei lotti interi aggiunge una riduzione di <strong class="negative">${pp(lotLoss)}</strong> rispetto al reinvestimento netto frazionario.</p>
+    <p>Il borsellino finale contiene <strong>${euro(lot.wallet)}</strong>; durante la vita del BTP sono stati acquistati <strong>${lot.bought}</strong> nuovi lotti.</p>
+    <p>La riduzione complessiva rispetto al reinvestimento teorico lordo è <strong class="negative">${pp(tirGross - tirLot)}</strong>.</p>`;
+      const totalNetCoupons = netCoupon * periods, totalGrossCoupons = grossCoupon * periods;
+      $('cashDetails').innerHTML = `
+    <p>Capitale rimborsato: <strong>${euro(initial)}</strong>.</p>
+    <p>Cedole lorde complessive: <strong>${euro(totalGrossCoupons)}</strong>.</p>
+    <p>Imposte sulle cedole: <strong>${euro(totalGrossCoupons - totalNetCoupons)}</strong>.</p>
+    <p>Cedole nette incassate: <strong>${euro(totalNetCoupons)}</strong>.</p>
+    <p>Capitale + cedole nette incassate: <strong>${euro(initial + totalNetCoupons)}</strong>, pari a un guadagno nominale del <strong>${pct(totalNetCoupons / initial)}</strong> sull'investimento iniziale.</p>
+    <p>La crescita annua equivalente di questo capitale finale è <strong>${pct(netCashGrowth)}</strong>; non reinvestendo, le cedole sono conteggiate come liquidità a rendimento zero fino alla scadenza.</p>
+    <p>Il TIR dei flussi netti è invece <strong>${pct(tirNetNo)}</strong>: considera le date degli incassi e può coincidere con il rendimento del reinvestimento frazionario. Non significa che le cedole non reinvestite abbiano davvero prodotto quel rendimento: il TIR è un tasso che riassume i flussi, mentre la crescita del capitale finale usa il totale effettivamente accumulato.</p>`;
+
+      if (chart) chart.destroy();
+      chart = new Chart($('tirChart'), {
+        type: 'bar',
+        data: { labels: scenarios.map(s => s.name), datasets: [{ data: scenarios.map(s => s.tir * 100), backgroundColor: scenarios.map(s => s.color), borderRadius: 6, maxBarThickness: 54 }] },
+        options: {
+          indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.raw.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%' } } },
+          scales: { x: { beginAtZero: true, title: { display: true, text: 'Crescita annua equivalente (%)' }, ticks: { callback: v => v + '%' } }, y: { grid: { display: false } } }
+        }
+      });
+    }
+    ['type', 'years', 'coupon', 'lots', 'tax'].forEach(id => $(id).addEventListener('input', calc));
+    $('reset').addEventListener('click', () => { $('type').value = '2'; $('years').value = 10; $('coupon').value = 3.5; $('lots').value = 10; $('tax').value = 12.5; calc(); });
+    document.addEventListener('DOMContentLoaded', function () {
+      const disclaimer = $('disclaimer-container');
+      fetch('html/disclaimer.html')
+        .then(response => {
+          if (!response.ok) throw new Error(`Caricamento disclaimer fallito: ${response.status}`);
+          return response.text();
+        })
+        .then(data => { disclaimer.innerHTML = data; })
+        .catch(error => {
+          console.error(error);
+          disclaimer.textContent = 'Disclaimer non disponibile.';
+        });
+    });
+    calc();
+  </script>
+</body>
+
+</html>
