@@ -1,0 +1,39 @@
+name: Update personal inflation data
+
+on:
+  schedule:
+    - cron: "15 9 20 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: personal-inflation-data
+  cancel-in-progress: false
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Download Eurostat HICP data
+        run: python py/download_personal_inflation.py
+      - name: Commit updated data when changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add json/inflazione_personale.json
+          if git diff --cached --quiet; then
+            echo "Eurostat data are unchanged."
+            exit 0
+          fi
+          git commit -m "Aggiorna dati inflazione personale Eurostat"
+          git push origin HEAD:main

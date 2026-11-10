@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore di inflazione personale</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        .personal-inflation-page {
+            padding-bottom: 32px;
+        }
+
+        .personal-inflation-page .container {
+            max-width: 1500px;
+        }
+
+        .period-controls {
+            background: #f7f9fc;
+            border: 1px solid #e1e7ef;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .result-card {
+            height: 100%;
+            border: 1px solid #dce5ef;
+            border-radius: 10px;
+            padding: 16px;
+            background: #fff;
+        }
+
+        .result-label {
+            color: #64748b;
+            font-size: .9rem;
+        }
+
+        .result-value {
+            color: #123b62;
+            font-size: 1.55rem;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .table-responsive {
+            max-height: 68vh;
+        }
+
+        #expenseTable {
+            min-width: 850px;
+        }
+
+        #expenseTable thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: #f1f5f9;
+            white-space: nowrap;
+        }
+
+        #expenseTable .category-row td {
+            vertical-align: middle;
+        }
+
+        #expenseTable .group-row th {
+            position: sticky;
+            top: 42px;
+            z-index: 1;
+            background: #eaf2fa;
+        }
+
+        #expenseTable .group-name {
+            font-weight: 700;
+        }
+
+        .expense-input {
+            max-width: 155px;
+            min-width: 120px;
+            text-align: right;
+        }
+
+        .category-code {
+            color: #64748b;
+            font-size: .82rem;
+            white-space: nowrap;
+        }
+
+        .personal-inflation-page .home-button {
+            float: none;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .personal-inflation-page .container {
+                margin-top: 0 !important;
+                padding: 16px !important;
+                border-radius: 0 !important;
+            }
+
+            .personal-inflation-page h1 {
+                font-size: 1.65rem;
+            }
+
+            .table-responsive {
+                max-height: 60vh;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-light personal-inflation-page">
+    <main class="container mt-4 p-4 bg-white rounded shadow-sm">
+        <div class="text-center mb-3">
+            <a href="/FireSWR" class="home-button">Home</a>
+        </div>
+        <h1 class="text-center">Calcolatore di inflazione personale</h1>
+        <p class="text-center text-muted mb-4">
+            Inserisci la spesa mensile per categoria: il calcolo combina le tue abitudini di spesa con gli indici
+            ufficiali dei prezzi al consumo.
+        </p>
+
+        <section class="period-controls mb-4" aria-label="Periodo di confronto">
+            <div class="form-row align-items-end">
+                <div class="form-group col-md-4">
+                    <label for="baseMonth">Periodo iniziale</label>
+                    <select id="baseMonth" class="form-control" disabled></select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="targetMonth">Periodo finale</label>
+                    <select id="targetMonth" class="form-control" disabled></select>
+                </div>
+                <div class="form-group col-md-4 mb-md-3">
+                    <button id="clearExpenses" type="button" class="btn btn-outline-secondary mr-2" disabled>
+                        Svuota spese
+                    </button>
+                    <button id="exportExpenses" type="button" class="btn btn-outline-primary" disabled>
+                        Esporta CSV
+                    </button>
+                </div>
+            </div>
+            <small class="form-text text-muted">
+                Il confronto predefinito è con lo stesso mese dell'anno precedente. Puoi scegliere qualsiasi periodo
+                disponibile.
+            </small>
+        </section>
+
+        <div id="loadStatus" class="alert alert-info" role="status" aria-live="polite">
+            Caricamento degli indici ufficiali Eurostat...
+        </div>
+
+        <section class="row mb-4" aria-label="Risultato del calcolo">
+            <div class="col-md-4 mb-3 mb-md-0">
+                <div class="result-card">
+                    <div class="result-label">Inflazione del tuo paniere nel periodo</div>
+                    <div id="personalRate" class="result-value">—</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3 mb-md-0">
+                <div class="result-card">
+                    <div class="result-label">Spesa mensile inserita</div>
+                    <div id="monthlyTotal" class="result-value">—</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="result-card">
+                    <div class="result-label">Spesa equivalente a prezzi finali</div>
+                    <div id="updatedTotal" class="result-value">—</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-2">
+            <label for="categorySearch" class="sr-only">Cerca una categoria</label>
+            <input id="categorySearch" type="search" class="form-control mb-2 mb-md-0 mr-md-3"
+                placeholder="Cerca una sottocategoria (es. pane, affitto, carburante)" disabled>
+            <small id="dataInfo" class="text-muted text-md-right"></small>
+        </div>
+
+        <div class="table-responsive border rounded">
+            <table id="expenseTable" class="table table-sm table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">Sottocategoria COICOP</th>
+                        <th scope="col">Codice</th>
+                        <th scope="col" class="text-right">Spesa mensile (€)</th>
+                        <th scope="col" class="text-right">Peso nel paniere</th>
+                        <th scope="col" class="text-right">Variazione prezzi</th>
+                        <th scope="col" class="text-right">Contributo</th>
+                    </tr>
+                </thead>
+                <tbody id="expenseRows">
+                    <tr><td colspan="6" class="text-center text-muted py-4">In attesa dei dati.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <section class="mt-4">
+            <h2 class="h5">Come leggere il risultato</h2>
+            <p>
+                Per ogni voce, il calcolatore confronta l'indice Eurostat del mese finale con quello iniziale.
+                Pondera poi le variazioni per la quota di spesa mensile che hai inserito: è una stima a paniere fisso,
+                non una misura dei prezzi dei singoli prodotti acquistati.
+            </p>
+            <p class="mb-1">
+                La classificazione e gli indici sono quelli dell'IPCA (HICP) per l'Italia, con dettaglio COICOP
+                disponibile nella fonte. I nomi delle sottocategorie sono riportati come pubblicati da Eurostat.
+                Le spese inserite restano nel tuo browser e non vengono inviate al sito; puoi esportarle in CSV per
+                conservarne una copia.
+            </p>
+            <p id="dataSource" class="small text-muted mt-2 mb-0"></p>
+        </section>
+
+        <div id="disclaimer-container"></div>
+    </main>
+
+    <script src="js/inflazione_personale.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('html/disclaimer.html')
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('HTTP ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(function (data) {
+                    document.getElementById('disclaimer-container').innerHTML = data;
+                })
+                .catch(function () {
+                    document.getElementById('disclaimer-container').textContent =
+                        'Il disclaimer non è al momento disponibile.';
+                });
+        });
+    </script>
+</body>
+
+</html>
