@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Corso secco e corso tel quel | Investire Male</title>
+  <link href="css/style.css" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #20252d;
+      --muted: #697386;
+      --line: #e5e8ee;
+      --bg: #f5f6f8;
+      --card: #fff;
+      --accent: #f07852;
+      --blue: #3976b9;
+      --green: #27836b;
+      --red: #c65b5b;
+    }
+
+    * { box-sizing: border-box }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    main { max-width: 1180px; margin: 32px auto; padding: 0 20px 50px }
+    .home-link { display: flow-root; margin-bottom: 18px }
+    header { margin-bottom: 24px }
+    h1 { font-size: clamp(27px, 4vw, 38px); line-height: 1.12; margin: 0 0 10px; letter-spacing: -.8px }
+    h2 { font-size: 19px; margin: 0 0 16px }
+    h3 { font-size: 16px; margin: 0 0 8px }
+    p { margin: 0 0 12px }
+    .sub { color: var(--muted); max-width: 850px; margin: 0 }
+    .layout { display: grid; grid-template-columns: 320px 1fr; gap: 18px; align-items: start }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: 0 2px 8px #18202b08 }
+    .controls { position: sticky; top: 16px }
+    .field { margin: 0 0 16px }
+    .field label { display: block; font-weight: 650; margin-bottom: 6px }
+    .field small { display: block; color: var(--muted); margin-top: 5px }
+    input, select {
+      width: 100%;
+      border: 1px solid #cfd5df;
+      border-radius: 8px;
+      padding: 10px 11px;
+      font: inherit;
+      background: #fff;
+      color: var(--ink);
+    }
+    input:focus, select:focus { outline: 2px solid #f0785233; border-color: var(--accent) }
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 10px 14px;
+      background: var(--ink);
+      color: #fff;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+      width: 100%;
+    }
+    .note, .footer { color: var(--muted); font-size: 12px }
+    .note { margin-top: 12px }
+    .content { display: grid; gap: 18px }
+    .results { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px }
+    .metric { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 15px }
+    .metric .k { color: var(--muted); font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: .4px }
+    .metric .v { font-size: 24px; font-weight: 750; letter-spacing: -.5px; margin-top: 5px; font-variant-numeric: tabular-nums }
+    .metric .d { color: var(--muted); font-size: 12px; margin-top: 3px }
+    .metric.highlight { border-color: #27836b66; background: #27836b08 }
+    .formula { background: #f7f8fa; border-radius: 9px; padding: 12px 14px; overflow-wrap: anywhere }
+    .table-wrap { overflow-x: auto }
+    table { width: 100%; border-collapse: collapse; font-size: 14px }
+    th, td { padding: 10px 9px; border-bottom: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums }
+    th:first-child, td:first-child { text-align: left }
+    th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .3px }
+    .error { display: none; padding: 12px 14px; border: 1px solid #c65b5b55; border-radius: 9px; background: #c65b5b0d; color: #9c3434 }
+    .footer { margin-top: 20px }
+
+    @media (max-width: 850px) {
+      .layout { grid-template-columns: 1fr }
+      .controls { position: static }
+      .results { grid-template-columns: 1fr 1fr }
+    }
+    @media (max-width: 480px) {
+      main { padding: 0 12px 30px; margin-top: 20px }
+      .card { padding: 15px }
+      .results { grid-template-columns: 1fr }
+      .metric .v { font-size: 21px }
+      table { font-size: 12px }
+      th, td { padding: 9px 5px }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="home-link"><a href="/FireSWR" class="home-button">🏠 Home</a></div>
+    <header>
+      <h1>Corso secco e corso tel quel</h1>
+      <p class="sub">Il corso secco esprime il prezzo del solo capitale; al regolamento si aggiunge il rateo maturato dal venditore. Inserisci i dati di un BTP per vedere il passaggio dal prezzo quotato all'importo effettivo dell'acquisto.</p>
+    </header>
+
+    <div class="layout">
+      <aside class="card controls" aria-labelledby="input-title">
+        <h2 id="input-title">Dati del BTP</h2>
+        <div class="field">
+          <label for="settlementDate">Data di regolamento</label>
+          <input id="settlementDate" type="date" value="2026-05-21">
+          <small>Data da cui si calcolano i giorni di rateo.</small>
+        </div>
+        <div class="field">
+          <label for="maturityDate">Data di scadenza</label>
+          <input id="maturityDate" type="date" value="2030-08-01">
+          <small>La scadenza viene usata come riferimento per ricostruire le date cedolari.</small>
+        </div>
+        <div class="field">
+          <label for="couponRate">Tasso cedolare annuo (%)</label>
+          <input id="couponRate" type="number" min="0" max="100" step="0.01" value="6">
+        </div>
+        <div class="field">
+          <label for="frequency">Frequenza cedola</label>
+          <select id="frequency">
+            <option value="2" selected>Semestrale</option>
+            <option value="4">Trimestrale</option>
+            <option value="1">Annuale</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="cleanPrice">Corso secco (prezzo per 100)</label>
+          <input id="cleanPrice" type="number" min="0" step="0.001" value="99">
+        </div>
+        <div class="field">
+          <label for="nominal">Valore nominale (€)</label>
+          <input id="nominal" type="number" min="0.01" step="0.01" value="80000">
+        </div>
+        <button id="reset" type="button">Reset valori</button>
+        <p class="note">Il calendario delle cedole regolari viene ricostruito a ritroso dalla scadenza. Il calcolo non include commissioni, imposte o eventuali convenzioni particolari del singolo titolo.</p>
+      </aside>
+
+      <section class="content" aria-label="Risultati del calcolo">
+        <div id="error" class="error" role="alert"></div>
+        <div class="results" aria-live="polite">
+          <div class="metric">
+            <div class="k">Corso secco</div>
+            <div class="v" id="cleanAmount">—</div>
+            <div class="d" id="cleanDetail">Valore capitale del titolo</div>
+          </div>
+          <div class="metric">
+            <div class="k">Rateo interessi</div>
+            <div class="v" id="accruedAmount">—</div>
+            <div class="d" id="accruedDetail">Interessi maturati dal venditore</div>
+          </div>
+          <div class="metric highlight">
+            <div class="k">Corso tel quel</div>
+            <div class="v" id="dirtyAmount">—</div>
+            <div class="d" id="dirtyDetail">Importo indicativo da regolare</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Come si compone il prezzo</h2>
+          <p>Le obbligazioni sono quotate normalmente al corso secco, ma il compratore paga al venditore anche la cedola maturata dall'ultimo stacco alla data di regolamento.</p>
+          <div class="formula" aria-live="polite">
+            <strong>Corso tel quel = corso secco + rateo</strong><br>
+            <span id="formulaDetail">Inserisci i dati per visualizzare il calcolo.</span>
+          </div>
+          <p class="note" id="periodDetail"></p>
+        </div>
+
+        <div class="card">
+          <h2>Passaggio dai corsi al regolamento</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Voce</th><th>Calcolo</th><th>Importo</th></tr></thead>
+              <tbody>
+                <tr><td>Capitale al corso secco</td><td id="tableCleanFormula">—</td><td id="tableClean">—</td></tr>
+                <tr><td>Rateo maturato</td><td id="tableAccruedFormula">—</td><td id="tableAccrued">—</td></tr>
+                <tr><td><strong>Controvalore tel quel</strong></td><td>Corso secco + rateo</td><td id="tableDirty"><strong>—</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">Seguendo la relazione semplificata delle slide, il corso ex è indicato come corso secco meno il rateo. Nelle date di godimento il rateo è nullo e i tre corsi coincidono; la convenzione del corso ex può variare in base allo strumento e al mercato.</p>
+        </div>
+
+        <div class="card">
+          <h2>Esempio delle slide</h2>
+          <p>Per un BTP da 80.000 € nominali, cedola annua del 6%, corso secco 99 e regolamento il 21 maggio tra le cedole del 1° febbraio e 1° agosto:</p>
+          <div class="formula">Rateo per 100 = 100 × (6% ÷ 2) × 109 ÷ 181 = 1,80663 €<br>Corso secco = 80.000 × 99 ÷ 100 = 79.200,00 €<br>Corso tel quel = 79.200,00 € + 1.445,30 € = 80.645,30 €</div>
+        </div>
+      </section>
+    </div>
+    <p class="footer">Simulatore didattico basato sulla convenzione giorni effettivi/giorni effettivi illustrata nelle slide. Verifica le condizioni e le convenzioni applicabili al titolo e alla data di regolamento.</p>
+  </main>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const euro = value => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+    const num = (value, digits = 5) => new Intl.NumberFormat('it-IT', { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
+    const dateFormat = new Intl.DateTimeFormat('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' });
+    const dayMs = 86400000;
+
+    function parseDate(value) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+      const date = new Date(`${value}T00:00:00Z`);
+      return Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value ? null : date;
+    }
+
+    function couponDate(maturity, monthsPerCoupon, periodIndex) {
+      const maturityMonth = maturity.getUTCFullYear() * 12 + maturity.getUTCMonth();
+      const targetMonth = maturityMonth - monthsPerCoupon * periodIndex;
+      const year = Math.floor(targetMonth / 12);
+      const month = targetMonth - year * 12;
+      const day = Math.min(maturity.getUTCDate(), new Date(Date.UTC(year, month + 1, 0)).getUTCDate());
+      return new Date(Date.UTC(year, month, day));
+    }
+
+    function formatDate(date) {
+      return dateFormat.format(date);
+    }
+
+    function setError(message) {
+      $('error').textContent = message;
+      $('error').style.display = message ? 'block' : 'none';
+      if (message) {
+        ['cleanAmount', 'accruedAmount', 'dirtyAmount', 'cleanDetail', 'accruedDetail',
+          'dirtyDetail', 'formulaDetail', 'periodDetail', 'tableCleanFormula',
+          'tableAccruedFormula', 'tableClean', 'tableAccrued', 'tableDirty']
+          .forEach(id => { $(id).textContent = '—'; });
+      }
+    }
+
+    function calculate() {
+      const settlement = parseDate($('settlementDate').value);
+      const maturity = parseDate($('maturityDate').value);
+      const frequency = Number($('frequency').value);
+      const annualCoupon = Number($('couponRate').value);
+      const cleanPrice = Number($('cleanPrice').value);
+      const nominal = Number($('nominal').value);
+
+      if (!settlement || !maturity) return setError('Inserisci date valide per il regolamento e la scadenza.');
+      if (maturity <= settlement) return setError('La scadenza deve essere successiva alla data di regolamento.');
+      if (![1, 2, 4].includes(frequency)) return setError('La frequenza cedolare selezionata non è valida.');
+      if (!Number.isFinite(annualCoupon) || annualCoupon < 0 || annualCoupon > 100) return setError('Inserisci un tasso cedolare compreso tra 0% e 100%.');
+      if (!Number.isFinite(cleanPrice) || cleanPrice < 0) return setError('Il corso secco deve essere un numero pari o superiore a zero.');
+      if (!Number.isFinite(nominal) || nominal <= 0) return setError('Il valore nominale deve essere maggiore di zero.');
+
+      const monthsPerCoupon = 12 / frequency;
+      let periodIndex = 0;
+      let nextCoupon = couponDate(maturity, monthsPerCoupon, periodIndex);
+      let previousCoupon = couponDate(maturity, monthsPerCoupon, periodIndex + 1);
+      while (previousCoupon > settlement) {
+        periodIndex += 1;
+        nextCoupon = previousCoupon;
+        previousCoupon = couponDate(maturity, monthsPerCoupon, periodIndex + 1);
+      }
+      const elapsedDays = (settlement - previousCoupon) / dayMs;
+      const couponDays = (nextCoupon - previousCoupon) / dayMs;
+      const couponPer100 = 100 * (annualCoupon / 100) / frequency;
+      const accruedPer100 = couponPer100 * elapsedDays / couponDays;
+      const accrued = nominal * accruedPer100 / 100;
+      const cleanAmount = nominal * cleanPrice / 100;
+      const dirtyAmount = cleanAmount + accrued;
+      const exPrice = cleanPrice - accruedPer100;
+
+      setError('');
+      $('cleanAmount').textContent = euro(cleanAmount);
+      $('accruedAmount').textContent = euro(accrued);
+      $('dirtyAmount').textContent = euro(dirtyAmount);
+      $('cleanDetail').textContent = `${num(cleanPrice, 3)} per 100 € nominali`;
+      $('accruedDetail').textContent = `${num(accruedPer100, 5)} € per 100 € nominali`;
+      $('dirtyDetail').textContent = `${num(cleanPrice + accruedPer100, 5)} per 100 € · importo da regolare`;
+      $('formulaDetail').textContent = `${euro(cleanAmount)} + ${euro(accrued)} = ${euro(dirtyAmount)} su ${euro(nominal)} nominali.`;
+      $('periodDetail').textContent = `Ultimo godimento: ${formatDate(previousCoupon)} · Prossima cedola: ${formatDate(nextCoupon)} · ${elapsedDays} giorni maturati su ${couponDays} giorni effettivi del periodo. Corso ex indicativo (secco − rateo): ${num(exPrice, 5)}.`;
+      $('tableCleanFormula').textContent = `${euro(nominal)} × ${num(cleanPrice, 3)} ÷ 100`;
+      $('tableAccruedFormula').textContent = `${euro(nominal)} × ${num(accruedPer100, 5)} ÷ 100`;
+      $('tableClean').textContent = euro(cleanAmount);
+      $('tableAccrued').textContent = euro(accrued);
+      $('tableDirty').textContent = euro(dirtyAmount);
+    }
+
+    ['settlementDate', 'maturityDate', 'frequency', 'couponRate', 'cleanPrice', 'nominal'].forEach(id => {
+      $(id).addEventListener('input', calculate);
+      $(id).addEventListener('change', calculate);
+    });
+    $('reset').addEventListener('click', () => {
+      $('settlementDate').value = '2026-05-21';
+      $('maturityDate').value = '2030-08-01';
+      $('frequency').value = '2';
+      $('couponRate').value = '6';
+      $('cleanPrice').value = '99';
+      $('nominal').value = '80000';
+      calculate();
+    });
+    calculate();
+  </script>
+</body>
+</html>
