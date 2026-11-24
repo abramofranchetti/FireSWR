@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DBMF e oro: confronto storico</title>
+    <meta name="description"
+        content="Confronto tra DBMF e oro sulle date comuni, in euro e corretto per l'inflazione italiana.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f7f8fa;
+            color: #20242b
+        }
+
+        main {
+            max-width: 1000px
+        }
+
+        .card {
+            border: 1px solid #e7e9ed;
+            border-radius: 14px
+        }
+
+        .chart-wrap {
+            position: relative;
+            height: 360px
+        }
+
+        .muted {
+            color: #69717d;
+            font-size: .9rem
+        }
+
+        @media(max-width:576px) {
+            .chart-wrap {
+                height: 290px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container py-4 py-lg-5">
+        <div class="text-center mb-4">
+            <a href="/FireSWR" class="home-button">🏠 Home</a>
+        </div>
+        <h1 class="h2 text-center mb-2">DBMF e oro</h1>
+        <p class="text-center muted mb-4">Andamento dal primo giorno con dati disponibili per entrambi</p>
+
+        <div id="loading" class="alert alert-info" role="status">Caricamento dei dati…</div>
+        <div id="error" class="alert alert-danger" role="alert" hidden></div>
+        <p id="period" class="muted text-center mb-4"></p>
+
+        <section class="card mb-4">
+            <div class="card-body">
+                <h2 class="h5">Andamento nominale</h2>
+                <p class="muted">Valore iniziale = 100. Prezzi in euro, senza correzione per l’inflazione.</p>
+                <div class="chart-wrap">
+                    <canvas id="nominalChart" aria-label="Andamento nominale di DBMF e oro"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="card mb-4">
+            <div class="card-body">
+                <h2 class="h5">Andamento corretto per l’inflazione italiana</h2>
+                <p class="muted">Valore iniziale = 100. Inflazione media annua italiana applicata ai valori in euro.</p>
+                <div class="chart-wrap">
+                    <canvas id="realChart" aria-label="Andamento di DBMF e oro corretto per l'inflazione italiana"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <p class="muted small">DBMF è rappresentato con il prezzo aggiustato (AdjClose); l’oro usa il prezzo giornaliero
+            GC=F. Entrambe le serie sono convertite da USD a EUR usando i cambi giornalieri. I valori sono indicizzati
+            alla prima data comune disponibile. Analisi storica a fini informativi, non costituisce consulenza finanziaria.</p>
+    </main>
+
+    <div id="disclaimer-container"></div>
+    <script>
+        const formatNumber = new Intl.NumberFormat('it-IT', { maximumFractionDigits: 1 });
+        const colors = { dbmf: '#e1764f', gold: '#c69a00' };
+
+        async function fetchJson(path) {
+            const response = await fetch(path);
+            if (!response.ok) throw new Error(`Caricamento di ${path} non riuscito (HTTP ${response.status}).`);
+            return response.json();
+        }
+
+        function parseSeries(rows, priceField, filename) {
+            if (!Array.isArray(rows)) throw new Error(`${filename}: formato dati non valido.`);
+            const series = new Map();
+            rows.forEach(row => {
+                const price = Number(row?.[priceField]);
+                if (typeof row?.Date === 'string' && Number.isFinite(price) && price > 0) {
+                    series.set(row.Date, price);
+                }
+            });
+            return series;
+        }
+
+        function parseInflation(csv) {
+            const inflation = new Map();
+            csv.split(/\r?\n/).forEach(row => {
+                const [yearText, rateText] = row.split(';');
+                const year = Number(yearText?.trim());
+                const rate = Number(rateText?.trim().replace('%', '').replace(',', '.')) / 100;
+                if (Number.isInteger(year) && Number.isFinite(rate)) inflation.set(year, rate);
+            });
+            return inflation;
+        }
+
+        function normalize(values) {
+            const start = values[0];
+            return values.map(value => value / start * 100);
+        }
+
+        function adjustForInflation(values, dates, inflation) {
+            const startYear = Number(dates[0].slice(0, 4));
+            let currentYear = startYear;
+            let deflator = 1;
+            return values.map((value, index) => {
+                const year = Number(dates[index].slice(0, 4));
+                if (year > currentYear) {
+                    for (let y = currentYear; y < year; y++) {
+                        if (inflation.has(y)) deflator *= 1 + inflation.get(y);
+                    }
+                    currentYear = year;
+                }
+                return value / deflator;
+            });
+        }
+
+        function renderChart(canvasId, dates, datasets) {
+            new Chart(document.getElementById(canvasId), {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: datasets.map(dataset => ({
+                        ...dataset,
+                        pointRadius: 0,
+                        borderWidth: 2,
+                        tension: 0.1
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: context => `${context.dataset.label}: ${formatNumber.format(context.parsed.y)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { ticks: { maxTicksLimit: 8, maxRotation: 0 } },
+                        y: { title: { display: true, text: 'Indice (prima data = 100)' } }
+                    }
+                }
+            });
+        }
+
+        async function main() {
+            const [dbmfRows, goldRows, historicalFx, updatedFx, inflationCsv] = await Promise.all([
+                fetchJson('DBMF.json'),
+                fetchJson('../json/GC=F.json'),
+                fetchJson('../json/cambio_eur_usd_storico.json'),
+                fetchJson('../json/cambio_eur_usd_updated.json'),
+                fetch('../csv/datiinflazionemediaitalia.csv').then(response => {
+                    if (!response.ok) throw new Error(`Caricamento dell'inflazione non riuscito (HTTP ${response.status}).`);
+                    return response.text();
+                })
+            ]);
+
+            const dbmf = parseSeries(dbmfRows, 'AdjClose', 'DBMF.json');
+            const gold = parseSeries(goldRows, 'Close', 'GC=F.json');
+            const fx = new Map();
+            [...historicalFx, ...updatedFx].forEach(row => {
+                const rate = Number(row?.Close);
+                if (row?.Date && Number.isFinite(rate) && rate > 0) fx.set(row.Date, rate);
+            });
+
+            const dates = [...dbmf.keys()]
+                .filter(date => gold.has(date) && fx.has(date))
+                .sort();
+            if (dates.length < 2) throw new Error('Dati insufficienti: non ci sono date comuni utilizzabili.');
+
+            const dbmfEur = dates.map(date => dbmf.get(date) / fx.get(date));
+            const goldEur = dates.map(date => gold.get(date) / fx.get(date));
+            const inflation = parseInflation(inflationCsv);
+            const dbmfReal = normalize(adjustForInflation(dbmfEur, dates, inflation));
+            const goldReal = normalize(adjustForInflation(goldEur, dates, inflation));
+
+            document.getElementById('loading').hidden = true;
+            document.getElementById('period').textContent =
+                `${dates[0]} – ${dates[dates.length - 1]} · ${dates.length.toLocaleString('it-IT')} date comuni · valori in EUR`;
+
+            renderChart('nominalChart', dates, [
+                { label: 'DBMF', data: normalize(dbmfEur), borderColor: colors.dbmf },
+                { label: 'Oro', data: normalize(goldEur), borderColor: colors.gold }
+            ]);
+            renderChart('realChart', dates, [
+                { label: 'DBMF', data: dbmfReal, borderColor: colors.dbmf },
+                { label: 'Oro', data: goldReal, borderColor: colors.gold }
+            ]);
+        }
+
+        main().catch(error => {
+            document.getElementById('loading').hidden = true;
+            const message = document.getElementById('error');
+            message.textContent = `Non è stato possibile caricare i dati: ${error.message}`;
+            message.hidden = false;
+        });
+
+        fetch('../html/disclaimer.html')
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.text();
+            })
+            .then(html => { document.getElementById('disclaimer-container').innerHTML = html; })
+            .catch(error => console.error('Impossibile caricare il disclaimer:', error));
+    </script>
+</body>
+
+</html>
